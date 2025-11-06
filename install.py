@@ -77,7 +77,8 @@ def get_command_version(command, version_flag="--version"):
         if match:
             return match.group(1)
         return output.strip().split('\n')[0]
-    except Exception as e:
+    except (subprocess.SubprocessError, OSError) as e:
+        # Virhe komennon suorituksessa
         return None
 
 def parse_version(version_str):
@@ -298,8 +299,7 @@ def start_expo_dev_server(tunnel=False):
             stdout=subprocess.PIPE,
             stderr=subprocess.STDOUT,
             text=True,
-            bufsize=1,
-            universal_newlines=True
+            bufsize=1
         )
         
         qr_code_shown = False
