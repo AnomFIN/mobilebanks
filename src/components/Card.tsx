@@ -1,95 +1,59 @@
-import React, { useEffect, useRef } from 'react';
-import { StyleSheet, View, Animated, ViewStyle } from 'react-native';
+import React from 'react';
+import { View, StyleSheet, ViewStyle } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
-import { Colors, BorderRadius, Shadow, Spacing, AnimationDuration } from '../theme/theme';
+import { useTheme, Shadow } from '../theme/theme';
 
 interface CardProps {
-  children: React.ReactNode;
+  children?: React.ReactNode;
   style?: ViewStyle;
   gradient?: boolean;
-  gradientColors?: readonly [string, string, ...string[]];
-  animated?: boolean;
-  accessibilityLabel?: string;
+  shadow?: 'small' | 'medium' | 'large';
+  padding?: number;
 }
 
-export const Card: React.FC<CardProps> = ({
-  children,
-  style,
-  gradient = false,
-  gradientColors = [Colors.gradientStart, Colors.gradientEnd] as const,
-  animated = true,
-  accessibilityLabel,
+const Card: React.FC<CardProps> = ({ 
+  children, 
+  style, 
+  gradient = false, 
+  shadow = 'medium',
+  padding = 16 
 }) => {
-  const fadeAnim = useRef(new Animated.Value(0)).current;
-  const scaleAnim = useRef(new Animated.Value(0.95)).current;
-
-  useEffect(() => {
-    if (animated) {
-      Animated.parallel([
-        Animated.timing(fadeAnim, {
-          toValue: 1,
-          duration: AnimationDuration.normal,
-          useNativeDriver: true,
-        }),
-        Animated.spring(scaleAnim, {
-          toValue: 1,
-          friction: 8,
-          tension: 40,
-          useNativeDriver: true,
-        }),
-      ]).start();
-    }
-  }, [animated, fadeAnim, scaleAnim]);
-
-  const animatedStyle = animated
-    ? {
-        opacity: fadeAnim,
-        transform: [{ scale: scaleAnim }],
-      }
-    : {};
+  const theme = useTheme();
+  
+  const shadowStyle = shadow ? Shadow[shadow] : {};
+  const containerStyle = [
+    styles.container, 
+    { padding },
+    shadowStyle,
+    style
+  ];
 
   if (gradient) {
     return (
-      <Animated.View
-        style={[styles.container, animatedStyle, style]}
-        accessibilityLabel={accessibilityLabel}
+      <LinearGradient 
+        colors={[theme.colors.cardGradientStart, theme.colors.cardGradientEnd]} 
+        start={[0, 0]} 
+        end={[1, 1]} 
+        style={containerStyle}
       >
-        <LinearGradient
-          colors={gradientColors}
-          start={{ x: 0, y: 0 }}
-          end={{ x: 1, y: 1 }}
-          style={styles.gradient}
-        >
-          {children}
-        </LinearGradient>
-      </Animated.View>
+        {children}
+      </LinearGradient>
     );
   }
 
   return (
-    <Animated.View
-      style={[styles.container, styles.cardStyle, animatedStyle, style]}
-      accessibilityLabel={accessibilityLabel}
-    >
+    <View style={[containerStyle, { backgroundColor: '#FFFFFF' }]}>
       {children}
-    </Animated.View>
+    </View>
   );
 };
 
-const styles = StyleSheet.create({
-  container: {
-    borderRadius: BorderRadius.lg,
+const styles = StyleSheet.create({ 
+  container: { 
+    borderRadius: 20, 
+    marginVertical: 8,
     overflow: 'hidden',
-  },
-  cardStyle: {
-    backgroundColor: Colors.card,
-    padding: Spacing.lg,
-    borderWidth: 1,
-    borderColor: Colors.cardBorder,
-    ...Shadow.medium,
-  },
-  gradient: {
-    padding: Spacing.lg,
-    borderRadius: BorderRadius.lg,
-  },
+  }, 
 });
+
+export default Card;

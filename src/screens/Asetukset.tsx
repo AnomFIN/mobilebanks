@@ -1,363 +1,159 @@
-import React, { useState } from 'react';
-import {
-  StyleSheet,
-  Text,
-  View,
-  ScrollView,
-  TouchableOpacity,
-  Switch,
-} from 'react-native';
+import React from 'react';
+import { View, Text, StyleSheet, ScrollView, TouchableOpacity, Switch } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { Ionicons } from '@expo/vector-icons';
-import * as Haptics from 'expo-haptics';
-import { Colors, Spacing, BorderRadius, FontSize, Shadow, FontWeight } from '../theme/theme';
-import { Card } from '../components/Card';
+import { useTheme } from '../theme/theme';
+import HeaderBar from '../components/HeaderBar';
 
-export default function AsetuksetScreen() {
-  const [hapticsEnabled, setHapticsEnabled] = useState(true);
-  const [animationsEnabled, setAnimationsEnabled] = useState(true);
-  const [darkMode, setDarkMode] = useState(false);
+const Asetukset: React.FC = () => {
+  const theme = useTheme();
+  const [notificationsEnabled, setNotificationsEnabled] = React.useState(true);
+  const [biometricsEnabled, setBiometricsEnabled] = React.useState(false);
+  const [twoFactorEnabled, setTwoFactorEnabled] = React.useState(true);
 
-  const handleHapticsToggle = () => {
-    if (hapticsEnabled) {
-      Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
-    }
-    setHapticsEnabled((prev) => !prev);
-  };
-
-  const handleAnimationsToggle = () => {
-    if (hapticsEnabled) {
-      Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
-    }
-    setAnimationsEnabled((prev) => !prev);
-  };
-
-  const handleDarkModeToggle = () => {
-    if (hapticsEnabled) {
-      Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
-    }
-    setDarkMode((prev) => !prev);
-  };
+  const settingsSections = [
+    {
+      title: 'Tili',
+      items: [
+        { icon: '👤', label: 'Profiili', action: () => {} },
+        { icon: '🏢', label: 'Yritystiedot', action: () => {} },
+        { icon: '💳', label: 'Maksutavat', action: () => {} },
+      ],
+    },
+    {
+      title: 'Turvallisuus',
+      items: [
+        { icon: '🔔', label: 'Ilmoitukset', toggle: notificationsEnabled, onToggle: setNotificationsEnabled },
+        { icon: '🔐', label: 'Biometria', toggle: biometricsEnabled, onToggle: setBiometricsEnabled },
+        { icon: '🔑', label: 'Kaksivaiheinen tunnistus', toggle: twoFactorEnabled, onToggle: setTwoFactorEnabled },
+      ],
+    },
+    {
+      title: 'Yleiset',
+      items: [
+        { icon: '🌐', label: 'Kieli', value: 'Suomi', action: () => {} },
+        { icon: '💱', label: 'Valuutta', value: 'EUR (€)', action: () => {} },
+        { icon: '❓', label: 'Ohje ja tuki', action: () => {} },
+        { icon: '📄', label: 'Käyttöehdot', action: () => {} },
+      ],
+    },
+  ];
 
   return (
-    <SafeAreaView style={styles.container} edges={['top']}>
-      <ScrollView style={styles.scrollView} showsVerticalScrollIndicator={false}>
-        {/* Header */}
-        <View style={styles.header}>
-          <Text style={styles.title}>Asetukset</Text>
-          <Text style={styles.subtitle}>Hallitse tilin asetuksia</Text>
-        </View>
+    <SafeAreaView style={[styles.container, { backgroundColor: theme.colors.background }]} edges={['top']}>
+      <ScrollView showsVerticalScrollIndicator={false}>
+        <HeaderBar small />
+        
+        <View style={styles.content}>
+          <Text style={[styles.title, { color: theme.colors.text }]}>Asetukset</Text>
+          
+          <View style={[styles.profileCard, { backgroundColor: theme.colors.surface }]}>
+            <View style={[styles.avatarCircle, { backgroundColor: theme.colors.primary }]}>
+              <Text style={styles.avatarText}>AA</Text>
+            </View>
+            <View style={styles.profileInfo}>
+              <Text style={[styles.profileName, { color: theme.colors.text }]}>Aku Ankka</Text>
+              <Text style={[styles.profileEmail, { color: theme.colors.muted }]}>aku.ankka@firma.fi</Text>
+              <Text style={[styles.profileCompany, { color: theme.colors.muted }]}>Firma Oy</Text>
+            </View>
+            <TouchableOpacity 
+              style={styles.editButton}
+              accessibilityLabel="Muokkaa profiilia"
+              accessibilityRole="button"
+            >
+              <Text style={styles.editIcon}>✏️</Text>
+            </TouchableOpacity>
+          </View>
 
-        {/* Account Info Section */}
-        <View style={styles.section}>
-          <Text style={styles.sectionTitle}>Tilin tiedot</Text>
-          <Card>
-            <View style={styles.infoRow}>
-              <View style={styles.infoIconContainer}>
-                <Ionicons name="person-outline" size={20} color={Colors.primary} />
-              </View>
-              <View style={styles.infoContent}>
-                <Text style={styles.infoLabel}>Käyttäjä</Text>
-                <Text style={styles.infoValue}>Hei, Aku Ankka</Text>
+          {settingsSections.map((section, sectionIndex) => (
+            <View key={sectionIndex} style={styles.section}>
+              <Text style={[styles.sectionTitle, { color: theme.colors.text }]}>{section.title}</Text>
+              <View style={[styles.settingsCard, { backgroundColor: theme.colors.surface }]}>
+                {section.items.map((item, itemIndex) => (
+                  <View key={itemIndex}>
+                    <TouchableOpacity
+                      style={styles.settingItem}
+                      onPress={'action' in item ? item.action : undefined}
+                      disabled={'toggle' in item}
+                      accessibilityLabel={item.label}
+                      accessibilityRole="button"
+                    >
+                      <View style={styles.settingLeft}>
+                        <Text style={styles.settingIcon}>{item.icon}</Text>
+                        <Text style={[styles.settingLabel, { color: theme.colors.text }]}>{item.label}</Text>
+                      </View>
+                      <View style={styles.settingRight}>
+                        {'value' in item && item.value && (
+                          <Text style={[styles.settingValue, { color: theme.colors.muted }]}>{item.value}</Text>
+                        )}
+                        {'toggle' in item && item.onToggle && (
+                          <Switch
+                            value={item.toggle}
+                            onValueChange={item.onToggle}
+                            trackColor={{ false: theme.colors.muted + '40', true: theme.colors.primary + '60' }}
+                            thumbColor={item.toggle ? theme.colors.primary : '#f4f3f4'}
+                            accessibilityLabel={`Toggle ${item.label}`}
+                          />
+                        )}
+                        {'action' in item && !('toggle' in item) && (
+                          <Text style={[styles.settingArrow, { color: theme.colors.muted }]}>›</Text>
+                        )}
+                      </View>
+                    </TouchableOpacity>
+                    {itemIndex < section.items.length - 1 && (
+                      <View style={[styles.divider, { backgroundColor: theme.colors.muted + '20' }]} />
+                    )}
+                  </View>
+                ))}
               </View>
             </View>
+          ))}
 
-            <View style={styles.divider} />
-
-            <View style={styles.infoRow}>
-              <View style={styles.infoIconContainer}>
-                <Ionicons name="business-outline" size={20} color={Colors.primary} />
-              </View>
-              <View style={styles.infoContent}>
-                <Text style={styles.infoLabel}>Tilinomistaja</Text>
-                <Text style={styles.infoValue}>Firma Oy</Text>
-              </View>
-            </View>
-
-            <View style={styles.divider} />
-
-            <View style={styles.infoRow}>
-              <View style={styles.infoIconContainer}>
-                <Ionicons name="card-outline" size={20} color={Colors.primary} />
-              </View>
-              <View style={styles.infoContent}>
-                <Text style={styles.infoLabel}>Tilinumero</Text>
-                <Text style={styles.infoValue}>FI21 1234 5678 9012 34</Text>
-              </View>
-            </View>
-          </Card>
-        </View>
-
-        {/* Preferences Section */}
-        <View style={styles.section}>
-          <Text style={styles.sectionTitle}>Asetukset</Text>
-          <Card>
-            <View style={styles.settingRow}>
-              <View style={styles.settingInfo}>
-                <View style={styles.settingIconContainer}>
-                  <Ionicons name="phone-portrait-outline" size={20} color={Colors.primary} />
-                </View>
-                <View>
-                  <Text style={styles.settingLabel}>Haptinen palaute</Text>
-                  <Text style={styles.settingDescription}>Värinä kosketuksissa</Text>
-                </View>
-              </View>
-              <Switch
-                value={hapticsEnabled}
-                onValueChange={handleHapticsToggle}
-                trackColor={{ false: Colors.border, true: Colors.primaryLight }}
-                thumbColor={hapticsEnabled ? Colors.primary : Colors.textMuted}
-                accessibilityLabel="Toggle haptics"
-              />
-            </View>
-
-            <View style={styles.divider} />
-
-            <View style={styles.settingRow}>
-              <View style={styles.settingInfo}>
-                <View style={styles.settingIconContainer}>
-                  <Ionicons name="sparkles-outline" size={20} color={Colors.primary} />
-                </View>
-                <View>
-                  <Text style={styles.settingLabel}>Animaatiot</Text>
-                  <Text style={styles.settingDescription}>Näytä siirtymäanimaatiot</Text>
-                </View>
-              </View>
-              <Switch
-                value={animationsEnabled}
-                onValueChange={handleAnimationsToggle}
-                trackColor={{ false: Colors.border, true: Colors.primaryLight }}
-                thumbColor={animationsEnabled ? Colors.primary : Colors.textMuted}
-                accessibilityLabel="Toggle animations"
-              />
-            </View>
-
-            <View style={styles.divider} />
-
-            <View style={styles.settingRow}>
-              <View style={styles.settingInfo}>
-                <View style={styles.settingIconContainer}>
-                  <Ionicons name="moon-outline" size={20} color={Colors.primary} />
-                </View>
-                <View>
-                  <Text style={styles.settingLabel}>Tumma tila</Text>
-                  <Text style={styles.settingDescription}>Käytä tummaa teemaa</Text>
-                </View>
-              </View>
-              <Switch
-                value={darkMode}
-                onValueChange={handleDarkModeToggle}
-                trackColor={{ false: Colors.border, true: Colors.primaryLight }}
-                thumbColor={darkMode ? Colors.primary : Colors.textMuted}
-                accessibilityLabel="Toggle dark mode"
-              />
-            </View>
-          </Card>
-        </View>
-
-        {/* About Section */}
-        <View style={styles.section}>
-          <Text style={styles.sectionTitle}>Tietoja</Text>
-          <Card>
-            <View style={styles.aboutRow}>
-              <Text style={styles.aboutLabel}>Versio</Text>
-              <Text style={styles.aboutValue}>1.0.0</Text>
-            </View>
-            <View style={styles.divider} />
-            <View style={styles.aboutRow}>
-              <Text style={styles.aboutLabel}>Yritys</Text>
-              <Text style={styles.aboutValue}>SumUp</Text>
-            </View>
-          </Card>
-        </View>
-
-        {/* Action Buttons */}
-        <View style={styles.actionsSection}>
-          <TouchableOpacity
-            style={styles.actionButton}
-            onPress={() => {
-              if (hapticsEnabled) {
-                Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
-              }
-            }}
-            accessibilityLabel="Contact support"
+          <TouchableOpacity 
+            style={[styles.logoutButton, { backgroundColor: theme.colors.surface }]}
+            accessibilityLabel="Kirjaudu ulos"
             accessibilityRole="button"
           >
-            <Ionicons name="mail-outline" size={20} color={Colors.primary} />
-            <Text style={styles.actionButtonText}>Ota yhteyttä tukeen</Text>
-            <Ionicons name="chevron-forward" size={20} color={Colors.textMuted} />
+            <Text style={styles.logoutIcon}>🚪</Text>
+            <Text style={[styles.logoutText, { color: '#FF3B30' }]}>Kirjaudu ulos</Text>
           </TouchableOpacity>
 
-          <TouchableOpacity
-            style={styles.actionButton}
-            onPress={() => {
-              if (hapticsEnabled) {
-                Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
-              }
-            }}
-            accessibilityLabel="Privacy policy"
-            accessibilityRole="button"
-          >
-            <Ionicons name="shield-checkmark-outline" size={20} color={Colors.primary} />
-            <Text style={styles.actionButtonText}>Tietosuojakäytäntö</Text>
-            <Ionicons name="chevron-forward" size={20} color={Colors.textMuted} />
-          </TouchableOpacity>
-
-          <TouchableOpacity
-            style={[styles.actionButton, styles.logoutButton]}
-            onPress={() => {
-              if (hapticsEnabled) {
-                Haptics.notificationAsync(Haptics.NotificationFeedbackType.Warning);
-              }
-            }}
-            accessibilityLabel="Logout"
-            accessibilityRole="button"
-          >
-            <Ionicons name="log-out-outline" size={20} color={Colors.error} />
-            <Text style={[styles.actionButtonText, styles.logoutText]}>Kirjaudu ulos</Text>
-            <Ionicons name="chevron-forward" size={20} color={Colors.error} />
-          </TouchableOpacity>
+          <Text style={[styles.versionText, { color: theme.colors.muted }]}>
+            SumUp Mobile v1.0.0
+          </Text>
         </View>
       </ScrollView>
     </SafeAreaView>
   );
-}
+};
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: Colors.background,
-  },
-  scrollView: {
-    flex: 1,
-  },
-  header: {
-    paddingHorizontal: Spacing.lg,
-    paddingVertical: Spacing.xl,
-  },
-  title: {
-    fontSize: FontSize.xxxl,
-    fontWeight: FontWeight.bold,
-    color: Colors.text,
-    marginBottom: Spacing.xs,
-  },
-  subtitle: {
-    fontSize: FontSize.md,
-    color: Colors.textSecondary,
-  },
-  section: {
-    paddingHorizontal: Spacing.lg,
-    marginBottom: Spacing.lg,
-  },
-  sectionTitle: {
-    fontSize: FontSize.lg,
-    fontWeight: FontWeight.bold,
-    color: Colors.text,
-    marginBottom: Spacing.md,
-  },
-  infoRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    paddingVertical: Spacing.sm,
-  },
-  infoIconContainer: {
-    width: 40,
-    height: 40,
-    borderRadius: BorderRadius.full,
-    backgroundColor: Colors.backgroundSecondary,
-    justifyContent: 'center',
-    alignItems: 'center',
-    marginRight: Spacing.md,
-  },
-  infoContent: {
-    flex: 1,
-  },
-  infoLabel: {
-    fontSize: FontSize.xs,
-    color: Colors.textSecondary,
-    marginBottom: Spacing.xs / 2,
-  },
-  infoValue: {
-    fontSize: FontSize.md,
-    color: Colors.text,
-    fontWeight: FontWeight.semibold,
-  },
-  settingRow: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    paddingVertical: Spacing.sm,
-  },
-  settingInfo: {
-    flex: 1,
-    flexDirection: 'row',
-    alignItems: 'center',
-  },
-  settingIconContainer: {
-    width: 40,
-    height: 40,
-    borderRadius: BorderRadius.full,
-    backgroundColor: Colors.backgroundSecondary,
-    justifyContent: 'center',
-    alignItems: 'center',
-    marginRight: Spacing.md,
-  },
-  settingLabel: {
-    fontSize: FontSize.md,
-    color: Colors.text,
-    fontWeight: FontWeight.semibold,
-    marginBottom: Spacing.xs / 2,
-  },
-  settingDescription: {
-    fontSize: FontSize.xs,
-    color: Colors.textSecondary,
-  },
-  divider: {
-    height: 1,
-    backgroundColor: Colors.border,
-    marginVertical: Spacing.sm,
-  },
-  aboutRow: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    paddingVertical: Spacing.md,
-  },
-  aboutLabel: {
-    fontSize: FontSize.md,
-    color: Colors.text,
-    fontWeight: FontWeight.medium,
-  },
-  aboutValue: {
-    fontSize: FontSize.md,
-    color: Colors.textSecondary,
-  },
-  actionsSection: {
-    paddingHorizontal: Spacing.lg,
-    paddingBottom: Spacing.xl,
-  },
-  actionButton: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    backgroundColor: Colors.card,
-    padding: Spacing.lg,
-    borderRadius: BorderRadius.md,
-    marginBottom: Spacing.sm,
-    borderWidth: 1,
-    borderColor: Colors.border,
-    ...Shadow.small,
-  },
-  actionButtonText: {
-    flex: 1,
-    fontSize: FontSize.md,
-    color: Colors.text,
-    fontWeight: FontWeight.semibold,
-    marginLeft: Spacing.md,
-  },
-  logoutButton: {
-    marginTop: Spacing.md,
-  },
-  logoutText: {
-    color: Colors.error,
-  },
+  container: { flex: 1 },
+  content: { padding: 16, paddingBottom: 40 },
+  title: { fontSize: 28, fontWeight: '700', marginBottom: 20 },
+  profileCard: { borderRadius: 16, padding: 20, marginBottom: 24, flexDirection: 'row', alignItems: 'center' },
+  avatarCircle: { width: 64, height: 64, borderRadius: 32, justifyContent: 'center', alignItems: 'center', marginRight: 16 },
+  avatarText: { color: '#FFFFFF', fontSize: 24, fontWeight: '700' },
+  profileInfo: { flex: 1 },
+  profileName: { fontSize: 18, fontWeight: '700', marginBottom: 4 },
+  profileEmail: { fontSize: 14, marginBottom: 2 },
+  profileCompany: { fontSize: 14 },
+  editButton: { padding: 8 },
+  editIcon: { fontSize: 20 },
+  section: { marginBottom: 24 },
+  sectionTitle: { fontSize: 16, fontWeight: '700', marginBottom: 12, paddingHorizontal: 4 },
+  settingsCard: { borderRadius: 16, overflow: 'hidden' },
+  settingItem: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', padding: 16 },
+  settingLeft: { flexDirection: 'row', alignItems: 'center', flex: 1 },
+  settingIcon: { fontSize: 20, marginRight: 12, width: 24 },
+  settingLabel: { fontSize: 16, fontWeight: '500' },
+  settingRight: { flexDirection: 'row', alignItems: 'center', gap: 8 },
+  settingValue: { fontSize: 14 },
+  settingArrow: { fontSize: 20, fontWeight: '300' },
+  divider: { height: 1, marginLeft: 56 },
+  logoutButton: { borderRadius: 16, padding: 16, flexDirection: 'row', alignItems: 'center', justifyContent: 'center', marginTop: 8 },
+  logoutIcon: { fontSize: 20, marginRight: 8 },
+  logoutText: { fontSize: 16, fontWeight: '700' },
+  versionText: { textAlign: 'center', fontSize: 12, marginTop: 24 },
 });
+
+export default Asetukset;

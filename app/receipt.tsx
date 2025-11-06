@@ -11,12 +11,13 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import * as Haptics from 'expo-haptics';
 import { Ionicons } from '@expo/vector-icons';
 import { Colors, Spacing, BorderRadius, FontSize, Shadow, FontWeight } from '../src/theme/theme';
-import { mockTransactions, mockAccount } from '../mockData';
-import { Card } from '../src/components/Card';
+import { useAccount } from '../src/context/AccountContext';
+import Card from '../src/components/Card';
 
 export default function ReceiptScreen() {
+  const { transactions } = useAccount();
   // Get the most recent transaction as the receipt example
-  const recentTransaction = mockTransactions[0];
+  const recentTransaction = transactions[0];
 
   const formatCurrency = (amount: number) => {
     return `${amount >= 0 ? '+' : ''}${amount.toFixed(2)} €`;
@@ -24,7 +25,7 @@ export default function ReceiptScreen() {
 
   const formatDate = (dateString: string) => {
     const date = new Date(dateString);
-    return date.toLocaleDateString('en-FI', {
+    return date.toLocaleDateString('fi-FI', {
       weekday: 'long',
       month: 'long',
       day: 'numeric',
@@ -38,7 +39,7 @@ export default function ReceiptScreen() {
     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
     try {
       await Share.share({
-        message: `Receipt from SumUp\n\nTransaction: ${recentTransaction.title}\nAmount: ${formatCurrency(recentTransaction.amount)}\nDate: ${formatDate(recentTransaction.date)}\nStatus: ${recentTransaction.status}`,
+        message: `Kuitti SumUp:sta\n\nTapahtuma: ${recentTransaction.title}\nSumma: ${formatCurrency(recentTransaction.amount)}\nPäivämäärä: ${formatDate(recentTransaction.date)}\nTila: ${recentTransaction.status}`,
       });
     } catch (error) {
       console.error('Error sharing:', error);
@@ -47,15 +48,24 @@ export default function ReceiptScreen() {
 
   const handleDownload = () => {
     Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
-    // In a real app, this would download the receipt
-    alert('Receipt downloaded! 📄');
+    alert('Kuitti ladattu! 📄');
   };
 
   const handlePrint = () => {
     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
-    // In a real app, this would print the receipt
-    alert('Print functionality coming soon! 🖨️');
+    alert('Tulostustoiminto tulossa pian! 🖨️');
   };
+
+  if (!recentTransaction) {
+    return (
+      <SafeAreaView style={styles.container} edges={['top']}>
+        <View style={styles.emptyState}>
+          <Ionicons name="receipt-outline" size={64} color={Colors.textSecondary} />
+          <Text style={styles.emptyText}>Ei kuitissa näytettäviä tapahtumia</Text>
+        </View>
+      </SafeAreaView>
+    );
+  }
 
   return (
     <SafeAreaView style={styles.container} edges={['top']}>
@@ -68,14 +78,14 @@ export default function ReceiptScreen() {
 
         {/* Receipt Card */}
         <View style={styles.receiptCardContainer}>
-          <Card gradient gradientColors={[Colors.gradientStart, Colors.gradientEnd]}>
+          <Card gradient shadow="large" padding={Spacing.xl}>
             {/* Company Header */}
             <View style={styles.companyHeader}>
               <View style={styles.logoCircle}>
-                <Ionicons name="card-outline" size={32} color={Colors.white} />
+                <Ionicons name="wallet" size={32} color={Colors.white} />
               </View>
               <Text style={styles.companyName}>SumUp</Text>
-              <Text style={styles.companySubtitle}>Mobile Banking</Text>
+              <Text style={styles.companySubtitle}>Mobiilipankki</Text>
             </View>
 
             {/* Status Badge */}
@@ -96,7 +106,12 @@ export default function ReceiptScreen() {
             {/* Amount */}
             <View style={styles.amountSection}>
               <Text style={styles.amountLabel}>Summa</Text>
-              <Text style={styles.amount}>
+              <Text
+                style={[
+                  styles.amount,
+                  recentTransaction.type === 'credit' && styles.amountCredit,
+                ]}
+              >
                 {formatCurrency(recentTransaction.amount)}
               </Text>
             </View>
@@ -107,14 +122,14 @@ export default function ReceiptScreen() {
             {/* Transaction Details */}
             <View style={styles.detailsSection}>
               <View style={styles.detailRow}>
-                <Text style={styles.detailLabel}>Tapahtuma ID</Text>
+                <Text style={styles.detailLabel}>Tapahtumatunnus</Text>
                 <Text style={styles.detailValue}>
                   #{recentTransaction.id.padStart(8, '0')}
                 </Text>
               </View>
 
               <View style={styles.detailRow}>
-                <Text style={styles.detailLabel}>Päivämäärä</Text>
+                <Text style={styles.detailLabel}>Päivämäärä ja aika</Text>
                 <Text style={styles.detailValue}>
                   {formatDate(recentTransaction.date)}
                 </Text>
@@ -140,13 +155,6 @@ export default function ReceiptScreen() {
                 <Text style={styles.detailLabel}>Kategoria</Text>
                 <Text style={styles.detailValue}>
                   {recentTransaction.category}
-                </Text>
-              </View>
-
-              <View style={styles.detailRow}>
-                <Text style={styles.detailLabel}>Tili</Text>
-                <Text style={styles.detailValue}>
-                  {mockAccount.accountNumber}
                 </Text>
               </View>
 
@@ -204,10 +212,10 @@ export default function ReceiptScreen() {
         {/* Footer Note */}
         <View style={styles.footer}>
           <Text style={styles.footerText}>
-            Tämä on virallinen kuitti SumUpilta.
+            Tämä on virallinen kuitti SumUp:sta.
           </Text>
           <Text style={styles.footerText}>
-            Säilytä tämä omissa tiedostoissasi.
+            Säilytä tämä omia tietojasi varten.
           </Text>
         </View>
       </ScrollView>
@@ -222,6 +230,18 @@ const styles = StyleSheet.create({
   },
   scrollView: {
     flex: 1,
+  },
+  emptyState: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    paddingHorizontal: Spacing.xl,
+  },
+  emptyText: {
+    fontSize: FontSize.md,
+    color: Colors.textSecondary,
+    marginTop: Spacing.lg,
+    textAlign: 'center',
   },
   header: {
     paddingHorizontal: Spacing.lg,
@@ -253,6 +273,8 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     marginBottom: Spacing.md,
+    borderWidth: 2,
+    borderColor: Colors.white,
   },
   companyName: {
     fontSize: FontSize.xl,
@@ -264,7 +286,7 @@ const styles = StyleSheet.create({
   companySubtitle: {
     fontSize: FontSize.sm,
     color: Colors.white,
-    opacity: 0.8,
+    opacity: 0.9,
   },
   statusBadge: {
     flexDirection: 'row',
@@ -281,11 +303,11 @@ const styles = StyleSheet.create({
   statusText: {
     fontSize: FontSize.sm,
     fontWeight: FontWeight.bold,
-    color: Colors.white,
+    color: Colors.success,
   },
   divider: {
     height: 1,
-    backgroundColor: 'rgba(255, 255, 255, 0.2)',
+    backgroundColor: 'rgba(255, 255, 255, 0.3)',
     marginVertical: Spacing.lg,
   },
   amountSection: {
@@ -294,12 +316,16 @@ const styles = StyleSheet.create({
   amountLabel: {
     fontSize: FontSize.sm,
     color: Colors.white,
-    opacity: 0.8,
+    opacity: 0.9,
     marginBottom: Spacing.sm,
+    fontWeight: FontWeight.medium,
   },
   amount: {
-    fontSize: FontSize.xxxxl,
+    fontSize: FontSize.huge,
     fontWeight: FontWeight.bold,
+    color: Colors.white,
+  },
+  amountCredit: {
     color: Colors.white,
   },
   detailsSection: {
@@ -313,8 +339,9 @@ const styles = StyleSheet.create({
   detailLabel: {
     fontSize: FontSize.sm,
     color: Colors.white,
-    opacity: 0.7,
+    opacity: 0.8,
     flex: 1,
+    fontWeight: FontWeight.medium,
   },
   detailValue: {
     fontSize: FontSize.sm,
@@ -339,7 +366,7 @@ const styles = StyleSheet.create({
   qrText: {
     fontSize: FontSize.xs,
     color: Colors.white,
-    opacity: 0.7,
+    opacity: 0.8,
   },
   actionsContainer: {
     flexDirection: 'row',
@@ -352,7 +379,7 @@ const styles = StyleSheet.create({
     flexDirection: 'column',
     alignItems: 'center',
     justifyContent: 'center',
-    backgroundColor: Colors.card,
+    backgroundColor: Colors.cardBackground,
     paddingVertical: Spacing.lg,
     borderRadius: BorderRadius.md,
     borderWidth: 1,
