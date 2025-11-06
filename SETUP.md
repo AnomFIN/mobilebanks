@@ -49,7 +49,9 @@ A stunning, investor-ready mobile banking application built with Expo Go featuri
 
 ### Installation
 
-#### Option 1: Automated Installation (Recommended for Windows)
+#### Vaihtoehto A: Käyttöönotto-assistentti (suositeltu)
+
+Käytä `install.py`-skriptiä helppoon ja ohjattuun asennukseen:
 
 1. **Clone the repository**
    ```bash
@@ -57,26 +59,34 @@ A stunning, investor-ready mobile banking application built with Expo Go featuri
    cd mobilebanks
    ```
 
-2. **Run the installation script**
+2. **Käynnistä käyttöönotto-assistentti**
    ```bash
    python3 install.py
    ```
-   
-   Or for install only (without starting dev server):
+
+   Valitse valikosta:
+   - **1) Full guided install and start** - Tarkistaa työkalut, asentaa riippuvuudet ja käynnistää serverin
+   - **2) Quick start** - Käynnistää serverin suoraan (vaatii asennetut riippuvuudet)
+   - **3) Install dependencies only** - Asentaa vain riippuvuudet
+   - **4) Exit** - Poistu
+
+3. **Tai käytä komentoriviliput**
    ```bash
+   # Automaattinen asennus ja käynnistys
+   python3 install.py --auto
+   
+   # Nopea käynnistys
+   python3 install.py --quick
+   
+   # Asenna vain riippuvuudet
    python3 install.py --install-only
    ```
 
-   The script will:
-   - ✅ Check Node.js and npm versions
-   - ✅ Install dependencies automatically
-   - ✅ Offer Expo login (optional)
-   - ✅ Start the development server
+4. **Scannaa QR-koodi**
+   - Expo Go -sovelluksella (Android)
+   - Kamerasovelluksella (iOS)
 
-   **Note:** This script includes fixes for Windows compatibility (FileNotFoundError with npm/npx commands).
-   See [INSTALL_PY_README.md](INSTALL_PY_README.md) for detailed documentation.
-
-#### Option 2: Manual Installation
+#### Vaihtoehto B: Manuaalinen asennus
 
 1. **Clone the repository**
    ```bash
