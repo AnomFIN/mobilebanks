@@ -1,4 +1,5 @@
 declare module '@expo/vector-icons' {
+  import * as React from 'react';
   import { ComponentProps } from 'react';
   import { TextProps } from 'react-native';
 
