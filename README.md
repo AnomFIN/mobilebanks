@@ -28,6 +28,31 @@ A stunning Expo Go mobile banking app with a minimalist fintech UI design, featu
 
 ## 🚀 Quick Start
 
+### Vaihtoehto 1: Käyttöönotto-assistentti (suositeltu)
+
+Käytä `install.py`-skriptiä helppoon asennukseen ja käynnistykseen:
+
+```bash
+# Interaktiivinen valikko
+python3 install.py
+
+# Tai suoraan automaattinen asennus
+python3 install.py --auto
+
+# Nopea käynnistys (jos riippuvuudet on jo asennettu)
+python3 install.py --quick
+
+# Asenna vain riippuvuudet
+python3 install.py --install-only
+```
+
+Skripti tarjoaa seuraavat toiminnot:
+- **Full guided install and start**: Tarkistaa työkalut, asentaa riippuvuudet ja käynnistää Expo serverin
+- **Quick start**: Käynnistää Expo serverin suoraan (olettaa riippuvuudet asennetuksi)
+- **Install dependencies only**: Asentaa vain npm-riippuvuudet
+
+### Vaihtoehto 2: Manuaalinen asennus
+
 ```bash
 # Install dependencies
 npm install

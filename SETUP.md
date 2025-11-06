@@ -49,6 +49,45 @@ A stunning, investor-ready mobile banking application built with Expo Go featuri
 
 ### Installation
 
+#### Vaihtoehto A: Käyttöönotto-assistentti (suositeltu)
+
+Käytä `install.py`-skriptiä helppoon ja ohjattuun asennukseen:
+
+1. **Clone the repository**
+   ```bash
+   git clone https://github.com/AnomFIN/mobilebanks.git
+   cd mobilebanks
+   ```
+
+2. **Käynnistä käyttöönotto-assistentti**
+   ```bash
+   python3 install.py
+   ```
+
+   Valitse valikosta:
+   - **1) Full guided install and start** - Tarkistaa työkalut, asentaa riippuvuudet ja käynnistää serverin
+   - **2) Quick start** - Käynnistää serverin suoraan (vaatii asennetut riippuvuudet)
+   - **3) Install dependencies only** - Asentaa vain riippuvuudet
+   - **4) Exit** - Poistu
+
+3. **Tai käytä komentoriviliput**
+   ```bash
+   # Automaattinen asennus ja käynnistys
+   python3 install.py --auto
+   
+   # Nopea käynnistys
+   python3 install.py --quick
+   
+   # Asenna vain riippuvuudet
+   python3 install.py --install-only
+   ```
+
+4. **Scannaa QR-koodi**
+   - Expo Go -sovelluksella (Android)
+   - Kamerasovelluksella (iOS)
+
+#### Vaihtoehto B: Manuaalinen asennus
+
 1. **Clone the repository**
    ```bash
    git clone https://github.com/AnomFIN/mobilebanks.git
