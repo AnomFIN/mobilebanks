@@ -4,6 +4,7 @@ import { Transaction } from '../../types';
 interface AccountContextType {
   balance: number;
   transactions: Transaction[];
+  accountNumber: string;
   createPayment: (amount: number, description?: string) => void;
 }
 
@@ -25,6 +26,7 @@ let transactionCounter = 1000;
 
 export const AccountProvider: React.FC<AccountProviderProps> = ({ children }) => {
   const [balance, setBalance] = useState<number>(14574.32);
+  const [accountNumber] = useState<string>('FI21 1234 5678 9012 34');
   const [transactions, setTransactions] = useState<Transaction[]>([
     {
       id: '1',
@@ -83,7 +85,7 @@ export const AccountProvider: React.FC<AccountProviderProps> = ({ children }) =>
   };
 
   return (
-    <AccountContext.Provider value={{ balance, transactions, createPayment }}>
+    <AccountContext.Provider value={{ balance, transactions, accountNumber, createPayment }}>
       {children}
     </AccountContext.Provider>
   );

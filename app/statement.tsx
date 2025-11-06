@@ -10,16 +10,18 @@ import {
 import { SafeAreaView } from 'react-native-safe-area-context';
 import * as Haptics from 'expo-haptics';
 import { Ionicons } from '@expo/vector-icons';
-import { Colors, Spacing, BorderRadius, FontSize, Shadow } from '../constants';
+import { Colors, Spacing, BorderRadius, FontSize, Shadow, FontWeight } from '../src/theme/theme';
 import { useAccount } from '../src/context/AccountContext';
+import { Card } from '../src/components/Card';
 
 type FilterType = 'all' | 'credit' | 'debit';
+type PeriodType = 'week' | 'month' | 'year';
 
 export default function StatementScreen() {
   const [filter, setFilter] = useState<FilterType>('all');
+  const [period, setPeriod] = useState<PeriodType>('month');
   const { transactions, balance } = useAccount();
   const fadeAnim = React.useRef(new Animated.Value(1)).current;
-  const { transactions, balance } = useAccount();
 
   const formatCurrency = (amount: number) => {
     return `${amount >= 0 ? '+' : ''}${amount.toFixed(2)} €`;
@@ -27,7 +29,7 @@ export default function StatementScreen() {
 
   const formatDate = (dateString: string) => {
     const date = new Date(dateString);
-    return date.toLocaleDateString('en-FI', {
+    return date.toLocaleDateString('fi-FI', {
       weekday: 'short',
       month: 'short',
       day: 'numeric',
@@ -54,6 +56,13 @@ export default function StatementScreen() {
     }
   };
 
+  const handlePeriodChange = (newPeriod: PeriodType) => {
+    if (newPeriod !== period) {
+      Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+      setPeriod(newPeriod);
+    }
+  };
+
   const filteredTransactions = transactions.filter((transaction) => {
     if (filter === 'all') return true;
     return transaction.type === filter;
@@ -67,18 +76,40 @@ export default function StatementScreen() {
     .filter((t) => t.type === 'debit')
     .reduce((sum, t) => sum + Math.abs(t.amount), 0);
 
+  const netIncome = totalIncome - totalExpenses;
+
   return (
     <SafeAreaView style={styles.container} edges={['top']}>
       <ScrollView style={styles.scrollView} showsVerticalScrollIndicator={false}>
         {/* Header */}
         <View style={styles.header}>
-          <Text style={styles.title}>Tiliote</Text>
-          <Text style={styles.subtitle}>Tapahtumahistoria</Text>
+          <Text style={styles.title}>Raportit</Text>
+          <Text style={styles.subtitle}>Taloudellinen yhteenveto</Text>
+        </View>
+
+        {/* Period Selector */}
+        <View style={styles.periodContainer}>
+          {(['week', 'month', 'year'] as PeriodType[]).map((p) => (
+            <TouchableOpacity
+              key={p}
+              style={[styles.periodTab, period === p && styles.periodTabActive]}
+              onPress={() => handlePeriodChange(p)}
+            >
+              <Text
+                style={[
+                  styles.periodText,
+                  period === p && styles.periodTextActive,
+                ]}
+              >
+                {p === 'week' ? 'Viikko' : p === 'month' ? 'Kuukausi' : 'Vuosi'}
+              </Text>
+            </TouchableOpacity>
+          ))}
         </View>
 
         {/* Summary Cards */}
         <View style={styles.summaryContainer}>
-          <View style={[styles.summaryCard, styles.incomeCard]}>
+          <Card shadow="medium" padding={Spacing.lg} style={styles.summaryCard}>
             <View style={styles.summaryIcon}>
               <Ionicons name="trending-up" size={24} color={Colors.success} />
             </View>
@@ -86,9 +117,9 @@ export default function StatementScreen() {
             <Text style={[styles.summaryAmount, styles.incomeAmount]}>
               +{totalIncome.toFixed(2)} €
             </Text>
-          </View>
+          </Card>
 
-          <View style={[styles.summaryCard, styles.expenseCard]}>
+          <Card shadow="medium" padding={Spacing.lg} style={styles.summaryCard}>
             <View style={styles.summaryIcon}>
               <Ionicons name="trending-down" size={24} color={Colors.danger} />
             </View>
@@ -96,7 +127,61 @@ export default function StatementScreen() {
             <Text style={[styles.summaryAmount, styles.expenseAmount]}>
               -{totalExpenses.toFixed(2)} €
             </Text>
-          </View>
+          </Card>
+        </View>
+
+        {/* Net Income Card */}
+        <View style={styles.netIncomeContainer}>
+          <Card gradient shadow="large" padding={Spacing.lg}>
+            <View style={styles.netIncomeContent}>
+              <View>
+                <Text style={styles.netIncomeLabel}>Nettotulos</Text>
+                <Text
+                  style={[
+                    styles.netIncomeAmount,
+                    netIncome >= 0 ? styles.netPositive : styles.netNegative,
+                  ]}
+                >
+                  {formatCurrency(netIncome)}
+                </Text>
+              </View>
+              <View style={styles.netIncomeIcon}>
+                <Ionicons
+                  name={netIncome >= 0 ? 'trending-up' : 'trending-down'}
+                  size={32}
+                  color={Colors.white}
+                />
+              </View>
+            </View>
+          </Card>
+        </View>
+
+        {/* Simple Chart Placeholder */}
+        <View style={styles.chartContainer}>
+          <Card shadow="medium" padding={Spacing.lg}>
+            <Text style={styles.chartTitle}>Kulutuskuvaaja</Text>
+            <View style={styles.chartPlaceholder}>
+              <View style={styles.chartBars}>
+                {[60, 80, 45, 90, 70, 85, 55].map((height, index) => (
+                  <View key={index} style={styles.chartBarContainer}>
+                    <View
+                      style={[
+                        styles.chartBar,
+                        { height: `${height}%`, backgroundColor: Colors.primary },
+                      ]}
+                    />
+                  </View>
+                ))}
+              </View>
+              <View style={styles.chartLabels}>
+                {['Ma', 'Ti', 'Ke', 'To', 'Pe', 'La', 'Su'].map((day, index) => (
+                  <Text key={index} style={styles.chartLabel}>
+                    {day}
+                  </Text>
+                ))}
+              </View>
+            </View>
+          </Card>
         </View>
 
         {/* Filter Tabs */}
@@ -147,81 +232,100 @@ export default function StatementScreen() {
         {/* Transactions List */}
         <Animated.View style={[styles.transactionsList, { opacity: fadeAnim }]}>
           {filteredTransactions.map((transaction) => (
-            <TouchableOpacity
+            <Card
               key={transaction.id}
-              style={styles.transactionItem}
-              onPress={() => {
-                Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
-              }}
+              shadow="small"
+              padding={Spacing.md}
+              style={styles.transactionCard}
             >
-              <View
-                style={[
-                  styles.transactionIconContainer,
-                  transaction.type === 'credit'
-                    ? styles.transactionIconCredit
-                    : styles.transactionIconDebit,
-                ]}
+              <TouchableOpacity
+                style={styles.transactionItem}
+                onPress={() => {
+                  Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+                }}
               >
-                <Ionicons
-                  name={
+                <View
+                  style={[
+                    styles.transactionIconContainer,
                     transaction.type === 'credit'
-                      ? 'arrow-down'
-                      : 'arrow-up'
-                  }
-                  size={20}
-                  color={Colors.white}
-                />
-              </View>
-
-              <View style={styles.transactionContent}>
-                <View style={styles.transactionHeader}>
-                  <Text style={styles.transactionTitle}>
-                    {transaction.title}
-                  </Text>
-                  <Text
-                    style={[
-                      styles.transactionAmount,
-                      transaction.type === 'credit' &&
-                        styles.transactionAmountCredit,
-                    ]}
-                  >
-                    {formatCurrency(transaction.amount)}
-                  </Text>
+                      ? styles.transactionIconCredit
+                      : styles.transactionIconDebit,
+                  ]}
+                >
+                  <Ionicons
+                    name={
+                      transaction.type === 'credit'
+                        ? 'arrow-down'
+                        : 'arrow-up'
+                    }
+                    size={20}
+                    color={Colors.white}
+                  />
                 </View>
 
-                <View style={styles.transactionFooter}>
-                  <View style={styles.transactionMeta}>
-                    <Ionicons
-                      name="calendar-outline"
-                      size={12}
-                      color={Colors.textSecondary}
-                    />
-                    <Text style={styles.transactionDate}>
-                      {formatDate(transaction.date)}
+                <View style={styles.transactionContent}>
+                  <View style={styles.transactionHeader}>
+                    <Text style={styles.transactionTitle}>
+                      {transaction.title}
+                    </Text>
+                    <Text
+                      style={[
+                        styles.transactionAmount,
+                        transaction.type === 'credit' &&
+                          styles.transactionAmountCredit,
+                      ]}
+                    >
+                      {formatCurrency(transaction.amount)}
                     </Text>
                   </View>
 
-                  <View style={styles.transactionMeta}>
-                    <Ionicons
-                      name="pricetag-outline"
-                      size={12}
-                      color={Colors.textSecondary}
-                    />
-                    <Text style={styles.transactionCategory}>
-                      {transaction.category}
-                    </Text>
-                  </View>
-                </View>
+                  <View style={styles.transactionFooter}>
+                    <View style={styles.transactionMeta}>
+                      <Ionicons
+                        name="calendar-outline"
+                        size={12}
+                        color={Colors.textSecondary}
+                      />
+                      <Text style={styles.transactionDate}>
+                        {formatDate(transaction.date)}
+                      </Text>
+                    </View>
 
-                {transaction.recipient && (
-                  <Text style={styles.transactionRecipient}>
-                    {transaction.recipient}
-                  </Text>
-                )}
-              </View>
-            </TouchableOpacity>
+                    <View style={styles.transactionMeta}>
+                      <Ionicons
+                        name="pricetag-outline"
+                        size={12}
+                        color={Colors.textSecondary}
+                      />
+                      <Text style={styles.transactionCategory}>
+                        {transaction.category}
+                      </Text>
+                    </View>
+                  </View>
+
+                  {transaction.recipient && (
+                    <Text style={styles.transactionRecipient}>
+                      {transaction.recipient}
+                    </Text>
+                  )}
+                </View>
+              </TouchableOpacity>
+            </Card>
           ))}
         </Animated.View>
+
+        {/* Export Button */}
+        <View style={styles.exportContainer}>
+          <TouchableOpacity
+            style={styles.exportButton}
+            onPress={() => {
+              Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
+            }}
+          >
+            <Ionicons name="download-outline" size={20} color={Colors.white} />
+            <Text style={styles.exportButtonText}>Vie raportti</Text>
+          </TouchableOpacity>
+        </View>
       </ScrollView>
     </SafeAreaView>
   );
@@ -230,7 +334,7 @@ export default function StatementScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: Colors.black,
+    backgroundColor: Colors.background,
   },
   scrollView: {
     flex: 1,
@@ -241,39 +345,56 @@ const styles = StyleSheet.create({
   },
   title: {
     fontSize: FontSize.xxxl,
-    fontWeight: '700',
-    color: Colors.white,
+    fontWeight: FontWeight.bold,
+    color: Colors.text,
     marginBottom: Spacing.xs,
   },
   subtitle: {
     fontSize: FontSize.md,
     color: Colors.textSecondary,
   },
+  periodContainer: {
+    flexDirection: 'row',
+    paddingHorizontal: Spacing.lg,
+    marginBottom: Spacing.lg,
+    gap: Spacing.sm,
+  },
+  periodTab: {
+    flex: 1,
+    paddingVertical: Spacing.sm,
+    paddingHorizontal: Spacing.md,
+    borderRadius: BorderRadius.sm,
+    backgroundColor: Colors.backgroundSecondary,
+    alignItems: 'center',
+    borderWidth: 1,
+    borderColor: Colors.border,
+  },
+  periodTabActive: {
+    backgroundColor: Colors.primary,
+    borderColor: Colors.primary,
+  },
+  periodText: {
+    fontSize: FontSize.sm,
+    fontWeight: FontWeight.semibold,
+    color: Colors.textSecondary,
+  },
+  periodTextActive: {
+    color: Colors.white,
+  },
   summaryContainer: {
     flexDirection: 'row',
     paddingHorizontal: Spacing.lg,
-    marginBottom: Spacing.xl,
+    marginBottom: Spacing.lg,
     gap: Spacing.md,
   },
   summaryCard: {
     flex: 1,
-    padding: Spacing.lg,
-    borderRadius: BorderRadius.md,
-    borderWidth: 1,
-  },
-  incomeCard: {
-    backgroundColor: Colors.gray,
-    borderColor: Colors.success,
-  },
-  expenseCard: {
-    backgroundColor: Colors.gray,
-    borderColor: Colors.danger,
   },
   summaryIcon: {
     width: 40,
     height: 40,
     borderRadius: BorderRadius.full,
-    backgroundColor: Colors.lightGray,
+    backgroundColor: Colors.backgroundSecondary,
     justifyContent: 'center',
     alignItems: 'center',
     marginBottom: Spacing.sm,
@@ -282,16 +403,91 @@ const styles = StyleSheet.create({
     fontSize: FontSize.sm,
     color: Colors.textSecondary,
     marginBottom: Spacing.xs,
+    fontWeight: FontWeight.medium,
   },
   summaryAmount: {
     fontSize: FontSize.xl,
-    fontWeight: '700',
+    fontWeight: FontWeight.bold,
   },
   incomeAmount: {
     color: Colors.success,
   },
   expenseAmount: {
     color: Colors.danger,
+  },
+  netIncomeContainer: {
+    paddingHorizontal: Spacing.lg,
+    marginBottom: Spacing.lg,
+  },
+  netIncomeContent: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+  },
+  netIncomeLabel: {
+    fontSize: FontSize.md,
+    color: Colors.white,
+    marginBottom: Spacing.xs,
+    fontWeight: FontWeight.medium,
+    opacity: 0.9,
+  },
+  netIncomeAmount: {
+    fontSize: FontSize.xxl,
+    fontWeight: FontWeight.bold,
+  },
+  netPositive: {
+    color: Colors.white,
+  },
+  netNegative: {
+    color: Colors.white,
+  },
+  netIncomeIcon: {
+    width: 60,
+    height: 60,
+    borderRadius: BorderRadius.full,
+    backgroundColor: 'rgba(255, 255, 255, 0.2)',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  chartContainer: {
+    paddingHorizontal: Spacing.lg,
+    marginBottom: Spacing.lg,
+  },
+  chartTitle: {
+    fontSize: FontSize.md,
+    fontWeight: FontWeight.semibold,
+    color: Colors.text,
+    marginBottom: Spacing.md,
+  },
+  chartPlaceholder: {
+    height: 180,
+  },
+  chartBars: {
+    flexDirection: 'row',
+    justifyContent: 'space-around',
+    alignItems: 'flex-end',
+    height: 140,
+    marginBottom: Spacing.sm,
+  },
+  chartBarContainer: {
+    flex: 1,
+    justifyContent: 'flex-end',
+    alignItems: 'center',
+    marginHorizontal: 2,
+  },
+  chartBar: {
+    width: '100%',
+    borderRadius: BorderRadius.xs,
+  },
+  chartLabels: {
+    flexDirection: 'row',
+    justifyContent: 'space-around',
+  },
+  chartLabel: {
+    fontSize: FontSize.xs,
+    color: Colors.textSecondary,
+    flex: 1,
+    textAlign: 'center',
   },
   filterContainer: {
     flexDirection: 'row',
@@ -304,36 +500,33 @@ const styles = StyleSheet.create({
     paddingVertical: Spacing.md,
     paddingHorizontal: Spacing.md,
     borderRadius: BorderRadius.sm,
-    backgroundColor: Colors.gray,
+    backgroundColor: Colors.backgroundSecondary,
     alignItems: 'center',
     borderWidth: 1,
-    borderColor: Colors.lightGray,
+    borderColor: Colors.border,
   },
   filterTabActive: {
-    backgroundColor: Colors.neonGreen,
-    borderColor: Colors.neonGreen,
+    backgroundColor: Colors.accent,
+    borderColor: Colors.accent,
     ...Shadow.small,
   },
   filterText: {
     fontSize: FontSize.sm,
-    fontWeight: '600',
+    fontWeight: FontWeight.semibold,
     color: Colors.textSecondary,
   },
   filterTextActive: {
-    color: Colors.black,
+    color: Colors.white,
   },
   transactionsList: {
     paddingHorizontal: Spacing.lg,
-    paddingBottom: Spacing.xl,
+    paddingBottom: Spacing.md,
+  },
+  transactionCard: {
+    marginBottom: Spacing.md,
   },
   transactionItem: {
     flexDirection: 'row',
-    padding: Spacing.md,
-    backgroundColor: Colors.gray,
-    borderRadius: BorderRadius.md,
-    marginBottom: Spacing.md,
-    borderWidth: 1,
-    borderColor: Colors.lightGray,
   },
   transactionIconContainer: {
     width: 44,
@@ -347,7 +540,7 @@ const styles = StyleSheet.create({
     backgroundColor: Colors.success,
   },
   transactionIconDebit: {
-    backgroundColor: Colors.lightGray,
+    backgroundColor: Colors.textSecondary,
   },
   transactionContent: {
     flex: 1,
@@ -361,14 +554,14 @@ const styles = StyleSheet.create({
   transactionTitle: {
     flex: 1,
     fontSize: FontSize.md,
-    fontWeight: '600',
-    color: Colors.white,
+    fontWeight: FontWeight.semibold,
+    color: Colors.text,
     marginRight: Spacing.sm,
   },
   transactionAmount: {
     fontSize: FontSize.md,
-    fontWeight: '700',
-    color: Colors.white,
+    fontWeight: FontWeight.bold,
+    color: Colors.text,
   },
   transactionAmountCredit: {
     color: Colors.success,
@@ -395,5 +588,24 @@ const styles = StyleSheet.create({
     fontSize: FontSize.xs,
     color: Colors.textSecondary,
     marginTop: Spacing.xs,
+  },
+  exportContainer: {
+    paddingHorizontal: Spacing.lg,
+    paddingBottom: Spacing.xl,
+  },
+  exportButton: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    backgroundColor: Colors.primary,
+    paddingVertical: Spacing.md,
+    borderRadius: BorderRadius.md,
+    ...Shadow.medium,
+    gap: Spacing.sm,
+  },
+  exportButtonText: {
+    fontSize: FontSize.md,
+    fontWeight: FontWeight.semibold,
+    color: Colors.white,
   },
 });
