@@ -72,7 +72,7 @@ const Asetukset: React.FC = () => {
                   <View key={itemIndex}>
                     <TouchableOpacity
                       style={styles.settingItem}
-                      onPress={item.action}
+                      onPress={'action' in item ? item.action : undefined}
                       disabled={'toggle' in item}
                       accessibilityLabel={item.label}
                       accessibilityRole="button"
@@ -94,7 +94,7 @@ const Asetukset: React.FC = () => {
                             accessibilityLabel={`Toggle ${item.label}`}
                           />
                         )}
-                        {item.action && !('toggle' in item) && (
+                        {'action' in item && !('toggle' in item) && (
                           <Text style={[styles.settingArrow, { color: theme.colors.muted }]}>›</Text>
                         )}
                       </View>

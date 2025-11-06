@@ -17,7 +17,7 @@ import * as Haptics from 'expo-haptics';
 import { Ionicons } from '@expo/vector-icons';
 import { Colors, Spacing, BorderRadius, FontSize, Shadow, FontWeight } from '../src/theme/theme';
 import { useAccount } from '../src/context/AccountContext';
-import { Card } from '../src/components/Card';
+import Card from '../src/components/Card';
 
 export default function PaymentScreen() {
   const [amount, setAmount] = useState('');

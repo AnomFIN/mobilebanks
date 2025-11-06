@@ -1,3 +1,4 @@
+import React from 'react';
 import { Tabs } from 'expo-router';
 import { StyleSheet, View, Platform } from 'react-native';
 import { Colors, Layout } from '../src/theme/theme';
