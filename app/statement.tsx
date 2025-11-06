@@ -11,13 +11,14 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import * as Haptics from 'expo-haptics';
 import { Ionicons } from '@expo/vector-icons';
 import { Colors, Spacing, BorderRadius, FontSize, Shadow } from '../constants';
-import { mockTransactions } from '../mockData';
+import { useAccount } from '../context/AccountContext';
 
 type FilterType = 'all' | 'credit' | 'debit';
 
 export default function StatementScreen() {
   const [filter, setFilter] = useState<FilterType>('all');
   const fadeAnim = React.useRef(new Animated.Value(1)).current;
+  const { transactions, balance } = useAccount();
 
   const formatCurrency = (amount: number) => {
     return `${amount >= 0 ? '+' : ''}${amount.toFixed(2)} €`;
@@ -52,16 +53,16 @@ export default function StatementScreen() {
     }
   };
 
-  const filteredTransactions = mockTransactions.filter((transaction) => {
+  const filteredTransactions = transactions.filter((transaction) => {
     if (filter === 'all') return true;
     return transaction.type === filter;
   });
 
-  const totalIncome = mockTransactions
+  const totalIncome = transactions
     .filter((t) => t.type === 'credit')
     .reduce((sum, t) => sum + t.amount, 0);
 
-  const totalExpenses = mockTransactions
+  const totalExpenses = transactions
     .filter((t) => t.type === 'debit')
     .reduce((sum, t) => sum + Math.abs(t.amount), 0);
 

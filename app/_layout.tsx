@@ -2,10 +2,16 @@ import { Tabs } from 'expo-router';
 import { StyleSheet, View, Platform } from 'react-native';
 import { Colors } from '../constants';
 import { Ionicons } from '@expo/vector-icons';
+import { AccountProvider } from '../context/AccountContext';
+import { enableScreens } from 'react-native-screens';
+
+// Enable screens for better performance
+enableScreens(true);
 
 export default function TabLayout() {
   return (
-    <Tabs
+    <AccountProvider>
+      <Tabs
       screenOptions={{
         headerShown: false,
         tabBarStyle: styles.tabBar,
@@ -18,7 +24,7 @@ export default function TabLayout() {
       <Tabs.Screen
         name="index"
         options={{
-          title: 'Home',
+          title: 'Etusivu',
           tabBarIcon: ({ color, size }) => (
             <Ionicons name="home" size={size} color={color} />
           ),
@@ -27,7 +33,7 @@ export default function TabLayout() {
       <Tabs.Screen
         name="payment"
         options={{
-          title: 'Payment',
+          title: 'Kassa',
           tabBarIcon: ({ color, size }) => (
             <Ionicons name="send" size={size} color={color} />
           ),
@@ -36,7 +42,7 @@ export default function TabLayout() {
       <Tabs.Screen
         name="statement"
         options={{
-          title: 'Statement',
+          title: 'Tiliote',
           tabBarIcon: ({ color, size }) => (
             <Ionicons name="list" size={size} color={color} />
           ),
@@ -45,13 +51,14 @@ export default function TabLayout() {
       <Tabs.Screen
         name="receipt"
         options={{
-          title: 'Receipt',
+          title: 'Kuitti',
           tabBarIcon: ({ color, size }) => (
             <Ionicons name="document-text" size={size} color={color} />
           ),
         }}
       />
     </Tabs>
+    </AccountProvider>
   );
 }
 

@@ -13,23 +13,17 @@ import {
 import { SafeAreaView } from 'react-native-safe-area-context';
 import * as Haptics from 'expo-haptics';
 import { Ionicons } from '@expo/vector-icons';
+import { useRouter } from 'expo-router';
 import { Colors, Spacing, BorderRadius, FontSize, Shadow } from '../constants';
-import { mockAccount } from '../mockData';
+import { useAccount } from '../context/AccountContext';
 
 export default function PaymentScreen() {
-  const [recipient, setRecipient] = useState('');
   const [amount, setAmount] = useState('');
-  const [message, setMessage] = useState('');
-  const [selectedContact, setSelectedContact] = useState<string | null>(null);
+  const [description, setDescription] = useState('');
+  const router = useRouter();
+  const { balance, createPayment } = useAccount();
 
   const scaleAnim = React.useRef(new Animated.Value(1)).current;
-
-  const quickContacts = [
-    { id: '1', name: 'Anna', icon: 'person' },
-    { id: '2', name: 'Mikko', icon: 'person' },
-    { id: '3', name: 'Sofia', icon: 'person' },
-    { id: '4', name: 'Janne', icon: 'person' },
-  ];
 
   const quickAmounts = [10, 25, 50, 100];
 
@@ -47,13 +41,16 @@ export default function PaymentScreen() {
         useNativeDriver: true,
       }),
     ]).start();
-    // In a real app, this would send the payment
-    alert('Payment sent successfully! 🎉');
-  };
-
-  const handleContactPress = (contactId: string) => {
-    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
-    setSelectedContact(contactId);
+    
+    // Create the payment using context
+    createPayment(Number(amount) || 0, description || undefined);
+    
+    // Clear inputs
+    setAmount('');
+    setDescription('');
+    
+    // Navigate to statement (Tiliote) screen
+    router.push('/statement');
   };
 
   const handleAmountPress = (value: number) => {
@@ -73,80 +70,24 @@ export default function PaymentScreen() {
         >
           {/* Header */}
           <View style={styles.header}>
-            <Text style={styles.title}>New Payment</Text>
-            <Text style={styles.subtitle}>Send money instantly</Text>
+            <Text style={styles.title}>Uusi maksu</Text>
+            <Text style={styles.subtitle}>Lähetä rahaa nopeasti</Text>
           </View>
 
           {/* Balance Info */}
           <View style={styles.balanceInfo}>
-            <Text style={styles.balanceLabel}>Available Balance</Text>
+            <Text style={styles.balanceLabel}>Käytettävissä oleva saldo</Text>
             <Text style={styles.balanceAmount}>
-              {mockAccount.balance.toFixed(2)} €
+              {balance.toFixed(2)} €
             </Text>
-          </View>
-
-          {/* Quick Contacts */}
-          <View style={styles.section}>
-            <Text style={styles.sectionTitle}>Quick Send</Text>
-            <ScrollView
-              horizontal
-              showsHorizontalScrollIndicator={false}
-              contentContainerStyle={styles.contactsList}
-            >
-              {quickContacts.map((contact) => (
-                <TouchableOpacity
-                  key={contact.id}
-                  style={[
-                    styles.contactItem,
-                    selectedContact === contact.id && styles.contactItemSelected,
-                  ]}
-                  onPress={() => handleContactPress(contact.id)}
-                >
-                  <View
-                    style={[
-                      styles.contactIcon,
-                      selectedContact === contact.id && styles.contactIconSelected,
-                    ]}
-                  >
-                    <Ionicons
-                      name={contact.icon as any}
-                      size={28}
-                      color={
-                        selectedContact === contact.id ? Colors.black : Colors.neonGreen
-                      }
-                    />
-                  </View>
-                  <Text style={styles.contactName}>{contact.name}</Text>
-                </TouchableOpacity>
-              ))}
-            </ScrollView>
           </View>
 
           {/* Payment Form */}
           <View style={styles.section}>
-            <Text style={styles.sectionTitle}>Payment Details</Text>
+            <Text style={styles.sectionTitle}>Maksun tiedot</Text>
 
             <View style={styles.inputContainer}>
-              <Text style={styles.inputLabel}>Recipient</Text>
-              <View style={styles.inputWrapper}>
-                <Ionicons
-                  name="person-outline"
-                  size={20}
-                  color={Colors.textSecondary}
-                  style={styles.inputIcon}
-                />
-                <TextInput
-                  style={styles.input}
-                  placeholder="Name or account number"
-                  placeholderTextColor={Colors.textSecondary}
-                  value={recipient}
-                  onChangeText={setRecipient}
-                />
-              </View>
-            </View>
-
-            <View style={styles.inputContainer}>
-              <Text style={styles.inputLabel}>Amount (€)</Text>
+              <Text style={styles.inputLabel}>Summa (€)</Text>
               <View style={styles.inputWrapper}>
                 <Ionicons
                   name="cash-outline"
@@ -179,7 +120,7 @@ export default function PaymentScreen() {
             </View>
 
             <View style={styles.inputContainer}>
-              <Text style={styles.inputLabel}>Message (Optional)</Text>
+              <Text style={styles.inputLabel}>Viesti (Valinnainen)</Text>
               <View style={styles.inputWrapper}>
                 <Ionicons
                   name="chatbox-outline"
@@ -189,10 +130,10 @@ export default function PaymentScreen() {
                 />
                 <TextInput
                   style={styles.input}
-                  placeholder="Add a note"
+                  placeholder="Lisää viesti"
                   placeholderTextColor={Colors.textSecondary}
-                  value={message}
-                  onChangeText={setMessage}
+                  value={description}
+                  onChangeText={setDescription}
                   multiline
                 />
               </View>
@@ -204,9 +145,8 @@ export default function PaymentScreen() {
             <TouchableOpacity
               style={styles.sendButton}
               onPress={handleSendPayment}
-              disabled={!recipient || !amount}
             >
-              <Text style={styles.sendButtonText}>Send Payment</Text>
+              <Text style={styles.sendButtonText}>Luo maksu</Text>
               <Ionicons name="arrow-forward" size={20} color={Colors.black} />
             </TouchableOpacity>
           </Animated.View>
@@ -269,37 +209,6 @@ const styles = StyleSheet.create({
     fontWeight: '700',
     color: Colors.white,
     marginBottom: Spacing.md,
-  },
-  contactsList: {
-    paddingRight: Spacing.lg,
-  },
-  contactItem: {
-    alignItems: 'center',
-    marginRight: Spacing.md,
-  },
-  contactItemSelected: {
-    opacity: 1,
-  },
-  contactIcon: {
-    width: 64,
-    height: 64,
-    borderRadius: BorderRadius.full,
-    backgroundColor: Colors.lightGray,
-    justifyContent: 'center',
-    alignItems: 'center',
-    marginBottom: Spacing.sm,
-    borderWidth: 2,
-    borderColor: 'transparent',
-  },
-  contactIconSelected: {
-    backgroundColor: Colors.neonGreen,
-    borderColor: Colors.neonGreen,
-    ...Shadow.medium,
-  },
-  contactName: {
-    fontSize: FontSize.sm,
-    color: Colors.white,
-    fontWeight: '600',
   },
   inputContainer: {
     marginBottom: Spacing.lg,

@@ -12,11 +12,15 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { LinearGradient } from 'expo-linear-gradient';
 import * as Haptics from 'expo-haptics';
 import { Ionicons } from '@expo/vector-icons';
+import { useRouter } from 'expo-router';
 import { Colors, Spacing, BorderRadius, FontSize, Shadow } from '../constants';
-import { mockAccount, mockTransactions } from '../mockData';
+import { useAccount } from '../context/AccountContext';
+import { mockAccount } from '../mockData';
 
 export default function HomeScreen() {
   const scaleAnim = React.useRef(new Animated.Value(1)).current;
+  const router = useRouter();
+  const { balance, transactions } = useAccount();
 
   const handlePress = () => {
     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
@@ -46,7 +50,7 @@ export default function HomeScreen() {
     });
   };
 
-  const recentTransactions = mockTransactions.slice(0, 5);
+  const recentTransactions = transactions.slice(0, 5);
 
   return (
     <SafeAreaView style={styles.container} edges={['top']}>
@@ -80,7 +84,7 @@ export default function HomeScreen() {
               <View>
                 <Text style={styles.balanceLabel}>Total Balance</Text>
                 <Text style={styles.balanceAmount}>
-                  {mockAccount.balance.toFixed(2)} €
+                  {balance.toFixed(2)} €
                 </Text>
                 <Text style={styles.accountNumber}>{mockAccount.accountNumber}</Text>
               </View>
@@ -97,12 +101,13 @@ export default function HomeScreen() {
             style={styles.actionButton}
             onPress={() => {
               Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
+              router.push('/payment');
             }}
           >
             <View style={styles.actionIcon}>
               <Ionicons name="send" size={24} color={Colors.black} />
             </View>
-            <Text style={styles.actionText}>Send</Text>
+            <Text style={styles.actionText}>Luo maksu</Text>
           </TouchableOpacity>
 
           <TouchableOpacity
