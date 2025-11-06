@@ -1,64 +1,25 @@
 import React from 'react';
-import { StyleSheet, Text, View, TouchableOpacity } from 'react-native';
-import { Ionicons } from '@expo/vector-icons';
-import { Colors, Spacing, FontSize, FontWeight } from '../theme/theme';
+import { View, Text, StyleSheet } from 'react-native';
+import { useTheme } from '../theme/theme';
 
-interface HeaderBarProps {
-  userName?: string;
-  companyName?: string;
-  showProfile?: boolean;
-  onProfilePress?: () => void;
-}
-
-export const HeaderBar: React.FC<HeaderBarProps> = ({
-  userName = 'Aku Ankka',
-  companyName = 'Firma Oy',
-  showProfile = true,
-  onProfilePress,
-}) => {
+const HeaderBar: React.FC<{ small?: boolean }> = ({ small = false }) => {
+  const theme = useTheme();
   return (
-    <View style={styles.container}>
-      <View style={styles.textContainer}>
-        <Text style={styles.greeting}>Hei, {userName}</Text>
-        <Text style={styles.companyName}>Tilinomistaja: {companyName}</Text>
+    <View style={[styles.container, { backgroundColor: theme.colors.background }]}>
+      <View>
+        <Text accessibilityRole="header" style={[styles.bankTitle, { color: theme.colors.text, fontSize: small ? 18 : 22 }]}>SumUp</Text>
+        <Text style={[styles.greeting, { color: theme.colors.text }]}>Hei, Aku Ankka</Text>
+        <Text style={[styles.owner, { color: theme.colors.muted }]}>Tilinomistaja: Firma Oy</Text>
       </View>
-      {showProfile && (
-        <TouchableOpacity
-          style={styles.profileButton}
-          onPress={onProfilePress}
-          accessibilityLabel="Profile button"
-        >
-          <Ionicons name="person-circle" size={40} color={Colors.primary} />
-        </TouchableOpacity>
-      )}
     </View>
   );
 };
 
-const styles = StyleSheet.create({
-  container: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    paddingHorizontal: Spacing.lg,
-    paddingVertical: Spacing.md,
-    backgroundColor: Colors.background,
-  },
-  textContainer: {
-    flex: 1,
-  },
-  greeting: {
-    fontSize: FontSize.xl,
-    fontWeight: FontWeight.bold,
-    color: Colors.text,
-    marginBottom: Spacing.xs,
-  },
-  companyName: {
-    fontSize: FontSize.xs,
-    fontWeight: FontWeight.regular,
-    color: Colors.textSecondary,
-  },
-  profileButton: {
-    padding: Spacing.xs,
-  },
+const styles = StyleSheet.create({ 
+  container: { paddingHorizontal: 16, paddingVertical: 14 }, 
+  bankTitle: { fontWeight: '800' }, 
+  greeting: { marginTop: 4, fontSize: 16, fontWeight: '600' }, 
+  owner: { marginTop: 2, fontSize: 12, fontWeight: '400', opacity: 0.9 } 
 });
+
+export default HeaderBar;
