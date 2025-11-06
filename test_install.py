@@ -7,6 +7,7 @@ Tests Windows compatibility and subprocess handling
 import unittest
 import os
 import sys
+import subprocess
 from unittest.mock import patch, MagicMock
 
 # Add parent directory to path to import install module
@@ -135,7 +136,7 @@ class TestPopenFunction(unittest.TestCase):
         call_args = mock_popen.call_args
         self.assertEqual(call_args[0][0], cmd)
         self.assertTrue(call_args[1]['text'])
-        self.assertEqual(call_args[1]['stdout'], __import__('subprocess').PIPE)
+        self.assertEqual(call_args[1]['stdout'], subprocess.PIPE)
         self.assertFalse(call_args[1]['shell'])
         self.assertEqual(result, mock_process)
     
@@ -153,7 +154,7 @@ class TestPopenFunction(unittest.TestCase):
         call_args = mock_popen.call_args
         self.assertEqual(call_args[0][0], 'npm start')
         self.assertTrue(call_args[1]['text'])
-        self.assertEqual(call_args[1]['stdout'], __import__('subprocess').PIPE)
+        self.assertEqual(call_args[1]['stdout'], subprocess.PIPE)
         self.assertTrue(call_args[1]['shell'])
         self.assertEqual(result, mock_process)
     
@@ -165,11 +166,11 @@ class TestPopenFunction(unittest.TestCase):
         mock_popen.return_value = mock_process
         
         cmd = ['npm', 'install']
-        result = popen(cmd, stderr=__import__('subprocess').PIPE)
+        result = popen(cmd, stderr=subprocess.PIPE)
         
         # Check that custom kwargs are passed through
         call_args = mock_popen.call_args
-        self.assertEqual(call_args[1]['stderr'], __import__('subprocess').PIPE)
+        self.assertEqual(call_args[1]['stderr'], subprocess.PIPE)
 
 
 class TestCrossPlatformCompatibility(unittest.TestCase):

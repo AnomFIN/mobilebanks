@@ -29,7 +29,6 @@ def normalize_cmd(cmd: Union[List[str], Tuple[str, ...], str]) -> Tuple[Union[Li
         # Windows: convert to string and use shell=True for .cmd/.bat compatibility
         if isinstance(cmd, (list, tuple)):
             cmd_str = ' '.join(cmd)
-            print(f"[Windows] Normalisoidaan komento: {cmd_str}")
             return (cmd_str, True)
         return (cmd, True)
     else:
@@ -161,7 +160,12 @@ def expo_login() -> bool:
     """Handle Expo login (optional)."""
     print("=== Expo Login (valinnainen) ===")
     
-    response = input("Haluatko kirjautua Expo-tilille? (k/e): ").lower()
+    while True:
+        response = input("Haluatko kirjautua Expo-tilille? (k/e): ").lower().strip()
+        if response in ['k', 'e']:
+            break
+        print("Virheellinen syöte. Vastaa 'k' (kyllä) tai 'e' (ei).")
+    
     if response == 'k':
         try:
             cmd = ['npx', 'expo', 'login']
@@ -177,6 +181,7 @@ def expo_login() -> bool:
         return True
 
 
+
 def generate_qr_code() -> Optional[str]:
     """Generate QR code for the Expo app (placeholder - real implementation would generate actual QR)."""
     print("=== QR-koodin luonti ===")
@@ -190,7 +195,12 @@ def start_dev_server(auto: bool = False) -> None:
     print("=== Käynnistetään development server ===")
     
     if not auto:
-        response = input("Käynnistetäänkö development server? (k/e): ").lower()
+        while True:
+            response = input("Käynnistetäänkö development server? (k/e): ").lower().strip()
+            if response in ['k', 'e']:
+                break
+            print("Virheellinen syöte. Vastaa 'k' (kyllä) tai 'e' (ei).")
+        
         if response != 'k':
             print("Development server -käynnistys ohitettu")
             return
