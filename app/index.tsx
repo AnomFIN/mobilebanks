@@ -13,17 +13,15 @@ import { LinearGradient } from 'expo-linear-gradient';
 import { useRouter } from 'expo-router';
 import * as Haptics from 'expo-haptics';
 import { Ionicons } from '@expo/vector-icons';
-import { useRouter } from 'expo-router';
-import { Colors, Spacing, BorderRadius, FontSize, Shadow } from '../constants';
+import { Colors, Spacing, BorderRadius, FontSize, Shadow, FontWeight } from '../src/theme/theme';
 import { useAccount } from '../src/context/AccountContext';
-import { mockAccount } from '../mockData';
+import { HeaderBar } from '../src/components/HeaderBar';
+import { Card } from '../src/components/Card';
 
 export default function HomeScreen() {
-  const { balance, transactions } = useAccount();
+  const { balance, transactions, accountNumber } = useAccount();
   const router = useRouter();
   const scaleAnim = React.useRef(new Animated.Value(1)).current;
-  const router = useRouter();
-  const { balance, transactions, accountNumber } = useAccount();
 
   const handlePress = () => {
     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
@@ -47,7 +45,7 @@ export default function HomeScreen() {
 
   const formatDate = (dateString: string) => {
     const date = new Date(dateString);
-    return date.toLocaleDateString('en-FI', {
+    return date.toLocaleDateString('fi-FI', {
       month: 'short',
       day: 'numeric',
     });
@@ -62,27 +60,11 @@ export default function HomeScreen() {
         showsVerticalScrollIndicator={false}
       >
         {/* Header */}
-        <View style={styles.header}>
-          <View>
-            <Text style={styles.greeting}>Hyvää päivää</Text>
-            <Text style={styles.companyName}>Helsinki eBike Service Oy</Text>
-          </View>
-          <TouchableOpacity
-            style={styles.profileButton}
-            onPress={handlePress}
-          >
-            <Ionicons name="person-circle" size={40} color={Colors.neonGreen} />
-          </TouchableOpacity>
-        </View>
+        <HeaderBar onProfilePress={handlePress} />
 
         {/* Balance Card */}
         <Animated.View style={[styles.balanceCard, { transform: [{ scale: scaleAnim }] }]}>
-          <LinearGradient
-            colors={[Colors.gray, Colors.darkGray]}
-            style={styles.gradient}
-            start={{ x: 0, y: 0 }}
-            end={{ x: 1, y: 1 }}
-          >
+          <Card gradient shadow="large" padding={Spacing.xl}>
             <View style={styles.balanceContent}>
               <View>
                 <Text style={styles.balanceLabel}>Kokonaissaldo</Text>
@@ -92,10 +74,10 @@ export default function HomeScreen() {
                 <Text style={styles.accountNumber}>{accountNumber}</Text>
               </View>
               <View style={styles.logoContainer}>
-                <Ionicons name="bicycle" size={48} color={Colors.neonGreen} />
+                <Ionicons name="wallet" size={40} color={Colors.white} />
               </View>
             </View>
-          </LinearGradient>
+          </Card>
         </Animated.View>
 
         {/* Quick Actions */}
@@ -108,9 +90,35 @@ export default function HomeScreen() {
             }}
           >
             <View style={styles.actionIcon}>
-              <Ionicons name="send" size={24} color={Colors.black} />
+              <Ionicons name="send" size={24} color={Colors.white} />
             </View>
-            <Text style={styles.actionText}>Luo maksu</Text>
+            <Text style={styles.actionText}>Maksa</Text>
+          </TouchableOpacity>
+
+          <TouchableOpacity
+            style={styles.actionButton}
+            onPress={() => {
+              Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
+              router.push('/statement');
+            }}
+          >
+            <View style={styles.actionIcon}>
+              <Ionicons name="bar-chart" size={24} color={Colors.white} />
+            </View>
+            <Text style={styles.actionText}>Raportit</Text>
+          </TouchableOpacity>
+
+          <TouchableOpacity
+            style={styles.actionButton}
+            onPress={() => {
+              Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
+              router.push('/receipt');
+            }}
+          >
+            <View style={styles.actionIcon}>
+              <Ionicons name="document-text" size={24} color={Colors.white} />
+            </View>
+            <Text style={styles.actionText}>Kuitti</Text>
           </TouchableOpacity>
 
           <TouchableOpacity
@@ -120,74 +128,63 @@ export default function HomeScreen() {
             }}
           >
             <View style={styles.actionIcon}>
-              <Ionicons name="download" size={24} color={Colors.black} />
+              <Ionicons name="card" size={24} color={Colors.white} />
             </View>
-            <Text style={styles.actionText}>Pyydä</Text>
-          </TouchableOpacity>
-
-          <TouchableOpacity
-            style={styles.actionButton}
-            onPress={() => {
-              Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
-            }}
-          >
-            <View style={styles.actionIcon}>
-              <Ionicons name="swap-horizontal" size={24} color={Colors.black} />
-            </View>
-            <Text style={styles.actionText}>Vaihda</Text>
-          </TouchableOpacity>
-
-          <TouchableOpacity
-            style={styles.actionButton}
-            onPress={() => {
-              Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
-            }}
-          >
-            <View style={styles.actionIcon}>
-              <Ionicons name="wallet" size={24} color={Colors.black} />
-            </View>
-            <Text style={styles.actionText}>Lataa</Text>
+            <Text style={styles.actionText}>Kortti</Text>
           </TouchableOpacity>
         </View>
 
         {/* Recent Transactions */}
         <View style={styles.section}>
           <View style={styles.sectionHeader}>
-            <Text style={styles.sectionTitle}>Viimeaikaiset tapahtumat</Text>
-            <TouchableOpacity onPress={handlePress}>
+            <Text style={styles.sectionTitle}>Viimeisimmät tapahtumat</Text>
+            <TouchableOpacity onPress={() => router.push('/statement')}>
               <Text style={styles.seeAll}>Näytä kaikki</Text>
             </TouchableOpacity>
           </View>
 
-          {recentTransactions.map((transaction) => (
-            <TouchableOpacity
-              key={transaction.id}
-              style={styles.transactionItem}
-              onPress={() => {
-                Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
-              }}
-            >
-              <View style={styles.transactionIcon}>
-                <Ionicons
-                  name={transaction.type === 'credit' ? 'arrow-down' : 'arrow-up'}
-                  size={20}
-                  color={transaction.type === 'credit' ? Colors.success : Colors.white}
-                />
-              </View>
-              <View style={styles.transactionDetails}>
-                <Text style={styles.transactionTitle}>{transaction.title}</Text>
-                <Text style={styles.transactionDate}>{formatDate(transaction.date)}</Text>
-              </View>
-              <Text
+          <Card shadow="small" padding={0}>
+            {recentTransactions.map((transaction, index) => (
+              <TouchableOpacity
+                key={transaction.id}
                 style={[
-                  styles.transactionAmount,
-                  transaction.type === 'credit' && styles.transactionAmountCredit,
+                  styles.transactionItem,
+                  index < recentTransactions.length - 1 && styles.transactionItemBorder,
                 ]}
+                onPress={() => {
+                  Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+                  router.push('/receipt');
+                }}
               >
-                {formatCurrency(transaction.amount)}
-              </Text>
-            </TouchableOpacity>
-          ))}
+                <View
+                  style={[
+                    styles.transactionIcon,
+                    transaction.type === 'credit'
+                      ? styles.transactionIconCredit
+                      : styles.transactionIconDebit,
+                  ]}
+                >
+                  <Ionicons
+                    name={transaction.type === 'credit' ? 'arrow-down' : 'arrow-up'}
+                    size={20}
+                    color={Colors.white}
+                  />
+                </View>
+                <View style={styles.transactionDetails}>
+                  <Text style={styles.transactionTitle}>{transaction.title}</Text>
+                  <Text style={styles.transactionDate}>{formatDate(transaction.date)}</Text>
+                </View>
+                <Text
+                  style={[
+                    styles.transactionAmount,
+                    transaction.type === 'credit' && styles.transactionAmountCredit,
+                  ]}
+                >
+                  {formatCurrency(transaction.amount)}
+                </Text>
+              </TouchableOpacity>
+            ))}
+          </Card>
         </View>
       </ScrollView>
     </SafeAreaView>
@@ -197,43 +194,14 @@ export default function HomeScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: Colors.black,
+    backgroundColor: Colors.background,
   },
   scrollView: {
     flex: 1,
   },
-  header: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    paddingHorizontal: Spacing.lg,
-    paddingVertical: Spacing.md,
-  },
-  greeting: {
-    fontSize: FontSize.sm,
-    color: Colors.textSecondary,
-    marginBottom: Spacing.xs,
-  },
-  companyName: {
-    fontSize: FontSize.lg,
-    fontWeight: '700',
-    color: Colors.white,
-  },
-  profileButton: {
-    padding: Spacing.xs,
-  },
   balanceCard: {
     marginHorizontal: Spacing.lg,
     marginVertical: Spacing.md,
-    borderRadius: BorderRadius.lg,
-    overflow: 'hidden',
-    ...Shadow.medium,
-  },
-  gradient: {
-    padding: Spacing.lg,
-    borderRadius: BorderRadius.lg,
-    borderWidth: 1,
-    borderColor: Colors.lightGray,
   },
   balanceContent: {
     flexDirection: 'row',
@@ -242,25 +210,28 @@ const styles = StyleSheet.create({
   },
   balanceLabel: {
     fontSize: FontSize.sm,
-    color: Colors.textSecondary,
+    color: Colors.white,
+    opacity: 0.9,
     marginBottom: Spacing.xs,
+    fontWeight: FontWeight.medium,
   },
   balanceAmount: {
-    fontSize: FontSize.xxxl,
-    fontWeight: '700',
+    fontSize: FontSize.huge,
+    fontWeight: FontWeight.bold,
     color: Colors.white,
     marginBottom: Spacing.sm,
   },
   accountNumber: {
     fontSize: FontSize.xs,
-    color: Colors.textSecondary,
+    color: Colors.white,
+    opacity: 0.8,
     fontFamily: Platform.OS === 'ios' ? 'Courier' : 'monospace',
   },
   logoContainer: {
     width: 72,
     height: 72,
     borderRadius: BorderRadius.full,
-    backgroundColor: Colors.lightGray,
+    backgroundColor: 'rgba(255, 255, 255, 0.2)',
     justifyContent: 'center',
     alignItems: 'center',
   },
@@ -268,7 +239,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-around',
     paddingHorizontal: Spacing.lg,
-    paddingVertical: Spacing.md,
+    paddingVertical: Spacing.lg,
   },
   actionButton: {
     alignItems: 'center',
@@ -277,16 +248,16 @@ const styles = StyleSheet.create({
     width: 56,
     height: 56,
     borderRadius: BorderRadius.full,
-    backgroundColor: Colors.neonGreen,
+    backgroundColor: Colors.primary,
     justifyContent: 'center',
     alignItems: 'center',
     marginBottom: Spacing.sm,
-    ...Shadow.small,
+    ...Shadow.medium,
   },
   actionText: {
     fontSize: FontSize.xs,
-    color: Colors.white,
-    fontWeight: '600',
+    color: Colors.text,
+    fontWeight: FontWeight.semibold,
   },
   section: {
     paddingHorizontal: Spacing.lg,
@@ -300,38 +271,46 @@ const styles = StyleSheet.create({
   },
   sectionTitle: {
     fontSize: FontSize.lg,
-    fontWeight: '700',
-    color: Colors.white,
+    fontWeight: FontWeight.bold,
+    color: Colors.text,
   },
   seeAll: {
     fontSize: FontSize.sm,
-    color: Colors.neonGreen,
-    fontWeight: '600',
+    color: Colors.primary,
+    fontWeight: FontWeight.semibold,
   },
   transactionItem: {
     flexDirection: 'row',
     alignItems: 'center',
     paddingVertical: Spacing.md,
+    paddingHorizontal: Spacing.lg,
+  },
+  transactionItemBorder: {
     borderBottomWidth: 1,
-    borderBottomColor: Colors.lightGray,
+    borderBottomColor: Colors.border,
   },
   transactionIcon: {
     width: 40,
     height: 40,
     borderRadius: BorderRadius.full,
-    backgroundColor: Colors.lightGray,
     justifyContent: 'center',
     alignItems: 'center',
     marginRight: Spacing.md,
+  },
+  transactionIconCredit: {
+    backgroundColor: Colors.success,
+  },
+  transactionIconDebit: {
+    backgroundColor: Colors.textSecondary,
   },
   transactionDetails: {
     flex: 1,
   },
   transactionTitle: {
     fontSize: FontSize.md,
-    fontWeight: '600',
-    color: Colors.white,
-    marginBottom: Spacing.xs,
+    fontWeight: FontWeight.semibold,
+    color: Colors.text,
+    marginBottom: Spacing.xs - 2,
   },
   transactionDate: {
     fontSize: FontSize.xs,
@@ -339,8 +318,8 @@ const styles = StyleSheet.create({
   },
   transactionAmount: {
     fontSize: FontSize.md,
-    fontWeight: '700',
-    color: Colors.white,
+    fontWeight: FontWeight.bold,
+    color: Colors.text,
   },
   transactionAmountCredit: {
     color: Colors.success,
