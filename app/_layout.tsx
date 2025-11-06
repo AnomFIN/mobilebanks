@@ -1,9 +1,9 @@
 import { Tabs } from 'expo-router';
 import { StyleSheet, View, Platform } from 'react-native';
 import { enableScreens } from 'react-native-screens';
-import { Colors } from '../constants';
 import { Ionicons } from '@expo/vector-icons';
 import { AccountProvider } from '../src/context/AccountContext';
+import { Colors, Spacing, FontSize } from '../src/theme/theme';
 
 // Enable screens for better performance
 enableScreens(true);
@@ -15,7 +15,7 @@ export default function TabLayout() {
         screenOptions={{
           headerShown: false,
           tabBarStyle: styles.tabBar,
-          tabBarActiveTintColor: Colors.neonGreen,
+          tabBarActiveTintColor: Colors.primaryBlue,
           tabBarInactiveTintColor: Colors.textSecondary,
           tabBarLabelStyle: styles.tabBarLabel,
           tabBarShowLabel: true,
@@ -24,7 +24,7 @@ export default function TabLayout() {
         <Tabs.Screen
           name="index"
           options={{
-            title: 'Koti',
+            title: 'Etusivu',
             tabBarIcon: ({ color, size }) => (
               <Ionicons name="home" size={size} color={color} />
             ),
@@ -33,7 +33,7 @@ export default function TabLayout() {
         <Tabs.Screen
           name="payment"
           options={{
-            title: 'Kassa',
+            title: 'Maksut',
             tabBarIcon: ({ color, size }) => (
               <Ionicons name="send" size={size} color={color} />
             ),
@@ -42,9 +42,9 @@ export default function TabLayout() {
         <Tabs.Screen
           name="statement"
           options={{
-            title: 'Tiliote',
+            title: 'Raportit',
             tabBarIcon: ({ color, size }) => (
-              <Ionicons name="list" size={size} color={color} />
+              <Ionicons name="bar-chart" size={size} color={color} />
             ),
           }}
         />
@@ -57,6 +57,15 @@ export default function TabLayout() {
             ),
           }}
         />
+        <Tabs.Screen
+          name="settings"
+          options={{
+            title: 'Asetukset',
+            tabBarIcon: ({ color, size }) => (
+              <Ionicons name="settings" size={size} color={color} />
+            ),
+          }}
+        />
       </Tabs>
     </AccountProvider>
   );
@@ -64,7 +73,7 @@ export default function TabLayout() {
 
 const styles = StyleSheet.create({
   tabBar: {
-    backgroundColor: Colors.gray,
+    backgroundColor: Colors.white,
     borderTopColor: Colors.lightGray,
     borderTopWidth: 1,
     height: Platform.OS === 'ios' ? 85 : 65,
@@ -72,7 +81,7 @@ const styles = StyleSheet.create({
     paddingTop: 10,
   },
   tabBarLabel: {
-    fontSize: 12,
+    fontSize: FontSize.xs,
     fontWeight: '600',
   },
 });
