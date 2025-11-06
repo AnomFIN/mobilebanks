@@ -2,27 +2,62 @@
 
 A stunning Expo Go mobile banking app with a minimalist fintech UI design, featuring offline mock data, haptics, and smooth animations.
 
-## Features
+<img src="https://img.shields.io/badge/Expo-000020?style=for-the-badge&logo=expo&logoColor=white" alt="Expo" />
+<img src="https://img.shields.io/badge/React_Native-20232A?style=for-the-badge&logo=react&logoColor=61DAFB" alt="React Native" />
+<img src="https://img.shields.io/badge/TypeScript-007ACC?style=for-the-badge&logo=typescript&logoColor=white" alt="TypeScript" />
 
-- **4 Main Screens:**
-  - **Home**: View account balance, recent transactions, and quick actions
-  - **New Payment**: Send money with quick contact selection and amount presets
-  - **Statement**: Browse transaction history with filtering options
-  - **Receipt**: View detailed transaction receipts with sharing options
+## ✨ Features
 
-- **Premium Design:**
-  - Black/white base with neon-green accent (#00FFAE)
-  - Elegant shadows and smooth transitions
-  - Styled like Apple Pay meets Revolut
-  - Responsive and investor-ready UI
+### 4 Main Screens
+- **Home**: View account balance, recent transactions, and quick actions
+- **New Payment**: Send money with quick contact selection and amount presets
+- **Statement**: Browse transaction history with filtering options
+- **Receipt**: View detailed transaction receipts with sharing options
 
-- **Enhanced UX:**
-  - Haptic feedback on interactions
-  - Smooth animations using React Native Reanimated
-  - Offline functionality with mock data
-  - Safe area support for modern devices
+### Premium Design
+- Black/white base with neon-green accent (#00FFAE)
+- Elegant shadows and smooth transitions
+- Styled like Apple Pay meets Revolut
+- Responsive and investor-ready UI
 
-## Tech Stack
+### Enhanced UX
+- Haptic feedback on interactions
+- Smooth animations using React Native Reanimated
+- Offline functionality with mock data
+- Safe area support for modern devices
+
+## 🚀 Quick Start
+
+```bash
+# Install dependencies
+npm install
+
+# Start development server
+npm start
+
+# Scan QR code with Expo Go app
+```
+
+**Detailed instructions**: See [SETUP.md](SETUP.md)
+
+## 📚 Documentation
+
+- **[SETUP.md](SETUP.md)**: Complete setup guide and quick start
+- **[UI_DESIGN.md](UI_DESIGN.md)**: Comprehensive UI design documentation
+- **[FEATURES.md](FEATURES.md)**: Detailed feature documentation
+
+## 🎨 Design System
+
+| Element | Value |
+|---------|-------|
+| Primary Color | Black (#000000) |
+| Secondary Color | White (#FFFFFF) |
+| Accent Color | Neon Green (#00FFAE) |
+| Font Sizes | 12px - 48px |
+| Spacing | 4px - 48px (8px grid) |
+| Border Radius | 8px - 24px |
+
+## 🏗️ Tech Stack
 
 - React Native with Expo SDK 54
 - TypeScript for type safety
@@ -31,58 +66,44 @@ A stunning Expo Go mobile banking app with a minimalist fintech UI design, featu
 - Expo Linear Gradient for premium visual effects
 - React Native Reanimated for smooth animations
 
-## Getting Started
-
-1. Install dependencies:
-   ```bash
-   npm install
-   ```
-
-2. Start the development server:
-   ```bash
-   npm start
-   ```
-
-3. Open the app:
-   - Scan the QR code with Expo Go (Android)
-   - Scan the QR code with Camera app (iOS)
-   - Press `w` to open in web browser
-   - Press `a` to open in Android emulator
-   - Press `i` to open in iOS simulator
-
-## Project Structure
-
-```
-├── app/
-│   ├── _layout.tsx       # Tab navigation layout
-│   ├── index.tsx         # Home screen
-│   ├── payment.tsx       # New Payment screen
-│   ├── statement.tsx     # Statement screen
-│   └── receipt.tsx       # Receipt screen
-├── constants.ts          # Theme colors, spacing, and styles
-├── mockData.ts          # Offline mock transaction data
-├── types.ts             # TypeScript type definitions
-└── assets/              # App icons and images
-```
-
-## Mock Data
+## 📊 Mock Data
 
 The app uses offline mock data including:
-- Account balance and details
-- 10+ sample transactions
-- Various transaction categories (Transport, Shopping, Food, etc.)
+- Account balance: €12,847.50
+- 10+ sample transactions (eBike rentals, salary, shopping, etc.)
+- Various transaction categories
 - Income and expense tracking
 
-## Design System
+## 📱 Screenshots
 
-- **Primary Color**: Black (#000000)
-- **Secondary Color**: White (#FFFFFF)
-- **Accent Color**: Neon Green (#00FFAE)
-- **Typography**: System fonts with various weights
-- **Spacing**: Consistent 8px-based spacing scale
-- **Border Radius**: Smooth rounded corners (8px-24px)
-- **Shadows**: Neon-green tinted shadows for depth
+The app features:
+- **Home Screen**: Balance card with gradient, quick actions, recent transactions
+- **Payment Screen**: Contact selection, amount input, quick presets
+- **Statement Screen**: Income/expense cards, filterable transaction list
+- **Receipt Screen**: Professional receipt with QR code, share options
 
-## License
+## 🔒 Security
+
+- ✅ Zero security vulnerabilities (CodeQL verified)
+- ✅ No external API calls
+- ✅ Type-safe TypeScript implementation
+- ⚠️ Demo app - not production-ready
+
+## 🎯 Project Goals
+
+Created to demonstrate:
+- Modern React Native development
+- Premium UI/UX design
+- Smooth animations and haptics
+- Proper TypeScript typing
+- Offline-first architecture
+- Professional code organization
+
+## 📄 License
 
 Private project for Helsinki eBike Service Oy
+
+---
+
+**Built with ❤️ using Expo and React Native**
+
