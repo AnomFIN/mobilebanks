@@ -28,6 +28,19 @@ A stunning Expo Go mobile banking app with a minimalist fintech UI design, featu
 
 ## 🚀 Quick Start
 
+### Automated Installation (Recommended for Windows)
+
+```bash
+# Clone and navigate
+git clone https://github.com/AnomFIN/mobilebanks.git
+cd mobilebanks
+
+# Run installation script (includes Windows fixes)
+python3 install.py
+```
+
+### Manual Installation
+
 ```bash
 # Install dependencies
 npm install
@@ -38,7 +51,7 @@ npm start
 # Scan QR code with Expo Go app
 ```
 
-**Detailed instructions**: See [SETUP.md](SETUP.md)
+**Detailed instructions**: See [SETUP.md](SETUP.md) | **Script docs**: [INSTALL_PY_README.md](INSTALL_PY_README.md)
 
 ## 📚 Documentation
 

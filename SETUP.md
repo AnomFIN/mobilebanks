@@ -49,6 +49,35 @@ A stunning, investor-ready mobile banking application built with Expo Go featuri
 
 ### Installation
 
+#### Option 1: Automated Installation (Recommended for Windows)
+
+1. **Clone the repository**
+   ```bash
+   git clone https://github.com/AnomFIN/mobilebanks.git
+   cd mobilebanks
+   ```
+
+2. **Run the installation script**
+   ```bash
+   python3 install.py
+   ```
+   
+   Or for install only (without starting dev server):
+   ```bash
+   python3 install.py --install-only
+   ```
+
+   The script will:
+   - ✅ Check Node.js and npm versions
+   - ✅ Install dependencies automatically
+   - ✅ Offer Expo login (optional)
+   - ✅ Start the development server
+
+   **Note:** This script includes fixes for Windows compatibility (FileNotFoundError with npm/npx commands).
+   See [INSTALL_PY_README.md](INSTALL_PY_README.md) for detailed documentation.
+
+#### Option 2: Manual Installation
+
 1. **Clone the repository**
    ```bash
    git clone https://github.com/AnomFIN/mobilebanks.git
