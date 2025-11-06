@@ -11,23 +11,22 @@ import {
   Animated,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import { useRouter } from 'expo-router';
 import * as Haptics from 'expo-haptics';
 import { Ionicons } from '@expo/vector-icons';
 import { useRouter } from 'expo-router';
 import { Colors, Spacing, BorderRadius, FontSize, Shadow } from '../constants';
-import { useAccount } from '../context/AccountContext';
+import { useAccount } from '../src/context/AccountContext';
 
 export default function PaymentScreen() {
   const [amount, setAmount] = useState('');
   const [description, setDescription] = useState('');
-  const router = useRouter();
   const { balance, createPayment } = useAccount();
+  const router = useRouter();
 
   const scaleAnim = React.useRef(new Animated.Value(1)).current;
 
-  const quickAmounts = [10, 25, 50, 100];
-
-  const handleSendPayment = () => {
+  const handleCreatePayment = () => {
     Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
     Animated.sequence([
       Animated.timing(scaleAnim, {
@@ -41,21 +40,12 @@ export default function PaymentScreen() {
         useNativeDriver: true,
       }),
     ]).start();
-    
-    // Create the payment using context
-    createPayment(Number(amount) || 0, description || undefined);
-    
-    // Clear inputs
-    setAmount('');
-    setDescription('');
-    
-    // Navigate to statement (Tiliote) screen
-    router.push('/statement');
-  };
 
-  const handleAmountPress = (value: number) => {
-    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
-    setAmount(value.toString());
+    // Create payment with coerced amount
+    createPayment(Number(amount) || 0, description || undefined);
+
+    // Navigate to statement screen
+    router.push('/statement');
   };
 
   return (
@@ -70,8 +60,8 @@ export default function PaymentScreen() {
         >
           {/* Header */}
           <View style={styles.header}>
-            <Text style={styles.title}>Uusi maksu</Text>
-            <Text style={styles.subtitle}>Lähetä rahaa nopeasti</Text>
+            <Text style={styles.title}>Luo maksu</Text>
+            <Text style={styles.subtitle}>Tee uusi maksu</Text>
           </View>
 
           {/* Balance Info */}
@@ -104,23 +94,10 @@ export default function PaymentScreen() {
                   keyboardType="decimal-pad"
                 />
               </View>
-
-              {/* Quick Amount Buttons */}
-              <View style={styles.quickAmounts}>
-                {quickAmounts.map((value) => (
-                  <TouchableOpacity
-                    key={value}
-                    style={styles.quickAmountButton}
-                    onPress={() => handleAmountPress(value)}
-                  >
-                    <Text style={styles.quickAmountText}>{value}€</Text>
-                  </TouchableOpacity>
-                ))}
-              </View>
             </View>
 
             <View style={styles.inputContainer}>
-              <Text style={styles.inputLabel}>Viesti (Valinnainen)</Text>
+              <Text style={styles.inputLabel}>Kuvaus (valinnainen)</Text>
               <View style={styles.inputWrapper}>
                 <Ionicons
                   name="chatbox-outline"
@@ -140,11 +117,11 @@ export default function PaymentScreen() {
             </View>
           </View>
 
-          {/* Send Button */}
+          {/* Create Payment Button */}
           <Animated.View style={[styles.sendButtonContainer, { transform: [{ scale: scaleAnim }] }]}>
             <TouchableOpacity
               style={styles.sendButton}
-              onPress={handleSendPayment}
+              onPress={handleCreatePayment}
             >
               <Text style={styles.sendButtonText}>Luo maksu</Text>
               <Ionicons name="arrow-forward" size={20} color={Colors.black} />
@@ -237,26 +214,6 @@ const styles = StyleSheet.create({
     fontSize: FontSize.md,
     color: Colors.white,
     padding: Spacing.sm,
-  },
-  quickAmounts: {
-    flexDirection: 'row',
-    marginTop: Spacing.md,
-    gap: Spacing.sm,
-  },
-  quickAmountButton: {
-    flex: 1,
-    paddingVertical: Spacing.sm,
-    paddingHorizontal: Spacing.md,
-    backgroundColor: Colors.lightGray,
-    borderRadius: BorderRadius.sm,
-    alignItems: 'center',
-    borderWidth: 1,
-    borderColor: Colors.lightGray,
-  },
-  quickAmountText: {
-    fontSize: FontSize.sm,
-    color: Colors.neonGreen,
-    fontWeight: '600',
   },
   sendButtonContainer: {
     paddingHorizontal: Spacing.lg,
