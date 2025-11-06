@@ -7,7 +7,7 @@ interface CardProps {
   children: React.ReactNode;
   style?: ViewStyle;
   gradient?: boolean;
-  gradientColors?: string[];
+  gradientColors?: [string, string];
   padding?: number;
   shadow?: 'small' | 'medium' | 'large' | 'none';
 }
