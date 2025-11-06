@@ -63,11 +63,18 @@ npm start
 # Scan QR code with Expo Go app
 ```
 
+**Alternative**: Use the Python installation script for automatic port conflict handling:
+```bash
+python3 install.py
+```
+This script automatically handles port conflicts on Windows and other platforms.
+
 **Detailed instructions**: See [SETUP.md](SETUP.md)
 
 ## 📚 Documentation
 
 - **[SETUP.md](SETUP.md)**: Complete setup guide and quick start
+- **[INSTALL_SCRIPT.md](INSTALL_SCRIPT.md)**: Python installation script documentation
 - **[UI_DESIGN.md](UI_DESIGN.md)**: Comprehensive UI design documentation
 - **[FEATURES.md](FEATURES.md)**: Detailed feature documentation
 
