@@ -12,8 +12,8 @@ import io
 from unittest.mock import Mock, patch, MagicMock, call
 import re
 
-# Add the parent directory to the path so we can import install
-sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+# Add the current directory to the path so we can import install
+sys.path.insert(0, os.path.dirname(__file__))
 
 try:
     import install

@@ -7,8 +7,6 @@ Handles Expo development server startup with automatic port conflict resolution.
 import sys
 import subprocess
 import re
-import signal
-import time
 
 
 def start_expo_and_show_qr(port=None):
@@ -27,6 +25,7 @@ def start_expo_and_show_qr(port=None):
     print(f"Starting Expo development server{f' on port {port}' if port else ''}...")
     print(f"Command: {' '.join(cmd)}")
     
+    process = None  # Initialize to avoid NameError in exception handler
     try:
         # Start Expo process with stdout/stderr pipes to capture output
         process = subprocess.Popen(
