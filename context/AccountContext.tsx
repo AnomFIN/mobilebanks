@@ -4,6 +4,7 @@ import { Transaction } from '../types';
 interface AccountContextType {
   balance: number;
   transactions: Transaction[];
+  accountNumber: string;
   createPayment: (amount: number, description?: string) => void;
 }
 
@@ -14,7 +15,9 @@ interface AccountProviderProps {
 }
 
 export const AccountProvider: React.FC<AccountProviderProps> = ({ children }) => {
+  const accountNumber = 'FI21 1234 5678 9012 34';
   const [balance, setBalance] = useState<number>(14574.32);
+  const [transactionCounter, setTransactionCounter] = useState<number>(100);
   const [transactions, setTransactions] = useState<Transaction[]>([
     {
       id: '1',
@@ -74,7 +77,7 @@ export const AccountProvider: React.FC<AccountProviderProps> = ({ children }) =>
     
     // Create new transaction with negative amount (debit)
     const newTransaction: Transaction = {
-      id: Date.now().toString(),
+      id: `tx-${transactionCounter + 1}`,
       title: description || 'Maksu',
       amount: -numAmount,
       date: new Date().toISOString(),
@@ -82,6 +85,9 @@ export const AccountProvider: React.FC<AccountProviderProps> = ({ children }) =>
       status: 'completed',
       type: 'debit',
     };
+
+    // Increment counter for next transaction
+    setTransactionCounter(prev => prev + 1);
 
     // Prepend to transactions array
     setTransactions(prev => [newTransaction, ...prev]);
@@ -91,7 +97,7 @@ export const AccountProvider: React.FC<AccountProviderProps> = ({ children }) =>
   };
 
   return (
-    <AccountContext.Provider value={{ balance, transactions, createPayment }}>
+    <AccountContext.Provider value={{ balance, transactions, accountNumber, createPayment }}>
       {children}
     </AccountContext.Provider>
   );

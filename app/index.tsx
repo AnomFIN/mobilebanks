@@ -15,12 +15,11 @@ import { Ionicons } from '@expo/vector-icons';
 import { useRouter } from 'expo-router';
 import { Colors, Spacing, BorderRadius, FontSize, Shadow } from '../constants';
 import { useAccount } from '../context/AccountContext';
-import { mockAccount } from '../mockData';
 
 export default function HomeScreen() {
   const scaleAnim = React.useRef(new Animated.Value(1)).current;
   const router = useRouter();
-  const { balance, transactions } = useAccount();
+  const { balance, transactions, accountNumber } = useAccount();
 
   const handlePress = () => {
     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
@@ -86,7 +85,7 @@ export default function HomeScreen() {
                 <Text style={styles.balanceAmount}>
                   {balance.toFixed(2)} €
                 </Text>
-                <Text style={styles.accountNumber}>{mockAccount.accountNumber}</Text>
+                <Text style={styles.accountNumber}>{accountNumber}</Text>
               </View>
               <View style={styles.logoContainer}>
                 <Ionicons name="bicycle" size={48} color={Colors.neonGreen} />
