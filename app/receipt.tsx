@@ -8,11 +8,11 @@ import {
   Share,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { LinearGradient } from 'expo-linear-gradient';
 import * as Haptics from 'expo-haptics';
 import { Ionicons } from '@expo/vector-icons';
-import { Colors, Spacing, BorderRadius, FontSize, Shadow } from '../constants';
+import { Colors, Spacing, BorderRadius, FontSize, Shadow, FontWeight } from '../src/theme/theme';
 import { mockTransactions, mockAccount } from '../mockData';
+import { Card } from '../src/components/Card';
 
 export default function ReceiptScreen() {
   // Get the most recent transaction as the receipt example
@@ -38,7 +38,7 @@ export default function ReceiptScreen() {
     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
     try {
       await Share.share({
-        message: `Receipt from Helsinki eBike Service Oy\n\nTransaction: ${recentTransaction.title}\nAmount: ${formatCurrency(recentTransaction.amount)}\nDate: ${formatDate(recentTransaction.date)}\nStatus: ${recentTransaction.status}`,
+        message: `Receipt from SumUp\n\nTransaction: ${recentTransaction.title}\nAmount: ${formatCurrency(recentTransaction.amount)}\nDate: ${formatDate(recentTransaction.date)}\nStatus: ${recentTransaction.status}`,
       });
     } catch (error) {
       console.error('Error sharing:', error);
@@ -62,27 +62,20 @@ export default function ReceiptScreen() {
       <ScrollView style={styles.scrollView} showsVerticalScrollIndicator={false}>
         {/* Header */}
         <View style={styles.header}>
-          <Text style={styles.title}>Receipt</Text>
-          <Text style={styles.subtitle}>Transaction details</Text>
+          <Text style={styles.title}>Kuitti</Text>
+          <Text style={styles.subtitle}>Tapahtuman tiedot</Text>
         </View>
 
         {/* Receipt Card */}
-        <View style={styles.receiptCard}>
-          <LinearGradient
-            colors={[Colors.gray, Colors.darkGray]}
-            style={styles.gradient}
-            start={{ x: 0, y: 0 }}
-            end={{ x: 1, y: 1 }}
-          >
+        <View style={styles.receiptCardContainer}>
+          <Card gradient gradientColors={[Colors.gradientStart, Colors.gradientEnd]}>
             {/* Company Header */}
             <View style={styles.companyHeader}>
               <View style={styles.logoCircle}>
-                <Ionicons name="bicycle" size={32} color={Colors.neonGreen} />
+                <Ionicons name="card-outline" size={32} color={Colors.white} />
               </View>
-              <Text style={styles.companyName}>
-                Helsinki eBike Service Oy
-              </Text>
-              <Text style={styles.companySubtitle}>Yritystili</Text>
+              <Text style={styles.companyName}>SumUp</Text>
+              <Text style={styles.companySubtitle}>Mobile Banking</Text>
             </View>
 
             {/* Status Badge */}
@@ -90,7 +83,7 @@ export default function ReceiptScreen() {
               <Ionicons
                 name="checkmark-circle"
                 size={20}
-                color={Colors.success}
+                color={Colors.white}
               />
               <Text style={styles.statusText}>
                 {recentTransaction.status.toUpperCase()}
@@ -102,13 +95,8 @@ export default function ReceiptScreen() {
 
             {/* Amount */}
             <View style={styles.amountSection}>
-              <Text style={styles.amountLabel}>Amount</Text>
-              <Text
-                style={[
-                  styles.amount,
-                  recentTransaction.type === 'credit' && styles.amountCredit,
-                ]}
-              >
+              <Text style={styles.amountLabel}>Summa</Text>
+              <Text style={styles.amount}>
                 {formatCurrency(recentTransaction.amount)}
               </Text>
             </View>
@@ -119,21 +107,21 @@ export default function ReceiptScreen() {
             {/* Transaction Details */}
             <View style={styles.detailsSection}>
               <View style={styles.detailRow}>
-                <Text style={styles.detailLabel}>Transaction ID</Text>
+                <Text style={styles.detailLabel}>Tapahtuma ID</Text>
                 <Text style={styles.detailValue}>
                   #{recentTransaction.id.padStart(8, '0')}
                 </Text>
               </View>
 
               <View style={styles.detailRow}>
-                <Text style={styles.detailLabel}>Date & Time</Text>
+                <Text style={styles.detailLabel}>Päivämäärä</Text>
                 <Text style={styles.detailValue}>
                   {formatDate(recentTransaction.date)}
                 </Text>
               </View>
 
               <View style={styles.detailRow}>
-                <Text style={styles.detailLabel}>Description</Text>
+                <Text style={styles.detailLabel}>Kuvaus</Text>
                 <Text style={styles.detailValue}>
                   {recentTransaction.title}
                 </Text>
@@ -141,7 +129,7 @@ export default function ReceiptScreen() {
 
               {recentTransaction.recipient && (
                 <View style={styles.detailRow}>
-                  <Text style={styles.detailLabel}>Recipient</Text>
+                  <Text style={styles.detailLabel}>Vastaanottaja</Text>
                   <Text style={styles.detailValue}>
                     {recentTransaction.recipient}
                   </Text>
@@ -149,23 +137,23 @@ export default function ReceiptScreen() {
               )}
 
               <View style={styles.detailRow}>
-                <Text style={styles.detailLabel}>Category</Text>
+                <Text style={styles.detailLabel}>Kategoria</Text>
                 <Text style={styles.detailValue}>
                   {recentTransaction.category}
                 </Text>
               </View>
 
               <View style={styles.detailRow}>
-                <Text style={styles.detailLabel}>Account</Text>
+                <Text style={styles.detailLabel}>Tili</Text>
                 <Text style={styles.detailValue}>
                   {mockAccount.accountNumber}
                 </Text>
               </View>
 
               <View style={styles.detailRow}>
-                <Text style={styles.detailLabel}>Type</Text>
+                <Text style={styles.detailLabel}>Tyyppi</Text>
                 <Text style={styles.detailValue}>
-                  {recentTransaction.type === 'credit' ? 'Credit' : 'Debit'}
+                  {recentTransaction.type === 'credit' ? 'Tulo' : 'Meno'}
                 </Text>
               </View>
             </View>
@@ -173,11 +161,11 @@ export default function ReceiptScreen() {
             {/* QR Code Placeholder */}
             <View style={styles.qrSection}>
               <View style={styles.qrPlaceholder}>
-                <Ionicons name="qr-code" size={80} color={Colors.neonGreen} />
+                <Ionicons name="qr-code" size={80} color={Colors.white} />
               </View>
-              <Text style={styles.qrText}>Scan to verify</Text>
+              <Text style={styles.qrText}>Skannaa vahvistaaksesi</Text>
             </View>
-          </LinearGradient>
+          </Card>
         </View>
 
         {/* Action Buttons */}
@@ -185,35 +173,41 @@ export default function ReceiptScreen() {
           <TouchableOpacity
             style={styles.actionButton}
             onPress={handleShare}
+            accessibilityLabel="Share receipt"
+            accessibilityRole="button"
           >
-            <Ionicons name="share-outline" size={24} color={Colors.white} />
-            <Text style={styles.actionButtonText}>Share</Text>
+            <Ionicons name="share-outline" size={24} color={Colors.primary} />
+            <Text style={styles.actionButtonText}>Jaa</Text>
           </TouchableOpacity>
 
           <TouchableOpacity
             style={styles.actionButton}
             onPress={handleDownload}
+            accessibilityLabel="Download receipt"
+            accessibilityRole="button"
           >
-            <Ionicons name="download-outline" size={24} color={Colors.white} />
-            <Text style={styles.actionButtonText}>Download</Text>
+            <Ionicons name="download-outline" size={24} color={Colors.primary} />
+            <Text style={styles.actionButtonText}>Lataa</Text>
           </TouchableOpacity>
 
           <TouchableOpacity
             style={styles.actionButton}
             onPress={handlePrint}
+            accessibilityLabel="Print receipt"
+            accessibilityRole="button"
           >
-            <Ionicons name="print-outline" size={24} color={Colors.white} />
-            <Text style={styles.actionButtonText}>Print</Text>
+            <Ionicons name="print-outline" size={24} color={Colors.primary} />
+            <Text style={styles.actionButtonText}>Tulosta</Text>
           </TouchableOpacity>
         </View>
 
         {/* Footer Note */}
         <View style={styles.footer}>
           <Text style={styles.footerText}>
-            This is an official receipt from Helsinki eBike Service Oy.
+            Tämä on virallinen kuitti SumUpilta.
           </Text>
           <Text style={styles.footerText}>
-            Keep this for your records.
+            Säilytä tämä omissa tiedostoissasi.
           </Text>
         </View>
       </ScrollView>
@@ -224,7 +218,7 @@ export default function ReceiptScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: Colors.black,
+    backgroundColor: Colors.background,
   },
   scrollView: {
     flex: 1,
@@ -235,26 +229,17 @@ const styles = StyleSheet.create({
   },
   title: {
     fontSize: FontSize.xxxl,
-    fontWeight: '700',
-    color: Colors.white,
+    fontWeight: FontWeight.bold,
+    color: Colors.text,
     marginBottom: Spacing.xs,
   },
   subtitle: {
     fontSize: FontSize.md,
     color: Colors.textSecondary,
   },
-  receiptCard: {
+  receiptCardContainer: {
     marginHorizontal: Spacing.lg,
     marginBottom: Spacing.xl,
-    borderRadius: BorderRadius.lg,
-    overflow: 'hidden',
-    ...Shadow.large,
-  },
-  gradient: {
-    padding: Spacing.xl,
-    borderRadius: BorderRadius.lg,
-    borderWidth: 1,
-    borderColor: Colors.lightGray,
   },
   companyHeader: {
     alignItems: 'center',
@@ -264,29 +249,28 @@ const styles = StyleSheet.create({
     width: 80,
     height: 80,
     borderRadius: BorderRadius.full,
-    backgroundColor: Colors.lightGray,
+    backgroundColor: 'rgba(255, 255, 255, 0.2)',
     justifyContent: 'center',
     alignItems: 'center',
     marginBottom: Spacing.md,
-    borderWidth: 2,
-    borderColor: Colors.neonGreen,
   },
   companyName: {
-    fontSize: FontSize.lg,
-    fontWeight: '700',
+    fontSize: FontSize.xl,
+    fontWeight: FontWeight.bold,
     color: Colors.white,
     marginBottom: Spacing.xs,
     textAlign: 'center',
   },
   companySubtitle: {
     fontSize: FontSize.sm,
-    color: Colors.textSecondary,
+    color: Colors.white,
+    opacity: 0.8,
   },
   statusBadge: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
-    backgroundColor: Colors.lightGray,
+    backgroundColor: 'rgba(255, 255, 255, 0.2)',
     paddingVertical: Spacing.sm,
     paddingHorizontal: Spacing.lg,
     borderRadius: BorderRadius.full,
@@ -296,12 +280,12 @@ const styles = StyleSheet.create({
   },
   statusText: {
     fontSize: FontSize.sm,
-    fontWeight: '700',
-    color: Colors.success,
+    fontWeight: FontWeight.bold,
+    color: Colors.white,
   },
   divider: {
     height: 1,
-    backgroundColor: Colors.lightGray,
+    backgroundColor: 'rgba(255, 255, 255, 0.2)',
     marginVertical: Spacing.lg,
   },
   amountSection: {
@@ -309,16 +293,14 @@ const styles = StyleSheet.create({
   },
   amountLabel: {
     fontSize: FontSize.sm,
-    color: Colors.textSecondary,
+    color: Colors.white,
+    opacity: 0.8,
     marginBottom: Spacing.sm,
   },
   amount: {
-    fontSize: FontSize.xxxl,
-    fontWeight: '700',
+    fontSize: FontSize.xxxxl,
+    fontWeight: FontWeight.bold,
     color: Colors.white,
-  },
-  amountCredit: {
-    color: Colors.success,
   },
   detailsSection: {
     gap: Spacing.md,
@@ -330,13 +312,14 @@ const styles = StyleSheet.create({
   },
   detailLabel: {
     fontSize: FontSize.sm,
-    color: Colors.textSecondary,
+    color: Colors.white,
+    opacity: 0.7,
     flex: 1,
   },
   detailValue: {
     fontSize: FontSize.sm,
     color: Colors.white,
-    fontWeight: '600',
+    fontWeight: FontWeight.semibold,
     flex: 1,
     textAlign: 'right',
   },
@@ -347,7 +330,7 @@ const styles = StyleSheet.create({
   qrPlaceholder: {
     width: 120,
     height: 120,
-    backgroundColor: Colors.lightGray,
+    backgroundColor: 'rgba(255, 255, 255, 0.2)',
     borderRadius: BorderRadius.md,
     justifyContent: 'center',
     alignItems: 'center',
@@ -355,7 +338,8 @@ const styles = StyleSheet.create({
   },
   qrText: {
     fontSize: FontSize.xs,
-    color: Colors.textSecondary,
+    color: Colors.white,
+    opacity: 0.7,
   },
   actionsContainer: {
     flexDirection: 'row',
@@ -368,17 +352,18 @@ const styles = StyleSheet.create({
     flexDirection: 'column',
     alignItems: 'center',
     justifyContent: 'center',
-    backgroundColor: Colors.gray,
+    backgroundColor: Colors.card,
     paddingVertical: Spacing.lg,
     borderRadius: BorderRadius.md,
     borderWidth: 1,
-    borderColor: Colors.lightGray,
+    borderColor: Colors.border,
     gap: Spacing.sm,
+    ...Shadow.small,
   },
   actionButtonText: {
     fontSize: FontSize.sm,
-    color: Colors.white,
-    fontWeight: '600',
+    color: Colors.text,
+    fontWeight: FontWeight.semibold,
   },
   footer: {
     paddingHorizontal: Spacing.lg,

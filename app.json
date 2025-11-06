@@ -1,13 +1,13 @@
 {
   "expo": {
-    "name": "Yritystili – Helsinki eBike Service Oy",
-    "slug": "yritystili-helsinki-ebike",
+    "name": "SumUp",
+    "slug": "sumup-mobile-bank",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
-    "userInterfaceStyle": "dark",
+    "userInterfaceStyle": "light",
     "newArchEnabled": true,
-    "scheme": "yritystili",
+    "scheme": "sumup",
     "plugins": [
       "expo-router"
     ],

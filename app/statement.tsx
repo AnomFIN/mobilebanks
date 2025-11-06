@@ -19,7 +19,6 @@ export default function StatementScreen() {
   const [filter, setFilter] = useState<FilterType>('all');
   const { transactions, balance } = useAccount();
   const fadeAnim = React.useRef(new Animated.Value(1)).current;
-  const { transactions, balance } = useAccount();
 
   const formatCurrency = (amount: number) => {
     return `${amount >= 0 ? '+' : ''}${amount.toFixed(2)} €`;
