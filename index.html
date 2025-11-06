@@ -284,6 +284,7 @@
             <div class="balance-content">
                 <div class="balance-info">
                     <div class="balance-label">Kokonaissaldo</div>
+                    <!-- Demo data - mirrors mobile app mock data -->
                     <div class="balance-amount" id="balance">14574.32 €</div>
                     <div class="account-number" id="accountNumber">FI21 1234 5678 9012 34</div>
                 </div>
@@ -334,7 +335,7 @@
     </div>
 
     <script>
-        // Mock data for transactions
+        // Mock data for transactions - Demo purposes only
         const transactions = [
             {
                 id: '1',
@@ -414,7 +415,7 @@
             }).join('');
         }
 
-        // Event handlers
+        // Event handlers - Using alerts for demo purposes to show where navigation would occur
         function handleProfileClick() {
             console.log('Profile clicked');
             alert('Profile functionality - would open profile settings in full app');
