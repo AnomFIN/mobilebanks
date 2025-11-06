@@ -1,12 +1,8 @@
 import { Tabs } from 'expo-router';
 import { StyleSheet, View, Platform } from 'react-native';
-import { enableScreens } from 'react-native-screens';
 import { Colors, Layout } from '../src/theme/theme';
 import { Ionicons } from '@expo/vector-icons';
 import { AccountProvider } from '../src/context/AccountContext';
-
-// Enable screens for better performance
-enableScreens(true);
 
 export default function TabLayout() {
   return (

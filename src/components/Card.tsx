@@ -1,32 +1,59 @@
 import React from 'react';
 import { View, StyleSheet, ViewStyle } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
-import { useTheme } from '../theme/theme';
+import { useTheme, Shadow } from '../theme/theme';
 
-const Card: React.FC<{ children?: React.ReactNode; style?: ViewStyle }> = ({ children, style }) => {
+interface CardProps {
+  children?: React.ReactNode;
+  style?: ViewStyle;
+  gradient?: boolean;
+  shadow?: 'small' | 'medium' | 'large';
+  padding?: number;
+}
+
+const Card: React.FC<CardProps> = ({ 
+  children, 
+  style, 
+  gradient = false, 
+  shadow = 'medium',
+  padding = 16 
+}) => {
   const theme = useTheme();
+  
+  const shadowStyle = shadow ? Shadow[shadow] : {};
+  const containerStyle = [
+    styles.container, 
+    { padding },
+    shadowStyle,
+    style
+  ];
+
+  if (gradient) {
+    return (
+      <LinearGradient 
+        colors={[theme.colors.cardGradientStart, theme.colors.cardGradientEnd]} 
+        start={[0, 0]} 
+        end={[1, 1]} 
+        style={containerStyle}
+      >
+        {children}
+      </LinearGradient>
+    );
+  }
+
   return (
-    <LinearGradient colors={[theme.colors.cardGradientStart, theme.colors.cardGradientEnd]} start={[0,0]} end={[1,1]} style={[styles.container, style]}>
-      <View style={styles.inner}>{children}</View>
-    </LinearGradient>
+    <View style={[containerStyle, { backgroundColor: '#FFFFFF' }]}>
+      {children}
+    </View>
   );
 };
 
 const styles = StyleSheet.create({ 
   container: { 
-    padding: 16, 
     borderRadius: 20, 
-    marginVertical: 8, 
-    shadowColor: '#000', 
-    shadowOpacity: 0.12, 
-    shadowRadius: 14, 
-    shadowOffset: { width: 0, height: 8 }, 
-    elevation: 8 
+    marginVertical: 8,
+    overflow: 'hidden',
   }, 
-  inner: { 
-    borderRadius: 16, 
-    overflow: 'hidden' 
-  } 
 });
 
 export default Card;
