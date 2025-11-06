@@ -28,6 +28,18 @@ A stunning Expo Go mobile banking app with a minimalist fintech UI design, featu
 
 ## 🚀 Quick Start
 
+### Automaattinen asennus (suositeltu)
+
+```bash
+# Tekstipohjainen valikko - helpoin tapa aloittaa
+python3 install.py
+
+# Tai automaattinen full install
+python3 install.py --auto
+```
+
+### Manuaalinen asennus
+
 ```bash
 # Install dependencies
 npm install
@@ -38,10 +50,11 @@ npm start
 # Scan QR code with Expo Go app
 ```
 
-**Detailed instructions**: See [SETUP.md](SETUP.md)
+**Detailed instructions**: See [SETUP.md](SETUP.md) or [README_INSTALL.md](README_INSTALL.md)
 
 ## 📚 Documentation
 
+- **[README_INSTALL.md](README_INSTALL.md)**: Install.py script guide (recommended)
 - **[SETUP.md](SETUP.md)**: Complete setup guide and quick start
 - **[UI_DESIGN.md](UI_DESIGN.md)**: Comprehensive UI design documentation
 - **[FEATURES.md](FEATURES.md)**: Detailed feature documentation
