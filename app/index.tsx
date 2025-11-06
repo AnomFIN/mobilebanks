@@ -10,12 +10,16 @@ import {
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { LinearGradient } from 'expo-linear-gradient';
+import { useRouter } from 'expo-router';
 import * as Haptics from 'expo-haptics';
 import { Ionicons } from '@expo/vector-icons';
 import { Colors, Spacing, BorderRadius, FontSize, Shadow } from '../constants';
-import { mockAccount, mockTransactions } from '../mockData';
+import { useAccount } from '../src/context/AccountContext';
+import { mockAccount } from '../mockData';
 
 export default function HomeScreen() {
+  const { balance, transactions } = useAccount();
+  const router = useRouter();
   const scaleAnim = React.useRef(new Animated.Value(1)).current;
 
   const handlePress = () => {
@@ -46,7 +50,7 @@ export default function HomeScreen() {
     });
   };
 
-  const recentTransactions = mockTransactions.slice(0, 5);
+  const recentTransactions = transactions.slice(0, 5);
 
   return (
     <SafeAreaView style={styles.container} edges={['top']}>
@@ -57,7 +61,7 @@ export default function HomeScreen() {
         {/* Header */}
         <View style={styles.header}>
           <View>
-            <Text style={styles.greeting}>Good day</Text>
+            <Text style={styles.greeting}>Hyvää päivää</Text>
             <Text style={styles.companyName}>Helsinki eBike Service Oy</Text>
           </View>
           <TouchableOpacity
@@ -78,9 +82,9 @@ export default function HomeScreen() {
           >
             <View style={styles.balanceContent}>
               <View>
-                <Text style={styles.balanceLabel}>Total Balance</Text>
+                <Text style={styles.balanceLabel}>Kokonaissaldo</Text>
                 <Text style={styles.balanceAmount}>
-                  {mockAccount.balance.toFixed(2)} €
+                  {balance.toFixed(2)} €
                 </Text>
                 <Text style={styles.accountNumber}>{mockAccount.accountNumber}</Text>
               </View>
@@ -97,12 +101,13 @@ export default function HomeScreen() {
             style={styles.actionButton}
             onPress={() => {
               Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
+              router.push('/payment');
             }}
           >
             <View style={styles.actionIcon}>
               <Ionicons name="send" size={24} color={Colors.black} />
             </View>
-            <Text style={styles.actionText}>Send</Text>
+            <Text style={styles.actionText}>Luo maksu</Text>
           </TouchableOpacity>
 
           <TouchableOpacity
@@ -114,7 +119,7 @@ export default function HomeScreen() {
             <View style={styles.actionIcon}>
               <Ionicons name="download" size={24} color={Colors.black} />
             </View>
-            <Text style={styles.actionText}>Request</Text>
+            <Text style={styles.actionText}>Pyydä</Text>
           </TouchableOpacity>
 
           <TouchableOpacity
@@ -126,7 +131,7 @@ export default function HomeScreen() {
             <View style={styles.actionIcon}>
               <Ionicons name="swap-horizontal" size={24} color={Colors.black} />
             </View>
-            <Text style={styles.actionText}>Exchange</Text>
+            <Text style={styles.actionText}>Vaihda</Text>
           </TouchableOpacity>
 
           <TouchableOpacity
@@ -138,16 +143,16 @@ export default function HomeScreen() {
             <View style={styles.actionIcon}>
               <Ionicons name="wallet" size={24} color={Colors.black} />
             </View>
-            <Text style={styles.actionText}>Top Up</Text>
+            <Text style={styles.actionText}>Lataa</Text>
           </TouchableOpacity>
         </View>
 
         {/* Recent Transactions */}
         <View style={styles.section}>
           <View style={styles.sectionHeader}>
-            <Text style={styles.sectionTitle}>Recent Activity</Text>
+            <Text style={styles.sectionTitle}>Viimeaikaiset tapahtumat</Text>
             <TouchableOpacity onPress={handlePress}>
-              <Text style={styles.seeAll}>See All</Text>
+              <Text style={styles.seeAll}>Näytä kaikki</Text>
             </TouchableOpacity>
           </View>
 
