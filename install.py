@@ -16,7 +16,6 @@ import sys
 import json
 import shutil
 import subprocess
-import threading
 import re
 import time
 import argparse
@@ -340,7 +339,7 @@ def start_expo_and_show_qr(interactive: bool = True, max_retries: int = 3) -> Op
                 echo(line.rstrip())
                 
                 # Tarkista porttikonflikti
-                if "is being used" in line.lower() or "port" in line.lower() and "in use" in line.lower():
+                if "is being used" in line.lower() or ("port" in line.lower() and "in use" in line.lower()):
                     port_conflict = True
                     # Yritä löytää ehdotettu portti
                     match = re.search(r"port (\d+)", line, re.IGNORECASE)
