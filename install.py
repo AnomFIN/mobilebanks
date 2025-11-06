@@ -103,8 +103,6 @@ def popen(cmd: Union[str, list, tuple], env: Optional[dict] = None,
     Palauttaa subprocess.Popen-instanssin.
     """
     cmd_for_subproc, shell_flag = normalize_cmd(cmd)
-    if os.name == "nt":
-        echo(f"- Windows detected: ajetaan komento shell-tilassa (shell=True)")
     return subprocess.Popen(
         cmd_for_subproc, 
         stdout=stdout, 
@@ -145,7 +143,7 @@ def compare_major(installed_ver: str, required: str) -> bool:
     req_major = int(req_match.group(1))
     return inst[0] >= req_major
 
-def ensure_python_package(package_name: str):
+def ensure_python_package(package_name: str) -> bool:
     """Varmistaa että Python-paketti on asennettu"""
     try:
         __import__(package_name)
