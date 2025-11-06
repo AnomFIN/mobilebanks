@@ -87,7 +87,7 @@ def parse_version(version_str):
         version_str = version_str.lstrip('v')
         parts = version_str.split('.')
         return tuple(int(p) for p in parts[:3])
-    except:
+    except (ValueError, AttributeError, IndexError):
         return (0, 0, 0)
 
 def check_node_npm():
@@ -290,6 +290,7 @@ def start_expo_dev_server(tunnel=False):
     print_info(f"Suoritetaan: {' '.join(cmd)}")
     print_info("Paina Ctrl+C lopettaaksesi\n")
     
+    process = None
     try:
         # Käynnistä Expo prosessi
         process = subprocess.Popen(
