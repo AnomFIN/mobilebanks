@@ -1,57 +1,64 @@
 import { Tabs } from 'expo-router';
 import { StyleSheet, View, Platform } from 'react-native';
+import { enableScreens } from 'react-native-screens';
 import { Colors } from '../constants';
 import { Ionicons } from '@expo/vector-icons';
+import { AccountProvider } from '../src/context/AccountContext';
+
+// Enable screens for better performance
+enableScreens(true);
 
 export default function TabLayout() {
   return (
-    <Tabs
-      screenOptions={{
-        headerShown: false,
-        tabBarStyle: styles.tabBar,
-        tabBarActiveTintColor: Colors.neonGreen,
-        tabBarInactiveTintColor: Colors.textSecondary,
-        tabBarLabelStyle: styles.tabBarLabel,
-        tabBarShowLabel: true,
-      }}
-    >
-      <Tabs.Screen
-        name="index"
-        options={{
-          title: 'Home',
-          tabBarIcon: ({ color, size }) => (
-            <Ionicons name="home" size={size} color={color} />
-          ),
+    <AccountProvider>
+      <Tabs
+        screenOptions={{
+          headerShown: false,
+          tabBarStyle: styles.tabBar,
+          tabBarActiveTintColor: Colors.neonGreen,
+          tabBarInactiveTintColor: Colors.textSecondary,
+          tabBarLabelStyle: styles.tabBarLabel,
+          tabBarShowLabel: true,
         }}
-      />
-      <Tabs.Screen
-        name="payment"
-        options={{
-          title: 'Payment',
-          tabBarIcon: ({ color, size }) => (
-            <Ionicons name="send" size={size} color={color} />
-          ),
-        }}
-      />
-      <Tabs.Screen
-        name="statement"
-        options={{
-          title: 'Statement',
-          tabBarIcon: ({ color, size }) => (
-            <Ionicons name="list" size={size} color={color} />
-          ),
-        }}
-      />
-      <Tabs.Screen
-        name="receipt"
-        options={{
-          title: 'Receipt',
-          tabBarIcon: ({ color, size }) => (
-            <Ionicons name="document-text" size={size} color={color} />
-          ),
-        }}
-      />
-    </Tabs>
+      >
+        <Tabs.Screen
+          name="index"
+          options={{
+            title: 'Koti',
+            tabBarIcon: ({ color, size }) => (
+              <Ionicons name="home" size={size} color={color} />
+            ),
+          }}
+        />
+        <Tabs.Screen
+          name="payment"
+          options={{
+            title: 'Kassa',
+            tabBarIcon: ({ color, size }) => (
+              <Ionicons name="send" size={size} color={color} />
+            ),
+          }}
+        />
+        <Tabs.Screen
+          name="statement"
+          options={{
+            title: 'Tiliote',
+            tabBarIcon: ({ color, size }) => (
+              <Ionicons name="list" size={size} color={color} />
+            ),
+          }}
+        />
+        <Tabs.Screen
+          name="receipt"
+          options={{
+            title: 'Kuitti',
+            tabBarIcon: ({ color, size }) => (
+              <Ionicons name="document-text" size={size} color={color} />
+            ),
+          }}
+        />
+      </Tabs>
+    </AccountProvider>
   );
 }
 

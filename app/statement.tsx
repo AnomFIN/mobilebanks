@@ -11,12 +11,13 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import * as Haptics from 'expo-haptics';
 import { Ionicons } from '@expo/vector-icons';
 import { Colors, Spacing, BorderRadius, FontSize, Shadow } from '../constants';
-import { mockTransactions } from '../mockData';
+import { useAccount } from '../src/context/AccountContext';
 
 type FilterType = 'all' | 'credit' | 'debit';
 
 export default function StatementScreen() {
   const [filter, setFilter] = useState<FilterType>('all');
+  const { transactions, balance } = useAccount();
   const fadeAnim = React.useRef(new Animated.Value(1)).current;
 
   const formatCurrency = (amount: number) => {
@@ -52,16 +53,16 @@ export default function StatementScreen() {
     }
   };
 
-  const filteredTransactions = mockTransactions.filter((transaction) => {
+  const filteredTransactions = transactions.filter((transaction) => {
     if (filter === 'all') return true;
     return transaction.type === filter;
   });
 
-  const totalIncome = mockTransactions
+  const totalIncome = transactions
     .filter((t) => t.type === 'credit')
     .reduce((sum, t) => sum + t.amount, 0);
 
-  const totalExpenses = mockTransactions
+  const totalExpenses = transactions
     .filter((t) => t.type === 'debit')
     .reduce((sum, t) => sum + Math.abs(t.amount), 0);
 
@@ -70,8 +71,8 @@ export default function StatementScreen() {
       <ScrollView style={styles.scrollView} showsVerticalScrollIndicator={false}>
         {/* Header */}
         <View style={styles.header}>
-          <Text style={styles.title}>Statement</Text>
-          <Text style={styles.subtitle}>Transaction history</Text>
+          <Text style={styles.title}>Tiliote</Text>
+          <Text style={styles.subtitle}>Tapahtumahistoria</Text>
         </View>
 
         {/* Summary Cards */}
@@ -80,7 +81,7 @@ export default function StatementScreen() {
             <View style={styles.summaryIcon}>
               <Ionicons name="trending-up" size={24} color={Colors.success} />
             </View>
-            <Text style={styles.summaryLabel}>Income</Text>
+            <Text style={styles.summaryLabel}>Tulot</Text>
             <Text style={[styles.summaryAmount, styles.incomeAmount]}>
               +{totalIncome.toFixed(2)} €
             </Text>
@@ -90,7 +91,7 @@ export default function StatementScreen() {
             <View style={styles.summaryIcon}>
               <Ionicons name="trending-down" size={24} color={Colors.danger} />
             </View>
-            <Text style={styles.summaryLabel}>Expenses</Text>
+            <Text style={styles.summaryLabel}>Menot</Text>
             <Text style={[styles.summaryAmount, styles.expenseAmount]}>
               -{totalExpenses.toFixed(2)} €
             </Text>
@@ -109,7 +110,7 @@ export default function StatementScreen() {
                 filter === 'all' && styles.filterTextActive,
               ]}
             >
-              All
+              Kaikki
             </Text>
           </TouchableOpacity>
 
@@ -123,7 +124,7 @@ export default function StatementScreen() {
                 filter === 'credit' && styles.filterTextActive,
               ]}
             >
-              Income
+              Tulot
             </Text>
           </TouchableOpacity>
 
@@ -137,7 +138,7 @@ export default function StatementScreen() {
                 filter === 'debit' && styles.filterTextActive,
               ]}
             >
-              Expenses
+              Menot
             </Text>
           </TouchableOpacity>
         </View>
