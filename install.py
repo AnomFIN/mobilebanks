@@ -8,6 +8,7 @@ Fixed for Windows compatibility - normalizes subprocess calls for .cmd/.bat file
 import os
 import sys
 import subprocess
+import shlex
 import json
 import argparse
 from typing import List, Tuple, Union, Optional
@@ -28,7 +29,13 @@ def normalize_cmd(cmd: Union[List[str], Tuple[str, ...], str]) -> Tuple[Union[Li
     if os.name == 'nt':
         # Windows: convert to string and use shell=True for .cmd/.bat compatibility
         if isinstance(cmd, (list, tuple)):
-            cmd_str = ' '.join(cmd)
+            # Use shlex.join if available (Python 3.8+), otherwise fallback to ' '.join
+            # shlex.join properly escapes arguments with spaces/special characters
+            try:
+                cmd_str = shlex.join(cmd)
+            except AttributeError:
+                # Python < 3.8: use manual escaping
+                cmd_str = ' '.join(shlex.quote(str(arg)) for arg in cmd)
             return (cmd_str, True)
         return (cmd, True)
     else:
@@ -36,6 +43,7 @@ def normalize_cmd(cmd: Union[List[str], Tuple[str, ...], str]) -> Tuple[Union[Li
         if isinstance(cmd, str):
             return (cmd.split(), False)
         return (cmd, False)
+
 
 
 def run(cmd: Union[List[str], str], check: bool = True, capture_output: bool = False, 
@@ -179,7 +187,6 @@ def expo_login() -> bool:
     else:
         print("Ohitetaan Expo login\n")
         return True
-
 
 
 def generate_qr_code() -> Optional[str]:

@@ -11,6 +11,8 @@ import subprocess
 from unittest.mock import patch, MagicMock
 
 # Add parent directory to path to import install module
+# This is acceptable for simple test scripts without complex packaging
+# For production, consider using setup.py or pyproject.toml with proper package structure
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 
 from install import normalize_cmd, run, popen
