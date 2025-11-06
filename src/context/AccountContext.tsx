@@ -21,6 +21,8 @@ interface AccountProviderProps {
   children: ReactNode;
 }
 
+let transactionCounter = 1000;
+
 export const AccountProvider: React.FC<AccountProviderProps> = ({ children }) => {
   const [balance, setBalance] = useState<number>(14574.32);
   const [transactions, setTransactions] = useState<Transaction[]>([
@@ -61,8 +63,10 @@ export const AccountProvider: React.FC<AccountProviderProps> = ({ children }) =>
     const numAmount = Number(amount) || 0;
     
     // Create new transaction with negative amount (debit)
+    // Use counter-based ID to avoid duplicates
+    transactionCounter++;
     const newTransaction: Transaction = {
-      id: Date.now().toString(),
+      id: transactionCounter.toString(),
       title: description || 'Maksu',
       amount: -Math.abs(numAmount),
       date: new Date().toISOString(),
