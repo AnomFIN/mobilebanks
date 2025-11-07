@@ -1,62 +1,59 @@
 import React from 'react';
-import { StyleSheet, View, ViewStyle } from 'react-native';
+import { View, StyleSheet, ViewStyle } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
-import { Colors, BorderRadius, Spacing, Shadow } from '../theme/theme';
+import { useTheme, Shadow } from '../theme/theme';
 
 interface CardProps {
-  children: React.ReactNode;
-  gradient?: boolean;
-  gradientColors?: string[];
+  children?: React.ReactNode;
   style?: ViewStyle;
-  elevation?: 'small' | 'medium' | 'large';
+  gradient?: boolean;
+  shadow?: 'small' | 'medium' | 'large';
+  padding?: number;
 }
 
-export const Card: React.FC<CardProps> = ({
-  children,
-  gradient = false,
-  gradientColors = [Colors.white, Colors.veryLightGray],
-  style,
-  elevation = 'medium',
+const Card: React.FC<CardProps> = ({ 
+  children, 
+  style, 
+  gradient = false, 
+  shadow = 'medium',
+  padding = 16 
 }) => {
-  const shadowStyle = elevation === 'small' 
-    ? Shadow.small 
-    : elevation === 'large' 
-    ? Shadow.large 
-    : Shadow.medium;
+  const theme = useTheme();
+  
+  const shadowStyle = shadow ? Shadow[shadow] : {};
+  const containerStyle = [
+    styles.container, 
+    { padding },
+    shadowStyle,
+    style
+  ];
 
   if (gradient) {
     return (
-      <View style={[styles.container, shadowStyle, style]}>
-        <LinearGradient
-          colors={gradientColors}
-          style={styles.gradient}
-          start={{ x: 0, y: 0 }}
-          end={{ x: 1, y: 1 }}
-        >
-          {children}
-        </LinearGradient>
-      </View>
+      <LinearGradient 
+        colors={[theme.colors.cardGradientStart, theme.colors.cardGradientEnd]} 
+        start={[0, 0]} 
+        end={[1, 1]} 
+        style={containerStyle}
+      >
+        {children}
+      </LinearGradient>
     );
   }
 
   return (
-    <View style={[styles.container, styles.solidCard, shadowStyle, style]}>
+    <View style={[containerStyle, { backgroundColor: '#FFFFFF' }]}>
       {children}
     </View>
   );
 };
 
-const styles = StyleSheet.create({
-  container: {
-    borderRadius: BorderRadius.lg,
+const styles = StyleSheet.create({ 
+  container: { 
+    borderRadius: 20, 
+    marginVertical: 8,
     overflow: 'hidden',
-  },
-  solidCard: {
-    backgroundColor: Colors.white,
-    padding: Spacing.lg,
-  },
-  gradient: {
-    padding: Spacing.lg,
-    borderRadius: BorderRadius.lg,
-  },
+  }, 
 });
+
+export default Card;

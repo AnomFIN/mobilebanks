@@ -11,11 +11,9 @@ import {
 import { SafeAreaView } from 'react-native-safe-area-context';
 import * as Haptics from 'expo-haptics';
 import { Ionicons } from '@expo/vector-icons';
-import { useRouter } from 'expo-router';
-import { HeaderBar } from '../src/components/HeaderBar';
-import { Card } from '../src/components/Card';
-import { Colors, Spacing, BorderRadius, FontSize, FontWeight, Shadow, Gradients } from '../src/theme/theme';
+import { Colors, Spacing, BorderRadius, FontSize, Shadow, FontWeight } from '../src/theme/theme';
 import { useAccount } from '../src/context/AccountContext';
+import Card from '../src/components/Card';
 
 type FilterType = 'all' | 'credit' | 'debit';
 type PeriodType = 'week' | 'month' | 'year';
@@ -36,6 +34,8 @@ export default function ReportsScreen() {
   const formatDate = (dateString: string) => {
     const date = new Date(dateString);
     return date.toLocaleDateString('fi-FI', {
+      weekday: 'short',
+      month: 'short',
       day: 'numeric',
       month: 'short',
       year: 'numeric',
@@ -81,87 +81,111 @@ export default function ReportsScreen() {
     .filter((t) => t.type === 'debit')
     .reduce((sum, t) => sum + Math.abs(t.amount), 0);
 
-  const netBalance = totalIncome - totalExpenses;
+  const netIncome = totalIncome - totalExpenses;
 
   return (
     <SafeAreaView style={styles.container} edges={['top']}>
       <HeaderBar />
       <ScrollView style={styles.scrollView} showsVerticalScrollIndicator={false}>
-        {/* Title */}
-        <View style={styles.titleSection}>
+        {/* Header */}
+        <View style={styles.header}>
           <Text style={styles.title}>Raportit</Text>
           <Text style={styles.subtitle}>Taloudellinen yhteenveto</Text>
         </View>
 
         {/* Period Selector */}
-        <View style={styles.periodSection}>
-          <View style={styles.periodContainer}>
+        <View style={styles.periodContainer}>
+          {(['week', 'month', 'year'] as PeriodType[]).map((p) => (
             <TouchableOpacity
-              style={[styles.periodTab, period === 'week' && styles.periodTabActive]}
-              onPress={() => handlePeriodChange('week')}
+              key={p}
+              style={[styles.periodTab, period === p && styles.periodTabActive]}
+              onPress={() => handlePeriodChange(p)}
             >
-              <Text style={[styles.periodText, period === 'week' && styles.periodTextActive]}>
-                Viikko
+              <Text
+                style={[
+                  styles.periodText,
+                  period === p && styles.periodTextActive,
+                ]}
+              >
+                {p === 'week' ? 'Viikko' : p === 'month' ? 'Kuukausi' : 'Vuosi'}
               </Text>
             </TouchableOpacity>
-            <TouchableOpacity
-              style={[styles.periodTab, period === 'month' && styles.periodTabActive]}
-              onPress={() => handlePeriodChange('month')}
-            >
-              <Text style={[styles.periodText, period === 'month' && styles.periodTextActive]}>
-                Kuukausi
-              </Text>
-            </TouchableOpacity>
-            <TouchableOpacity
-              style={[styles.periodTab, period === 'year' && styles.periodTabActive]}
-              onPress={() => handlePeriodChange('year')}
-            >
-              <Text style={[styles.periodText, period === 'year' && styles.periodTextActive]}>
-                Vuosi
-              </Text>
-            </TouchableOpacity>
-          </View>
+          ))}
         </View>
 
         {/* Summary Cards */}
-        <View style={styles.summarySection}>
-          <Card gradient gradientColors={[Colors.success, '#28A745']} elevation="large">
-            <View style={styles.summaryCard}>
-              <View style={styles.summaryIcon}>
-                <Ionicons name="trending-up" size={28} color={Colors.white} />
-              </View>
-              <Text style={styles.summaryLabel}>Tulot</Text>
-              <Text style={styles.summaryAmount}>
-                +{totalIncome.toFixed(2)} €
-              </Text>
+        <View style={styles.summaryContainer}>
+          <Card shadow="medium" padding={Spacing.lg} style={styles.summaryCard}>
+            <View style={styles.summaryIcon}>
+              <Ionicons name="trending-up" size={24} color={Colors.success} />
             </View>
+            <Text style={styles.summaryLabel}>Tulot</Text>
+            <Text style={[styles.summaryAmount, styles.incomeAmount]}>
+              +{totalIncome.toFixed(2)} €
+            </Text>
           </Card>
 
-          <View style={{ height: Spacing.md }} />
+          <Card shadow="medium" padding={Spacing.lg} style={styles.summaryCard}>
+            <View style={styles.summaryIcon}>
+              <Ionicons name="trending-down" size={24} color={Colors.danger} />
+            </View>
+            <Text style={styles.summaryLabel}>Menot</Text>
+            <Text style={[styles.summaryAmount, styles.expenseAmount]}>
+              -{totalExpenses.toFixed(2)} €
+            </Text>
+          </Card>
+        </View>
 
-          <Card gradient gradientColors={[Colors.danger, '#DC3545']} elevation="large">
-            <View style={styles.summaryCard}>
-              <View style={styles.summaryIcon}>
-                <Ionicons name="trending-down" size={28} color={Colors.white} />
+        {/* Net Income Card */}
+        <View style={styles.netIncomeContainer}>
+          <Card gradient shadow="large" padding={Spacing.lg}>
+            <View style={styles.netIncomeContent}>
+              <View>
+                <Text style={styles.netIncomeLabel}>Nettotulos</Text>
+                <Text
+                  style={[
+                    styles.netIncomeAmount,
+                    netIncome >= 0 ? styles.netPositive : styles.netNegative,
+                  ]}
+                >
+                  {formatCurrency(netIncome)}
+                </Text>
               </View>
-              <Text style={styles.summaryLabel}>Menot</Text>
-              <Text style={styles.summaryAmount}>
-                -{totalExpenses.toFixed(2)} €
-              </Text>
+              <View style={styles.netIncomeIcon}>
+                <Ionicons
+                  name={netIncome >= 0 ? 'trending-up' : 'trending-down'}
+                  size={32}
+                  color={Colors.white}
+                />
+              </View>
             </View>
           </Card>
+        </View>
 
-          <View style={{ height: Spacing.md }} />
-
-          <Card gradient gradientColors={Gradients.blueCard} elevation="large">
-            <View style={styles.summaryCard}>
-              <View style={styles.summaryIcon}>
-                <Ionicons name="wallet" size={28} color={Colors.white} />
+        {/* Simple Chart Placeholder */}
+        <View style={styles.chartContainer}>
+          <Card shadow="medium" padding={Spacing.lg}>
+            <Text style={styles.chartTitle}>Kulutuskuvaaja</Text>
+            <View style={styles.chartPlaceholder}>
+              <View style={styles.chartBars}>
+                {[60, 80, 45, 90, 70, 85, 55].map((height, index) => (
+                  <View key={index} style={styles.chartBarContainer}>
+                    <View
+                      style={[
+                        styles.chartBar,
+                        { height: `${height}%`, backgroundColor: Colors.primary },
+                      ]}
+                    />
+                  </View>
+                ))}
               </View>
-              <Text style={styles.summaryLabel}>Nettosaldo</Text>
-              <Text style={styles.summaryAmount}>
-                {netBalance >= 0 ? '+' : ''}{netBalance.toFixed(2)} €
-              </Text>
+              <View style={styles.chartLabels}>
+                {['Ma', 'Ti', 'Ke', 'To', 'Pe', 'La', 'Su'].map((day, index) => (
+                  <Text key={index} style={styles.chartLabel}>
+                    {day}
+                  </Text>
+                ))}
+              </View>
             </View>
           </Card>
         </View>
@@ -203,97 +227,102 @@ export default function ReportsScreen() {
           </TouchableOpacity>
         </View>
 
-        {/* Filter Tabs */}
-        <View style={styles.filterSection}>
-          <Text style={styles.sectionTitle}>Tapahtumat</Text>
-          <View style={styles.filterContainer}>
-            <TouchableOpacity
-              style={[styles.filterTab, filter === 'all' && styles.filterTabActive]}
-              onPress={() => handleFilterChange('all')}
-            >
-              <Text style={[styles.filterText, filter === 'all' && styles.filterTextActive]}>
-                Kaikki
-              </Text>
-            </TouchableOpacity>
-
-            <TouchableOpacity
-              style={[styles.filterTab, filter === 'credit' && styles.filterTabActive]}
-              onPress={() => handleFilterChange('credit')}
-            >
-              <Text style={[styles.filterText, filter === 'credit' && styles.filterTextActive]}>
-                Tulot
-              </Text>
-            </TouchableOpacity>
-
-            <TouchableOpacity
-              style={[styles.filterTab, filter === 'debit' && styles.filterTabActive]}
-              onPress={() => handleFilterChange('debit')}
-            >
-              <Text style={[styles.filterText, filter === 'debit' && styles.filterTextActive]}>
-                Menot
-              </Text>
-            </TouchableOpacity>
-          </View>
-        </View>
-
         {/* Transactions List */}
-        <View style={styles.transactionsSection}>
-          <Animated.View style={{ opacity: fadeAnim }}>
-            <Card>
-              {filteredTransactions.length > 0 ? (
-                filteredTransactions.map((transaction, index) => (
-                  <TouchableOpacity
-                    key={transaction.id}
-                    style={[
-                      styles.transactionItem,
-                      index === filteredTransactions.length - 1 && styles.transactionItemLast,
-                    ]}
-                    onPress={() => {
-                      Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
-                      router.push('/receipt');
-                    }}
-                  >
-                    <View
-                      style={[
-                        styles.transactionIcon,
-                        transaction.type === 'credit'
-                          ? styles.transactionIconCredit
-                          : styles.transactionIconDebit,
-                      ]}
-                    >
-                      <Ionicons
-                        name={transaction.type === 'credit' ? 'arrow-down' : 'arrow-up'}
-                        size={18}
-                        color={Colors.white}
-                      />
-                    </View>
+        <Animated.View style={[styles.transactionsList, { opacity: fadeAnim }]}>
+          {filteredTransactions.map((transaction) => (
+            <Card
+              key={transaction.id}
+              shadow="small"
+              padding={Spacing.md}
+              style={styles.transactionCard}
+            >
+              <TouchableOpacity
+                style={styles.transactionItem}
+                onPress={() => {
+                  Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+                }}
+              >
+                <View
+                  style={[
+                    styles.transactionIconContainer,
+                    transaction.type === 'credit'
+                      ? styles.transactionIconCredit
+                      : styles.transactionIconDebit,
+                  ]}
+                >
+                  <Ionicons
+                    name={
+                      transaction.type === 'credit'
+                        ? 'arrow-down'
+                        : 'arrow-up'
+                    }
+                    size={20}
+                    color={Colors.white}
+                  />
+                </View>
 
-                    <View style={styles.transactionContent}>
-                      <Text style={styles.transactionTitle}>{transaction.title}</Text>
-                      <Text style={styles.transactionDate}>{formatDate(transaction.date)}</Text>
-                      {transaction.category && (
-                        <Text style={styles.transactionCategory}>{transaction.category}</Text>
-                      )}
-                    </View>
-
+                <View style={styles.transactionContent}>
+                  <View style={styles.transactionHeader}>
+                    <Text style={styles.transactionTitle}>
+                      {transaction.title}
+                    </Text>
                     <Text
                       style={[
                         styles.transactionAmount,
-                        transaction.type === 'credit' && styles.transactionAmountCredit,
+                        transaction.type === 'credit' &&
+                          styles.transactionAmountCredit,
                       ]}
                     >
                       {formatCurrency(transaction.amount)}
                     </Text>
-                  </TouchableOpacity>
-                ))
-              ) : (
-                <View style={styles.emptyState}>
-                  <Ionicons name="document-outline" size={48} color={Colors.lightGray} />
-                  <Text style={styles.emptyStateText}>Ei tapahtumia</Text>
+                  </View>
+
+                  <View style={styles.transactionFooter}>
+                    <View style={styles.transactionMeta}>
+                      <Ionicons
+                        name="calendar-outline"
+                        size={12}
+                        color={Colors.textSecondary}
+                      />
+                      <Text style={styles.transactionDate}>
+                        {formatDate(transaction.date)}
+                      </Text>
+                    </View>
+
+                    <View style={styles.transactionMeta}>
+                      <Ionicons
+                        name="pricetag-outline"
+                        size={12}
+                        color={Colors.textSecondary}
+                      />
+                      <Text style={styles.transactionCategory}>
+                        {transaction.category}
+                      </Text>
+                    </View>
+                  </View>
+
+                  {transaction.recipient && (
+                    <Text style={styles.transactionRecipient}>
+                      {transaction.recipient}
+                    </Text>
+                  )}
                 </View>
-              )}
+              </TouchableOpacity>
             </Card>
-          </Animated.View>
+          ))}
+        </Animated.View>
+
+        {/* Export Button */}
+        <View style={styles.exportContainer}>
+          <TouchableOpacity
+            style={styles.exportButton}
+            onPress={() => {
+              Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
+            }}
+          >
+            <Ionicons name="download-outline" size={20} color={Colors.white} />
+            <Text style={styles.exportButtonText}>Vie raportti</Text>
+          </TouchableOpacity>
         </View>
       </ScrollView>
     </SafeAreaView>
@@ -303,7 +332,7 @@ export default function ReportsScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: Colors.veryLightGray,
+    backgroundColor: Colors.background,
   },
   scrollView: {
     flex: 1,
@@ -316,32 +345,32 @@ const styles = StyleSheet.create({
   title: {
     fontSize: FontSize.xxxl,
     fontWeight: FontWeight.bold,
-    color: Colors.textPrimary,
+    color: Colors.text,
     marginBottom: Spacing.xs,
   },
   subtitle: {
     fontSize: FontSize.md,
     color: Colors.textSecondary,
   },
-  periodSection: {
-    paddingHorizontal: Spacing.lg,
-    marginBottom: Spacing.lg,
-  },
   periodContainer: {
     flexDirection: 'row',
-    backgroundColor: Colors.white,
-    borderRadius: BorderRadius.lg,
-    padding: 4,
-    ...Shadow.small,
+    paddingHorizontal: Spacing.lg,
+    marginBottom: Spacing.lg,
+    gap: Spacing.sm,
   },
   periodTab: {
     flex: 1,
-    paddingVertical: Spacing.md,
+    paddingVertical: Spacing.sm,
+    paddingHorizontal: Spacing.md,
+    borderRadius: BorderRadius.sm,
+    backgroundColor: Colors.backgroundSecondary,
     alignItems: 'center',
-    borderRadius: BorderRadius.md,
+    borderWidth: 1,
+    borderColor: Colors.border,
   },
   periodTabActive: {
-    backgroundColor: Colors.primaryBlue,
+    backgroundColor: Colors.primary,
+    borderColor: Colors.primary,
   },
   periodText: {
     fontSize: FontSize.sm,
@@ -351,19 +380,20 @@ const styles = StyleSheet.create({
   periodTextActive: {
     color: Colors.white,
   },
-  summarySection: {
+  summaryContainer: {
+    flexDirection: 'row',
     paddingHorizontal: Spacing.lg,
     marginBottom: Spacing.lg,
+    gap: Spacing.md,
   },
   summaryCard: {
-    alignItems: 'center',
-    paddingVertical: Spacing.md,
+    flex: 1,
   },
   summaryIcon: {
     width: 56,
     height: 56,
     borderRadius: BorderRadius.full,
-    backgroundColor: 'rgba(255, 255, 255, 0.2)',
+    backgroundColor: Colors.backgroundSecondary,
     justifyContent: 'center',
     alignItems: 'center',
     marginBottom: Spacing.md,
@@ -373,11 +403,11 @@ const styles = StyleSheet.create({
     color: Colors.white,
     opacity: 0.9,
     marginBottom: Spacing.xs,
+    fontWeight: FontWeight.medium,
   },
   summaryAmount: {
-    fontSize: FontSize.xxxl,
+    fontSize: FontSize.xl,
     fontWeight: FontWeight.bold,
-    color: Colors.white,
   },
   chartSection: {
     paddingHorizontal: Spacing.lg,
@@ -389,24 +419,81 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     marginBottom: Spacing.md,
   },
-  chartTitle: {
-    fontSize: FontSize.lg,
-    fontWeight: FontWeight.bold,
-    color: Colors.textPrimary,
+  netIncomeContainer: {
+    paddingHorizontal: Spacing.lg,
+    marginBottom: Spacing.lg,
   },
-  chartPlaceholder: {
-    height: 200,
+  netIncomeContent: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+  },
+  netIncomeLabel: {
+    fontSize: FontSize.md,
+    color: Colors.white,
+    marginBottom: Spacing.xs,
+    fontWeight: FontWeight.medium,
+    opacity: 0.9,
+  },
+  netIncomeAmount: {
+    fontSize: FontSize.xxl,
+    fontWeight: FontWeight.bold,
+  },
+  netPositive: {
+    color: Colors.white,
+  },
+  netNegative: {
+    color: Colors.white,
+  },
+  netIncomeIcon: {
+    width: 60,
+    height: 60,
+    borderRadius: BorderRadius.full,
+    backgroundColor: 'rgba(255, 255, 255, 0.2)',
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: Colors.veryLightGray,
-    borderRadius: BorderRadius.md,
   },
-  chartPlaceholderText: {
-    fontSize: FontSize.sm,
+  chartContainer: {
+    paddingHorizontal: Spacing.lg,
+    marginBottom: Spacing.lg,
+  },
+  chartTitle: {
+    fontSize: FontSize.md,
+    fontWeight: FontWeight.semibold,
+    color: Colors.text,
+    marginBottom: Spacing.md,
+  },
+  chartPlaceholder: {
+    height: 180,
+  },
+  chartBars: {
+    flexDirection: 'row',
+    justifyContent: 'space-around',
+    alignItems: 'flex-end',
+    height: 140,
+    marginBottom: Spacing.sm,
+  },
+  chartBarContainer: {
+    flex: 1,
+    justifyContent: 'flex-end',
+    alignItems: 'center',
+    marginHorizontal: 2,
+  },
+  chartBar: {
+    width: '100%',
+    borderRadius: BorderRadius.xs,
+  },
+  chartLabels: {
+    flexDirection: 'row',
+    justifyContent: 'space-around',
+  },
+  chartLabel: {
+    fontSize: FontSize.xs,
     color: Colors.textSecondary,
-    marginTop: Spacing.md,
+    flex: 1,
+    textAlign: 'center',
   },
-  actionsSection: {
+  filterContainer: {
     flexDirection: 'row',
     paddingHorizontal: Spacing.lg,
     marginBottom: Spacing.lg,
@@ -447,13 +534,17 @@ const styles = StyleSheet.create({
   filterTab: {
     flex: 1,
     paddingVertical: Spacing.md,
-    backgroundColor: Colors.white,
+    paddingHorizontal: Spacing.md,
+    borderRadius: BorderRadius.sm,
+    backgroundColor: Colors.backgroundSecondary,
     alignItems: 'center',
-    borderRadius: BorderRadius.md,
-    ...Shadow.small,
+    borderWidth: 1,
+    borderColor: Colors.border,
   },
   filterTabActive: {
-    backgroundColor: Colors.primaryBlue,
+    backgroundColor: Colors.accent,
+    borderColor: Colors.accent,
+    ...Shadow.small,
   },
   filterText: {
     fontSize: FontSize.sm,
@@ -465,14 +556,13 @@ const styles = StyleSheet.create({
   },
   transactionsSection: {
     paddingHorizontal: Spacing.lg,
-    paddingBottom: Spacing.xl,
+    paddingBottom: Spacing.md,
+  },
+  transactionCard: {
+    marginBottom: Spacing.md,
   },
   transactionItem: {
     flexDirection: 'row',
-    alignItems: 'center',
-    paddingVertical: Spacing.md,
-    borderBottomWidth: 1,
-    borderBottomColor: Colors.lightGray,
   },
   transactionItemLast: {
     borderBottomWidth: 0,
@@ -489,7 +579,7 @@ const styles = StyleSheet.create({
     backgroundColor: Colors.success,
   },
   transactionIconDebit: {
-    backgroundColor: Colors.mediumGray,
+    backgroundColor: Colors.textSecondary,
   },
   transactionContent: {
     flex: 1,
@@ -497,22 +587,13 @@ const styles = StyleSheet.create({
   transactionTitle: {
     fontSize: FontSize.md,
     fontWeight: FontWeight.semibold,
-    color: Colors.textPrimary,
-    marginBottom: 2,
-  },
-  transactionDate: {
-    fontSize: FontSize.xs,
-    color: Colors.textSecondary,
-  },
-  transactionCategory: {
-    fontSize: FontSize.xs,
-    color: Colors.textLight,
-    marginTop: 2,
+    color: Colors.text,
+    marginRight: Spacing.sm,
   },
   transactionAmount: {
     fontSize: FontSize.md,
     fontWeight: FontWeight.bold,
-    color: Colors.textPrimary,
+    color: Colors.text,
   },
   transactionAmountCredit: {
     color: Colors.success,
@@ -525,5 +606,24 @@ const styles = StyleSheet.create({
     fontSize: FontSize.md,
     color: Colors.textSecondary,
     marginTop: Spacing.md,
+  },
+  exportContainer: {
+    paddingHorizontal: Spacing.lg,
+    paddingBottom: Spacing.xl,
+  },
+  exportButton: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    backgroundColor: Colors.primary,
+    paddingVertical: Spacing.md,
+    borderRadius: BorderRadius.md,
+    ...Shadow.medium,
+    gap: Spacing.sm,
+  },
+  exportButtonText: {
+    fontSize: FontSize.md,
+    fontWeight: FontWeight.semibold,
+    color: Colors.white,
   },
 });

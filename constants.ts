@@ -11,6 +11,15 @@ export const Colors = {
   success: '#00FFAE',
   danger: '#FF006E',
   warning: '#FFB800',
+  // Additional colors needed by components
+  primary: '#0A84FF',
+  accent: '#00D1FF',
+  background: '#FFFFFF',
+  backgroundSecondary: '#FBFDFF',
+  border: '#E5E7EB',
+  cardBackground: '#1A1A1A',
+  text: '#0B0B0B',
+  overlay: 'rgba(0, 0, 0, 0.5)',
 };
 
 export const Spacing = {
@@ -20,9 +29,11 @@ export const Spacing = {
   lg: 24,
   xl: 32,
   xxl: 48,
+  xxxl: 64,
 };
 
 export const BorderRadius = {
+  xs: 4,
   sm: 8,
   md: 12,
   lg: 16,
@@ -38,6 +49,7 @@ export const FontSize = {
   xl: 24,
   xxl: 32,
   xxxl: 48,
+  huge: 64,
 };
 
 export const Shadow = {
@@ -62,4 +74,15 @@ export const Shadow = {
     shadowRadius: 16,
     elevation: 8,
   },
+};
+
+export const FontWeight = {
+  regular: '400' as const,
+  medium: '500' as const,
+  semibold: '600' as const,
+  bold: '700' as const,
+};
+
+export const Layout = {
+  tabBarHeight: Platform.OS === 'ios' ? 80 : 60,
 };

@@ -1,76 +1,47 @@
 import React from 'react';
-import { StyleSheet, Text, View, TouchableOpacity } from 'react-native';
-import { Ionicons } from '@expo/vector-icons';
-import { Colors, Spacing, FontSize, FontWeight } from '../theme/theme';
+import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
+import { useTheme } from '../theme/theme';
 
 interface HeaderBarProps {
-  bankName?: string;
-  greeting?: string;
-  ownerText?: string;
+  small?: boolean;
   onProfilePress?: () => void;
 }
 
-export const HeaderBar: React.FC<HeaderBarProps> = ({
-  bankName = 'SumUp',
-  greeting = 'Hei, Aku Ankka',
-  ownerText = 'Tilinomistaja: Firma Oy',
-  onProfilePress,
-}) => {
+const HeaderBar: React.FC<HeaderBarProps> = ({ small = false, onProfilePress }) => {
+  const theme = useTheme();
+  
+  const content = (
+    <View>
+      <Text accessibilityRole="header" style={[styles.bankTitle, { color: theme.colors.text, fontSize: small ? 18 : 22 }]}>SumUp</Text>
+      <Text style={[styles.greeting, { color: theme.colors.text }]}>Hei, Aku Ankka</Text>
+      <Text style={[styles.owner, { color: theme.colors.muted }]}>Tilinomistaja: Firma Oy</Text>
+    </View>
+  );
+
+  if (onProfilePress) {
+    return (
+      <TouchableOpacity 
+        style={[styles.container, { backgroundColor: theme.colors.background }]}
+        onPress={onProfilePress}
+        activeOpacity={0.7}
+      >
+        {content}
+      </TouchableOpacity>
+    );
+  }
+
   return (
-    <View style={styles.container}>
-      <View style={styles.leftSection}>
-        <Text style={styles.bankName}>{bankName}</Text>
-        <View style={styles.greetingContainer}>
-          <Text style={styles.greeting}>{greeting}</Text>
-          <Text style={styles.ownerText}>{ownerText}</Text>
-        </View>
-      </View>
-      {onProfilePress && (
-        <TouchableOpacity
-          style={styles.profileButton}
-          onPress={onProfilePress}
-          accessibilityLabel="Open profile"
-        >
-          <Ionicons name="person-circle-outline" size={32} color={Colors.primaryBlue} />
-        </TouchableOpacity>
-      )}
+    <View style={[styles.container, { backgroundColor: theme.colors.background }]}>
+      {content}
     </View>
   );
 };
 
-const styles = StyleSheet.create({
-  container: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    paddingHorizontal: Spacing.lg,
-    paddingVertical: Spacing.md,
-    backgroundColor: Colors.white,
-  },
-  leftSection: {
-    flex: 1,
-  },
-  bankName: {
-    fontSize: FontSize.lg,
-    fontWeight: FontWeight.bold,
-    color: Colors.primaryBlue,
-    marginBottom: Spacing.xs,
-  },
-  greetingContainer: {
-    marginTop: Spacing.xs,
-  },
-  greeting: {
-    fontSize: FontSize.md,
-    fontWeight: FontWeight.semibold,
-    color: Colors.textPrimary,
-    marginBottom: 2,
-  },
-  ownerText: {
-    fontSize: FontSize.xs,
-    fontWeight: FontWeight.regular,
-    color: Colors.textSecondary,
-  },
-  profileButton: {
-    padding: Spacing.xs,
-  },
+const styles = StyleSheet.create({ 
+  container: { paddingHorizontal: 16, paddingVertical: 14 }, 
+  bankTitle: { fontWeight: '800' }, 
+  greeting: { marginTop: 4, fontSize: 16, fontWeight: '600' }, 
+  owner: { marginTop: 2, fontSize: 12, fontWeight: '400', opacity: 0.9 } 
 });
+
+export default HeaderBar;

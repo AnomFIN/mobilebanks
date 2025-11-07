@@ -8,27 +8,16 @@ import {
   Share,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { LinearGradient } from 'expo-linear-gradient';
 import * as Haptics from 'expo-haptics';
 import { Ionicons } from '@expo/vector-icons';
-import { HeaderBar } from '../src/components/HeaderBar';
-import { Card } from '../src/components/Card';
-import { Colors, Spacing, BorderRadius, FontSize, FontWeight, Shadow } from '../src/theme/theme';
+import { Colors, Spacing, BorderRadius, FontSize, Shadow, FontWeight } from '../src/theme/theme';
 import { useAccount } from '../src/context/AccountContext';
+import Card from '../src/components/Card';
 
 export default function ReceiptScreen() {
-  const { transactions, accountNumber } = useAccount();
+  const { transactions } = useAccount();
   // Get the most recent transaction as the receipt example
-  const recentTransaction = transactions[0] || {
-    id: '1',
-    title: 'Maksu',
-    amount: -15.90,
-    date: new Date().toISOString(),
-    category: 'Yleinen',
-    status: 'completed' as const,
-    recipient: 'Vastaanottaja',
-    type: 'debit' as const,
-  };
+  const recentTransaction = transactions[0];
 
   const formatCurrency = (amount: number) => {
     return `${amount >= 0 ? '+' : ''}${amount.toFixed(2)} €`;
@@ -56,7 +45,7 @@ export default function ReceiptScreen() {
     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
     try {
       await Share.share({
-        message: `SumUp Kuitti\n\nTapahtuma: ${recentTransaction.title}\nSumma: ${formatCurrency(recentTransaction.amount)}\nPäivämäärä: ${formatDate(recentTransaction.date)}\nTila: ${recentTransaction.status}`,
+        message: `Kuitti SumUp:sta\n\nTapahtuma: ${recentTransaction.title}\nSumma: ${formatCurrency(recentTransaction.amount)}\nPäivämäärä: ${formatDate(recentTransaction.date)}\nTila: ${recentTransaction.status}`,
       });
     } catch (error) {
       console.error('Error sharing:', error);
@@ -65,34 +54,45 @@ export default function ReceiptScreen() {
 
   const handleDownload = () => {
     Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
-    // Mock download action
+    alert('Kuitti ladattu! 📄');
   };
 
   const handlePrint = () => {
     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
-    // Mock print action
+    alert('Tulostustoiminto tulossa pian! 🖨️');
   };
+
+  if (!recentTransaction) {
+    return (
+      <SafeAreaView style={styles.container} edges={['top']}>
+        <View style={styles.emptyState}>
+          <Ionicons name="receipt-outline" size={64} color={Colors.textSecondary} />
+          <Text style={styles.emptyText}>Ei kuitissa näytettäviä tapahtumia</Text>
+        </View>
+      </SafeAreaView>
+    );
+  }
 
   return (
     <SafeAreaView style={styles.container} edges={['top']}>
       <HeaderBar />
       <ScrollView style={styles.scrollView} showsVerticalScrollIndicator={false}>
-        {/* Title */}
-        <View style={styles.titleSection}>
+        {/* Header */}
+        <View style={styles.header}>
           <Text style={styles.title}>Kuitti</Text>
           <Text style={styles.subtitle}>Tapahtuman tiedot</Text>
         </View>
 
         {/* Receipt Card */}
-        <View style={styles.receiptSection}>
-          <Card elevation="large">
+        <View style={styles.receiptCardContainer}>
+          <Card gradient shadow="large" padding={Spacing.xl}>
             {/* Company Header */}
             <View style={styles.companyHeader}>
               <View style={styles.logoCircle}>
-                <Ionicons name="wallet" size={32} color={Colors.primaryBlue} />
+                <Ionicons name="wallet" size={32} color={Colors.white} />
               </View>
               <Text style={styles.companyName}>SumUp</Text>
-              <Text style={styles.companySubtitle}>Maksujärjestelmä</Text>
+              <Text style={styles.companySubtitle}>Mobiilipankki</Text>
             </View>
 
             {/* Status Badge */}
@@ -136,16 +136,9 @@ export default function ReceiptScreen() {
               </View>
 
               <View style={styles.detailRow}>
-                <Text style={styles.detailLabel}>Päivämäärä</Text>
+                <Text style={styles.detailLabel}>Päivämäärä ja aika</Text>
                 <Text style={styles.detailValue}>
                   {formatDate(recentTransaction.date)}
-                </Text>
-              </View>
-
-              <View style={styles.detailRow}>
-                <Text style={styles.detailLabel}>Aika</Text>
-                <Text style={styles.detailValue}>
-                  {formatTime(recentTransaction.date)}
                 </Text>
               </View>
 
@@ -173,13 +166,6 @@ export default function ReceiptScreen() {
               </View>
 
               <View style={styles.detailRow}>
-                <Text style={styles.detailLabel}>Tili</Text>
-                <Text style={styles.detailValue}>
-                  {accountNumber}
-                </Text>
-              </View>
-
-              <View style={styles.detailRow}>
                 <Text style={styles.detailLabel}>Tyyppi</Text>
                 <Text style={styles.detailValue}>
                   {recentTransaction.type === 'credit' ? 'Tulo' : 'Meno'}
@@ -190,9 +176,9 @@ export default function ReceiptScreen() {
             {/* QR Code Placeholder */}
             <View style={styles.qrSection}>
               <View style={styles.qrPlaceholder}>
-                <Ionicons name="qr-code-outline" size={80} color={Colors.primaryBlue} />
+                <Ionicons name="qr-code" size={80} color={Colors.white} />
               </View>
-              <Text style={styles.qrText}>Skannaa varmistaaksesi</Text>
+              <Text style={styles.qrText}>Skannaa vahvistaaksesi</Text>
             </View>
           </Card>
         </View>
@@ -204,7 +190,7 @@ export default function ReceiptScreen() {
             onPress={handleShare}
             accessibilityLabel="Jaa kuitti"
           >
-            <Ionicons name="share-outline" size={24} color={Colors.primaryBlue} />
+            <Ionicons name="share-outline" size={24} color={Colors.primary} />
             <Text style={styles.actionButtonText}>Jaa</Text>
           </TouchableOpacity>
 
@@ -213,7 +199,7 @@ export default function ReceiptScreen() {
             onPress={handleDownload}
             accessibilityLabel="Lataa kuitti"
           >
-            <Ionicons name="download-outline" size={24} color={Colors.primaryBlue} />
+            <Ionicons name="download-outline" size={24} color={Colors.primary} />
             <Text style={styles.actionButtonText}>Lataa</Text>
           </TouchableOpacity>
 
@@ -222,7 +208,7 @@ export default function ReceiptScreen() {
             onPress={handlePrint}
             accessibilityLabel="Tulosta kuitti"
           >
-            <Ionicons name="print-outline" size={24} color={Colors.primaryBlue} />
+            <Ionicons name="print-outline" size={24} color={Colors.primary} />
             <Text style={styles.actionButtonText}>Tulosta</Text>
           </TouchableOpacity>
         </View>
@@ -230,10 +216,10 @@ export default function ReceiptScreen() {
         {/* Footer Note */}
         <View style={styles.footer}>
           <Text style={styles.footerText}>
-            Tämä on virallinen kuitti SumUp-maksusta.
+            Tämä on virallinen kuitti SumUp:sta.
           </Text>
           <Text style={styles.footerText}>
-            Säilytä tämä tietueidesi vuoksi.
+            Säilytä tämä omia tietojasi varten.
           </Text>
         </View>
       </ScrollView>
@@ -244,12 +230,24 @@ export default function ReceiptScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: Colors.veryLightGray,
+    backgroundColor: Colors.background,
   },
   scrollView: {
     flex: 1,
   },
-  titleSection: {
+  emptyState: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    paddingHorizontal: Spacing.xl,
+  },
+  emptyText: {
+    fontSize: FontSize.md,
+    color: Colors.textSecondary,
+    marginTop: Spacing.lg,
+    textAlign: 'center',
+  },
+  header: {
     paddingHorizontal: Spacing.lg,
     paddingTop: Spacing.md,
     paddingBottom: Spacing.lg,
@@ -257,16 +255,16 @@ const styles = StyleSheet.create({
   title: {
     fontSize: FontSize.xxxl,
     fontWeight: FontWeight.bold,
-    color: Colors.textPrimary,
+    color: Colors.text,
     marginBottom: Spacing.xs,
   },
   subtitle: {
     fontSize: FontSize.md,
     color: Colors.textSecondary,
   },
-  receiptSection: {
-    paddingHorizontal: Spacing.lg,
-    marginBottom: Spacing.lg,
+  receiptCardContainer: {
+    marginHorizontal: Spacing.lg,
+    marginBottom: Spacing.xl,
   },
   companyHeader: {
     alignItems: 'center',
@@ -276,28 +274,29 @@ const styles = StyleSheet.create({
     width: 80,
     height: 80,
     borderRadius: BorderRadius.full,
-    backgroundColor: Colors.veryLightGray,
+    backgroundColor: 'rgba(255, 255, 255, 0.2)',
     justifyContent: 'center',
     alignItems: 'center',
     marginBottom: Spacing.md,
     borderWidth: 2,
-    borderColor: Colors.primaryBlue,
+    borderColor: Colors.white,
   },
   companyName: {
     fontSize: FontSize.xl,
     fontWeight: FontWeight.bold,
-    color: Colors.textPrimary,
+    color: Colors.white,
     marginBottom: Spacing.xs,
   },
   companySubtitle: {
     fontSize: FontSize.sm,
-    color: Colors.textSecondary,
+    color: Colors.white,
+    opacity: 0.9,
   },
   statusBadge: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
-    backgroundColor: Colors.veryLightGray,
+    backgroundColor: 'rgba(255, 255, 255, 0.2)',
     paddingVertical: Spacing.sm,
     paddingHorizontal: Spacing.lg,
     borderRadius: BorderRadius.full,
@@ -311,7 +310,7 @@ const styles = StyleSheet.create({
   },
   divider: {
     height: 1,
-    backgroundColor: Colors.lightGray,
+    backgroundColor: 'rgba(255, 255, 255, 0.3)',
     marginVertical: Spacing.lg,
   },
   amountSection: {
@@ -319,16 +318,18 @@ const styles = StyleSheet.create({
   },
   amountLabel: {
     fontSize: FontSize.sm,
-    color: Colors.textSecondary,
+    color: Colors.white,
+    opacity: 0.9,
     marginBottom: Spacing.sm,
+    fontWeight: FontWeight.medium,
   },
   amount: {
     fontSize: FontSize.huge,
     fontWeight: FontWeight.bold,
-    color: Colors.textPrimary,
+    color: Colors.white,
   },
   amountCredit: {
-    color: Colors.success,
+    color: Colors.white,
   },
   detailsSection: {
     gap: Spacing.md,
@@ -340,12 +341,14 @@ const styles = StyleSheet.create({
   },
   detailLabel: {
     fontSize: FontSize.sm,
-    color: Colors.textSecondary,
+    color: Colors.white,
+    opacity: 0.8,
     flex: 1,
+    fontWeight: FontWeight.medium,
   },
   detailValue: {
     fontSize: FontSize.sm,
-    color: Colors.textPrimary,
+    color: Colors.white,
     fontWeight: FontWeight.semibold,
     flex: 1,
     textAlign: 'right',
@@ -357,7 +360,7 @@ const styles = StyleSheet.create({
   qrPlaceholder: {
     width: 120,
     height: 120,
-    backgroundColor: Colors.veryLightGray,
+    backgroundColor: 'rgba(255, 255, 255, 0.2)',
     borderRadius: BorderRadius.md,
     justifyContent: 'center',
     alignItems: 'center',
@@ -367,7 +370,8 @@ const styles = StyleSheet.create({
   },
   qrText: {
     fontSize: FontSize.xs,
-    color: Colors.textSecondary,
+    color: Colors.white,
+    opacity: 0.8,
   },
   actionsContainer: {
     flexDirection: 'row',
@@ -380,15 +384,17 @@ const styles = StyleSheet.create({
     flexDirection: 'column',
     alignItems: 'center',
     justifyContent: 'center',
-    backgroundColor: Colors.white,
+    backgroundColor: Colors.cardBackground,
     paddingVertical: Spacing.lg,
-    borderRadius: BorderRadius.lg,
+    borderRadius: BorderRadius.md,
+    borderWidth: 1,
+    borderColor: Colors.border,
     gap: Spacing.sm,
     ...Shadow.small,
   },
   actionButtonText: {
     fontSize: FontSize.sm,
-    color: Colors.primaryBlue,
+    color: Colors.text,
     fontWeight: FontWeight.semibold,
   },
   footer: {

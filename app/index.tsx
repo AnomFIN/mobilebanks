@@ -13,10 +13,10 @@ import { LinearGradient } from 'expo-linear-gradient';
 import { useRouter } from 'expo-router';
 import * as Haptics from 'expo-haptics';
 import { Ionicons } from '@expo/vector-icons';
-import { HeaderBar } from '../src/components/HeaderBar';
-import { Card } from '../src/components/Card';
-import { Colors, Spacing, BorderRadius, FontSize, FontWeight, Shadow, Gradients } from '../src/theme/theme';
+import { Colors, Spacing, BorderRadius, FontSize, Shadow, FontWeight } from '../src/theme/theme';
 import { useAccount } from '../src/context/AccountContext';
+import HeaderBar from '../src/components/HeaderBar';
+import Card from '../src/components/Card';
 
 export default function HomeScreen() {
   const { balance, transactions, accountNumber } = useAccount();
@@ -62,9 +62,12 @@ export default function HomeScreen() {
         style={styles.scrollView}
         showsVerticalScrollIndicator={false}
       >
+        {/* Header */}
+        <HeaderBar onProfilePress={handlePress} />
+
         {/* Balance Card */}
-        <Animated.View style={[styles.balanceCardContainer, { transform: [{ scale: scaleAnim }] }]}>
-          <Card gradient gradientColors={Gradients.blueCard} elevation="large">
+        <Animated.View style={[styles.balanceCard, { transform: [{ scale: scaleAnim }] }]}>
+          <Card gradient shadow="large" padding={Spacing.xl}>
             <View style={styles.balanceContent}>
               <View>
                 <Text style={styles.balanceLabel}>Kokonaissaldo</Text>
@@ -74,7 +77,7 @@ export default function HomeScreen() {
                 <Text style={styles.accountNumber}>{accountNumber}</Text>
               </View>
               <View style={styles.logoContainer}>
-                <Ionicons name="wallet" size={36} color={Colors.white} />
+                <Ionicons name="wallet" size={40} color={Colors.white} />
               </View>
             </View>
           </Card>
@@ -91,9 +94,9 @@ export default function HomeScreen() {
             accessibilityLabel="Luo uusi maksu"
           >
             <View style={styles.actionIcon}>
-              <Ionicons name="send" size={24} color={Colors.primaryBlue} />
+              <Ionicons name="send" size={24} color={Colors.white} />
             </View>
-            <Text style={styles.actionText}>Maksu</Text>
+            <Text style={styles.actionText}>Maksa</Text>
           </TouchableOpacity>
 
           <TouchableOpacity
@@ -105,7 +108,7 @@ export default function HomeScreen() {
             accessibilityLabel="Näytä raportit"
           >
             <View style={styles.actionIcon}>
-              <Ionicons name="bar-chart" size={24} color={Colors.primaryBlue} />
+              <Ionicons name="bar-chart" size={24} color={Colors.white} />
             </View>
             <Text style={styles.actionText}>Raportit</Text>
           </TouchableOpacity>
@@ -119,7 +122,7 @@ export default function HomeScreen() {
             accessibilityLabel="Näytä kuitti"
           >
             <View style={styles.actionIcon}>
-              <Ionicons name="document-text" size={24} color={Colors.primaryBlue} />
+              <Ionicons name="document-text" size={24} color={Colors.white} />
             </View>
             <Text style={styles.actionText}>Kuitti</Text>
           </TouchableOpacity>
@@ -132,49 +135,45 @@ export default function HomeScreen() {
             accessibilityLabel="Lisää toimintoja"
           >
             <View style={styles.actionIcon}>
-              <Ionicons name="ellipsis-horizontal" size={24} color={Colors.primaryBlue} />
+              <Ionicons name="card" size={24} color={Colors.white} />
             </View>
-            <Text style={styles.actionText}>Lisää</Text>
+            <Text style={styles.actionText}>Kortti</Text>
           </TouchableOpacity>
         </View>
 
         {/* Recent Transactions */}
         <View style={styles.section}>
           <View style={styles.sectionHeader}>
-            <Text style={styles.sectionTitle}>Viimeaikaiset tapahtumat</Text>
-            <TouchableOpacity
-              onPress={() => {
-                handlePress();
-                router.push('/statement');
-              }}
-            >
+            <Text style={styles.sectionTitle}>Viimeisimmät tapahtumat</Text>
+            <TouchableOpacity onPress={() => router.push('/statement')}>
               <Text style={styles.seeAll}>Näytä kaikki</Text>
             </TouchableOpacity>
           </View>
 
-          <Card>
+          <Card shadow="small" padding={0}>
             {recentTransactions.map((transaction, index) => (
               <TouchableOpacity
                 key={transaction.id}
                 style={[
                   styles.transactionItem,
-                  index === recentTransactions.length - 1 && styles.transactionItemLast,
+                  index < recentTransactions.length - 1 && styles.transactionItemBorder,
                 ]}
                 onPress={() => {
                   Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
                   router.push('/receipt');
                 }}
-                accessibilityLabel={`Tapahtuma: ${transaction.title}`}
               >
                 <View
                   style={[
                     styles.transactionIcon,
-                    transaction.type === 'credit' ? styles.transactionIconCredit : styles.transactionIconDebit,
+                    transaction.type === 'credit'
+                      ? styles.transactionIconCredit
+                      : styles.transactionIconDebit,
                   ]}
                 >
                   <Ionicons
                     name={transaction.type === 'credit' ? 'arrow-down' : 'arrow-up'}
-                    size={18}
+                    size={20}
                     color={Colors.white}
                   />
                 </View>
@@ -202,12 +201,12 @@ export default function HomeScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: Colors.veryLightGray,
+    backgroundColor: Colors.background,
   },
   scrollView: {
     flex: 1,
   },
-  balanceCardContainer: {
+  balanceCard: {
     marginHorizontal: Spacing.lg,
     marginVertical: Spacing.md,
   },
@@ -221,6 +220,7 @@ const styles = StyleSheet.create({
     color: Colors.white,
     opacity: 0.9,
     marginBottom: Spacing.xs,
+    fontWeight: FontWeight.medium,
   },
   balanceAmount: {
     fontSize: FontSize.huge,
@@ -246,7 +246,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-around',
     paddingHorizontal: Spacing.lg,
-    paddingVertical: Spacing.md,
+    paddingVertical: Spacing.lg,
   },
   actionButton: {
     alignItems: 'center',
@@ -255,7 +255,7 @@ const styles = StyleSheet.create({
     width: 56,
     height: 56,
     borderRadius: BorderRadius.full,
-    backgroundColor: Colors.white,
+    backgroundColor: Colors.primary,
     justifyContent: 'center',
     alignItems: 'center',
     marginBottom: Spacing.sm,
@@ -263,7 +263,7 @@ const styles = StyleSheet.create({
   },
   actionText: {
     fontSize: FontSize.xs,
-    color: Colors.textPrimary,
+    color: Colors.text,
     fontWeight: FontWeight.semibold,
   },
   section: {
@@ -279,19 +279,22 @@ const styles = StyleSheet.create({
   sectionTitle: {
     fontSize: FontSize.lg,
     fontWeight: FontWeight.bold,
-    color: Colors.textPrimary,
+    color: Colors.text,
   },
   seeAll: {
     fontSize: FontSize.sm,
-    color: Colors.primaryBlue,
+    color: Colors.primary,
     fontWeight: FontWeight.semibold,
   },
   transactionItem: {
     flexDirection: 'row',
     alignItems: 'center',
     paddingVertical: Spacing.md,
+    paddingHorizontal: Spacing.lg,
+  },
+  transactionItemBorder: {
     borderBottomWidth: 1,
-    borderBottomColor: Colors.lightGray,
+    borderBottomColor: Colors.border,
   },
   transactionItemLast: {
     borderBottomWidth: 0,
@@ -308,7 +311,7 @@ const styles = StyleSheet.create({
     backgroundColor: Colors.success,
   },
   transactionIconDebit: {
-    backgroundColor: Colors.mediumGray,
+    backgroundColor: Colors.textSecondary,
   },
   transactionDetails: {
     flex: 1,
@@ -316,8 +319,8 @@ const styles = StyleSheet.create({
   transactionTitle: {
     fontSize: FontSize.md,
     fontWeight: FontWeight.semibold,
-    color: Colors.textPrimary,
-    marginBottom: 2,
+    color: Colors.text,
+    marginBottom: Spacing.xs - 2,
   },
   transactionDate: {
     fontSize: FontSize.xs,
@@ -326,7 +329,7 @@ const styles = StyleSheet.create({
   transactionAmount: {
     fontSize: FontSize.md,
     fontWeight: FontWeight.bold,
-    color: Colors.textPrimary,
+    color: Colors.text,
   },
   transactionAmountCredit: {
     color: Colors.success,

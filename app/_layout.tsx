@@ -1,12 +1,10 @@
+import React from 'react';
 import { Tabs } from 'expo-router';
 import { StyleSheet, View, Platform } from 'react-native';
-import { enableScreens } from 'react-native-screens';
+import { Colors, Layout } from '../src/theme/theme';
 import { Ionicons } from '@expo/vector-icons';
 import { AccountProvider } from '../src/context/AccountContext';
 import { Colors, Spacing, FontSize } from '../src/theme/theme';
-
-// Enable screens for better performance
-enableScreens(true);
 
 export default function TabLayout() {
   return (
@@ -15,7 +13,7 @@ export default function TabLayout() {
         screenOptions={{
           headerShown: false,
           tabBarStyle: styles.tabBar,
-          tabBarActiveTintColor: Colors.primaryBlue,
+          tabBarActiveTintColor: Colors.primary,
           tabBarInactiveTintColor: Colors.textSecondary,
           tabBarLabelStyle: styles.tabBarLabel,
           tabBarShowLabel: true,
@@ -73,10 +71,10 @@ export default function TabLayout() {
 
 const styles = StyleSheet.create({
   tabBar: {
-    backgroundColor: Colors.white,
-    borderTopColor: Colors.lightGray,
+    backgroundColor: Colors.background,
+    borderTopColor: Colors.border,
     borderTopWidth: 1,
-    height: Platform.OS === 'ios' ? 85 : 65,
+    height: Layout.tabBarHeight,
     paddingBottom: Platform.OS === 'ios' ? 20 : 10,
     paddingTop: 10,
   },
