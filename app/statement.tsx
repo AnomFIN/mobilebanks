@@ -6,6 +6,7 @@ import {
   ScrollView,
   TouchableOpacity,
   Animated,
+  Dimensions,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import * as Haptics from 'expo-haptics';
@@ -17,10 +18,13 @@ import Card from '../src/components/Card';
 type FilterType = 'all' | 'credit' | 'debit';
 type PeriodType = 'week' | 'month' | 'year';
 
-export default function StatementScreen() {
+const { width } = Dimensions.get('window');
+
+export default function ReportsScreen() {
   const [filter, setFilter] = useState<FilterType>('all');
   const [period, setPeriod] = useState<PeriodType>('month');
   const { transactions, balance } = useAccount();
+  const router = useRouter();
   const fadeAnim = React.useRef(new Animated.Value(1)).current;
 
   const formatCurrency = (amount: number) => {
@@ -33,6 +37,7 @@ export default function StatementScreen() {
       weekday: 'short',
       month: 'short',
       day: 'numeric',
+      month: 'short',
       year: 'numeric',
     });
   };
@@ -80,6 +85,7 @@ export default function StatementScreen() {
 
   return (
     <SafeAreaView style={styles.container} edges={['top']}>
+      <HeaderBar />
       <ScrollView style={styles.scrollView} showsVerticalScrollIndicator={false}>
         {/* Header */}
         <View style={styles.header}>
@@ -184,48 +190,40 @@ export default function StatementScreen() {
           </Card>
         </View>
 
-        {/* Filter Tabs */}
-        <View style={styles.filterContainer}>
+        {/* Chart Placeholder */}
+        <View style={styles.chartSection}>
+          <Card>
+            <View style={styles.chartHeader}>
+              <Text style={styles.chartTitle}>Kulutuskatsaus</Text>
+              <TouchableOpacity onPress={() => Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light)}>
+                <Ionicons name="information-circle-outline" size={20} color={Colors.textSecondary} />
+              </TouchableOpacity>
+            </View>
+            <View style={styles.chartPlaceholder}>
+              <Ionicons name="bar-chart-outline" size={64} color={Colors.lightGray} />
+              <Text style={styles.chartPlaceholderText}>
+                Kaavio tulossa pian
+              </Text>
+            </View>
+          </Card>
+        </View>
+
+        {/* Export Actions */}
+        <View style={styles.actionsSection}>
           <TouchableOpacity
-            style={[styles.filterTab, filter === 'all' && styles.filterTabActive]}
-            onPress={() => handleFilterChange('all')}
+            style={styles.actionButton}
+            onPress={() => Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium)}
           >
-            <Text
-              style={[
-                styles.filterText,
-                filter === 'all' && styles.filterTextActive,
-              ]}
-            >
-              Kaikki
-            </Text>
+            <Ionicons name="download-outline" size={22} color={Colors.primaryBlue} />
+            <Text style={styles.actionButtonText}>Lataa raportti</Text>
           </TouchableOpacity>
 
           <TouchableOpacity
-            style={[styles.filterTab, filter === 'credit' && styles.filterTabActive]}
-            onPress={() => handleFilterChange('credit')}
+            style={styles.actionButton}
+            onPress={() => Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium)}
           >
-            <Text
-              style={[
-                styles.filterText,
-                filter === 'credit' && styles.filterTextActive,
-              ]}
-            >
-              Tulot
-            </Text>
-          </TouchableOpacity>
-
-          <TouchableOpacity
-            style={[styles.filterTab, filter === 'debit' && styles.filterTabActive]}
-            onPress={() => handleFilterChange('debit')}
-          >
-            <Text
-              style={[
-                styles.filterText,
-                filter === 'debit' && styles.filterTextActive,
-              ]}
-            >
-              Menot
-            </Text>
+            <Ionicons name="share-outline" size={22} color={Colors.primaryBlue} />
+            <Text style={styles.actionButtonText}>Jaa</Text>
           </TouchableOpacity>
         </View>
 
@@ -339,9 +337,10 @@ const styles = StyleSheet.create({
   scrollView: {
     flex: 1,
   },
-  header: {
+  titleSection: {
     paddingHorizontal: Spacing.lg,
-    paddingVertical: Spacing.xl,
+    paddingTop: Spacing.md,
+    paddingBottom: Spacing.lg,
   },
   title: {
     fontSize: FontSize.xxxl,
@@ -391,17 +390,18 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   summaryIcon: {
-    width: 40,
-    height: 40,
+    width: 56,
+    height: 56,
     borderRadius: BorderRadius.full,
     backgroundColor: Colors.backgroundSecondary,
     justifyContent: 'center',
     alignItems: 'center',
-    marginBottom: Spacing.sm,
+    marginBottom: Spacing.md,
   },
   summaryLabel: {
     fontSize: FontSize.sm,
-    color: Colors.textSecondary,
+    color: Colors.white,
+    opacity: 0.9,
     marginBottom: Spacing.xs,
     fontWeight: FontWeight.medium,
   },
@@ -409,11 +409,15 @@ const styles = StyleSheet.create({
     fontSize: FontSize.xl,
     fontWeight: FontWeight.bold,
   },
-  incomeAmount: {
-    color: Colors.success,
+  chartSection: {
+    paddingHorizontal: Spacing.lg,
+    marginBottom: Spacing.lg,
   },
-  expenseAmount: {
-    color: Colors.danger,
+  chartHeader: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginBottom: Spacing.md,
   },
   netIncomeContainer: {
     paddingHorizontal: Spacing.lg,
@@ -493,6 +497,38 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     paddingHorizontal: Spacing.lg,
     marginBottom: Spacing.lg,
+    gap: Spacing.md,
+  },
+  actionButton: {
+    flex: 1,
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    backgroundColor: Colors.white,
+    paddingVertical: Spacing.md,
+    borderRadius: BorderRadius.lg,
+    gap: Spacing.sm,
+    ...Shadow.small,
+  },
+  actionButtonText: {
+    fontSize: FontSize.md,
+    fontWeight: FontWeight.semibold,
+    color: Colors.primaryBlue,
+  },
+  filterSection: {
+    paddingHorizontal: Spacing.lg,
+    marginBottom: Spacing.md,
+  },
+  sectionTitle: {
+    fontSize: FontSize.sm,
+    fontWeight: FontWeight.semibold,
+    color: Colors.textSecondary,
+    marginBottom: Spacing.md,
+    textTransform: 'uppercase',
+    letterSpacing: 0.5,
+  },
+  filterContainer: {
+    flexDirection: 'row',
     gap: Spacing.sm,
   },
   filterTab: {
@@ -518,7 +554,7 @@ const styles = StyleSheet.create({
   filterTextActive: {
     color: Colors.white,
   },
-  transactionsList: {
+  transactionsSection: {
     paddingHorizontal: Spacing.lg,
     paddingBottom: Spacing.md,
   },
@@ -528,9 +564,12 @@ const styles = StyleSheet.create({
   transactionItem: {
     flexDirection: 'row',
   },
-  transactionIconContainer: {
-    width: 44,
-    height: 44,
+  transactionItemLast: {
+    borderBottomWidth: 0,
+  },
+  transactionIcon: {
+    width: 36,
+    height: 36,
     borderRadius: BorderRadius.full,
     justifyContent: 'center',
     alignItems: 'center',
@@ -545,14 +584,7 @@ const styles = StyleSheet.create({
   transactionContent: {
     flex: 1,
   },
-  transactionHeader: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'flex-start',
-    marginBottom: Spacing.xs,
-  },
   transactionTitle: {
-    flex: 1,
     fontSize: FontSize.md,
     fontWeight: FontWeight.semibold,
     color: Colors.text,
@@ -566,28 +598,14 @@ const styles = StyleSheet.create({
   transactionAmountCredit: {
     color: Colors.success,
   },
-  transactionFooter: {
-    flexDirection: 'row',
+  emptyState: {
+    paddingVertical: Spacing.xxl,
     alignItems: 'center',
-    gap: Spacing.md,
   },
-  transactionMeta: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: Spacing.xs,
-  },
-  transactionDate: {
-    fontSize: FontSize.xs,
+  emptyStateText: {
+    fontSize: FontSize.md,
     color: Colors.textSecondary,
-  },
-  transactionCategory: {
-    fontSize: FontSize.xs,
-    color: Colors.textSecondary,
-  },
-  transactionRecipient: {
-    fontSize: FontSize.xs,
-    color: Colors.textSecondary,
-    marginTop: Spacing.xs,
+    marginTop: Spacing.md,
   },
   exportContainer: {
     paddingHorizontal: Spacing.lg,

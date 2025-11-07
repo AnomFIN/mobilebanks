@@ -30,6 +30,12 @@ export default function ReceiptScreen() {
       month: 'long',
       day: 'numeric',
       year: 'numeric',
+    });
+  };
+
+  const formatTime = (dateString: string) => {
+    const date = new Date(dateString);
+    return date.toLocaleTimeString('fi-FI', {
       hour: '2-digit',
       minute: '2-digit',
     });
@@ -69,6 +75,7 @@ export default function ReceiptScreen() {
 
   return (
     <SafeAreaView style={styles.container} edges={['top']}>
+      <HeaderBar />
       <ScrollView style={styles.scrollView} showsVerticalScrollIndicator={false}>
         {/* Header */}
         <View style={styles.header}>
@@ -181,6 +188,7 @@ export default function ReceiptScreen() {
           <TouchableOpacity
             style={styles.actionButton}
             onPress={handleShare}
+            accessibilityLabel="Jaa kuitti"
           >
             <Ionicons name="share-outline" size={24} color={Colors.primary} />
             <Text style={styles.actionButtonText}>Jaa</Text>
@@ -189,6 +197,7 @@ export default function ReceiptScreen() {
           <TouchableOpacity
             style={styles.actionButton}
             onPress={handleDownload}
+            accessibilityLabel="Lataa kuitti"
           >
             <Ionicons name="download-outline" size={24} color={Colors.primary} />
             <Text style={styles.actionButtonText}>Lataa</Text>
@@ -197,6 +206,7 @@ export default function ReceiptScreen() {
           <TouchableOpacity
             style={styles.actionButton}
             onPress={handlePrint}
+            accessibilityLabel="Tulosta kuitti"
           >
             <Ionicons name="print-outline" size={24} color={Colors.primary} />
             <Text style={styles.actionButtonText}>Tulosta</Text>
@@ -239,7 +249,8 @@ const styles = StyleSheet.create({
   },
   header: {
     paddingHorizontal: Spacing.lg,
-    paddingVertical: Spacing.xl,
+    paddingTop: Spacing.md,
+    paddingBottom: Spacing.lg,
   },
   title: {
     fontSize: FontSize.xxxl,
@@ -275,7 +286,6 @@ const styles = StyleSheet.create({
     fontWeight: FontWeight.bold,
     color: Colors.white,
     marginBottom: Spacing.xs,
-    textAlign: 'center',
   },
   companySubtitle: {
     fontSize: FontSize.sm,
@@ -291,7 +301,6 @@ const styles = StyleSheet.create({
     paddingHorizontal: Spacing.lg,
     borderRadius: BorderRadius.full,
     alignSelf: 'center',
-    marginBottom: Spacing.lg,
     gap: Spacing.xs,
   },
   statusText: {
@@ -356,6 +365,8 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     marginBottom: Spacing.md,
+    borderWidth: 1,
+    borderColor: Colors.lightGray,
   },
   qrText: {
     fontSize: FontSize.xs,
@@ -393,7 +404,7 @@ const styles = StyleSheet.create({
   },
   footerText: {
     fontSize: FontSize.xs,
-    color: Colors.textSecondary,
+    color: Colors.textLight,
     textAlign: 'center',
     lineHeight: 18,
   },

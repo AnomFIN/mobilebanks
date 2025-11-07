@@ -55,6 +55,9 @@ export default function HomeScreen() {
 
   return (
     <SafeAreaView style={styles.container} edges={['top']}>
+      <HeaderBar
+        onProfilePress={handlePress}
+      />
       <ScrollView
         style={styles.scrollView}
         showsVerticalScrollIndicator={false}
@@ -88,6 +91,7 @@ export default function HomeScreen() {
               Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
               router.push('/payment');
             }}
+            accessibilityLabel="Luo uusi maksu"
           >
             <View style={styles.actionIcon}>
               <Ionicons name="send" size={24} color={Colors.white} />
@@ -101,6 +105,7 @@ export default function HomeScreen() {
               Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
               router.push('/statement');
             }}
+            accessibilityLabel="Näytä raportit"
           >
             <View style={styles.actionIcon}>
               <Ionicons name="bar-chart" size={24} color={Colors.white} />
@@ -114,6 +119,7 @@ export default function HomeScreen() {
               Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
               router.push('/receipt');
             }}
+            accessibilityLabel="Näytä kuitti"
           >
             <View style={styles.actionIcon}>
               <Ionicons name="document-text" size={24} color={Colors.white} />
@@ -126,6 +132,7 @@ export default function HomeScreen() {
             onPress={() => {
               Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
             }}
+            accessibilityLabel="Lisää toimintoja"
           >
             <View style={styles.actionIcon}>
               <Ionicons name="card" size={24} color={Colors.white} />
@@ -228,8 +235,8 @@ const styles = StyleSheet.create({
     fontFamily: Platform.OS === 'ios' ? 'Courier' : 'monospace',
   },
   logoContainer: {
-    width: 72,
-    height: 72,
+    width: 64,
+    height: 64,
     borderRadius: BorderRadius.full,
     backgroundColor: 'rgba(255, 255, 255, 0.2)',
     justifyContent: 'center',
@@ -289,9 +296,12 @@ const styles = StyleSheet.create({
     borderBottomWidth: 1,
     borderBottomColor: Colors.border,
   },
+  transactionItemLast: {
+    borderBottomWidth: 0,
+  },
   transactionIcon: {
-    width: 40,
-    height: 40,
+    width: 36,
+    height: 36,
     borderRadius: BorderRadius.full,
     justifyContent: 'center',
     alignItems: 'center',

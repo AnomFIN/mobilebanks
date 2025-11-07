@@ -4,6 +4,7 @@ import { StyleSheet, View, Platform } from 'react-native';
 import { Colors, Layout } from '../src/theme/theme';
 import { Ionicons } from '@expo/vector-icons';
 import { AccountProvider } from '../src/context/AccountContext';
+import { Colors, Spacing, FontSize } from '../src/theme/theme';
 
 export default function TabLayout() {
   return (
@@ -54,6 +55,15 @@ export default function TabLayout() {
             ),
           }}
         />
+        <Tabs.Screen
+          name="settings"
+          options={{
+            title: 'Asetukset',
+            tabBarIcon: ({ color, size }) => (
+              <Ionicons name="settings" size={size} color={color} />
+            ),
+          }}
+        />
       </Tabs>
     </AccountProvider>
   );
@@ -69,7 +79,7 @@ const styles = StyleSheet.create({
     paddingTop: 10,
   },
   tabBarLabel: {
-    fontSize: 12,
+    fontSize: FontSize.xs,
     fontWeight: '600',
   },
 });
