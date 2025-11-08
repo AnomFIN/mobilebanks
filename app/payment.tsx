@@ -18,6 +18,7 @@ import { Ionicons } from '@expo/vector-icons';
 import { Colors, Spacing, BorderRadius, FontSize, Shadow, FontWeight } from '../src/theme/theme';
 import { useAccount } from '../src/context/AccountContext';
 import Card from '../src/components/Card';
+import HeaderBar from '../src/components/HeaderBar';
 
 export default function PaymentScreen() {
   const [amount, setAmount] = useState('');
@@ -61,18 +62,6 @@ export default function PaymentScreen() {
     // Create payment
     createPayment(Number(amount) || 0, description || undefined);
     
-    // Show success modal
-    setShowSuccessModal(true);
-    
-    // Hide modal after 2 seconds and navigate
-    setTimeout(() => {
-      setShowSuccessModal(false);
-      setAmount('');
-      setDescription('');
-      setSelectedContact(null);
-    }, 2000);
-  };
-
     // Show success modal
     setShowSuccess(true);
     Animated.timing(successAnim, {
@@ -147,9 +136,9 @@ export default function PaymentScreen() {
             </Card>
           </View>
 
-            {/* Amount Input */}
-            <View style={styles.inputContainer}>
-              <Text style={styles.inputLabel}>Summa</Text>
+          {/* Amount Input */}
+          <View style={styles.section}>
+            <Text style={styles.sectionTitle}>Summa</Text>
               <Card shadow="small" padding={Spacing.md}>
                 <View style={styles.inputWrapper}>
                   <Ionicons
@@ -168,7 +157,6 @@ export default function PaymentScreen() {
                   <Text style={styles.currency}>€</Text>
                 </View>
               </Card>
-            </View>
 
             {/* Preset Amounts */}
             <View style={styles.presetsContainer}>
@@ -184,9 +172,9 @@ export default function PaymentScreen() {
             </View>
           </View>
 
-            {/* Description Input */}
-            <View style={styles.inputContainer}>
-              <Text style={styles.inputLabel}>Kuvaus (valinnainen)</Text>
+          {/* Description Input */}
+          <View style={styles.section}>
+              <Text style={styles.sectionTitle}>Kuvaus (valinnainen)</Text>
               <Card shadow="small" padding={Spacing.md}>
                 <View style={styles.inputWrapper}>
                   <Ionicons
@@ -204,7 +192,6 @@ export default function PaymentScreen() {
                   />
                 </View>
               </Card>
-            </View>
           </View>
 
           {/* Create Payment Button */}
@@ -217,7 +204,7 @@ export default function PaymentScreen() {
               <Text style={styles.sendButtonText}>Luo maksu</Text>
               <Ionicons name="arrow-forward" size={20} color={Colors.white} />
             </TouchableOpacity>
-          </View>
+          </Animated.View>
         </ScrollView>
       </KeyboardAvoidingView>
 
@@ -267,7 +254,7 @@ const styles = StyleSheet.create({
   scrollView: {
     flex: 1,
   },
-  titleSection: {
+  header: {
     paddingHorizontal: Spacing.lg,
     paddingTop: Spacing.md,
     paddingBottom: Spacing.lg,
@@ -321,15 +308,8 @@ const styles = StyleSheet.create({
     color: Colors.text,
     marginBottom: Spacing.md,
   },
-  contactsContainer: {
-    flexDirection: 'row',
-    gap: Spacing.md,
-  },
-  sectionTitle: {
-    fontSize: FontSize.sm,
-    color: Colors.text,
-    marginBottom: Spacing.sm,
-    fontWeight: FontWeight.semibold,
+  inputIcon: {
+    marginRight: Spacing.sm,
   },
   inputWrapper: {
     flexDirection: 'row',
@@ -347,25 +327,6 @@ const styles = StyleSheet.create({
     fontSize: FontSize.lg,
     color: Colors.text,
     fontWeight: FontWeight.semibold,
-  },
-  presetsContainer: {
-    flexDirection: 'row',
-    flexWrap: 'wrap',
-    gap: Spacing.sm,
-    marginBottom: Spacing.lg,
-  },
-  presetButton: {
-    paddingHorizontal: Spacing.lg,
-    paddingVertical: Spacing.md,
-    backgroundColor: Colors.backgroundSecondary,
-    borderRadius: BorderRadius.md,
-    borderWidth: 1,
-    borderColor: Colors.border,
-  },
-  presetText: {
-    fontSize: FontSize.md,
-    fontWeight: FontWeight.semibold,
-    color: Colors.primary,
   },
   presetsContainer: {
     flexDirection: 'row',
@@ -392,7 +353,7 @@ const styles = StyleSheet.create({
     paddingBottom: Spacing.xl,
     marginTop: Spacing.md,
   },
-  payButton: {
+  sendButton: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
