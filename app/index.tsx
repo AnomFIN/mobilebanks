@@ -61,8 +61,6 @@ export default function HomeScreen() {
         style={styles.scrollView}
         showsVerticalScrollIndicator={false}
       >
-        {/* Header */}
-        <HeaderBar onProfilePress={handlePress} />
 
         {/* Balance Card */}
         <Animated.View style={[styles.balanceCard, { transform: [{ scale: scaleAnim }] }]}>
