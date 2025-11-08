@@ -1,10 +1,9 @@
 import React from 'react';
 import { Tabs } from 'expo-router';
 import { StyleSheet, View, Platform } from 'react-native';
-import { Colors, Layout } from '../src/theme/theme';
+import { Colors, Layout, Spacing, FontSize } from '../src/theme/theme';
 import { Ionicons } from '@expo/vector-icons';
 import { AccountProvider } from '../src/context/AccountContext';
-import { Colors, Spacing, FontSize } from '../src/theme/theme';
 
 export default function TabLayout() {
   return (
