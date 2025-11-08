@@ -423,6 +423,411 @@
             color: var(--text-primary);
         }
 
+        /* Premium Statement Styles */
+        .statement-header {
+            background: linear-gradient(135deg, 
+                var(--primary-solid) 0%, 
+                rgba(103, 126, 234, 0.9) 50%, 
+                rgba(88, 166, 255, 0.8) 100%);
+            border-radius: var(--radius-xl);
+            padding: var(--space-6);
+            margin-bottom: var(--space-6);
+            color: white;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .statement-header::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -50%;
+            width: 100%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 70%);
+            animation: shimmer 4s ease-in-out infinite;
+        }
+
+        .statement-title-section {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: var(--space-4);
+        }
+
+        .statement-title {
+            font-size: 1.8rem;
+            font-weight: 800;
+            margin: 0;
+        }
+
+        .statement-period {
+            display: flex;
+            align-items: center;
+            gap: var(--space-2);
+            background: rgba(255, 255, 255, 0.15);
+            padding: var(--space-2) var(--space-3);
+            border-radius: var(--radius-md);
+            backdrop-filter: blur(10px);
+        }
+
+        .period-icon {
+            font-size: 1.1rem;
+        }
+
+        .balance-showcase {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-end;
+        }
+
+        .balance-main .balance-label {
+            font-size: 0.9rem;
+            opacity: 0.9;
+            margin-bottom: var(--space-1);
+        }
+
+        .balance-amount {
+            font-size: 2.5rem;
+            font-weight: 900;
+            letter-spacing: -0.02em;
+        }
+
+        .balance-trend {
+            text-align: right;
+        }
+
+        .trend-indicator {
+            display: flex;
+            align-items: center;
+            gap: var(--space-2);
+            padding: var(--space-2) var(--space-3);
+            border-radius: var(--radius-md);
+            backdrop-filter: blur(10px);
+        }
+
+        .trend-indicator.positive {
+            background: rgba(34, 197, 94, 0.2);
+        }
+
+        .trend-indicator.negative {
+            background: rgba(239, 68, 68, 0.2);
+        }
+
+        .trend-text {
+            font-size: 0.85rem;
+            font-weight: 600;
+        }
+
+        /* Analytics Cards */
+        .analytics-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: var(--space-4);
+            margin-bottom: var(--space-6);
+        }
+
+        .analytics-card {
+            background: var(--glass);
+            border: 1px solid var(--border-subtle);
+            border-radius: var(--radius-lg);
+            padding: var(--space-4);
+            backdrop-filter: blur(20px);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .analytics-card.income {
+            border-left: 4px solid var(--success);
+        }
+
+        .analytics-card.expenses {
+            border-left: 4px solid #ef4444;
+        }
+
+        .analytics-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(135deg, transparent 0%, rgba(255,255,255,0.03) 100%);
+        }
+
+        .analytics-icon {
+            font-size: 1.5rem;
+            margin-bottom: var(--space-3);
+        }
+
+        .analytics-label {
+            font-size: 0.8rem;
+            color: var(--text-secondary);
+            margin-bottom: var(--space-1);
+        }
+
+        .analytics-value {
+            font-size: 1.4rem;
+            font-weight: 800;
+            margin-bottom: var(--space-2);
+        }
+
+        .analytics-change {
+            font-size: 0.75rem;
+            opacity: 0.8;
+        }
+
+        /* Advanced Filters */
+        .advanced-filters {
+            margin-bottom: var(--space-6);
+        }
+
+        .filter-section {
+            display: flex;
+            flex-direction: column;
+            gap: var(--space-4);
+        }
+
+        .search-container {
+            position: relative;
+            display: flex;
+            align-items: center;
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-subtle);
+            border-radius: var(--radius-lg);
+            padding: var(--space-3) var(--space-4);
+        }
+
+        .search-icon {
+            margin-right: var(--space-3);
+            opacity: 0.6;
+        }
+
+        .search-input {
+            flex: 1;
+            background: transparent;
+            border: none;
+            outline: none;
+            font-size: 0.95rem;
+            color: var(--text-primary);
+        }
+
+        .search-input::placeholder {
+            color: var(--text-secondary);
+        }
+
+        .filter-chips {
+            display: flex;
+            gap: var(--space-2);
+            overflow-x: auto;
+            padding: var(--space-2) 0;
+        }
+
+        .filter-chip {
+            display: flex;
+            align-items: center;
+            gap: var(--space-2);
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-subtle);
+            border-radius: var(--radius-full);
+            padding: var(--space-2) var(--space-4);
+            font-size: 0.85rem;
+            font-weight: 600;
+            color: var(--text-secondary);
+            cursor: pointer;
+            transition: all 0.2s ease;
+            white-space: nowrap;
+        }
+
+        .filter-chip:hover {
+            background: var(--bg-hover);
+            transform: translateY(-1px);
+        }
+
+        .filter-chip.active {
+            background: var(--primary-solid);
+            color: white;
+            border-color: var(--primary-solid);
+        }
+
+        .chip-icon {
+            font-size: 0.9rem;
+        }
+
+        /* Professional Transaction Container */
+        .transaction-container {
+            background: var(--glass);
+            border: 1px solid var(--border-subtle);
+            border-radius: var(--radius-xl);
+            backdrop-filter: blur(20px);
+            overflow: hidden;
+        }
+
+        .container-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: var(--space-5) var(--space-5) var(--space-4) var(--space-5);
+            border-bottom: 1px solid var(--border-subtle);
+        }
+
+        .container-title {
+            font-size: 1.1rem;
+            font-weight: 700;
+            margin: 0;
+        }
+
+        .export-options {
+            display: flex;
+            gap: var(--space-2);
+        }
+
+        .export-btn {
+            display: flex;
+            align-items: center;
+            gap: var(--space-2);
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-subtle);
+            border-radius: var(--radius-md);
+            padding: var(--space-2) var(--space-3);
+            font-size: 0.8rem;
+            font-weight: 600;
+            color: var(--text-secondary);
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .export-btn:hover {
+            background: var(--primary-solid);
+            color: white;
+            transform: translateY(-1px);
+        }
+
+        .export-icon {
+            font-size: 0.9rem;
+        }
+
+        /* Professional Transaction Items */
+        .professional-transaction {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: var(--space-4) var(--space-5);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+            transition: all 0.2s ease;
+            cursor: pointer;
+        }
+
+        .professional-transaction:hover {
+            background: rgba(255, 255, 255, 0.02);
+        }
+
+        .professional-transaction:last-child {
+            border-bottom: none;
+        }
+
+        .transaction-left {
+            display: flex;
+            align-items: center;
+            gap: var(--space-4);
+            flex: 1;
+        }
+
+        .transaction-avatar {
+            width: 48px;
+            height: 48px;
+            border-radius: var(--radius-lg);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2rem;
+            font-weight: 700;
+            color: white;
+            position: relative;
+        }
+
+        .transaction-avatar.credit {
+            background: linear-gradient(135deg, var(--success) 0%, #10b981 100%);
+        }
+
+        .transaction-avatar.debit {
+            background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%);
+        }
+
+        .transaction-details {
+            flex: 1;
+            min-width: 0;
+        }
+
+        .transaction-company {
+            font-size: 0.95rem;
+            font-weight: 600;
+            margin-bottom: var(--space-1);
+            color: var(--text-primary);
+        }
+
+        .transaction-meta {
+            display: flex;
+            align-items: center;
+            gap: var(--space-3);
+            font-size: 0.8rem;
+            color: var(--text-secondary);
+        }
+
+        .transaction-date {
+            display: flex;
+            align-items: center;
+            gap: var(--space-1);
+        }
+
+        .transaction-reference {
+            display: flex;
+            align-items: center;
+            gap: var(--space-1);
+        }
+
+        .transaction-archive {
+            display: flex;
+            align-items: center;
+            gap: var(--space-1);
+        }
+
+        .transaction-right {
+            text-align: right;
+            min-width: 120px;
+        }
+
+        .professional-amount {
+            font-size: 1.1rem;
+            font-weight: 800;
+            margin-bottom: var(--space-1);
+        }
+
+        .professional-amount.credit {
+            color: var(--success);
+        }
+
+        .professional-amount.debit {
+            color: var(--text-primary);
+        }
+
+        .transaction-status {
+            font-size: 0.75rem;
+            font-weight: 600;
+            padding: var(--space-1) var(--space-2);
+            border-radius: var(--radius-sm);
+        }
+
+        .transaction-status.completed {
+            background: rgba(34, 197, 94, 0.1);
+            color: var(--success);
+        }
+
+        .transaction-status.pending {
+            background: rgba(251, 191, 36, 0.1);
+            color: #f59e0b;
+        }
+
         /* Tab Navigation */
         .tab-nav {
             position: fixed;
@@ -750,6 +1155,249 @@
         .toggle.active::after {
             transform: translateX(20px);
         }
+
+        /* Premium Features */
+        .premium-features {
+            display: flex;
+            flex-direction: column;
+            gap: var(--space-4);
+            margin-bottom: var(--space-8);
+        }
+
+        .feature-card {
+            display: flex;
+            align-items: center;
+            background: var(--surface-primary);
+            padding: var(--space-6);
+            border-radius: var(--radius-xl);
+            box-shadow: var(--shadow-soft);
+            border: 1px solid var(--border-subtle);
+            transition: all var(--transition-medium);
+        }
+
+        .feature-card:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-medium);
+        }
+
+        .feature-icon {
+            font-size: 2rem;
+            margin-right: var(--space-4);
+            width: 60px;
+            height: 60px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: var(--primary);
+            border-radius: var(--radius-lg);
+            color: var(--text-inverse);
+        }
+
+        .feature-content h3 {
+            font-size: 1.1rem;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin-bottom: var(--space-1);
+        }
+
+        .feature-content p {
+            font-size: 0.9rem;
+            color: var(--text-secondary);
+            line-height: 1.4;
+        }
+
+        /* Card Styles */
+        .card-item {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border-radius: var(--radius-xl);
+            padding: var(--space-6);
+            margin-bottom: var(--space-4);
+            color: var(--text-inverse);
+            position: relative;
+            overflow: hidden;
+            box-shadow: var(--shadow-large);
+        }
+
+        .card-item::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -50%;
+            width: 100%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 70%);
+            animation: shimmer 3s ease-in-out infinite;
+        }
+
+        .card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: var(--space-4);
+        }
+
+        .card-type {
+            font-size: 0.8rem;
+            font-weight: 600;
+            opacity: 0.8;
+        }
+
+        .card-logo {
+            font-size: 1.5rem;
+            font-weight: 800;
+        }
+
+        .card-number {
+            font-size: 1.1rem;
+            font-family: 'SF Mono', 'Monaco', 'Cascadia Code', monospace;
+            font-weight: 500;
+            letter-spacing: 0.1em;
+            margin: var(--space-4) 0;
+        }
+
+        .card-footer {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-end;
+        }
+
+        .card-holder {
+            font-size: 0.9rem;
+            font-weight: 600;
+            opacity: 0.9;
+        }
+
+        .card-expiry {
+            font-size: 0.8rem;
+            font-weight: 500;
+            opacity: 0.8;
+        }
+
+        .card-actions {
+            display: flex;
+            gap: var(--space-2);
+            margin-top: var(--space-4);
+        }
+
+        /* Payment Flow Styles */
+        .payment-step {
+            display: none;
+        }
+
+        .payment-step.active {
+            display: block;
+        }
+
+        .payment-progress {
+            display: flex;
+            justify-content: center;
+            margin-bottom: var(--space-6);
+        }
+
+        .progress-step {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            background: var(--surface-tertiary);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 var(--space-2);
+            font-size: 0.8rem;
+            font-weight: 600;
+            color: var(--text-secondary);
+        }
+
+        .progress-step.active {
+            background: var(--primary-solid);
+            color: var(--text-inverse);
+        }
+
+        .progress-step.completed {
+            background: var(--success);
+            color: var(--text-inverse);
+        }
+
+        .loading-spinner {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 2px solid var(--border-medium);
+            border-radius: 50%;
+            border-top-color: var(--primary-solid);
+            animation: spin 1s linear infinite;
+            margin-right: var(--space-2);
+        }
+
+        /* Dark Mode */
+        body.dark-mode {
+            --surface-primary: #0d1117;
+            --surface-secondary: #161b22;
+            --surface-tertiary: #21262d;
+            --text-primary: #f0f6fc;
+            --text-secondary: #8b949e;
+            --text-tertiary: #6e7681;
+            --background: linear-gradient(135deg, #0d1117 0%, #161b22 100%);
+            --glass: rgba(13, 17, 23, 0.95);
+            --frosted-glass: rgba(22, 27, 34, 0.8);
+            --bg-primary: #0d1117;
+            --bg-secondary: #161b22;
+            --bg-soft: #21262d;
+            --bg-hover: #30363d;
+            --border: #30363d;
+            --border-subtle: #21262d;
+            --primary-solid: #58a6ff;
+            --primary-bg: #1c2128;
+            --text-inverse: #0d1117;
+        }
+
+        body.dark-mode .premium-card {
+            background: linear-gradient(135deg, 
+                rgba(13, 17, 23, 0.95) 0%, 
+                rgba(22, 27, 34, 0.95) 100%);
+            border: 1px solid rgba(240, 246, 252, 0.1);
+            backdrop-filter: blur(20px);
+            box-shadow: 
+                0 10px 40px rgba(0, 0, 0, 0.3),
+                0 0 0 1px rgba(240, 246, 252, 0.05) inset;
+        }
+
+        body.dark-mode .nav-tabs {
+            background: var(--surface-secondary);
+            border-bottom: 1px solid var(--border);
+        }
+
+        body.dark-mode .nav-tab.active {
+            background: var(--surface-primary);
+            color: var(--primary-solid);
+            border-bottom: 2px solid var(--primary-solid);
+        }
+
+        body.dark-mode .card-item {
+            background: linear-gradient(135deg, #1c2128 0%, #21262d 100%);
+            border: 1px solid rgba(88, 166, 255, 0.2);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+        }
+
+        body.dark-mode .progress-step.active {
+            background: var(--primary-solid);
+            color: var(--text-inverse);
+        }
+
+        body.dark-mode .btn-primary {
+            background: linear-gradient(135deg, var(--primary-solid) 0%, #4493f8 100%);
+            box-shadow: 0 4px 16px rgba(88, 166, 255, 0.3);
+        }
+
+        body.dark-mode .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(88, 166, 255, 0.4);
+        }
+
+        body.dark-mode .header-bar {
+            background: rgba(13, 17, 23, 0.95);
+            border-bottom: 1px solid var(--border);
+        }
     </style>
 </head>
 <body>
@@ -792,9 +1440,9 @@
                         <div class="action-icon">💸</div>
                         <div class="action-label">Maksa</div>
                     </div>
-                    <div class="action-btn" onclick="showScreen('statement')">
-                        <div class="action-icon">📊</div>
-                        <div class="action-label">Tiliote</div>
+                    <div class="action-btn" onclick="showScreen('cards')">
+                        <div class="action-icon">�</div>
+                        <div class="action-label">Kortit</div>
                     </div>
                     <div class="action-btn" onclick="showScreen('receipt')">
                         <div class="action-icon">🧾</div>
@@ -803,6 +1451,35 @@
                     <div class="action-btn" onclick="showScreen('settings')">
                         <div class="action-icon">⚙️</div>
                         <div class="action-label">Asetukset</div>
+                    </div>
+                </div>
+                
+                <!-- Premium Features Section -->
+                <div class="section-header">
+                    <h2 class="section-title">Premium Banking</h2>
+                </div>
+                
+                <div class="premium-features">
+                    <div class="feature-card">
+                        <div class="feature-icon">🌍</div>
+                        <div class="feature-content">
+                            <h3>Maailmanlaajuinen pankkitoiminta</h3>
+                            <p>Käytä korttejasi 200+ maassa ilman lisämaksuja</p>
+                        </div>
+                    </div>
+                    <div class="feature-card">
+                        <div class="feature-icon">🔒</div>
+                        <div class="feature-content">
+                            <h3>Pankkiluokan turvallisuus</h3>
+                            <p>256-bittinen salaus ja biometrinen tunnistus</p>
+                        </div>
+                    </div>
+                    <div class="feature-card">
+                        <div class="feature-icon">⚡</div>
+                        <div class="feature-content">
+                            <h3>Välittömät maksut</h3>
+                            <p>Reaaliaikaiset tilisiirrot 24/7</p>
+                        </div>
                     </div>
                 </div>
 
@@ -818,44 +1495,183 @@
             </div>
         </div>
 
-        <!-- Payment Screen -->
-        <div id="payment" class="screen">
+        <!-- Cards Screen -->
+        <div id="cards" class="screen">
             <div class="main-content">
                 <div class="section-header">
-                    <h2 class="section-title">Luo maksu</h2>
+                    <h2 class="section-title">Yrityksen kortit</h2>
                     <div style="font-size: 0.875rem; color: var(--text-secondary);">
-                        Saldo: <span id="payment-balance">5,234.60 €</span>
+                        Yhteensä: <span id="card-count">1</span> korttia
                     </div>
                 </div>
 
-                <div class="card">
-                    <form id="payment-form">
-                        <div class="form-group">
-                            <label class="form-label">Summa (€)</label>
-                            <input type="number" id="payment-amount" class="form-input" placeholder="0.00" step="0.01" min="0" required>
+                <!-- Card List -->
+                <div id="card-list">
+                    <div class="card-item">
+                        <div class="card-header">
+                            <div class="card-type">VISA DEBIT</div>
+                            <div class="card-logo">VISA</div>
                         </div>
-
-                        <div class="form-group">
-                            <label class="form-label">Pikavalinnat</label>
-                            <div class="preset-amounts">
-                                <button type="button" class="preset-btn" onclick="setAmount(10)">10 €</button>
-                                <button type="button" class="preset-btn" onclick="setAmount(25)">25 €</button>
-                                <button type="button" class="preset-btn" onclick="setAmount(50)">50 €</button>
-                                <button type="button" class="preset-btn" onclick="setAmount(100)">100 €</button>
-                                <button type="button" class="preset-btn" onclick="setAmount(250)">250 €</button>
-                                <button type="button" class="preset-btn" onclick="setAmount(500)">500 €</button>
+                        <div class="card-number">**** **** **** 3456</div>
+                        <div class="card-footer">
+                            <div>
+                                <div style="font-size: 0.7rem; opacity: 0.7;">HALTIJA</div>
+                                <div class="card-holder" id="card-holder-name">FIRMA OY</div>
+                            </div>
+                            <div>
+                                <div style="font-size: 0.7rem; opacity: 0.7;">VOIMASSA</div>
+                                <div class="card-expiry">12/28</div>
                             </div>
                         </div>
+                    </div>
+                </div>
 
-                        <div class="form-group">
-                            <label class="form-label">Kuvaus (valinnainen)</label>
-                            <input type="text" id="payment-description" class="form-input" placeholder="Maksun kuvaus">
+                <!-- Card Actions -->
+                <div class="card-actions">
+                    <button class="btn btn-primary" style="flex: 1;" onclick="requestNewCard()">
+                        📱 Hae uutta korttia
+                    </button>
+                    <button class="btn btn-secondary" style="flex: 1;" onclick="addToAppleWallet()">
+                        🍎 Lisää Apple Wallet
+                    </button>
+                </div>
+
+                <!-- Card Settings -->
+                <div class="card">
+                    <h3 style="margin-bottom: var(--space-4);">Korttiasetukset</h3>
+                    <div class="settings-item">
+                        <div class="settings-info">
+                            <div class="settings-text">
+                                <h4>Kontaktittomat maksut</h4>
+                                <p>Ota käyttöön tap-to-pay maksut</p>
+                            </div>
                         </div>
+                        <div class="toggle active" onclick="toggleSetting(this, 'contactless')"></div>
+                    </div>
+                    <div class="settings-item">
+                        <div class="settings-info">
+                            <div class="settings-text">
+                                <h4>Verkkomaksut</h4>
+                                <p>Salli online-ostokset</p>
+                            </div>
+                        </div>
+                        <div class="toggle active" onclick="toggleSetting(this, 'online')"></div>
+                    </div>
+                    <div class="settings-item">
+                        <div class="settings-info">
+                            <div class="settings-text">
+                                <h4>Ulkomaan maksut</h4>
+                                <p>Kansainväliset tapahtumat</p>
+                            </div>
+                        </div>
+                        <div class="toggle" onclick="toggleSetting(this, 'international')"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
 
-                        <button type="submit" class="btn btn-primary" style="width: 100%; margin-top: var(--space-4);">
-                            Luo maksu
-                        </button>
-                    </form>
+        <!-- Payment Screen -->
+        <div id="payment" class="screen">
+            <div class="main-content">
+                <!-- Payment Progress -->
+                <div class="payment-progress">
+                    <div class="progress-step active">1</div>
+                    <div class="progress-step">2</div>
+                    <div class="progress-step">3</div>
+                </div>
+
+                <!-- Step 1: Payment Details -->
+                <div id="payment-step-1" class="payment-step active">
+                    <div class="section-header">
+                        <h2 class="section-title">Uusi maksu</h2>
+                        <div style="font-size: 0.875rem; color: var(--text-secondary);">
+                            Käytettävissä: <span id="payment-balance">5,234.60 €</span>
+                        </div>
+                    </div>
+
+                    <div class="card">
+                        <form id="payment-form">
+                            <div class="form-group">
+                                <label class="form-label">Saajan tilinumero (IBAN)</label>
+                                <input type="text" id="payment-iban" class="form-input" placeholder="FI21 1234 5678 9012 34" required>
+                            </div>
+
+                            <div class="form-group">
+                                <label class="form-label">Summa (€)</label>
+                                <input type="number" id="payment-amount" class="form-input" placeholder="0.00" step="0.01" min="0.01" required>
+                            </div>
+
+                            <div class="form-group">
+                                <label class="form-label">Pikavalinnat</label>
+                                <div class="preset-amounts">
+                                    <button type="button" class="preset-btn" onclick="setAmount(50)">50 €</button>
+                                    <button type="button" class="preset-btn" onclick="setAmount(100)">100 €</button>
+                                    <button type="button" class="preset-btn" onclick="setAmount(250)">250 €</button>
+                                    <button type="button" class="preset-btn" onclick="setAmount(500)">500 €</button>
+                                    <button type="button" class="preset-btn" onclick="setAmount(1000)">1000 €</button>
+                                    <button type="button" class="preset-btn" onclick="setAmount(2500)">2500 €</button>
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <label class="form-label">Viitenumero</label>
+                                <input type="text" id="payment-reference" class="form-input" placeholder="1234567890123456789">
+                            </div>
+
+                            <div class="form-group">
+                                <label class="form-label">Viesti saajalle</label>
+                                <input type="text" id="payment-message" class="form-input" placeholder="Lasku 12/2025">
+                            </div>
+
+                            <div class="form-group">
+                                <label class="form-label">Eräpäivä</label>
+                                <input type="date" id="payment-due-date" class="form-input">
+                            </div>
+
+                            <button type="submit" class="btn btn-primary" style="width: 100%; margin-top: var(--space-4);">
+                                Tarkista maksu
+                            </button>
+                        </form>
+                    </div>
+                </div>
+
+                <!-- Step 2: Verification -->
+                <div id="payment-step-2" class="payment-step">
+                    <div class="section-header">
+                        <h2 class="section-title">Tarkistetaan tiedot...</h2>
+                    </div>
+                    <div class="card" style="text-align: center; padding: var(--space-8);">
+                        <div class="loading-spinner"></div>
+                        <span>Odotetaan...</span>
+                        <div id="verification-result" style="margin-top: var(--space-6); display: none;">
+                            <div style="color: var(--success); font-size: 1.2rem; margin-bottom: var(--space-4);">
+                                ✅ Maksun saajan nimi ja IBAN täsmäävät toisiinsa.
+                            </div>
+                            <button class="btn btn-primary" onclick="showPaymentConfirmation()">
+                                Jatka hyväksymään
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Step 3: Confirmation -->
+                <div id="payment-step-3" class="payment-step">
+                    <div class="section-header">
+                        <h2 class="section-title">Hyväksy maksu</h2>
+                    </div>
+                    <div class="card">
+                        <div id="payment-summary">
+                            <!-- Populated by JavaScript -->
+                        </div>
+                        <div style="display: flex; gap: var(--space-3); margin-top: var(--space-6);">
+                            <button class="btn btn-secondary" onclick="editPayment()" style="flex: 1;">
+                                Muokkaa
+                            </button>
+                            <button class="btn btn-primary" onclick="executePayment()" style="flex: 1;">
+                                💸 Maksa nyt
+                            </button>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
@@ -863,22 +1679,104 @@
         <!-- Statement Screen -->
         <div id="statement" class="screen">
             <div class="main-content">
-                <div class="section-header">
-                    <h2 class="section-title">Tiliote</h2>
-                    <div style="font-size: 0.875rem; color: var(--text-secondary);">
-                        Saldo: <span id="statement-balance">5,234.60 €</span>
+                <!-- Premium Header with Analytics -->
+                <div class="statement-header">
+                    <div class="statement-title-section">
+                        <h1 class="statement-title">Tiliote</h1>
+                        <div class="statement-period">
+                            <span class="period-icon">📅</span>
+                            <span>Marraskuu 2025</span>
+                        </div>
+                    </div>
+                    
+                    <div class="balance-showcase">
+                        <div class="balance-main">
+                            <div class="balance-label">Nykyinen saldo</div>
+                            <div class="balance-amount" id="statement-balance-main">5,234.60 €</div>
+                        </div>
+                        <div class="balance-trend">
+                            <div class="trend-indicator positive">
+                                <span class="trend-icon">📈</span>
+                                <span class="trend-text">+12.4% tässä kuussa</span>
+                            </div>
+                        </div>
                     </div>
                 </div>
 
-                <!-- Filters -->
-                <div class="filter-tabs">
-                    <button class="filter-tab active" onclick="filterTransactions('all')">Kaikki</button>
-                    <button class="filter-tab" onclick="filterTransactions('credit')">Tulot</button>
-                    <button class="filter-tab" onclick="filterTransactions('debit')">Menot</button>
+                <!-- Advanced Analytics Cards -->
+                <div class="analytics-grid">
+                    <div class="analytics-card income">
+                        <div class="analytics-icon">💰</div>
+                        <div class="analytics-content">
+                            <div class="analytics-label">Tulot yhteensä</div>
+                            <div class="analytics-value">+8,450.00 €</div>
+                            <div class="analytics-change">+5.2% edellisestä kuusta</div>
+                        </div>
+                    </div>
+                    
+                    <div class="analytics-card expenses">
+                        <div class="analytics-icon">💸</div>
+                        <div class="analytics-content">
+                            <div class="analytics-label">Menot yhteensä</div>
+                            <div class="analytics-value">-3,215.40 €</div>
+                            <div class="analytics-change">-8.1% edellisestä kuusta</div>
+                        </div>
+                    </div>
                 </div>
 
-                <div id="all-transactions">
-                    <!-- Populated by JavaScript -->
+                <!-- Premium Filters with Search -->
+                <div class="advanced-filters">
+                    <div class="filter-section">
+                        <div class="search-container">
+                            <div class="search-icon">🔍</div>
+                            <input 
+                                type="text" 
+                                placeholder="Hae tapahtumia..." 
+                                class="search-input"
+                                id="transaction-search"
+                            >
+                        </div>
+                        
+                        <div class="filter-chips">
+                            <button class="filter-chip active" onclick="filterTransactions('all')">
+                                <span class="chip-icon">📊</span>
+                                Kaikki
+                            </button>
+                            <button class="filter-chip" onclick="filterTransactions('credit')">
+                                <span class="chip-icon">💚</span>
+                                Tulot
+                            </button>
+                            <button class="filter-chip" onclick="filterTransactions('debit')">
+                                <span class="chip-icon">🔴</span>
+                                Menot
+                            </button>
+                            <button class="filter-chip" onclick="filterTransactions('pending')">
+                                <span class="chip-icon">⏳</span>
+                                Odottaa
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Professional Transaction List -->
+                <div class="transaction-container">
+                    <div class="container-header">
+                        <h3 class="container-title">Tapahtumat</h3>
+                        <div class="export-options">
+                            <button class="export-btn" onclick="exportToPDF()">
+                                <span class="export-icon">📄</span>
+                                PDF
+                            </button>
+                            <button class="export-btn" onclick="exportToExcel()">
+                                <span class="export-icon">📊</span>
+                                Excel
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <div id="professional-transactions">
+                        <!-- Populated by enhanced JavaScript -->
+                    </div>
                 </div>
             </div>
         </div>
@@ -989,7 +1887,45 @@
                                     <p>Käytä tummaa väripalettia</p>
                                 </div>
                             </div>
-                            <div class="toggle" onclick="toggleSetting(this, 'darkMode')"></div>
+                            <div class="toggle" onclick="toggleDarkMode(this)"></div>
+                        </div>
+
+                        <div class="settings-item">
+                            <div class="settings-info">
+                                <div class="settings-icon">💳</div>
+                                <div class="settings-text">
+                                    <h4>Korttien määrä</h4>
+                                    <p>Hallitse yrityksen kortteja</p>
+                                </div>
+                            </div>
+                            <select class="form-input" style="width: 80px;" onchange="updateCardCount(this.value)">
+                                <option value="1">1</option>
+                                <option value="2">2</option>
+                                <option value="3">3</option>
+                                <option value="5">5</option>
+                            </select>
+                        </div>
+
+                        <div class="settings-item">
+                            <div class="settings-info">
+                                <div class="settings-icon">📊</div>
+                                <div class="settings-text">
+                                    <h4>Kehittyneet analytiikka</h4>
+                                    <p>Yksityiskohtaiset raportit ja trendit</p>
+                                </div>
+                            </div>
+                            <div class="toggle active" onclick="toggleSetting(this, 'analytics')"></div>
+                        </div>
+
+                        <div class="settings-item">
+                            <div class="settings-info">
+                                <div class="settings-icon">🤖</div>
+                                <div class="settings-text">
+                                    <h4>AI-avustaja</h4>
+                                    <p>Älykkäät säästösuositukset</p>
+                                </div>
+                            </div>
+                            <div class="toggle" onclick="toggleSetting(this, 'aiAssistant')"></div>
                         </div>
                     </div>
                 </div>
@@ -1047,9 +1983,9 @@
                 <div class="tab-icon">💸</div>
                 <div class="tab-label">Maksa</div>
             </div>
-            <div class="tab-item" onclick="showScreen('statement')">
-                <div class="tab-icon">📊</div>
-                <div class="tab-label">Tiliote</div>
+            <div class="tab-item" onclick="showScreen('cards')">
+                <div class="tab-icon">�</div>
+                <div class="tab-label">Kortit</div>
             </div>
             <div class="tab-item" onclick="showScreen('receipt')">
                 <div class="tab-icon">🧾</div>
@@ -1265,23 +2201,97 @@
             }
 
             renderAllTransactions() {
-                const container = document.getElementById('all-transactions');
+                const container = document.getElementById('professional-transactions');
                 if (!container) return;
                 
                 const filtered = this.getFilteredTransactions();
                 
                 if (filtered.length === 0) {
                     container.innerHTML = `
-                        <div class="card" style="text-align: center; padding: var(--space-8);">
-                            <div style="font-size: 3rem; margin-bottom: var(--space-4); opacity: 0.5;">📊</div>
-                            <p style="color: var(--text-secondary);">Ei tapahtumia valitulle suodattimelle</p>
+                        <div style="text-align: center; padding: var(--space-8);">
+                            <div style="font-size: 3rem; margin-bottom: var(--space-4); opacity: 0.3;">📊</div>
+                            <p style="color: var(--text-secondary); font-size: 0.9rem;">Ei tapahtumia valitulle suodattimelle</p>
                         </div>
                     `;
                 } else {
                     container.innerHTML = filtered
-                        .map(transaction => this.renderTransactionItem(transaction))
+                        .map(transaction => this.renderProfessionalTransaction(transaction))
                         .join('');
                 }
+            }
+
+            renderProfessionalTransaction(transaction) {
+                const date = new Date(transaction.date);
+                const formattedDate = date.toLocaleDateString('fi-FI', { 
+                    day: 'numeric', 
+                    month: 'short', 
+                    year: 'numeric' 
+                });
+                
+                const processedDate = new Date(date.getTime() + Math.random() * 24 * 60 * 60 * 1000);
+                const formattedProcessedDate = processedDate.toLocaleDateString('fi-FI', {
+                    day: 'numeric',
+                    month: 'short'
+                });
+
+                const referenceNumber = this.generateReferenceNumber();
+                const archiveId = `ARC-${Date.now()}-${Math.floor(Math.random() * 1000)}`;
+                const companyInitials = this.getCompanyInitials(transaction.description);
+                
+                const isCredit = transaction.type === 'credit';
+                const status = Math.random() > 0.1 ? 'completed' : 'pending';
+                const statusText = status === 'completed' ? 'Kirjattu' : 'Käsitellään';
+
+                return `
+                    <div class="professional-transaction" onclick="showTransactionDetails('${transaction.id}')">
+                        <div class="transaction-left">
+                            <div class="transaction-avatar ${transaction.type}">
+                                ${companyInitials}
+                            </div>
+                            <div class="transaction-details">
+                                <div class="transaction-company">${transaction.description}</div>
+                                <div class="transaction-meta">
+                                    <div class="transaction-date">
+                                        <span>📅</span>
+                                        <span>${formattedDate}</span>
+                                    </div>
+                                    <div class="transaction-reference">
+                                        <span>🔗</span>
+                                        <span>${referenceNumber}</span>
+                                    </div>
+                                    <div class="transaction-archive">
+                                        <span>📁</span>
+                                        <span>${archiveId}</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="transaction-right">
+                            <div class="professional-amount ${transaction.type}">
+                                ${isCredit ? '+' : ''}${this.formatCurrency(transaction.amount)}
+                            </div>
+                            <div class="transaction-status ${status}">
+                                ${statusText} ${formattedProcessedDate}
+                            </div>
+                        </div>
+                    </div>
+                `;
+            }
+
+            getCompanyInitials(description) {
+                const words = description.split(' ');
+                if (words.length >= 2) {
+                    return (words[0][0] + words[1][0]).toUpperCase();
+                }
+                return description.substring(0, 2).toUpperCase();
+            }
+
+            generateReferenceNumber() {
+                const numbers = [];
+                for (let i = 0; i < 8; i++) {
+                    numbers.push(Math.floor(Math.random() * 10));
+                }
+                return numbers.join('');
             }
 
             getFilteredTransactions() {
@@ -1294,11 +2304,23 @@
             filterTransactions(type) {
                 this.state.currentFilter = type;
                 
-                // Update filter tabs
-                document.querySelectorAll('.filter-tab').forEach(tab => {
-                    tab.classList.remove('active');
+                // Update filter chips
+                document.querySelectorAll('.filter-chip').forEach(chip => {
+                    chip.classList.remove('active');
                 });
-                event.target.classList.add('active');
+                
+                // Find and activate the clicked chip
+                const activeChip = Array.from(document.querySelectorAll('.filter-chip')).find(chip => {
+                    const chipText = chip.textContent.toLowerCase().trim();
+                    return (type === 'all' && chipText.includes('kaikki')) ||
+                           (type === 'credit' && chipText.includes('tulot')) ||
+                           (type === 'debit' && chipText.includes('menot')) ||
+                           (type === 'pending' && chipText.includes('odottaa'));
+                });
+                
+                if (activeChip) {
+                    activeChip.classList.add('active');
+                }
                 
                 this.renderAllTransactions();
             }
@@ -1532,9 +2554,287 @@
             app.showScreen('settings');
         }
 
+        // New Payment Flow Functions
+        function startPaymentVerification() {
+            const iban = document.getElementById('payment-iban').value;
+            const amount = document.getElementById('payment-amount').value;
+            const reference = document.getElementById('payment-reference').value;
+            const message = document.getElementById('payment-message').value;
+
+            if (!iban || !amount || (!reference && !message)) {
+                alert('Täytä kaikki pakolliset kentät. Viitenumero tai viesti on pakollinen.');
+                return;
+            }
+
+            // Show verification step
+            document.getElementById('payment-step-1').classList.remove('active');
+            document.getElementById('payment-step-2').classList.add('active');
+            document.querySelectorAll('.progress-step')[1].classList.add('active');
+
+            // Simulate verification delay
+            setTimeout(() => {
+                document.getElementById('verification-result').style.display = 'block';
+            }, 2000);
+        }
+
+        function showPaymentConfirmation() {
+            const iban = document.getElementById('payment-iban').value;
+            const amount = document.getElementById('payment-amount').value;
+            const reference = document.getElementById('payment-reference').value;
+            const message = document.getElementById('payment-message').value;
+            const dueDate = document.getElementById('payment-due-date').value;
+
+            const summary = `
+                <div style="border-bottom: 1px solid var(--border-subtle); padding-bottom: var(--space-4); margin-bottom: var(--space-4);">
+                    <div style="display: flex; justify-content: space-between; margin-bottom: var(--space-2);">
+                        <span>Saajan tili:</span>
+                        <span style="font-family: monospace;">${iban}</span>
+                    </div>
+                    <div style="display: flex; justify-content: space-between; margin-bottom: var(--space-2);">
+                        <span>Summa:</span>
+                        <span style="font-weight: 700; color: var(--primary-solid);">${amount} €</span>
+                    </div>
+                    <div style="display: flex; justify-content: space-between; margin-bottom: var(--space-2);">
+                        <span>Viitenumero:</span>
+                        <span>${reference || '-'}</span>
+                    </div>
+                    <div style="display: flex; justify-content: space-between; margin-bottom: var(--space-2);">
+                        <span>Viesti:</span>
+                        <span>${message || '-'}</span>
+                    </div>
+                    <div style="display: flex; justify-content: space-between;">
+                        <span>Eräpäivä:</span>
+                        <span>${new Date(dueDate).toLocaleDateString('fi-FI')}</span>
+                    </div>
+                </div>
+            `;
+
+            document.getElementById('payment-summary').innerHTML = summary;
+            document.getElementById('payment-step-2').classList.remove('active');
+            document.getElementById('payment-step-3').classList.add('active');
+            document.querySelectorAll('.progress-step')[2].classList.add('active');
+        }
+
+        function editPayment() {
+            document.getElementById('payment-step-3').classList.remove('active');
+            document.getElementById('payment-step-1').classList.add('active');
+            document.querySelectorAll('.progress-step').forEach((step, index) => {
+                if (index === 0) step.classList.add('active');
+                else step.classList.remove('active');
+            });
+        }
+
+        function executePayment() {
+            const amount = document.getElementById('payment-amount').value;
+            const iban = document.getElementById('payment-iban').value;
+            const reference = document.getElementById('payment-reference').value;
+            const message = document.getElementById('payment-message').value;
+
+            // Create payment transaction
+            app.createPayment(parseFloat(amount), `${reference ? 'Viite: ' + reference : ''}${message ? ' - ' + message : ''}`);
+            
+            // Store receipt data
+            app.state.lastPayment = {
+                iban,
+                amount: parseFloat(amount),
+                reference,
+                message,
+                date: new Date().toISOString()
+            };
+
+            // Show success and redirect to receipt
+            app.showSuccess();
+            setTimeout(() => {
+                showScreen('receipt');
+                // Reset payment form
+                document.getElementById('payment-form').reset();
+                document.getElementById('payment-step-3').classList.remove('active');
+                document.getElementById('payment-step-1').classList.add('active');
+                document.querySelectorAll('.progress-step').forEach((step, index) => {
+                    if (index === 0) step.classList.add('active');
+                    else step.classList.remove('active');
+                });
+            }, 2500);
+        }
+
+        // Cards Functions
+        function requestNewCard() {
+            alert('🏧 Uuden kortin hakeminen aloitettu!\n\nKortti saapuu 5-7 arkipäivässä.');
+        }
+
+        function addToAppleWallet() {
+            alert('🍎 Kortti lisätty Apple Wallet -jonoon!\n\nVarmista henkilöllisyytesi Apple Pay -asetuksissa.');
+        }
+
+        function updateCardCount(count) {
+            document.getElementById('card-count').textContent = count;
+            // Update card list (simplified)
+            const cardList = document.getElementById('card-list');
+            cardList.innerHTML = '';
+            for (let i = 0; i < count; i++) {
+                const cardNumber = `**** **** **** ${3456 + i}`;
+                cardList.innerHTML += `
+                    <div class="card-item">
+                        <div class="card-header">
+                            <div class="card-type">VISA DEBIT</div>
+                            <div class="card-logo">VISA</div>
+                        </div>
+                        <div class="card-number">${cardNumber}</div>
+                        <div class="card-footer">
+                            <div>
+                                <div style="font-size: 0.7rem; opacity: 0.7;">HALTIJA</div>
+                                <div class="card-holder">FIRMA OY</div>
+                            </div>
+                            <div>
+                                <div style="font-size: 0.7rem; opacity: 0.7;">VOIMASSA</div>
+                                <div class="card-expiry">12/28</div>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            }
+        }
+
+        // Dark Mode Toggle
+        function toggleDarkMode(element) {
+            element.classList.toggle('active');
+            document.body.classList.toggle('dark-mode');
+            
+            // Save preference
+            const isDark = document.body.classList.contains('dark-mode');
+            localStorage.setItem('darkMode', isDark);
+        }
+
+        // Download Receipt as PNG
+        function downloadReceipt() {
+            // Create a canvas with receipt content
+            const canvas = document.createElement('canvas');
+            const ctx = canvas.getContext('2d');
+            canvas.width = 400;
+            canvas.height = 600;
+
+            // White background
+            ctx.fillStyle = '#ffffff';
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+            // Header
+            ctx.fillStyle = '#667eea';
+            ctx.fillRect(0, 0, canvas.width, 100);
+            ctx.fillStyle = '#ffffff';
+            ctx.font = 'bold 24px Arial';
+            ctx.textAlign = 'center';
+            ctx.fillText('SumUp Banking', canvas.width / 2, 40);
+            ctx.font = '16px Arial';
+            ctx.fillText('Maksukuitti', canvas.width / 2, 70);
+
+            // Transaction details
+            ctx.fillStyle = '#000000';
+            ctx.font = '14px Arial';
+            ctx.textAlign = 'left';
+            const lastPayment = app.state.lastPayment || {};
+            
+            let y = 150;
+            ctx.fillText(`Summa: ${lastPayment.amount || '0.00'} €`, 50, y);
+            y += 30;
+            ctx.fillText(`IBAN: ${lastPayment.iban || 'N/A'}`, 50, y);
+            y += 30;
+            ctx.fillText(`Viitenumero: ${lastPayment.reference || '-'}`, 50, y);
+            y += 30;
+            ctx.fillText(`Viesti: ${lastPayment.message || '-'}`, 50, y);
+            y += 30;
+            ctx.fillText(`Päivämäärä: ${new Date().toLocaleDateString('fi-FI')}`, 50, y);
+            y += 50;
+            ctx.fillText(`Tapahtuma-ID: ${Date.now()}`, 50, y);
+
+            // Convert to blob and download
+            canvas.toBlob((blob) => {
+                const url = URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = 'sumup-kuitti.png';
+                a.click();
+                URL.revokeObjectURL(url);
+            });
+        }
+
+        // Export Functions
+        function exportToPDF() {
+            alert('📄 PDF-vienti aloitettu!\n\nTiliote ladataan hetkessä...');
+            // Simulate PDF generation delay
+            setTimeout(() => {
+                const link = document.createElement('a');
+                link.href = '#';
+                link.download = 'tiliote-marraskuu-2025.pdf';
+                document.body.appendChild(link);
+                link.click();
+                document.body.removeChild(link);
+            }, 1500);
+        }
+
+        function exportToExcel() {
+            alert('📊 Excel-vienti aloitettu!\n\nTiedosto valmistuu hetkessä...');
+            // Simulate Excel generation delay
+            setTimeout(() => {
+                const link = document.createElement('a');
+                link.href = '#';
+                link.download = 'tiliote-marraskuu-2025.xlsx';
+                document.body.appendChild(link);
+                link.click();
+                document.body.removeChild(link);
+            }, 2000);
+        }
+
+        // Transaction Search and Details
+        function showTransactionDetails(transactionId) {
+            const transaction = app.state.transactions.find(t => t.id === transactionId);
+            if (!transaction) return;
+
+            const details = `
+                🏦 TAPAHTUMAN TIEDOT
+                
+                📋 Kuvaus: ${transaction.description}
+                💰 Summa: ${app.formatCurrency(transaction.amount)}
+                📅 Päivämäärä: ${new Date(transaction.date).toLocaleDateString('fi-FI')}
+                🔗 Viitenumero: ${Math.floor(Math.random() * 100000000)}
+                📁 Arkistointitunnus: ARC-${Date.now()}-${Math.floor(Math.random() * 1000)}
+                ⏰ Kirjattu: ${new Date().toLocaleDateString('fi-FI')} ${new Date().toLocaleTimeString('fi-FI', {hour: '2-digit', minute: '2-digit'})}
+                
+                Haluatko ladata kuitin?
+            `;
+            
+            if (confirm(details)) {
+                downloadReceipt();
+            }
+        }
+
+        // Search functionality
+        document.addEventListener('DOMContentLoaded', () => {
+            const searchInput = document.getElementById('transaction-search');
+            if (searchInput) {
+                searchInput.addEventListener('input', (e) => {
+                    const query = e.target.value.toLowerCase();
+                    const transactions = document.querySelectorAll('.professional-transaction');
+                    
+                    transactions.forEach(transaction => {
+                        const company = transaction.querySelector('.transaction-company').textContent.toLowerCase();
+                        const visible = company.includes(query);
+                        transaction.style.display = visible ? 'flex' : 'none';
+                    });
+                });
+            }
+        });
+
         // Initialize app
         document.addEventListener('DOMContentLoaded', () => {
             app = new BankingApp();
+            
+            // Load dark mode preference
+            const isDark = localStorage.getItem('darkMode') === 'true';
+            if (isDark) {
+                document.body.classList.add('dark-mode');
+                const darkToggle = document.querySelector('.toggle[onclick*="toggleDarkMode"]');
+                if (darkToggle) darkToggle.classList.add('active');
+            }
             
             // Add premium loading animation
             setTimeout(() => {
