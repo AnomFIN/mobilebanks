@@ -25,7 +25,6 @@ interface AccountProviderProps {
 let transactionCounter = 1000;
 
 export const AccountProvider: React.FC<AccountProviderProps> = ({ children }) => {
-  const accountNumber = 'FI21 1234 5678 9012 34';
   const [balance, setBalance] = useState<number>(14574.32);
   const [accountNumber] = useState<string>('FI21 1234 5678 9012 34');
   const [transactions, setTransactions] = useState<Transaction[]>([

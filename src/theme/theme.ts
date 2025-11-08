@@ -5,6 +5,7 @@ export const Colors = {
   // Primary colors
   white: '#FFFFFF',
   black: '#0B0B0B',
+  primary: '#0A84FF',
   primaryBlue: '#0A84FF',
   accentCyan: '#00D1FF',
   
@@ -14,16 +15,25 @@ export const Colors = {
   lightGray: '#E5E5E5',
   veryLightGray: '#F5F5F5',
   
+  // Backgrounds
+  background: '#FFFFFF',
+  backgroundSecondary: '#F5F5F5',
+  
   // Semantic colors
   success: '#34C759',
   danger: '#FF3B30',
   warning: '#FF9500',
   
   // Text colors
+  text: '#0B0B0B',
   textPrimary: '#0B0B0B',
   textSecondary: '#666666',
   textLight: '#999999',
   textWhite: '#FFFFFF',
+  
+  // UI colors
+  border: '#E5E5E5',
+  overlay: 'rgba(0, 0, 0, 0.5)',
 };
 
 export const Spacing = {
