@@ -951,30 +951,6 @@
             transform: translateY(-1px);
         }
 
-        /* Preset Amount Buttons */
-        .preset-amounts {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: var(--space-2);
-            margin-bottom: var(--space-6);
-        }
-
-        .preset-btn {
-            padding: var(--space-3);
-            background: var(--surface-secondary);
-            border: 1px solid var(--border-medium);
-            border-radius: var(--radius-md);
-            font-weight: 600;
-            cursor: pointer;
-            transition: all var(--transition-fast);
-        }
-
-        .preset-btn:hover {
-            background: var(--primary-solid);
-            color: var(--text-inverse);
-            transform: scale(1.05);
-        }
-
         /* Filters */
         .filter-tabs {
             display: flex;
@@ -1599,18 +1575,6 @@
                             <div class="form-group">
                                 <label class="form-label">Summa (€)</label>
                                 <input type="number" id="payment-amount" class="form-input" placeholder="0.00" step="0.01" min="0.01" required>
-                            </div>
-
-                            <div class="form-group">
-                                <label class="form-label">Pikavalinnat</label>
-                                <div class="preset-amounts">
-                                    <button type="button" class="preset-btn" onclick="setAmount(50)">50 €</button>
-                                    <button type="button" class="preset-btn" onclick="setAmount(100)">100 €</button>
-                                    <button type="button" class="preset-btn" onclick="setAmount(250)">250 €</button>
-                                    <button type="button" class="preset-btn" onclick="setAmount(500)">500 €</button>
-                                    <button type="button" class="preset-btn" onclick="setAmount(1000)">1000 €</button>
-                                    <button type="button" class="preset-btn" onclick="setAmount(2500)">2500 €</button>
-                                </div>
                             </div>
 
                             <div class="form-group">
@@ -2373,13 +2337,6 @@
                 }, 2500);
             }
 
-            setAmount(amount) {
-                const input = document.getElementById('payment-amount');
-                if (input) {
-                    input.value = amount;
-                }
-            }
-
             showSuccess() {
                 const modal = document.getElementById('success-modal');
                 if (modal) {
@@ -2512,10 +2469,6 @@
 
         function showScreen(screenId) {
             app.showScreen(screenId);
-        }
-
-        function setAmount(amount) {
-            app.setAmount(amount);
         }
 
         function filterTransactions(type) {
