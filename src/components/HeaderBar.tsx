@@ -1,6 +1,8 @@
 import React from 'react';
-import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
-import { useTheme } from '../theme/theme';
+import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
+import { Ionicons } from '@expo/vector-icons';
+import { useTheme } from '../theme/themeContext';
+import { FontWeight } from '../theme/theme';
 
 interface HeaderBarProps {
   small?: boolean;
@@ -39,9 +41,9 @@ const HeaderBar: React.FC<HeaderBarProps> = ({ small = false, onProfilePress }) 
 
 const styles = StyleSheet.create({ 
   container: { paddingHorizontal: 16, paddingVertical: 14 }, 
-  bankTitle: { fontWeight: '800' }, 
-  greeting: { marginTop: 4, fontSize: 16, fontWeight: '600' }, 
-  owner: { marginTop: 2, fontSize: 12, fontWeight: '400', opacity: 0.9 } 
+  bankTitle: { fontWeight: FontWeight.heavy }, 
+  greeting: { marginTop: 4, fontSize: 16, fontWeight: FontWeight.semibold }, 
+  owner: { marginTop: 2, fontSize: 12, fontWeight: FontWeight.regular, opacity: 0.9 } 
 });
 
 export default HeaderBar;

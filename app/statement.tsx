@@ -137,7 +137,7 @@ const styles = StyleSheet.create({
   },
   title: {
     fontSize: FontSize.xl,
-    fontWeight: FontWeight.bold as any,
+    fontWeight: FontWeight.bold,
     color: Colors.text,
     marginBottom: Spacing.xs,
   },
@@ -167,7 +167,7 @@ const styles = StyleSheet.create({
   },
   filterText: {
     fontSize: FontSize.sm,
-    fontWeight: FontWeight.medium as any,
+    fontWeight: FontWeight.medium,
     color: Colors.text,
   },
   filterTextActive: {
@@ -179,7 +179,7 @@ const styles = StyleSheet.create({
   },
   sectionTitle: {
     fontSize: FontSize.lg,
-    fontWeight: FontWeight.semibold as any,
+    fontWeight: FontWeight.semibold,
     color: Colors.text,
     marginBottom: Spacing.md,
   },
@@ -210,7 +210,7 @@ const styles = StyleSheet.create({
   },
   transactionTitle: {
     fontSize: FontSize.md,
-    fontWeight: FontWeight.medium as any,
+    fontWeight: FontWeight.medium,
     color: Colors.text,
     marginBottom: 2,
   },
@@ -228,7 +228,7 @@ const styles = StyleSheet.create({
   },
   transactionAmount: {
     fontSize: FontSize.md,
-    fontWeight: FontWeight.semibold as any,
+    fontWeight: FontWeight.semibold,
     marginBottom: 2,
   },
   transactionStatus: {

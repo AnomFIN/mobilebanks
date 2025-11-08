@@ -1,7 +1,7 @@
 import React from 'react';
 import { Tabs } from 'expo-router';
 import { StyleSheet, View, Platform } from 'react-native';
-import { Colors, Layout, Spacing, FontSize } from '../src/theme/theme';
+import { Colors, Layout, Spacing, FontSize, FontWeight } from '../src/theme/theme';
 import { Ionicons } from '@expo/vector-icons';
 import { AccountProvider } from '../src/context/AccountContext';
 import { ThemeProvider } from '../src/theme/themeContext';
@@ -87,6 +87,6 @@ const styles = StyleSheet.create({
   },
   tabBarLabel: {
     fontSize: FontSize.xs,
-    fontWeight: '600',
+    fontWeight: FontWeight.semibold,
   },
 });
