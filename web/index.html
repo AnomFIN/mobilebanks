@@ -423,6 +423,114 @@
             color: var(--text-primary);
         }
 
+        /* Professional Receipt Styles */
+        .receipt-container {
+            display: flex;
+            justify-content: center;
+            margin-top: var(--space-4);
+        }
+
+        .receipt-paper {
+            background: white;
+            color: #000;
+            width: 100%;
+            max-width: 400px;
+            padding: var(--space-6);
+            border-radius: var(--radius-lg);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+            font-family: 'SF Mono', 'Monaco', 'Cascadia Code', monospace;
+            line-height: 1.4;
+        }
+
+        .receipt-header {
+            text-align: center;
+            border-bottom: 2px solid #000;
+            padding-bottom: var(--space-4);
+            margin-bottom: var(--space-5);
+        }
+
+        .bank-logo {
+            font-size: 1.5rem;
+            font-weight: 800;
+            margin-bottom: var(--space-2);
+        }
+
+        .receipt-type {
+            font-size: 1.1rem;
+            font-weight: 700;
+            margin-bottom: var(--space-2);
+        }
+
+        .receipt-date {
+            font-size: 0.9rem;
+            color: #666;
+        }
+
+        .receipt-section {
+            margin-bottom: var(--space-5);
+            padding-bottom: var(--space-3);
+            border-bottom: 1px solid #ddd;
+        }
+
+        .receipt-section:last-of-type {
+            border-bottom: none;
+        }
+
+        .receipt-section .section-title {
+            font-size: 0.8rem;
+            font-weight: 700;
+            margin-bottom: var(--space-3);
+            color: #333;
+            letter-spacing: 0.5px;
+        }
+
+        .receipt-line {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: var(--space-2);
+            font-size: 0.9rem;
+        }
+
+        .receipt-line .label {
+            color: #666;
+            flex: 1;
+        }
+
+        .receipt-line .value {
+            font-weight: 600;
+            text-align: right;
+            flex: 1;
+            color: #000;
+        }
+
+        .receipt-line .value.amount {
+            font-weight: 800;
+            font-size: 1.1rem;
+        }
+
+        .receipt-footer {
+            text-align: center;
+            margin-top: var(--space-5);
+            padding-top: var(--space-4);
+            border-top: 2px solid #000;
+        }
+
+        .footer-text {
+            font-size: 0.8rem;
+            color: #666;
+            margin-bottom: var(--space-3);
+            line-height: 1.5;
+        }
+
+        .verification-code {
+            font-size: 0.75rem;
+            font-weight: 700;
+            color: #333;
+            padding: var(--space-2);
+            background: #f5f5f5;
+            border-radius: var(--radius-sm);
+        }
+
         /* Premium Statement Styles */
         .statement-header {
             background: linear-gradient(135deg, 
@@ -1417,7 +1525,7 @@
                         <div class="action-label">Maksa</div>
                     </div>
                     <div class="action-btn" onclick="showScreen('cards')">
-                        <div class="action-icon">�</div>
+                        <div class="action-icon">💳</div>
                         <div class="action-label">Kortit</div>
                     </div>
                     <div class="action-btn" onclick="showScreen('receipt')">
@@ -1508,7 +1616,7 @@
                         📱 Hae uutta korttia
                     </button>
                     <button class="btn btn-secondary" style="flex: 1;" onclick="addToAppleWallet()">
-                        🍎 Lisää Apple Wallet
+                         Lisää Apple Wallet
                     </button>
                 </div>
 
@@ -1749,13 +1857,113 @@
         <div id="receipt" class="screen">
             <div class="main-content">
                 <div class="section-header">
-                    <h2 class="section-title">Kuitti</h2>
+                    <h2 class="section-title">Maksukuitti</h2>
+                    <button class="btn btn-primary" onclick="downloadReceipt()" style="font-size: 0.9rem;">
+                        Lataa kuitti (.PNG)
+                    </button>
                 </div>
 
-                <div class="card" id="receipt-content">
-                    <div style="text-align: center; padding: var(--space-8); color: var(--text-tertiary);">
-                        <div style="font-size: 3rem; margin-bottom: var(--space-4);">🧾</div>
-                        <p>Valitse tapahtuma nähdäksesi kuitin</p>
+                <div class="receipt-container">
+                    <div class="receipt-paper" id="receipt-content">
+                        <!-- Receipt Header -->
+                        <div class="receipt-header">
+                            <div class="bank-logo">SumUp Banking</div>
+                            <div class="receipt-type">MAKSUKUITTI</div>
+                            <div class="receipt-date">${new Date().toLocaleDateString('fi-FI', { 
+                                weekday: 'long', 
+                                year: 'numeric', 
+                                month: 'long', 
+                                day: 'numeric' 
+                            })}</div>
+                        </div>
+
+                        <!-- Transaction Details -->
+                        <div class="receipt-section">
+                            <h4 class="section-title">TAPAHTUMAN TIEDOT</h4>
+                            <div class="receipt-line">
+                                <span class="label">Maksun saaja:</span>
+                                <span class="value" id="receipt-payee">Teknologia Yritys Oy</span>
+                            </div>
+                            <div class="receipt-line">
+                                <span class="label">Saajan tili (IBAN):</span>
+                                <span class="value" id="receipt-iban">FI21 1234 5678 9012 34</span>
+                            </div>
+                            <div class="receipt-line">
+                                <span class="label">Summa:</span>
+                                <span class="value amount" id="receipt-amount">1 250,00 EUR</span>
+                            </div>
+                            <div class="receipt-line">
+                                <span class="label">Viitenumero:</span>
+                                <span class="value" id="receipt-reference">12345678901234567890</span>
+                            </div>
+                            <div class="receipt-line">
+                                <span class="label">Viesti:</span>
+                                <span class="value" id="receipt-message">Lasku 2025-11-001</span>
+                            </div>
+                        </div>
+
+                        <!-- Timing Information -->
+                        <div class="receipt-section">
+                            <h4 class="section-title">AJOITUS</h4>
+                            <div class="receipt-line">
+                                <span class="label">Maksupäivä:</span>
+                                <span class="value">${new Date().toLocaleDateString('fi-FI')}</span>
+                            </div>
+                            <div class="receipt-line">
+                                <span class="label">Kirjausaika:</span>
+                                <span class="value">${new Date().toLocaleTimeString('fi-FI')}</span>
+                            </div>
+                            <div class="receipt-line">
+                                <span class="label">Eräpäivä:</span>
+                                <span class="value">${new Date(Date.now() + 3*24*60*60*1000).toLocaleDateString('fi-FI')}</span>
+                            </div>
+                        </div>
+
+                        <!-- Bank Information -->
+                        <div class="receipt-section">
+                            <h4 class="section-title">PANKKITIEDOT</h4>
+                            <div class="receipt-line">
+                                <span class="label">Maksajan tili:</span>
+                                <span class="value">FI12 3456 7890 1234 56</span>
+                            </div>
+                            <div class="receipt-line">
+                                <span class="label">Tilinomistaja:</span>
+                                <span class="value">Firma Oy</span>
+                            </div>
+                            <div class="receipt-line">
+                                <span class="label">Y-tunnus:</span>
+                                <span class="value">1234567-8</span>
+                            </div>
+                        </div>
+
+                        <!-- Technical Information -->
+                        <div class="receipt-section">
+                            <h4 class="section-title">TEKNINEN TIETO</h4>
+                            <div class="receipt-line">
+                                <span class="label">Tapahtuma-ID:</span>
+                                <span class="value">${Date.now()}</span>
+                            </div>
+                            <div class="receipt-line">
+                                <span class="label">Arkistointitunnus:</span>
+                                <span class="value">ARC-${new Date().getFullYear()}-${String(Date.now()).slice(-6)}</span>
+                            </div>
+                            <div class="receipt-line">
+                                <span class="label">Palvelutunnus:</span>
+                                <span class="value">SB-PROD-${Math.floor(Math.random()*10000)}</span>
+                            </div>
+                        </div>
+
+                        <!-- Footer -->
+                        <div class="receipt-footer">
+                            <div class="footer-text">
+                                SumUp Banking - Yrityspalvelut<br>
+                                Puh: 020 123 4567 | www.sumup.fi<br>
+                                Säilytä kuitti maksutositteena
+                            </div>
+                            <div class="verification-code">
+                                Varmennuskoodi: ${Math.floor(Math.random()*1000000).toString().padStart(6, '0')}
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -1948,7 +2156,7 @@
                 <div class="tab-label">Maksa</div>
             </div>
             <div class="tab-item" onclick="showScreen('cards')">
-                <div class="tab-icon">�</div>
+                <div class="tab-icon">💳</div>
                 <div class="tab-label">Kortit</div>
             </div>
             <div class="tab-item" onclick="showScreen('receipt')">
@@ -2216,15 +2424,15 @@
                                 <div class="transaction-company">${transaction.description}</div>
                                 <div class="transaction-meta">
                                     <div class="transaction-date">
-                                        <span>📅</span>
+                                        <span>Pvm:</span>
                                         <span>${formattedDate}</span>
                                     </div>
                                     <div class="transaction-reference">
-                                        <span>🔗</span>
+                                        <span>Viite:</span>
                                         <span>${referenceNumber}</span>
                                     </div>
                                     <div class="transaction-archive">
-                                        <span>📁</span>
+                                        <span>Arkisto:</span>
                                         <span>${archiveId}</span>
                                     </div>
                                 </div>
@@ -2622,7 +2830,7 @@
         }
 
         function addToAppleWallet() {
-            alert('🍎 Kortti lisätty Apple Wallet -jonoon!\n\nVarmista henkilöllisyytesi Apple Pay -asetuksissa.');
+            alert(' Kortti lisätty Apple Wallet -jonoon!\n\nVarmista henkilöllisyytesi Apple Pay -asetuksissa.');
         }
 
         function updateCardCount(count) {
@@ -2664,55 +2872,120 @@
             localStorage.setItem('darkMode', isDark);
         }
 
-        // Download Receipt as PNG
+        // Download Receipt as PNG (Professional)
         function downloadReceipt() {
-            // Create a canvas with receipt content
+            const receiptElement = document.getElementById('receipt-content');
+            
+            // Create a high-quality canvas
             const canvas = document.createElement('canvas');
             const ctx = canvas.getContext('2d');
-            canvas.width = 400;
-            canvas.height = 600;
-
+            
+            // Set high DPI for crisp text
+            const scale = 2;
+            canvas.width = 400 * scale;
+            canvas.height = 800 * scale;
+            ctx.scale(scale, scale);
+            
             // White background
             ctx.fillStyle = '#ffffff';
-            ctx.fillRect(0, 0, canvas.width, canvas.height);
-
-            // Header
-            ctx.fillStyle = '#667eea';
-            ctx.fillRect(0, 0, canvas.width, 100);
-            ctx.fillStyle = '#ffffff';
-            ctx.font = 'bold 24px Arial';
-            ctx.textAlign = 'center';
-            ctx.fillText('SumUp Banking', canvas.width / 2, 40);
-            ctx.font = '16px Arial';
-            ctx.fillText('Maksukuitti', canvas.width / 2, 70);
-
-            // Transaction details
-            ctx.fillStyle = '#000000';
-            ctx.font = '14px Arial';
-            ctx.textAlign = 'left';
-            const lastPayment = app.state.lastPayment || {};
+            ctx.fillRect(0, 0, 400, 800);
             
-            let y = 150;
-            ctx.fillText(`Summa: ${lastPayment.amount || '0.00'} €`, 50, y);
+            // Professional receipt rendering
+            ctx.fillStyle = '#000000';
+            ctx.textAlign = 'center';
+            
+            // Header
+            ctx.font = 'bold 20px Arial';
+            ctx.fillText('SumUp Banking', 200, 40);
+            ctx.font = '16px Arial';
+            ctx.fillText('MAKSUKUITTI', 200, 65);
+            ctx.font = '12px Arial';
+            ctx.fillText(new Date().toLocaleDateString('fi-FI'), 200, 85);
+            
+            // Draw separator line
+            ctx.beginPath();
+            ctx.moveTo(30, 100);
+            ctx.lineTo(370, 100);
+            ctx.strokeStyle = '#000000';
+            ctx.lineWidth = 2;
+            ctx.stroke();
+            
+            // Receipt content
+            ctx.textAlign = 'left';
+            ctx.font = '12px Arial';
+            let y = 130;
+            
+            // Transaction details
+            const details = [
+                'TAPAHTUMAN TIEDOT',
+                '',
+                'Maksun saaja: Teknologia Yritys Oy',
+                'Saajan tili: FI21 1234 5678 9012 34',
+                'Summa: 1 250,00 EUR',
+                'Viitenumero: 12345678901234567890',
+                'Viesti: Lasku 2025-11-001',
+                '',
+                'AJOITUS',
+                '',
+                `Maksupäivä: ${new Date().toLocaleDateString('fi-FI')}`,
+                `Kirjausaika: ${new Date().toLocaleTimeString('fi-FI')}`,
+                `Eräpäivä: ${new Date(Date.now() + 3*24*60*60*1000).toLocaleDateString('fi-FI')}`,
+                '',
+                'PANKKITIEDOT',
+                '',
+                'Maksajan tili: FI12 3456 7890 1234 56',
+                'Tilinomistaja: Firma Oy',
+                'Y-tunnus: 1234567-8',
+                '',
+                'TEKNINEN TIETO',
+                '',
+                `Tapahtuma-ID: ${Date.now()}`,
+                `Arkistointitunnus: ARC-${new Date().getFullYear()}-${String(Date.now()).slice(-6)}`,
+                `Palvelutunnus: SB-PROD-${Math.floor(Math.random()*10000)}`,
+                `Varmennuskoodi: ${Math.floor(Math.random()*1000000).toString().padStart(6, '0')}`
+            ];
+            
+            details.forEach(line => {
+                if (line === '') {
+                    y += 15;
+                } else if (line.includes('TIEDOT') || line.includes('AJOITUS') || line.includes('PANKKITIEDOT') || line.includes('TEKNINEN')) {
+                    ctx.font = 'bold 11px Arial';
+                    ctx.fillText(line, 30, y);
+                    y += 20;
+                    ctx.font = '12px Arial';
+                } else {
+                    ctx.fillText(line, 30, y);
+                    y += 18;
+                }
+            });
+            
+            // Footer
             y += 30;
-            ctx.fillText(`IBAN: ${lastPayment.iban || 'N/A'}`, 50, y);
-            y += 30;
-            ctx.fillText(`Viitenumero: ${lastPayment.reference || '-'}`, 50, y);
-            y += 30;
-            ctx.fillText(`Viesti: ${lastPayment.message || '-'}`, 50, y);
-            y += 30;
-            ctx.fillText(`Päivämäärä: ${new Date().toLocaleDateString('fi-FI')}`, 50, y);
-            y += 50;
-            ctx.fillText(`Tapahtuma-ID: ${Date.now()}`, 50, y);
-
+            ctx.beginPath();
+            ctx.moveTo(30, y);
+            ctx.lineTo(370, y);
+            ctx.stroke();
+            
+            y += 25;
+            ctx.textAlign = 'center';
+            ctx.font = '10px Arial';
+            ctx.fillText('SumUp Banking - Yrityspalvelut', 200, y);
+            y += 15;
+            ctx.fillText('Puh: 020 123 4567 | www.sumup.fi', 200, y);
+            y += 15;
+            ctx.fillText('Säilytä kuitti maksutositteena', 200, y);
+            
             // Convert to blob and download
             canvas.toBlob((blob) => {
                 const url = URL.createObjectURL(blob);
                 const a = document.createElement('a');
                 a.href = url;
-                a.download = 'sumup-kuitti.png';
+                a.download = `sumup-kuitti-${new Date().toISOString().split('T')[0]}.png`;
                 a.click();
                 URL.revokeObjectURL(url);
+                
+                // Show success message
+                alert('✅ Kuitti ladattu onnistuneesti!\n\nTiedosto tallennettu nimellä: sumup-kuitti-' + new Date().toISOString().split('T')[0] + '.png');
             });
         }
 
