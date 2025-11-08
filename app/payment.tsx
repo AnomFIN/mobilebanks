@@ -60,6 +60,18 @@ export default function PaymentScreen() {
 
     // Create payment
     createPayment(Number(amount) || 0, description || undefined);
+    
+    // Show success modal
+    setShowSuccessModal(true);
+    
+    // Hide modal after 2 seconds and navigate
+    setTimeout(() => {
+      setShowSuccessModal(false);
+      setAmount('');
+      setDescription('');
+      setSelectedContact(null);
+    }, 2000);
+  };
 
     // Show success modal
     setShowSuccess(true);
@@ -205,7 +217,7 @@ export default function PaymentScreen() {
               <Text style={styles.sendButtonText}>Luo maksu</Text>
               <Ionicons name="arrow-forward" size={20} color={Colors.white} />
             </TouchableOpacity>
-          </Animated.View>
+          </View>
         </ScrollView>
       </KeyboardAvoidingView>
 
@@ -309,8 +321,9 @@ const styles = StyleSheet.create({
     color: Colors.text,
     marginBottom: Spacing.md,
   },
-  inputContainer: {
-    marginBottom: Spacing.lg,
+  contactsContainer: {
+    flexDirection: 'row',
+    gap: Spacing.md,
   },
   sectionTitle: {
     fontSize: FontSize.sm,

@@ -100,7 +100,7 @@ export default function ReceiptScreen() {
               <Ionicons
                 name="checkmark-circle"
                 size={20}
-                color={Colors.success}
+                color={Colors.white}
               />
               <Text style={styles.statusText}>
                 {recentTransaction.status.toUpperCase()}
