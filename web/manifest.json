@@ -1,0 +1,84 @@
+{
+  "name": "SumUp Banking",
+  "short_name": "SumUp",
+  "description": "Premium business banking application with enterprise-grade security and modern design",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#fafbfc",
+  "theme_color": "#1a1a1a",
+  "orientation": "portrait-primary",
+  "scope": "/",
+  "lang": "fi",
+  "dir": "ltr",
+  "categories": ["finance", "business", "productivity"],
+  "edge_side_panel": {
+    "preferred_width": 430
+  },
+  "screenshots": [
+    {
+      "src": "icon-192.svg",
+      "sizes": "430x932",
+      "type": "image/svg+xml",
+      "form_factor": "narrow",
+      "label": "SumUp Banking - Premium Mobile Experience"
+    }
+  ],
+  "icons": [
+    {
+      "src": "icon-192.svg",
+      "sizes": "192x192",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "icon-192.svg", 
+      "sizes": "512x512",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "logo.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "monochrome"
+    }
+  ],
+  "shortcuts": [
+    {
+      "name": "Luo maksu",
+      "short_name": "Maksa",
+      "description": "Suorita tilisiirto tai maksu",
+      "url": "/?screen=payment",
+      "icons": [{ "src": "icon-192.svg", "sizes": "192x192" }]
+    },
+    {
+      "name": "Tiliote",
+      "short_name": "Tiliote", 
+      "description": "Näytä tapahtumahistoria ja saldo",
+      "url": "/?screen=statement",
+      "icons": [{ "src": "icon-192.svg", "sizes": "192x192" }]
+    },
+    {
+      "name": "Asetukset",
+      "short_name": "Asetukset",
+      "description": "Hallitse tilin ja sovelluksen asetuksia",
+      "url": "/?screen=settings", 
+      "icons": [{ "src": "icon-192.svg", "sizes": "192x192" }]
+    },
+    {
+      "name": "Kuitti",
+      "short_name": "Kuitti",
+      "description": "Näytä tapahtumakohtainen kuitti",
+      "url": "/?screen=receipt",
+      "icons": [{ "src": "icon-192.svg", "sizes": "192x192" }]
+    }
+  ],
+  "related_applications": [],
+  "prefer_related_applications": false,
+  "protocol_handlers": [
+    {
+      "protocol": "web+sumup",
+      "url": "/?payment=%s"
+    }
+  ]
+}

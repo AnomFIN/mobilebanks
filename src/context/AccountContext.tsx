@@ -5,7 +5,16 @@ interface AccountContextType {
   balance: number;
   transactions: Transaction[];
   accountNumber: string;
+  accountHolderName: string;
+  companyName: string;
   createPayment: (amount: number, description?: string) => void;
+  updateBalance: (newBalance: number) => void;
+  updateAccountHolderName: (name: string) => void;
+  updateCompanyName: (company: string) => void;
+  updateAccountNumber: (iban: string) => void;
+  addTransaction: (transaction: Omit<Transaction, 'id'>) => void;
+  updateTransaction: (id: string, updatedTransaction: Partial<Transaction>) => void;
+  deleteTransaction: (id: string) => void;
 }
 
 const AccountContext = createContext<AccountContextType | undefined>(undefined);
@@ -25,9 +34,10 @@ interface AccountProviderProps {
 let transactionCounter = 1000;
 
 export const AccountProvider: React.FC<AccountProviderProps> = ({ children }) => {
-  const accountNumber = 'FI21 1234 5678 9012 34';
   const [balance, setBalance] = useState<number>(14574.32);
-  const [accountNumber] = useState<string>('FI21 1234 5678 9012 34');
+  const [accountNumber, setAccountNumber] = useState<string>('FI21 1234 5678 9012 34');
+  const [accountHolderName, setAccountHolderName] = useState<string>('Aku Ankka');
+  const [companyName, setCompanyName] = useState<string>('Firma Oy');
   const [transactions, setTransactions] = useState<Transaction[]>([
     {
       id: '1',
@@ -85,8 +95,82 @@ export const AccountProvider: React.FC<AccountProviderProps> = ({ children }) =>
     setBalance((prev) => Math.round((prev - Math.abs(numAmount)) * 100) / 100);
   };
 
+  const updateBalance = (newBalance: number) => {
+    setBalance(Math.round(newBalance * 100) / 100);
+  };
+
+  const updateAccountHolderName = (name: string) => {
+    setAccountHolderName(name);
+  };
+
+  const updateCompanyName = (company: string) => {
+    setCompanyName(company);
+  };
+
+  const updateAccountNumber = (iban: string) => {
+    setAccountNumber(iban);
+  };
+
+  const addTransaction = (transaction: Omit<Transaction, 'id'>) => {
+    transactionCounter++;
+    const newTransaction: Transaction = {
+      ...transaction,
+      id: transactionCounter.toString(),
+    };
+    setTransactions((prev) => [newTransaction, ...prev]);
+    
+    // Update balance based on transaction type
+    const amountChange = transaction.type === 'credit' ? 
+      Math.abs(transaction.amount) : 
+      -Math.abs(transaction.amount);
+    setBalance((prev) => Math.round((prev + amountChange) * 100) / 100);
+  };
+
+  const updateTransaction = (id: string, updatedTransaction: Partial<Transaction>) => {
+    setTransactions((prev) => prev.map((t) => {
+      if (t.id === id) {
+        const oldAmount = t.amount;
+        const newTransaction = { ...t, ...updatedTransaction };
+        
+        // If amount changed, update balance
+        if (updatedTransaction.amount !== undefined && updatedTransaction.amount !== oldAmount) {
+          const amountDiff = updatedTransaction.amount - oldAmount;
+          setBalance((prevBalance) => Math.round((prevBalance + amountDiff) * 100) / 100);
+        }
+        
+        return newTransaction;
+      }
+      return t;
+    }));
+  };
+
+  const deleteTransaction = (id: string) => {
+    const transactionToDelete = transactions.find(t => t.id === id);
+    if (transactionToDelete) {
+      // Reverse the balance change
+      const amountToReverse = -transactionToDelete.amount;
+      setBalance((prev) => Math.round((prev + amountToReverse) * 100) / 100);
+    }
+    
+    setTransactions((prev) => prev.filter((t) => t.id !== id));
+  };
+
   return (
-    <AccountContext.Provider value={{ balance, transactions, accountNumber, createPayment }}>
+    <AccountContext.Provider value={{ 
+      balance, 
+      transactions, 
+      accountNumber, 
+      accountHolderName,
+      companyName,
+      createPayment,
+      updateBalance,
+      updateAccountHolderName,
+      updateCompanyName,
+      updateAccountNumber,
+      addTransaction,
+      updateTransaction,
+      deleteTransaction
+    }}>
       {children}
     </AccountContext.Provider>
   );

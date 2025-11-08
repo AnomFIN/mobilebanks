@@ -2,7 +2,7 @@ import React from 'react';
 import { StatusBar } from 'expo-status-bar';
 import { NavigationContainer } from '@react-navigation/native';
 import AppNavigator from './src/navigation/AppNavigator';
-import { ThemeProvider } from './src/theme/theme';
+import { ThemeProvider } from './src/theme/themeContext';
 
 export default function App() {
   return (
