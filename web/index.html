@@ -1628,7 +1628,7 @@
                                 <input type="date" id="payment-due-date" class="form-input">
                             </div>
 
-                            <button type="submit" class="btn btn-primary" style="width: 100%; margin-top: var(--space-4);">
+                            <button type="button" class="btn btn-primary" style="width: 100%; margin-top: var(--space-4);" onclick="startPaymentVerification()">
                                 Tarkista maksu
                             </button>
                         </form>
@@ -2556,15 +2556,21 @@
 
         // New Payment Flow Functions
         function startPaymentVerification() {
+            console.log('🚀 Starting payment verification...');
+            
             const iban = document.getElementById('payment-iban').value;
             const amount = document.getElementById('payment-amount').value;
             const reference = document.getElementById('payment-reference').value;
             const message = document.getElementById('payment-message').value;
 
+            console.log('📋 Form values:', { iban, amount, reference, message });
+
             if (!iban || !amount || (!reference && !message)) {
                 alert('Täytä kaikki pakolliset kentät. Viitenumero tai viesti on pakollinen.');
                 return;
             }
+
+            console.log('✅ Validation passed, proceeding to step 2');
 
             // Show verification step
             document.getElementById('payment-step-1').classList.remove('active');
