@@ -21,6 +21,7 @@ import Card from '../src/components/Card';
 
 export default function PaymentScreen() {
   const [amount, setAmount] = useState('');
+  const [recipient, setRecipient] = useState('');
   const [description, setDescription] = useState('');
   const [showSuccess, setShowSuccess] = useState(false);
   const { balance, createPayment } = useAccount();
@@ -38,6 +39,7 @@ export default function PaymentScreen() {
 
   const handleCreatePayment = () => {
     if (!amount || parseFloat(amount) <= 0) {
+      Haptics.notificationAsync(Haptics.NotificationFeedbackType.Error);
       return;
     }
 
@@ -56,7 +58,7 @@ export default function PaymentScreen() {
       }),
     ]).start();
 
-    // Create payment with coerced amount
+    // Create payment
     createPayment(Number(amount) || 0, description || undefined);
     
     // Show success modal
@@ -91,6 +93,7 @@ export default function PaymentScreen() {
 
   return (
     <SafeAreaView style={styles.container} edges={['top']}>
+      <HeaderBar />
       <KeyboardAvoidingView
         behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
         style={styles.keyboardView}
@@ -122,40 +125,26 @@ export default function PaymentScreen() {
             </Card>
           </View>
 
-          {/* Contact Picker */}
+          {/* Contact Picker (Mock) */}
           <View style={styles.section}>
-            <Text style={styles.sectionTitle}>Valitse vastaanottaja</Text>
-            <View style={styles.contactsContainer}>
-              {mockContacts.map((contact) => (
-                <TouchableOpacity
-                  key={contact.id}
-                  style={[
-                    styles.contactButton,
-                    selectedContact === contact.id && styles.contactButtonActive,
-                  ]}
-                  onPress={() => handleContactSelect(contact.id)}
-                  accessibilityLabel={`Select ${contact.name}`}
-                  accessibilityRole="button"
-                >
-                  <View style={[
-                    styles.contactAvatar,
-                    selectedContact === contact.id && styles.contactAvatarActive,
-                  ]}>
-                    <Ionicons
-                      name="person"
-                      size={24}
-                      color={selectedContact === contact.id ? Colors.white : Colors.primary}
-                    />
-                  </View>
-                  <Text style={[
-                    styles.contactName,
-                    selectedContact === contact.id && styles.contactNameActive,
-                  ]}>
-                    {contact.name}
-                  </Text>
-                </TouchableOpacity>
-              ))}
-            </View>
+            <Text style={styles.sectionTitle}>Vastaanottaja</Text>
+            <Card>
+              <View style={styles.inputWrapper}>
+                <Ionicons
+                  name="person-outline"
+                  size={20}
+                  color={Colors.textSecondary}
+                  style={styles.inputIcon}
+                />
+                <TextInput
+                  style={styles.input}
+                  placeholder="Valitse tai kirjoita nimi"
+                  placeholderTextColor={Colors.textSecondary}
+                  value={recipient}
+                  onChangeText={setRecipient}
+                />
+              </View>
+            </Card>
           </View>
 
             {/* Amount Input */}
@@ -193,6 +182,7 @@ export default function PaymentScreen() {
                 </TouchableOpacity>
               ))}
             </View>
+          </View>
 
             {/* Description Input */}
             <View style={styles.inputContainer}>
@@ -218,7 +208,7 @@ export default function PaymentScreen() {
           </View>
 
           {/* Create Payment Button */}
-          <View style={styles.sendButtonContainer}>
+          <Animated.View style={[styles.buttonContainer, { transform: [{ scale: scaleAnim }] }]}>
             <TouchableOpacity
               style={[styles.sendButton, (!amount || Number(amount) <= 0) && styles.sendButtonDisabled]}
               onPress={handleCreatePayment}
@@ -277,9 +267,10 @@ const styles = StyleSheet.create({
   scrollView: {
     flex: 1,
   },
-  header: {
+  titleSection: {
     paddingHorizontal: Spacing.lg,
-    paddingVertical: Spacing.xl,
+    paddingTop: Spacing.md,
+    paddingBottom: Spacing.lg,
   },
   title: {
     fontSize: FontSize.xxxl,
@@ -334,7 +325,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     gap: Spacing.md,
   },
-  inputLabel: {
+  sectionTitle: {
     fontSize: FontSize.sm,
     color: Colors.text,
     marginBottom: Spacing.sm,
@@ -376,18 +367,40 @@ const styles = StyleSheet.create({
     fontWeight: FontWeight.semibold,
     color: Colors.primary,
   },
-  sendButtonContainer: {
+  presetsContainer: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    marginTop: Spacing.md,
+    gap: Spacing.sm,
+  },
+  presetButton: {
+    paddingHorizontal: Spacing.lg,
+    paddingVertical: Spacing.md,
+    backgroundColor: Colors.white,
+    borderRadius: BorderRadius.full,
+    borderWidth: 1,
+    borderColor: Colors.primaryBlue,
+    ...Shadow.small,
+  },
+  presetText: {
+    fontSize: FontSize.sm,
+    fontWeight: FontWeight.semibold,
+    color: Colors.primaryBlue,
+  },
+  buttonContainer: {
     paddingHorizontal: Spacing.lg,
     paddingBottom: Spacing.xl,
+    marginTop: Spacing.md,
   },
-  sendButton: {
+  payButton: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
     backgroundColor: Colors.primary,
     paddingVertical: Spacing.lg,
-    borderRadius: BorderRadius.md,
+    borderRadius: BorderRadius.lg,
     ...Shadow.large,
+    gap: Spacing.sm,
   },
   sendButtonDisabled: {
     backgroundColor: Colors.textSecondary,
