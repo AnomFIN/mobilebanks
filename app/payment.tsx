@@ -139,24 +139,24 @@ export default function PaymentScreen() {
           {/* Amount Input */}
           <View style={styles.section}>
             <Text style={styles.sectionTitle}>Summa</Text>
-              <Card shadow="small" padding={Spacing.md}>
-                <View style={styles.inputWrapper}>
-                  <Ionicons
-                    name="cash-outline"
-                    size={24}
-                    color={Colors.primary}
-                  />
-                  <TextInput
-                    style={styles.input}
-                    placeholder="0.00"
-                    placeholderTextColor={Colors.textSecondary}
-                    value={amount}
-                    onChangeText={setAmount}
-                    keyboardType="decimal-pad"
-                  />
-                  <Text style={styles.currency}>€</Text>
-                </View>
-              </Card>
+            <Card shadow="small" padding={Spacing.md}>
+              <View style={styles.inputWrapper}>
+                <Ionicons
+                  name="cash-outline"
+                  size={24}
+                  color={Colors.primary}
+                />
+                <TextInput
+                  style={styles.input}
+                  placeholder="0.00"
+                  placeholderTextColor={Colors.textSecondary}
+                  value={amount}
+                  onChangeText={setAmount}
+                  keyboardType="decimal-pad"
+                />
+                <Text style={styles.currency}>€</Text>
+              </View>
+            </Card>
 
             {/* Preset Amounts */}
             <View style={styles.presetsContainer}>
@@ -174,24 +174,24 @@ export default function PaymentScreen() {
 
           {/* Description Input */}
           <View style={styles.section}>
-              <Text style={styles.sectionTitle}>Kuvaus (valinnainen)</Text>
-              <Card shadow="small" padding={Spacing.md}>
-                <View style={styles.inputWrapper}>
-                  <Ionicons
-                    name="chatbox-outline"
-                    size={24}
-                    color={Colors.primary}
-                  />
-                  <TextInput
-                    style={styles.input}
-                    placeholder="Lisää viesti"
-                    placeholderTextColor={Colors.textSecondary}
-                    value={description}
-                    onChangeText={setDescription}
-                    multiline
-                  />
-                </View>
-              </Card>
+            <Text style={styles.sectionTitle}>Kuvaus (valinnainen)</Text>
+            <Card shadow="small" padding={Spacing.md}>
+              <View style={styles.inputWrapper}>
+                <Ionicons
+                  name="chatbox-outline"
+                  size={24}
+                  color={Colors.primary}
+                />
+                <TextInput
+                  style={styles.input}
+                  placeholder="Lisää viesti"
+                  placeholderTextColor={Colors.textSecondary}
+                  value={description}
+                  onChangeText={setDescription}
+                  multiline
+                />
+              </View>
+            </Card>
           </View>
 
           {/* Create Payment Button */}
