@@ -19,7 +19,6 @@ import { Colors, Spacing, BorderRadius, FontSize, Shadow, FontWeight } from '../
 import { useAccount } from '../src/context/AccountContext';
 import HeaderBar from '../src/components/HeaderBar';
 import Card from '../src/components/Card';
-import HeaderBar from '../src/components/HeaderBar';
 
 export default function PaymentScreen() {
   const [amount, setAmount] = useState('');
@@ -163,7 +162,7 @@ export default function PaymentScreen() {
               <Text style={styles.sendButtonText}>Luo maksu</Text>
               <Ionicons name="arrow-forward" size={20} color={Colors.white} />
             </TouchableOpacity>
-          </Animated.View>
+          </View>
         </ScrollView>
       </KeyboardAvoidingView>
 
@@ -214,6 +213,11 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   header: {
+    paddingHorizontal: Spacing.lg,
+    paddingTop: Spacing.lg,
+    paddingBottom: Spacing.md,
+  },
+  titleSection: {
     paddingHorizontal: Spacing.lg,
     paddingTop: Spacing.lg,
     paddingBottom: Spacing.md,
