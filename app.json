@@ -1,20 +1,20 @@
 {
   "expo": {
-    "name": "Yritystili – Helsinki eBike Service Oy",
-    "slug": "yritystili-helsinki-ebike",
+    "name": "SumUp",
+    "slug": "sumup-mobile-bank",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
-    "userInterfaceStyle": "dark",
+    "userInterfaceStyle": "light",
     "newArchEnabled": true,
-    "scheme": "yritystili",
+    "scheme": "sumup",
     "plugins": [
       "expo-router"
     ],
     "splash": {
       "image": "./assets/splash-icon.png",
       "resizeMode": "contain",
-      "backgroundColor": "#000000"
+      "backgroundColor": "#FFFFFF"
     },
     "ios": {
       "supportsTablet": true
@@ -22,7 +22,7 @@
     "android": {
       "adaptiveIcon": {
         "foregroundImage": "./assets/adaptive-icon.png",
-        "backgroundColor": "#000000"
+        "backgroundColor": "#FFFFFF"
       },
       "edgeToEdgeEnabled": true,
       "predictiveBackGestureEnabled": false

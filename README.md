@@ -28,17 +28,30 @@ A stunning Expo Go mobile banking app with a minimalist fintech UI design, featu
 
 ## 🚀 Quick Start
 
-### Automaattinen asennus (suositeltu)
+### Vaihtoehto 1: Käyttöönotto-assistentti (suositeltu)
+
+Käytä `install.py`-skriptiä helppoon asennukseen ja käynnistykseen:
 
 ```bash
-# Tekstipohjainen valikko - helpoin tapa aloittaa
+# Interaktiivinen valikko
 python3 install.py
 
-# Tai automaattinen full install
+# Tai suoraan automaattinen asennus
 python3 install.py --auto
+
+# Nopea käynnistys (jos riippuvuudet on jo asennettu)
+python3 install.py --quick
+
+# Asenna vain riippuvuudet
+python3 install.py --install-only
 ```
 
-### Manuaalinen asennus
+Skripti tarjoaa seuraavat toiminnot:
+- **Full guided install and start**: Tarkistaa työkalut, asentaa riippuvuudet ja käynnistää Expo serverin
+- **Quick start**: Käynnistää Expo serverin suoraan (olettaa riippuvuudet asennetuksi)
+- **Install dependencies only**: Asentaa vain npm-riippuvuudet
+
+### Vaihtoehto 2: Manuaalinen asennus
 
 ```bash
 # Install dependencies
@@ -50,12 +63,20 @@ npm start
 # Scan QR code with Expo Go app
 ```
 
-**Detailed instructions**: See [SETUP.md](SETUP.md) or [README_INSTALL.md](README_INSTALL.md)
+**Alternative**: Use the Python installation script for automatic port conflict handling:
+```bash
+python3 install.py
+```
+This script automatically handles port conflicts on Windows and other platforms.
+
+**Detailed instructions**: See [SETUP.md](SETUP.md)
 
 ## 📚 Documentation
 
 - **[README_INSTALL.md](README_INSTALL.md)**: Install.py script guide (recommended)
 - **[SETUP.md](SETUP.md)**: Complete setup guide and quick start
+- **[README_INSTALL.md](README_INSTALL.md)**: install.py käyttöohjeet (tekstipohjainen valikko, Windows-parannukset, porttikäsittely)
+- **[INSTALL_SCRIPT.md](INSTALL_SCRIPT.md)**: Python installation script documentation (vanha versio)
 - **[UI_DESIGN.md](UI_DESIGN.md)**: Comprehensive UI design documentation
 - **[FEATURES.md](FEATURES.md)**: Detailed feature documentation
 

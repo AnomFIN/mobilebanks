@@ -1,0 +1,459 @@
+<!DOCTYPE html>
+<html lang="fi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Yritystili - Helsinki eBike Service Oy</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Helvetica', 'Arial', sans-serif;
+            background-color: #FFFFFF;
+            color: #0B0B0B;
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 480px;
+            margin: 0 auto;
+            min-height: 100vh;
+            background-color: #FFFFFF;
+        }
+
+        /* Header Bar */
+        .header-bar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 24px;
+        }
+
+        .header-title {
+            font-size: 18px;
+            font-weight: 700;
+            color: #0B0B0B;
+        }
+
+        .profile-button {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #0A84FF, #00D1FF);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border: none;
+            cursor: pointer;
+            color: white;
+            font-size: 18px;
+            transition: transform 0.2s;
+        }
+
+        .profile-button:hover {
+            transform: scale(1.05);
+        }
+
+        .profile-button:active {
+            transform: scale(0.95);
+        }
+
+        /* Balance Card */
+        .balance-card {
+            margin: 16px 24px;
+            padding: 32px;
+            background: linear-gradient(135deg, #0A84FF, #00D1FF);
+            border-radius: 16px;
+            box-shadow: 0 8px 16px rgba(10, 132, 255, 0.3);
+            color: white;
+            transition: transform 0.2s;
+        }
+
+        .balance-card:active {
+            transform: scale(0.98);
+        }
+
+        .balance-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .balance-info {
+            flex: 1;
+        }
+
+        .balance-label {
+            font-size: 14px;
+            opacity: 0.9;
+            margin-bottom: 4px;
+            font-weight: 500;
+        }
+
+        .balance-amount {
+            font-size: 56px;
+            font-weight: 700;
+            margin-bottom: 8px;
+        }
+
+        .account-number {
+            font-size: 12px;
+            opacity: 0.8;
+            font-family: 'Courier New', monospace;
+        }
+
+        .logo-container {
+            width: 72px;
+            height: 72px;
+            border-radius: 50%;
+            background-color: rgba(255, 255, 255, 0.2);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 40px;
+        }
+
+        /* Quick Actions */
+        .quick-actions {
+            display: flex;
+            justify-content: space-around;
+            padding: 24px;
+        }
+
+        .action-button {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            background: none;
+            border: none;
+            cursor: pointer;
+            transition: transform 0.2s;
+        }
+
+        .action-button:hover {
+            transform: translateY(-2px);
+        }
+
+        .action-button:active {
+            transform: translateY(0);
+        }
+
+        .action-icon {
+            width: 56px;
+            height: 56px;
+            border-radius: 50%;
+            background-color: #0A84FF;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 8px;
+            box-shadow: 0 4px 8px rgba(10, 132, 255, 0.3);
+            color: white;
+            font-size: 24px;
+        }
+
+        .action-text {
+            font-size: 12px;
+            color: #0B0B0B;
+            font-weight: 600;
+        }
+
+        /* Recent Transactions Section */
+        .section {
+            padding: 16px 24px;
+        }
+
+        .section-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 16px;
+        }
+
+        .section-title {
+            font-size: 18px;
+            font-weight: 700;
+            color: #0B0B0B;
+        }
+
+        .see-all {
+            font-size: 14px;
+            color: #0A84FF;
+            font-weight: 600;
+            cursor: pointer;
+            text-decoration: none;
+        }
+
+        .see-all:hover {
+            text-decoration: underline;
+        }
+
+        .card {
+            background-color: #FFFFFF;
+            border-radius: 12px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+        }
+
+        .transaction-item {
+            display: flex;
+            align-items: center;
+            padding: 16px 24px;
+            cursor: pointer;
+            transition: background-color 0.2s;
+        }
+
+        .transaction-item:hover {
+            background-color: #F5F5F5;
+        }
+
+        .transaction-item:not(:last-child) {
+            border-bottom: 1px solid #E5E7EB;
+        }
+
+        .transaction-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 16px;
+            color: white;
+            font-size: 20px;
+        }
+
+        .transaction-icon-credit {
+            background-color: #00FFAE;
+        }
+
+        .transaction-icon-debit {
+            background-color: #6B7280;
+        }
+
+        .transaction-details {
+            flex: 1;
+        }
+
+        .transaction-title {
+            font-size: 16px;
+            font-weight: 600;
+            color: #0B0B0B;
+            margin-bottom: 2px;
+        }
+
+        .transaction-date {
+            font-size: 12px;
+            color: #6B7280;
+        }
+
+        .transaction-amount {
+            font-size: 16px;
+            font-weight: 700;
+            color: #0B0B0B;
+        }
+
+        .transaction-amount-credit {
+            color: #00FFAE;
+        }
+
+        /* Responsive adjustments */
+        @media (max-width: 480px) {
+            .balance-amount {
+                font-size: 48px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Header Bar -->
+        <header class="header-bar">
+            <h1 class="header-title">Yritystili</h1>
+            <button class="profile-button" onclick="handleProfileClick()">
+                👤
+            </button>
+        </header>
+
+        <!-- Balance Card -->
+        <div class="balance-card" onclick="handleBalanceCardClick()">
+            <div class="balance-content">
+                <div class="balance-info">
+                    <div class="balance-label">Kokonaissaldo</div>
+                    <!-- Demo data - mirrors mobile app mock data -->
+                    <div class="balance-amount" id="balance">14574.32 €</div>
+                    <div class="account-number" id="accountNumber">FI21 1234 5678 9012 34</div>
+                </div>
+                <div class="logo-container">
+                    👛
+                </div>
+            </div>
+        </div>
+
+        <!-- Quick Actions -->
+        <div class="quick-actions">
+            <button class="action-button" onclick="handleAction('payment')">
+                <div class="action-icon">
+                    📤
+                </div>
+                <div class="action-text">Maksa</div>
+            </button>
+            <button class="action-button" onclick="handleAction('statement')">
+                <div class="action-icon">
+                    📊
+                </div>
+                <div class="action-text">Raportit</div>
+            </button>
+            <button class="action-button" onclick="handleAction('receipt')">
+                <div class="action-icon">
+                    📄
+                </div>
+                <div class="action-text">Kuitti</div>
+            </button>
+            <button class="action-button" onclick="handleAction('card')">
+                <div class="action-icon">
+                    💳
+                </div>
+                <div class="action-text">Kortti</div>
+            </button>
+        </div>
+
+        <!-- Recent Transactions Section -->
+        <div class="section">
+            <div class="section-header">
+                <div class="section-title">Viimeisimmät tapahtumat</div>
+                <a href="#" class="see-all" onclick="handleSeeAll(event)">Näytä kaikki</a>
+            </div>
+            <div class="card" id="transactionsList">
+                <!-- Transactions will be populated by JavaScript -->
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Mock data for transactions - Demo purposes only
+        const transactions = [
+            {
+                id: '1',
+                title: 'eBike Rental - Day Pass',
+                amount: -15.90,
+                date: '2025-11-05T14:30:00Z',
+                type: 'debit',
+            },
+            {
+                id: '2',
+                title: 'Salary',
+                amount: 3500.00,
+                date: '2025-11-01T09:00:00Z',
+                type: 'credit',
+            },
+            {
+                id: '3',
+                title: 'eBike Monthly Subscription',
+                amount: -49.90,
+                date: '2025-10-28T12:15:00Z',
+                type: 'debit',
+            },
+            {
+                id: '4',
+                title: 'Grocery Store',
+                amount: -87.35,
+                date: '2025-10-27T16:45:00Z',
+                type: 'debit',
+            },
+            {
+                id: '5',
+                title: 'Restaurant',
+                amount: -42.50,
+                date: '2025-10-26T19:30:00Z',
+                type: 'debit',
+            },
+        ];
+
+        // Format currency
+        function formatCurrency(amount) {
+            return `${amount >= 0 ? '+' : ''}${amount.toFixed(2)} €`;
+        }
+
+        // Format date
+        function formatDate(dateString) {
+            const date = new Date(dateString);
+            return date.toLocaleDateString('fi-FI', {
+                month: 'short',
+                day: 'numeric',
+            });
+        }
+
+        // Populate transactions
+        function populateTransactions() {
+            const transactionsList = document.getElementById('transactionsList');
+            const recentTransactions = transactions.slice(0, 5);
+
+            transactionsList.innerHTML = recentTransactions.map(transaction => {
+                const iconClass = transaction.type === 'credit' ? 'transaction-icon-credit' : 'transaction-icon-debit';
+                const iconSymbol = transaction.type === 'credit' ? '↓' : '↑';
+                const amountClass = transaction.type === 'credit' ? 'transaction-amount transaction-amount-credit' : 'transaction-amount';
+
+                return `
+                    <div class="transaction-item" onclick="handleTransactionClick('${transaction.id}')">
+                        <div class="transaction-icon ${iconClass}">
+                            ${iconSymbol}
+                        </div>
+                        <div class="transaction-details">
+                            <div class="transaction-title">${transaction.title}</div>
+                            <div class="transaction-date">${formatDate(transaction.date)}</div>
+                        </div>
+                        <div class="${amountClass}">
+                            ${formatCurrency(transaction.amount)}
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        // Event handlers - Using alerts for demo purposes to show where navigation would occur
+        function handleProfileClick() {
+            console.log('Profile clicked');
+            alert('Profile functionality - would open profile settings in full app');
+        }
+
+        function handleBalanceCardClick() {
+            console.log('Balance card clicked');
+        }
+
+        function handleAction(action) {
+            console.log(`Action clicked: ${action}`);
+            const messages = {
+                payment: 'Maksa - would navigate to payment screen',
+                statement: 'Raportit - would navigate to reports screen',
+                receipt: 'Kuitti - would navigate to receipt screen',
+                card: 'Kortti - would show card details'
+            };
+            alert(messages[action] || 'Action not implemented');
+        }
+
+        function handleTransactionClick(transactionId) {
+            console.log(`Transaction clicked: ${transactionId}`);
+            const transaction = transactions.find(t => t.id === transactionId);
+            if (transaction) {
+                alert(`Transaction: ${transaction.title}\nAmount: ${formatCurrency(transaction.amount)}\nDate: ${formatDate(transaction.date)}`);
+            }
+        }
+
+        function handleSeeAll(event) {
+            event.preventDefault();
+            console.log('See all clicked');
+            alert('Näytä kaikki - would navigate to full transaction statement');
+        }
+
+        // Initialize
+        document.addEventListener('DOMContentLoaded', function() {
+            populateTransactions();
+        });
+    </script>
+</body>
+</html>

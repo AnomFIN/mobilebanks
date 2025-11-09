@@ -1,406 +1,262 @@
-# Installation Guide – install.py
+# install.py - Käyttöohjeet
 
-Yritystili – Helsinki eBike Service Oy -sovelluksen asennus- ja käynnistysskripti.
+Tekstipohjainen asennus- ja käynnistysskripti Expo/Node -projektille.
 
-## 📋 Yleiskuvaus
+## Ominaisuudet
 
-`install.py` on tekstipohjainen Python-skripti, joka helpottaa Expo-projektin asennusta ja käynnistämistä. Skripti tarjoaa sekä interaktiivisen valikon että komentorivi-liput automaatiota varten.
+### Tekstipohjainen valikko
+Skripti tarjoaa interaktiivisen valikon neljällä vaihtoehdolla:
 
-## 🚀 Pikaopas
+1. **Full guided install and start** (oletus)
+   - Tarkistaa Node.js ja npm asennuksen
+   - Tarkistaa package.json engines-vaatimukset
+   - Asentaa riippuvuudet (npm ci / npm install / yarn install)
+   - Tarkistaa Expo-kirjautumisen (EXPO_TOKEN tai `expo whoami`)
+   - Käynnistää backendin jos löytyy (backend/server/api -hakemisto)
+   - Käynnistää Expo dev-serverin ja näyttää QR-koodin
+   - Käsittelee porttikonflikti automaattisesti (interaktiivinen vahvistus)
 
-### Interaktiivinen käyttö
+2. **Quick start (no input)**
+   - Käynnistää Expo dev-serverin suoraan
+   - Ei asenna riippuvuuksia (olettaa jo asennetuksi)
+   - Automaattinen porttien käsittely (ei interaktiivisia kysymyksiä)
 
-Yksinkertaisesti suorita:
+3. **Install dependencies only**
+   - Tarkistaa Node.js ja npm
+   - Asentaa vain riippuvuudet
+   - Ei käynnistä sovellusta
+
+4. **Exit**
+   - Poistuu ohjelmasta
+
+### Komentorivivaihtoehdot (liput)
+
+Skripti tukee myös automaattista suoritusta ilman interaktiivista valikkoa:
+
+```bash
+# Automaattinen full guided install
+python3 install.py --auto
+
+# Nopea käynnistys (olettaa riippuvuudet asennetuksi)
+python3 install.py --quick
+
+# Asenna vain riippuvuudet
+python3 install.py --install-only
+```
+
+### Windows-yhteensopivuus
+
+Skripti on parannettu toimimaan Windowsissa ilman `FileNotFoundError`-virheitä:
+
+- `normalize_cmd(cmd)` funktio muuttaa komentolistat merkkijonoiksi Windowsissa
+- `shell=True` käytetään Windowsissa, jotta npm/npx (.cmd/.bat) löytyvät
+- `popen()` ja `run()` apufunktiot käyttävät `normalize_cmd`:ia automaattisesti
+
+## Käyttö
+
+### Interaktiivinen valikko (suositeltu)
 
 ```bash
 python3 install.py
 ```
 
-Tämä näyttää tekstipohjaisen valikon neljällä vaihtoehdolla.
+Skripti näyttää valikon ja kysyy mitä haluat tehdä. Oletus on vaihtoehto 1 (Full guided install).
 
-### Automaattinen käyttö (komentoriviliput)
+### Automaattinen asennus ja käynnistys
 
 ```bash
-# Full guided install (automaattinen)
 python3 install.py --auto
+```
 
-# Quick start (suora käynnistys)
+Suorittaa täydellisen asennuksen ja käynnistyksen ilman kysymyksiä.
+
+### Nopea käynnistys
+
+```bash
 python3 install.py --quick
+```
 
-# Asenna vain riippuvuudet
+Käynnistää Expo dev-serverin suoraan. Olettaa että riippuvuudet on jo asennettu.
+
+### Vain riippuvuuksien asennus
+
+```bash
 python3 install.py --install-only
 ```
 
-## 📖 Vaihtoehdot
+Asentaa vain npm-riippuvuudet ilman sovelluksen käynnistystä.
 
-### Option 1: Full Guided Install and Start
+## Porttikonflikti
 
-**Interaktiivinen**: Valitse `1` valikossa  
-**Komentorivi**: `python3 install.py --auto`
+### Automaattinen käsittely
 
-Tämä vaihtoehto suorittaa täydellisen ohjatun asennuksen ja käynnistyksen:
+Skripti tunnistaa automaattisesti jos Expo-portti (oletus 8081) on jo käytössä:
 
-1. **Työkalutarkistus**: Tarkistaa että `node`, `npm`, `npx` ja `git` ovat asennettu
-2. **Engines-tarkistus**: Validoi `package.json` engines-vaatimukset
-3. **Riippuvuuksien asennus**: Asentaa riippuvuudet käyttäen `npm` tai `yarn`
-4. **Expo-kirjautuminen**: 
-   - Tarkistaa `EXPO_TOKEN` ympäristömuuttuja
-   - Tarkistaa olemassa oleva Expo-kirjautuminen
-   - Antaa ohjeet kirjautumiseen tarvittaessa
-5. **Backend-käynnistys**: 
-   - Etsii `server.js` tiedostoa
-   - Tarkistaa backend-skriptit `package.json`:sta
-   - Antaa ohjeet backendin käynnistämiseen
-6. **Expo Dev Server**: Käynnistää `npx expo start --tunnel`
-7. **QR-koodi**: Näyttää QR-koodin (jos `pyqrcode` on asennettu)
+- **Interaktiivisessa tilassa** (`--auto` tai vaihtoehto 1): Kysyy käyttäjältä hyväksynnän seuraavan portin käyttöön
+- **Ei-interaktiivisessa tilassa** (`--quick` tai vaihtoehto 2): Yrittää automaattisesti seuraavaa porttia
 
-**Käyttötapaukset**:
-- Ensimmäinen asennus uudelle kehittäjälle
-- CI/CD-putki (käytä `--auto` lippua)
-- Täydellinen ympäristön tarkistus
+Skripti yrittää enintään 3 porttia (8081, 8082, 8083).
 
-### Option 2: Quick Start
+### Manuaalinen portin valinta
 
-**Interaktiivinen**: Valitse `2` valikossa  
-**Komentorivi**: `python3 install.py --quick`
+Jos haluat käyttää tiettyä porttia, voit käynnistää Expon manuaalisesti:
 
-Nopea käynnistys kehittäjille, joilla riippuvuudet on jo asennettu:
+```bash
+# Käynnistä Expo portilla 8082
+npx expo start --port 8082
 
-1. Käynnistää suoraan Expo dev-serverin (`npx expo start --tunnel`)
-2. Näyttää QR-koodin Expo Go -sovellusta varten
+# Käynnistä Expo tunnel-tilassa portilla 8082
+npx expo start --tunnel --port 8082
+```
 
-**Käyttötapaukset**:
-- Päivittäinen kehitystyö kun riippuvuudet on jo asennettu
-- Nopea uudelleenkäynnistys
-- Testaus
+### Portin vapauttaminen
 
-### Option 3: Install Dependencies Only
+Jos portti on jumissa, voit vapauttaa sen:
 
-**Interaktiivinen**: Valitse `3` valikossa  
-**Komentorivi**: `python3 install.py --install-only`
+**Linux/macOS:**
+```bash
+# Etsi prosessi portilla 8081
+lsof -ti:8081
 
-Asentaa vain projektin riippuvuudet:
+# Tapa prosessi
+kill -9 $(lsof -ti:8081)
+```
 
-1. Tarkistaa työkalut (`node`, `npm`, `git`)
-2. Asentaa riippuvuudet käyttäen `npm install` tai `yarn install`
+**Windows (PowerShell):**
+```powershell
+# Etsi prosessi portilla 8081
+netstat -ano | findstr :8081
 
-**Käyttötapaukset**:
-- Riippuvuuksien päivitys
-- Ongelmanratkaisu riippuvuusongelmissa
-- CI/CD build-vaihe
+# Tapa prosessi (korvaa <PID> prosessi-ID:llä)
+taskkill /PID <PID> /F
+```
 
-### Option 4: Exit
+## Expo-kirjautuminen
 
-**Interaktiivinen**: Valitse `4` valikossa
+Skripti tukee kahta tapaa kirjautua Expoon:
 
-Poistuu skriptistä ilman toimenpiteitä.
+### 1. EXPO_TOKEN ympäristömuuttuja
 
-## 🛠️ Vaatimukset
+```bash
+# Aseta EXPO_TOKEN (suositeltu CI/CD-ympäristöissä)
+export EXPO_TOKEN="your-expo-token"
 
-### Pakolliset
+# Suorita skripti
+python3 install.py --auto
+```
 
-- **Python 3.x**: Skriptin suorittamiseen
-- **Node.js**: JavaScript runtime (suositeltu v18+)
-- **npm**: Node package manager (tulee Node.js:n mukana)
-- **npx**: Package runner (tulee Node.js:n mukana)
-- **Git**: Versionhallinta
+### 2. Interaktiivinen kirjautuminen
 
-### Valinnaiset
+Kun suoritat `--auto` tai vaihtoehdon 1, skripti:
+1. Tarkistaa onko EXPO_TOKEN asetettu
+2. Tarkistaa onko jo kirjautunut (`npx expo whoami`)
+3. Kysyy haluatko kirjautua (`npx expo login`)
 
-- **Yarn**: Vaihtoehtoinen package manager (npm toimii myös)
-- **pyqrcode**: QR-koodin näyttämiseen terminaalissa
-  ```bash
-  pip install pyqrcode pypng
-  ```
+Kirjautuminen ei ole pakollinen kehityksessä.
 
-## 🎯 Esimerkkejä
+## QR-koodi
+
+Skripti yrittää näyttää QR-koodin terminalissa, jotta voit skannata sen Expo Go -sovelluksella.
+
+### QR-koodin riippuvuudet
+
+```bash
+# Asenna Python-paketit (jos puuttuvat)
+pip install pyqrcode pypng
+```
+
+Skripti asentaa nämä automaattisesti jos puuttuvat.
+
+## Backend-käynnistys
+
+Jos projektissa on backend-hakemisto (`backend/`, `server/`, `api/`), skripti yrittää käynnistää sen automaattisesti:
+
+- Jos löytyy `package.json` ja `start`-skripti: `npm run start`
+- Muuten etsii entry pointia: `index.js`, `server.js`, `app.js`
+
+Backend käynnistetään taustalla samaan aikaan Expo-serverin kanssa.
+
+## Riippuvuudet
+
+Skripti yrittää asentaa riippuvuudet seuraavassa järjestyksessä:
+
+1. **npm ci** (jos `package-lock.json` löytyy)
+2. **npm install** (jos npm löytyy)
+3. **yarn install** (jos `yarn.lock` löytyy ja yarn on asennettu)
+
+## Ongelmatilanteet
+
+### "Node.js ei löydy"
+- Asenna Node.js: https://nodejs.org/
+- Suositeltu versio: 18.x tai uudempi
+
+### "npm ei löydy"
+- npm tulee yleensä Node.js:n mukana
+- Varmista että Node.js on asennettu oikein
+
+### "Riippuvuuksien asennus epäonnistui"
+- Tarkista internet-yhteys
+- Tyhjennä npm cache: `npm cache clean --force`
+- Poista `node_modules` ja yritä uudelleen: `rm -rf node_modules && npm install`
+
+### "Expo-käynnistys epäonnistui"
+- Tarkista että riippuvuudet on asennettu: `python3 install.py --install-only`
+- Varmista että portti 8081 on vapaa (tai käytä `--port`)
+- Tarkista Expo-versio: `npx expo --version`
+
+### FileNotFoundError Windowsissa (vanha versio)
+- Päivitetty versio korjaa tämän automaattisesti
+- Käytä `normalize_cmd()` ja `popen()`/`run()` funktioita
+
+## Esimerkkejä
 
 ### Ensimmäinen asennus
-
 ```bash
-# Kloonaa repo
-git clone https://github.com/AnomFIN/mobilebanks.git
-cd mobilebanks
+# Interaktiivinen asennus ja käynnistys
+python3 install.py
 
-# Suorita full guided install
+# Valitse: 1 (Full guided install and start)
+```
+
+### Päivittäinen kehitys
+```bash
+# Nopea käynnistys (riippuvuudet jo asennettu)
+python3 install.py --quick
+```
+
+### CI/CD-ympäristö
+```bash
+# Automaattinen asennus ilman interaktiota
+export EXPO_TOKEN="your-token"
 python3 install.py --auto
 ```
 
-### Päivittäinen kehitystyö
-
+### Vain riippuvuuksien päivitys
 ```bash
-# Quick start kun riippuvuudet on jo asennettu
-python3 install.py --quick
-```
-
-### CI/CD-pipeline
-
-```yaml
-# .github/workflows/example.yml
-steps:
-  - name: Install dependencies
-    run: python3 install.py --install-only
-  
-  - name: Run tests
-    run: npm test
-```
-
-### Riippuvuuksien päivitys
-
-```bash
-# Asenna vain riippuvuudet
+# Asenna/päivitä riippuvuudet
 python3 install.py --install-only
 ```
 
-## 🔧 Ominaisuudet
+## Lisätietoja
 
-### Työkalutarkistus
+- Paina `Ctrl+C` lopettaaksesi sovelluksen
+- Skripti sulkee automaattisesti Expo-serverin ja backendin (jos käynnistetty)
+- Kaikki virheet ja varoitukset näytetään terminaalissa
 
-Skripti tarkistaa automaattisesti että kaikki vaaditut työkalut ovat asennettu ja näyttää niiden versiot:
+## Kehittäjille
 
-```
-Tarkistetaan työkalut...
-✓ Node.js löytyi (versio: v18.17.0)
-✓ npm löytyi (versio: 9.6.7)
-✓ npx löytyi (versio: 9.6.7)
-✓ Git löytyi (versio: 2.40.0)
-```
+### normalize_cmd(cmd)
+Palauttaa tuplen `(cmd_for_subprocess, shell_flag)`:
+- Windowsissa: lista → merkkijono, `shell=True`
+- Unix: lista → lista, `shell=False`
 
-Jos jokin työkalu puuttuu, skripti antaa asennusohjeet.
+### popen(cmd, ...)
+Käynnistää prosessin käyttäen `normalize_cmd`:ia. Palauttaa `subprocess.Popen`.
 
-### Package Manager -valinta
-
-Skripti valitsee automaattisesti:
-- **Yarn**: Jos `yarn` on asennettu JA `yarn.lock` löytyy
-- **npm**: Muussa tapauksessa (oletus)
-
-### Expo-kirjautuminen
-
-Skripti tukee useita tapoja Expo-kirjautumiseen:
-
-1. **EXPO_TOKEN ympäristömuuttuja**:
-   ```bash
-   export EXPO_TOKEN=your_token_here
-   python3 install.py --auto
-   ```
-
-2. **Olemassa oleva kirjautuminen**:
-   Skripti tarkistaa `npx expo whoami`
-
-3. **Manuaalinen kirjautuminen**:
-   Skripti antaa ohjeet: `npx expo login`
-
-### QR-koodi
-
-Jos `pyqrcode` on asennettu, skripti näyttää QR-koodin suoraan terminaalissa:
-
-```bash
-pip install pyqrcode pypng
-python3 install.py --quick
-```
-
-Ilman `pyqrcode`:ta Expo näyttää QR-koodin automaattisesti.
-
-### Backend-tuki
-
-Skripti tunnistaa backend-palvelimen:
-
-1. **server.js**: Jos tiedosto löytyy projektin juuresta
-2. **Backend-skriptit**: Jos `package.json` sisältää `server` tai `backend` skriptin
-
-Skripti antaa ohjeet backendin käynnistämiseen erikseen.
-
-## 🎨 Värikoodit
-
-Skripti käyttää ANSI-värikoodeja selkeän visuaalisen palautteen antamiseen:
-
-- 🟢 **Vihreä (✓)**: Onnistuneet toiminnot
-- 🔴 **Punainen (✗)**: Virheet
-- 🟡 **Keltainen (⚠)**: Varoitukset
-- 🔵 **Sininen (ℹ)**: Informaatio
-- 🟦 **Syaani**: Otsikot ja korostukset
-
-## ❗ Virheiden käsittely
-
-### Työkalu puuttuu
-
-```
-✗ Node.js ei löytynyt!
-⚠ Varmista että kaikki työkalut on asennettu:
-  - Node.js: https://nodejs.org/
-  - npm tulee Node.js:n mukana
-  - Git: https://git-scm.com/
-```
-
-### Riippuvuuksien asennus epäonnistui
-
-```
-✗ Riippuvuuksien asennus epäonnistui!
-```
-
-Ratkaisuja:
-1. Tarkista internet-yhteys
-2. Poista `node_modules` ja yritä uudelleen:
-   ```bash
-   rm -rf node_modules package-lock.json
-   python3 install.py --install-only
-   ```
-3. Tarkista npm-rekisterin saatavuus
-
-### package.json ei löytynyt
-
-```
-✗ package.json ei löytynyt!
-```
-
-Varmista että suoritat skriptin projektin juurihakemistossa.
-
-## 🔍 Vianmääritys
-
-### Skripti ei käynnisty
-
-```bash
-# Tarkista Python-versio
-python3 --version
-
-# Pitäisi näyttää Python 3.x
-```
-
-### Expo ei käynnisty
-
-```bash
-# Tyhjennä Metro bundler cache
-npx expo start -c
-
-# Tai käytä skriptiä
-python3 install.py --quick
-```
-
-### QR-koodi ei näy
-
-```bash
-# Asenna pyqrcode
-pip install pyqrcode pypng
-
-# Tai anna Expon näyttää QR-koodi
-# (Expo näyttää sen joka tapauksessa)
-```
-
-### Backend ei käynnisty
-
-Backend on käynnistettävä erikseen:
-
-```bash
-# Jos server.js löytyy
-node server.js
-
-# Tai jos package.json sisältää backend-skriptin
-npm run server
-# tai
-npm run backend
-```
-
-## 📱 Käyttö mobiililaitteella
-
-1. Asenna **Expo Go** -sovellus:
-   - [iOS App Store](https://apps.apple.com/app/expo-go/id982107779)
-   - [Google Play Store](https://play.google.com/store/apps/details?id=host.exp.exponent)
-
-2. Käynnistä dev-serveri:
-   ```bash
-   python3 install.py --quick
-   ```
-
-3. Skannaa QR-koodi:
-   - **iOS**: Käytä Camera-sovellusta
-   - **Android**: Käytä Expo Go -sovellusta
-
-## 🚀 CI/CD-integraatio
-
-### GitHub Actions esimerkki
-
-```yaml
-name: Build and Test
-
-on: [push, pull_request]
-
-jobs:
-  build:
-    runs-on: ubuntu-latest
-    
-    steps:
-      - uses: actions/checkout@v3
-      
-      - name: Setup Node.js
-        uses: actions/setup-node@v3
-        with:
-          node-version: '18'
-      
-      - name: Setup Python
-        uses: actions/setup-python@v4
-        with:
-          python-version: '3.x'
-      
-      - name: Install dependencies
-        run: python3 install.py --install-only
-      
-      - name: Run tests
-        run: npm test
-```
-
-### GitLab CI esimerkki
-
-```yaml
-stages:
-  - install
-  - test
-
-install:
-  stage: install
-  script:
-    - python3 install.py --install-only
-  artifacts:
-    paths:
-      - node_modules/
-
-test:
-  stage: test
-  dependencies:
-    - install
-  script:
-    - npm test
-```
-
-## 💡 Vinkkejä
-
-1. **Ensimmäinen asennus**: Käytä `--auto` lippua täydelliseen asennukseen
-2. **Päivittäinen kehitys**: Käytä `--quick` lippua nopeaan käynnistykseen
-3. **Riippuvuusongelmissa**: Käytä `--install-only` lippua
-4. **CI/CD**: Käytä `--install-only` build-vaiheessa
-5. **EXPO_TOKEN**: Aseta ympäristömuuttuja automaattista kirjautumista varten
-
-## 🔗 Linkit
-
-- **Projektin README**: [README.md](README.md)
-- **Setup-ohje**: [SETUP.md](SETUP.md)
-- **Expo dokumentaatio**: https://docs.expo.dev/
-- **Node.js**: https://nodejs.org/
-- **npm**: https://www.npmjs.com/
-
-## 📞 Tuki
-
-Jos kohtaat ongelmia:
-
-1. Tarkista että kaikki vaatimukset on asennettu
-2. Lue virheilmoitukset huolellisesti
-3. Kokeile tyhjentää cache: `npx expo start -c`
-4. Kokeile asentaa riippuvuudet uudelleen:
-   ```bash
-   rm -rf node_modules package-lock.json
-   python3 install.py --install-only
-   ```
+### run(cmd, ...)
+Suorittaa komennon käyttäen `normalize_cmd`:ia. Palauttaa `(returncode, output)`.
 
 ---
 
-**Yritystili – Helsinki eBike Service Oy**  
-Built with ❤️ using Expo and React Native
+**Tekijät:** Helsinki eBike Service Oy  
+**Versio:** 2.0 (Windows-parannukset ja porttikäsittely)

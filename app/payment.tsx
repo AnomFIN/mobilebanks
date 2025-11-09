@@ -9,25 +9,43 @@ import {
   KeyboardAvoidingView,
   Platform,
   Animated,
+  Modal,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useRouter } from 'expo-router';
 import * as Haptics from 'expo-haptics';
 import { Ionicons } from '@expo/vector-icons';
-import { useRouter } from 'expo-router';
-import { Colors, Spacing, BorderRadius, FontSize, Shadow } from '../constants';
+import { Colors, Spacing, BorderRadius, FontSize, Shadow, FontWeight } from '../src/theme/theme';
 import { useAccount } from '../src/context/AccountContext';
+import HeaderBar from '../src/components/HeaderBar';
+import Card from '../src/components/Card';
+import HeaderBar from '../src/components/HeaderBar';
 
 export default function PaymentScreen() {
   const [amount, setAmount] = useState('');
   const [description, setDescription] = useState('');
+  const [showSuccess, setShowSuccess] = useState(false);
   const { balance, createPayment } = useAccount();
   const router = useRouter();
 
   const scaleAnim = React.useRef(new Animated.Value(1)).current;
+  const successAnim = React.useRef(new Animated.Value(0)).current;
+
+  const presetAmounts = [5, 10, 20, 50, 100];
+
+  const handlePresetAmount = (preset: number) => {
+    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+    setAmount(preset.toString());
+  };
 
   const handleCreatePayment = () => {
+    if (!amount || parseFloat(amount) <= 0) {
+      Haptics.notificationAsync(Haptics.NotificationFeedbackType.Error);
+      return;
+    }
+
     Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
+    
     Animated.sequence([
       Animated.timing(scaleAnim, {
         toValue: 0.95,
@@ -41,15 +59,24 @@ export default function PaymentScreen() {
       }),
     ]).start();
 
-    // Create payment with coerced amount
+    // Create payment
     createPayment(Number(amount) || 0, description || undefined);
-
-    // Navigate to statement screen
-    router.push('/statement');
+    
+    // Show success modal
+    setShowSuccess(true);
+    
+    // Hide modal after 2 seconds and navigate
+    setTimeout(() => {
+      setShowSuccess(false);
+      setAmount('');
+      setDescription('');
+      router.replace('/statement');
+    }, 2000);
   };
 
   return (
     <SafeAreaView style={styles.container} edges={['top']}>
+      <HeaderBar />
       <KeyboardAvoidingView
         behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
         style={styles.keyboardView}
@@ -58,77 +85,119 @@ export default function PaymentScreen() {
           style={styles.scrollView}
           showsVerticalScrollIndicator={false}
         >
-          {/* Header */}
-          <View style={styles.header}>
+          {/* Title Section */}
+          <View style={styles.titleSection}>
             <Text style={styles.title}>Luo maksu</Text>
-            <Text style={styles.subtitle}>Tee uusi maksu</Text>
-          </View>
-
-          {/* Balance Info */}
-          <View style={styles.balanceInfo}>
-            <Text style={styles.balanceLabel}>Käytettävissä oleva saldo</Text>
-            <Text style={styles.balanceAmount}>
-              {balance.toFixed(2)} €
+            <Text style={styles.subtitle}>
+              Saldo: {balance.toFixed(2)} €
             </Text>
           </View>
 
-          {/* Payment Form */}
+          {/* Amount Input */}
           <View style={styles.section}>
-            <Text style={styles.sectionTitle}>Maksun tiedot</Text>
-
-            <View style={styles.inputContainer}>
-              <Text style={styles.inputLabel}>Summa (€)</Text>
+            <Text style={styles.sectionLabel}>Summa</Text>
+            <Card shadow="small" padding={Spacing.md}>
               <View style={styles.inputWrapper}>
                 <Ionicons
-                  name="cash-outline"
-                  size={20}
-                  color={Colors.textSecondary}
-                  style={styles.inputIcon}
+                  name="wallet-outline"
+                  size={24}
+                  color={Colors.primaryBlue}
                 />
                 <TextInput
                   style={styles.input}
-                  placeholder="0.00"
-                  placeholderTextColor={Colors.textSecondary}
                   value={amount}
                   onChangeText={setAmount}
+                  placeholder="0.00"
                   keyboardType="decimal-pad"
+                  placeholderTextColor={Colors.textLight}
                 />
+                <Text style={styles.currency}>€</Text>
               </View>
-            </View>
+            </Card>
 
-            <View style={styles.inputContainer}>
-              <Text style={styles.inputLabel}>Kuvaus (valinnainen)</Text>
-              <View style={styles.inputWrapper}>
-                <Ionicons
-                  name="chatbox-outline"
-                  size={20}
-                  color={Colors.textSecondary}
-                  style={styles.inputIcon}
-                />
-                <TextInput
-                  style={styles.input}
-                  placeholder="Lisää viesti"
-                  placeholderTextColor={Colors.textSecondary}
-                  value={description}
-                  onChangeText={setDescription}
-                  multiline
-                />
-              </View>
+            {/* Preset Amounts */}
+            <View style={styles.presetsContainer}>
+              {presetAmounts.map((preset) => (
+                <TouchableOpacity
+                  key={preset}
+                  style={styles.presetButton}
+                  onPress={() => handlePresetAmount(preset)}
+                >
+                  <Text style={styles.presetText}>{preset}€</Text>
+                </TouchableOpacity>
+              ))}
             </View>
           </View>
 
-          {/* Create Payment Button */}
-          <Animated.View style={[styles.sendButtonContainer, { transform: [{ scale: scaleAnim }] }]}>
+          {/* Description Input */}
+          <View style={styles.section}>
+            <Text style={styles.sectionLabel}>Kuvaus (valinnainen)</Text>
+            <Card shadow="small" padding={Spacing.md}>
+              <View style={styles.inputWrapper}>
+                <Ionicons
+                  name="chatbox-outline"
+                  size={24}
+                  color={Colors.primaryBlue}
+                />
+                <TextInput
+                  style={styles.input}
+                  value={description}
+                  onChangeText={setDescription}
+                  placeholder="Lisää kuvaus..."
+                  placeholderTextColor={Colors.textLight}
+                />
+              </View>
+            </Card>
+          </View>
+
+          {/* Send Button */}
+          <View style={styles.buttonContainer}>
             <TouchableOpacity
-              style={styles.sendButton}
+              style={[
+                styles.sendButton,
+                (!amount || Number(amount) <= 0) && styles.sendButtonDisabled
+              ]}
               onPress={handleCreatePayment}
+              disabled={!amount || Number(amount) <= 0}
             >
               <Text style={styles.sendButtonText}>Luo maksu</Text>
-              <Ionicons name="arrow-forward" size={20} color={Colors.black} />
+              <Ionicons name="arrow-forward" size={20} color={Colors.white} />
             </TouchableOpacity>
           </Animated.View>
         </ScrollView>
       </KeyboardAvoidingView>
+
+      {/* Success Modal */}
+      <Modal
+        visible={showSuccess}
+        transparent
+        animationType="fade"
+      >
+        <View style={styles.modalOverlay}>
+          <Animated.View 
+            style={[
+              styles.modalContainer,
+              {
+                opacity: successAnim,
+                transform: [
+                  {
+                    scale: successAnim.interpolate({
+                      inputRange: [0, 1],
+                      outputRange: [0.8, 1],
+                    }),
+                  },
+                ],
+              },
+            ]}
+          >
+            <Ionicons name="checkmark-circle" size={60} color={Colors.success} />
+            <Text style={styles.modalTitle}>Maksu luotu!</Text>
+            <Text style={styles.modalSubtitle}>
+              Summa: {amount} €
+            </Text>
+          </Animated.View>
+        </View>
+      </Modal>
     </SafeAreaView>
   );
 }
@@ -136,7 +205,7 @@ export default function PaymentScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: Colors.black,
+    backgroundColor: Colors.veryLightGray,
   },
   keyboardView: {
     flex: 1,
@@ -146,92 +215,105 @@ const styles = StyleSheet.create({
   },
   header: {
     paddingHorizontal: Spacing.lg,
-    paddingVertical: Spacing.xl,
+    paddingTop: Spacing.lg,
+    paddingBottom: Spacing.md,
   },
   title: {
-    fontSize: FontSize.xxxl,
-    fontWeight: '700',
-    color: Colors.white,
+    fontSize: FontSize.xxl,
+    fontWeight: FontWeight.bold,
+    color: Colors.textPrimary,
     marginBottom: Spacing.xs,
   },
   subtitle: {
     fontSize: FontSize.md,
     color: Colors.textSecondary,
   },
-  balanceInfo: {
-    marginHorizontal: Spacing.lg,
-    padding: Spacing.lg,
-    backgroundColor: Colors.gray,
-    borderRadius: BorderRadius.md,
-    borderWidth: 1,
-    borderColor: Colors.lightGray,
-    marginBottom: Spacing.xl,
-  },
-  balanceLabel: {
-    fontSize: FontSize.sm,
-    color: Colors.textSecondary,
-    marginBottom: Spacing.xs,
-  },
-  balanceAmount: {
-    fontSize: FontSize.xxl,
-    fontWeight: '700',
-    color: Colors.neonGreen,
-  },
   section: {
     paddingHorizontal: Spacing.lg,
-    marginBottom: Spacing.xl,
-  },
-  sectionTitle: {
-    fontSize: FontSize.lg,
-    fontWeight: '700',
-    color: Colors.white,
-    marginBottom: Spacing.md,
-  },
-  inputContainer: {
     marginBottom: Spacing.lg,
   },
-  inputLabel: {
-    fontSize: FontSize.sm,
-    color: Colors.textSecondary,
+  sectionLabel: {
+    fontSize: FontSize.md,
+    fontWeight: FontWeight.medium,
+    color: Colors.textPrimary,
     marginBottom: Spacing.sm,
-    fontWeight: '600',
   },
   inputWrapper: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: Colors.gray,
-    borderRadius: BorderRadius.md,
-    borderWidth: 1,
-    borderColor: Colors.lightGray,
-    paddingHorizontal: Spacing.md,
-    paddingVertical: Spacing.sm,
-  },
-  inputIcon: {
-    marginRight: Spacing.sm,
   },
   input: {
     flex: 1,
-    fontSize: FontSize.md,
-    color: Colors.white,
-    padding: Spacing.sm,
+    fontSize: FontSize.lg,
+    color: Colors.textPrimary,
+    marginLeft: Spacing.sm,
+    padding: 0,
   },
-  sendButtonContainer: {
+  currency: {
+    fontSize: FontSize.lg,
+    fontWeight: FontWeight.medium,
+    color: Colors.textSecondary,
+  },
+  presetsContainer: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    marginTop: Spacing.md,
+    gap: Spacing.sm,
+  },
+  presetButton: {
+    backgroundColor: Colors.lightGray,
+    paddingHorizontal: Spacing.md,
+    paddingVertical: Spacing.sm,
+    borderRadius: BorderRadius.md,
+  },
+  presetText: {
+    fontSize: FontSize.sm,
+    fontWeight: FontWeight.medium,
+    color: Colors.textPrimary,
+  },
+  buttonContainer: {
     paddingHorizontal: Spacing.lg,
     paddingBottom: Spacing.xl,
   },
   sendButton: {
+    backgroundColor: Colors.primaryBlue,
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
-    backgroundColor: Colors.neonGreen,
-    paddingVertical: Spacing.lg,
+    paddingVertical: Spacing.md,
     borderRadius: BorderRadius.md,
-    ...Shadow.large,
+    gap: Spacing.sm,
+  },
+  sendButtonDisabled: {
+    backgroundColor: Colors.lightGray,
   },
   sendButtonText: {
+    color: Colors.white,
     fontSize: FontSize.lg,
-    fontWeight: '700',
-    color: Colors.black,
-    marginRight: Spacing.sm,
+    fontWeight: FontWeight.medium,
+  },
+  modalOverlay: {
+    flex: 1,
+    backgroundColor: 'rgba(0, 0, 0, 0.5)',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  modalContainer: {
+    backgroundColor: Colors.white,
+    borderRadius: BorderRadius.lg,
+    padding: Spacing.xl,
+    alignItems: 'center',
+    marginHorizontal: Spacing.lg,
+  },
+  modalTitle: {
+    fontSize: FontSize.xl,
+    fontWeight: FontWeight.bold,
+    color: Colors.textPrimary,
+    marginTop: Spacing.md,
+    marginBottom: Spacing.xs,
+  },
+  modalSubtitle: {
+    fontSize: FontSize.md,
+    color: Colors.textSecondary,
   },
 });

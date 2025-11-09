@@ -5,21 +5,25 @@ import {
   View,
   ScrollView,
   TouchableOpacity,
-  Animated,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import * as Haptics from 'expo-haptics';
+import { useRouter } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
-import { Colors, Spacing, BorderRadius, FontSize, Shadow } from '../constants';
+import * as Haptics from 'expo-haptics';
+import { Colors, Spacing, BorderRadius, FontSize, FontWeight } from '../src/theme/theme';
 import { useAccount } from '../src/context/AccountContext';
-
-type FilterType = 'all' | 'credit' | 'debit';
+import Card from '../src/components/Card';
+import HeaderBar from '../src/components/HeaderBar';
 
 export default function StatementScreen() {
-  const [filter, setFilter] = useState<FilterType>('all');
   const { transactions, balance } = useAccount();
-  const fadeAnim = React.useRef(new Animated.Value(1)).current;
-  const { transactions, balance } = useAccount();
+  const router = useRouter();
+  const [selectedFilter, setSelectedFilter] = useState<'all' | 'credit' | 'debit'>('all');
+
+  const handleFilterChange = (filter: 'all' | 'credit' | 'debit') => {
+    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+    setSelectedFilter(filter);
+  };
 
   const formatCurrency = (amount: number) => {
     return `${amount >= 0 ? '+' : ''}${amount.toFixed(2)} €`;
@@ -27,201 +31,92 @@ export default function StatementScreen() {
 
   const formatDate = (dateString: string) => {
     const date = new Date(dateString);
-    return date.toLocaleDateString('en-FI', {
-      weekday: 'short',
-      month: 'short',
+    return date.toLocaleDateString('fi-FI', {
       day: 'numeric',
-      year: 'numeric',
+      month: 'short',
     });
   };
 
-  const handleFilterChange = (newFilter: FilterType) => {
-    if (newFilter !== filter) {
-      Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
-      Animated.sequence([
-        Animated.timing(fadeAnim, {
-          toValue: 0.3,
-          duration: 150,
-          useNativeDriver: true,
-        }),
-        Animated.timing(fadeAnim, {
-          toValue: 1,
-          duration: 150,
-          useNativeDriver: true,
-        }),
-      ]).start();
-      setFilter(newFilter);
-    }
-  };
-
-  const filteredTransactions = transactions.filter((transaction) => {
-    if (filter === 'all') return true;
-    return transaction.type === filter;
+  const filteredTransactions = transactions.filter((t) => {
+    if (selectedFilter === 'all') return true;
+    return t.type === selectedFilter;
   });
-
-  const totalIncome = transactions
-    .filter((t) => t.type === 'credit')
-    .reduce((sum, t) => sum + t.amount, 0);
-
-  const totalExpenses = transactions
-    .filter((t) => t.type === 'debit')
-    .reduce((sum, t) => sum + Math.abs(t.amount), 0);
 
   return (
     <SafeAreaView style={styles.container} edges={['top']}>
+      <HeaderBar />
       <ScrollView style={styles.scrollView} showsVerticalScrollIndicator={false}>
-        {/* Header */}
         <View style={styles.header}>
           <Text style={styles.title}>Tiliote</Text>
-          <Text style={styles.subtitle}>Tapahtumahistoria</Text>
+          <Text style={styles.subtitle}>Saldo: {balance.toFixed(2)} €</Text>
         </View>
 
-        {/* Summary Cards */}
-        <View style={styles.summaryContainer}>
-          <View style={[styles.summaryCard, styles.incomeCard]}>
-            <View style={styles.summaryIcon}>
-              <Ionicons name="trending-up" size={24} color={Colors.success} />
-            </View>
-            <Text style={styles.summaryLabel}>Tulot</Text>
-            <Text style={[styles.summaryAmount, styles.incomeAmount]}>
-              +{totalIncome.toFixed(2)} €
-            </Text>
-          </View>
-
-          <View style={[styles.summaryCard, styles.expenseCard]}>
-            <View style={styles.summaryIcon}>
-              <Ionicons name="trending-down" size={24} color={Colors.danger} />
-            </View>
-            <Text style={styles.summaryLabel}>Menot</Text>
-            <Text style={[styles.summaryAmount, styles.expenseAmount]}>
-              -{totalExpenses.toFixed(2)} €
-            </Text>
-          </View>
-        </View>
-
-        {/* Filter Tabs */}
         <View style={styles.filterContainer}>
           <TouchableOpacity
-            style={[styles.filterTab, filter === 'all' && styles.filterTabActive]}
+            style={[styles.filterButton, selectedFilter === 'all' && styles.filterButtonActive]}
             onPress={() => handleFilterChange('all')}
           >
-            <Text
-              style={[
-                styles.filterText,
-                filter === 'all' && styles.filterTextActive,
-              ]}
-            >
+            <Text style={[styles.filterText, selectedFilter === 'all' && styles.filterTextActive]}>
               Kaikki
             </Text>
           </TouchableOpacity>
 
           <TouchableOpacity
-            style={[styles.filterTab, filter === 'credit' && styles.filterTabActive]}
+            style={[styles.filterButton, selectedFilter === 'credit' && styles.filterButtonActive]}
             onPress={() => handleFilterChange('credit')}
           >
-            <Text
-              style={[
-                styles.filterText,
-                filter === 'credit' && styles.filterTextActive,
-              ]}
-            >
+            <Text style={[styles.filterText, selectedFilter === 'credit' && styles.filterTextActive]}>
               Tulot
             </Text>
           </TouchableOpacity>
 
           <TouchableOpacity
-            style={[styles.filterTab, filter === 'debit' && styles.filterTabActive]}
+            style={[styles.filterButton, selectedFilter === 'debit' && styles.filterButtonActive]}
             onPress={() => handleFilterChange('debit')}
           >
-            <Text
-              style={[
-                styles.filterText,
-                filter === 'debit' && styles.filterTextActive,
-              ]}
-            >
+            <Text style={[styles.filterText, selectedFilter === 'debit' && styles.filterTextActive]}>
               Menot
             </Text>
           </TouchableOpacity>
         </View>
 
-        {/* Transactions List */}
-        <Animated.View style={[styles.transactionsList, { opacity: fadeAnim }]}>
+        <View style={styles.transactionsSection}>
+          <Text style={styles.sectionTitle}>Tapahtumat ({filteredTransactions.length})</Text>
+          
           {filteredTransactions.map((transaction) => (
-            <TouchableOpacity
-              key={transaction.id}
-              style={styles.transactionItem}
-              onPress={() => {
-                Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
-              }}
-            >
-              <View
-                style={[
-                  styles.transactionIconContainer,
-                  transaction.type === 'credit'
-                    ? styles.transactionIconCredit
-                    : styles.transactionIconDebit,
-                ]}
-              >
-                <Ionicons
-                  name={
-                    transaction.type === 'credit'
-                      ? 'arrow-down'
-                      : 'arrow-up'
-                  }
-                  size={20}
-                  color={Colors.white}
-                />
-              </View>
-
+            <Card key={transaction.id} style={styles.transactionCard}>
               <View style={styles.transactionContent}>
-                <View style={styles.transactionHeader}>
-                  <Text style={styles.transactionTitle}>
-                    {transaction.title}
-                  </Text>
-                  <Text
-                    style={[
-                      styles.transactionAmount,
-                      transaction.type === 'credit' &&
-                        styles.transactionAmountCredit,
-                    ]}
-                  >
+                <View style={styles.transactionLeft}>
+                  <View style={[styles.iconContainer, { backgroundColor: transaction.type === 'credit' ? Colors.success + '20' : Colors.error + '20' }]}>
+                    <Ionicons
+                      name={transaction.type === 'credit' ? 'add-circle' : 'remove-circle'}
+                      size={20}
+                      color={transaction.type === 'credit' ? Colors.success : Colors.error}
+                    />
+                  </View>
+                  <View style={styles.transactionInfo}>
+                    <Text style={styles.transactionTitle}>{transaction.title}</Text>
+                    <Text style={styles.transactionCategory}>{transaction.category}</Text>
+                    <Text style={styles.transactionDate}>{formatDate(transaction.date)}</Text>
+                  </View>
+                </View>
+                <View style={styles.transactionRight}>
+                  <Text style={[styles.transactionAmount, { color: transaction.type === 'credit' ? Colors.success : Colors.error }]}>
                     {formatCurrency(transaction.amount)}
                   </Text>
+                  <Text style={styles.transactionStatus}>{transaction.status}</Text>
                 </View>
-
-                <View style={styles.transactionFooter}>
-                  <View style={styles.transactionMeta}>
-                    <Ionicons
-                      name="calendar-outline"
-                      size={12}
-                      color={Colors.textSecondary}
-                    />
-                    <Text style={styles.transactionDate}>
-                      {formatDate(transaction.date)}
-                    </Text>
-                  </View>
-
-                  <View style={styles.transactionMeta}>
-                    <Ionicons
-                      name="pricetag-outline"
-                      size={12}
-                      color={Colors.textSecondary}
-                    />
-                    <Text style={styles.transactionCategory}>
-                      {transaction.category}
-                    </Text>
-                  </View>
-                </View>
-
-                {transaction.recipient && (
-                  <Text style={styles.transactionRecipient}>
-                    {transaction.recipient}
-                  </Text>
-                )}
               </View>
-            </TouchableOpacity>
+            </Card>
           ))}
-        </Animated.View>
+
+          {filteredTransactions.length === 0 && (
+            <Card style={styles.emptyState}>
+              <Ionicons name="document-outline" size={48} color={Colors.textSecondary} />
+              <Text style={styles.emptyStateText}>Ei tapahtumia</Text>
+            </Card>
+          )}
+        </View>
       </ScrollView>
     </SafeAreaView>
   );
@@ -230,170 +125,124 @@ export default function StatementScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: Colors.black,
+    backgroundColor: Colors.background,
   },
   scrollView: {
     flex: 1,
   },
   header: {
-    paddingHorizontal: Spacing.lg,
-    paddingVertical: Spacing.xl,
+    paddingHorizontal: Spacing.md,
+    paddingTop: Spacing.md,
+    paddingBottom: Spacing.lg,
   },
   title: {
-    fontSize: FontSize.xxxl,
-    fontWeight: '700',
-    color: Colors.white,
+    fontSize: FontSize.xl,
+    fontWeight: FontWeight.bold,
+    color: Colors.text,
     marginBottom: Spacing.xs,
   },
   subtitle: {
     fontSize: FontSize.md,
     color: Colors.textSecondary,
   },
-  summaryContainer: {
-    flexDirection: 'row',
-    paddingHorizontal: Spacing.lg,
-    marginBottom: Spacing.xl,
-    gap: Spacing.md,
-  },
-  summaryCard: {
-    flex: 1,
-    padding: Spacing.lg,
-    borderRadius: BorderRadius.md,
-    borderWidth: 1,
-  },
-  incomeCard: {
-    backgroundColor: Colors.gray,
-    borderColor: Colors.success,
-  },
-  expenseCard: {
-    backgroundColor: Colors.gray,
-    borderColor: Colors.danger,
-  },
-  summaryIcon: {
-    width: 40,
-    height: 40,
-    borderRadius: BorderRadius.full,
-    backgroundColor: Colors.lightGray,
-    justifyContent: 'center',
-    alignItems: 'center',
-    marginBottom: Spacing.sm,
-  },
-  summaryLabel: {
-    fontSize: FontSize.sm,
-    color: Colors.textSecondary,
-    marginBottom: Spacing.xs,
-  },
-  summaryAmount: {
-    fontSize: FontSize.xl,
-    fontWeight: '700',
-  },
-  incomeAmount: {
-    color: Colors.success,
-  },
-  expenseAmount: {
-    color: Colors.danger,
-  },
   filterContainer: {
     flexDirection: 'row',
-    paddingHorizontal: Spacing.lg,
+    paddingHorizontal: Spacing.md,
     marginBottom: Spacing.lg,
     gap: Spacing.sm,
   },
-  filterTab: {
+  filterButton: {
     flex: 1,
-    paddingVertical: Spacing.md,
+    paddingVertical: Spacing.sm,
     paddingHorizontal: Spacing.md,
-    borderRadius: BorderRadius.sm,
-    backgroundColor: Colors.gray,
-    alignItems: 'center',
+    backgroundColor: Colors.card,
+    borderRadius: BorderRadius.md,
     borderWidth: 1,
-    borderColor: Colors.lightGray,
+    borderColor: Colors.border,
+    alignItems: 'center',
   },
-  filterTabActive: {
-    backgroundColor: Colors.neonGreen,
-    borderColor: Colors.neonGreen,
-    ...Shadow.small,
+  filterButtonActive: {
+    backgroundColor: Colors.primary,
+    borderColor: Colors.primary,
   },
   filterText: {
     fontSize: FontSize.sm,
-    fontWeight: '600',
-    color: Colors.textSecondary,
+    fontWeight: FontWeight.medium,
+    color: Colors.text,
   },
   filterTextActive: {
-    color: Colors.black,
+    color: Colors.white,
   },
-  transactionsList: {
-    paddingHorizontal: Spacing.lg,
+  transactionsSection: {
+    paddingHorizontal: Spacing.md,
     paddingBottom: Spacing.xl,
   },
-  transactionItem: {
-    flexDirection: 'row',
-    padding: Spacing.md,
-    backgroundColor: Colors.gray,
-    borderRadius: BorderRadius.md,
+  sectionTitle: {
+    fontSize: FontSize.lg,
+    fontWeight: FontWeight.semibold,
+    color: Colors.text,
     marginBottom: Spacing.md,
-    borderWidth: 1,
-    borderColor: Colors.lightGray,
   },
-  transactionIconContainer: {
-    width: 44,
-    height: 44,
-    borderRadius: BorderRadius.full,
-    justifyContent: 'center',
-    alignItems: 'center',
-    marginRight: Spacing.md,
-  },
-  transactionIconCredit: {
-    backgroundColor: Colors.success,
-  },
-  transactionIconDebit: {
-    backgroundColor: Colors.lightGray,
+  transactionCard: {
+    marginBottom: Spacing.sm,
+    padding: Spacing.md,
   },
   transactionContent: {
-    flex: 1,
-  },
-  transactionHeader: {
     flexDirection: 'row',
     justifyContent: 'space-between',
-    alignItems: 'flex-start',
-    marginBottom: Spacing.xs,
+    alignItems: 'center',
+  },
+  transactionLeft: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    flex: 1,
+  },
+  iconContainer: {
+    width: 40,
+    height: 40,
+    borderRadius: 20,
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginRight: Spacing.md,
+  },
+  transactionInfo: {
+    flex: 1,
   },
   transactionTitle: {
-    flex: 1,
     fontSize: FontSize.md,
-    fontWeight: '600',
-    color: Colors.white,
-    marginRight: Spacing.sm,
+    fontWeight: FontWeight.medium,
+    color: Colors.text,
+    marginBottom: 2,
   },
-  transactionAmount: {
-    fontSize: FontSize.md,
-    fontWeight: '700',
-    color: Colors.white,
-  },
-  transactionAmountCredit: {
-    color: Colors.success,
-  },
-  transactionFooter: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: Spacing.md,
-  },
-  transactionMeta: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: Spacing.xs,
+  transactionCategory: {
+    fontSize: FontSize.sm,
+    color: Colors.textSecondary,
+    marginBottom: 2,
   },
   transactionDate: {
     fontSize: FontSize.xs,
     color: Colors.textSecondary,
   },
-  transactionCategory: {
+  transactionRight: {
+    alignItems: 'flex-end',
+  },
+  transactionAmount: {
+    fontSize: FontSize.md,
+    fontWeight: FontWeight.semibold,
+    marginBottom: 2,
+  },
+  transactionStatus: {
     fontSize: FontSize.xs,
     color: Colors.textSecondary,
   },
-  transactionRecipient: {
-    fontSize: FontSize.xs,
+  emptyState: {
+    padding: Spacing.xl,
+    alignItems: 'center',
+  },
+  emptyStateText: {
+    fontSize: FontSize.md,
     color: Colors.textSecondary,
-    marginTop: Spacing.xs,
+    marginTop: Spacing.md,
+    textAlign: 'center',
   },
 });

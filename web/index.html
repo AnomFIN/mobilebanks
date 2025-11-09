@@ -1,0 +1,2818 @@
+<!DOCTYPE html>
+<html lang="fi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <title>SumUp Banking</title>
+    
+    <!-- PWA Meta Tags -->
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="SumUp Banking">
+    <meta name="theme-color" content="#1a1a1a">
+    
+    <!-- Icons -->
+    <link rel="apple-touch-icon" href="icon-192.svg">
+    <link rel="icon" href="icon-192.svg">
+    <link rel="manifest" href="manifest.json">
+    
+    <style>
+        /* Premium Design System */
+        :root {
+            /* Color Palette - Tesla/Apple Inspired */
+            --primary: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            --primary-solid: #667eea;
+            --primary-dark: #5a67d8;
+            --accent: #00d4ff;
+            --success: #10b981;
+            --error: #ef4444;
+            --warning: #f59e0b;
+            
+            /* Premium Neutrals */
+            --surface-primary: #ffffff;
+            --surface-secondary: #f8fafc;
+            --surface-tertiary: #f1f5f9;
+            --background: linear-gradient(135deg, #fafbfc 0%, #f1f5f9 100%);
+            --glass: rgba(255, 255, 255, 0.9);
+            --frosted-glass: rgba(255, 255, 255, 0.7);
+            
+            /* Typography */
+            --text-primary: #0f172a;
+            --text-secondary: #475569;
+            --text-tertiary: #94a3b8;
+            --text-inverse: #ffffff;
+            
+            /* Borders & Shadows */
+            --border-subtle: rgba(148, 163, 184, 0.1);
+            --border-medium: rgba(148, 163, 184, 0.2);
+            --shadow-subtle: 0 1px 2px rgba(0, 0, 0, 0.04);
+            --shadow-soft: 0 4px 6px -1px rgba(0, 0, 0, 0.07), 0 2px 4px -1px rgba(0, 0, 0, 0.04);
+            --shadow-medium: 0 10px 15px -3px rgba(0, 0, 0, 0.08), 0 4px 6px -2px rgba(0, 0, 0, 0.04);
+            --shadow-large: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+            
+            /* Spacing System */
+            --space-1: 0.25rem;
+            --space-2: 0.5rem;
+            --space-3: 0.75rem;
+            --space-4: 1rem;
+            --space-6: 1.5rem;
+            --space-8: 2rem;
+            --space-12: 3rem;
+            
+            /* Border Radius */
+            --radius-sm: 0.5rem;
+            --radius-md: 0.75rem;
+            --radius-lg: 1rem;
+            --radius-xl: 1.5rem;
+            --radius-2xl: 2rem;
+            
+            /* Transitions */
+            --transition-fast: 150ms cubic-bezier(0.4, 0, 0.2, 1);
+            --transition-medium: 250ms cubic-bezier(0.4, 0, 0.2, 1);
+            --transition-slow: 350ms cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            background: var(--background);
+            color: var(--text-primary);
+            line-height: 1.6;
+            font-weight: 400;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+            text-rendering: optimizeLegibility;
+            overflow-x: hidden;
+            -webkit-tap-highlight-color: transparent;
+            user-select: none;
+        }
+
+        /* App Container */
+        .app {
+            max-width: 430px;
+            margin: 0 auto;
+            min-height: 100vh;
+            background: var(--surface-primary);
+            box-shadow: var(--shadow-large);
+            position: relative;
+            overflow: hidden;
+        }
+
+        /* Status Bar */
+        .status-bar {
+            height: 44px;
+            background: var(--glass);
+            backdrop-filter: blur(20px) saturate(180%);
+            -webkit-backdrop-filter: blur(20px) saturate(180%);
+            position: fixed;
+            top: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 100%;
+            max-width: 430px;
+            z-index: 1000;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-bottom: 1px solid var(--border-subtle);
+        }
+
+        .status-indicator {
+            width: 3px;
+            height: 3px;
+            border-radius: 50%;
+            background: var(--text-primary);
+        }
+
+        /* Header Bar */
+        .header-bar {
+            height: 60px;
+            background: var(--glass);
+            backdrop-filter: blur(20px) saturate(180%);
+            -webkit-backdrop-filter: blur(20px) saturate(180%);
+            position: fixed;
+            top: 44px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 100%;
+            max-width: 430px;
+            z-index: 999;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 var(--space-6);
+            border-bottom: 1px solid var(--border-subtle);
+        }
+
+        .logo {
+            font-size: 1.25rem;
+            font-weight: 700;
+            background: var(--primary);
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+            letter-spacing: -0.02em;
+        }
+
+        .header-actions {
+            display: flex;
+            gap: var(--space-3);
+        }
+
+        .header-btn {
+            width: 36px;
+            height: 36px;
+            border: none;
+            border-radius: var(--radius-md);
+            background: var(--frosted-glass);
+            backdrop-filter: blur(10px);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all var(--transition-fast);
+        }
+
+        .header-btn:hover {
+            background: var(--surface-tertiary);
+            transform: scale(1.05);
+        }
+
+        /* Main Content */
+        .main-content {
+            margin-top: 104px;
+            padding: var(--space-6);
+            padding-bottom: calc(80px + var(--space-6));
+            min-height: calc(100vh - 104px);
+        }
+
+        /* Cards */
+        .card {
+            background: var(--surface-primary);
+            border-radius: var(--radius-xl);
+            padding: var(--space-6);
+            margin-bottom: var(--space-4);
+            box-shadow: var(--shadow-soft);
+            border: 1px solid var(--border-subtle);
+            transition: all var(--transition-medium);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .card:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-medium);
+        }
+
+        .card.glass {
+            background: var(--glass);
+            backdrop-filter: blur(20px) saturate(180%);
+            -webkit-backdrop-filter: blur(20px) saturate(180%);
+        }
+
+        /* Balance Card */
+        .balance-card {
+            background: var(--primary);
+            color: var(--text-inverse);
+            margin-bottom: var(--space-6);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .balance-card::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -50%;
+            width: 100%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 70%);
+            animation: shimmer 3s ease-in-out infinite;
+        }
+
+        @keyframes shimmer {
+            0%, 100% { transform: rotate(0deg) scale(1); }
+            50% { transform: rotate(180deg) scale(1.1); }
+        }
+
+        .balance-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: var(--space-4);
+        }
+
+        .balance-label {
+            font-size: 0.875rem;
+            opacity: 0.9;
+            font-weight: 500;
+            letter-spacing: 0.02em;
+        }
+
+        .balance-amount {
+            font-size: 2.5rem;
+            font-weight: 700;
+            letter-spacing: -0.02em;
+            margin: var(--space-2) 0;
+        }
+
+        .account-number {
+            font-size: 0.875rem;
+            opacity: 0.8;
+            font-family: 'SF Mono', 'Monaco', 'Cascadia Code', monospace;
+            font-weight: 500;
+        }
+
+        /* Quick Actions */
+        .quick-actions {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: var(--space-4);
+            margin-bottom: var(--space-8);
+        }
+
+        .action-btn {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: var(--space-4);
+            background: var(--surface-primary);
+            border: 1px solid var(--border-subtle);
+            border-radius: var(--radius-lg);
+            cursor: pointer;
+            transition: all var(--transition-fast);
+            text-decoration: none;
+            box-shadow: var(--shadow-subtle);
+        }
+
+        .action-btn:hover {
+            transform: translateY(-3px) scale(1.02);
+            box-shadow: var(--shadow-soft);
+            border-color: var(--primary-solid);
+        }
+
+        .action-btn:active {
+            transform: translateY(-1px) scale(0.98);
+        }
+
+        .action-icon {
+            width: 48px;
+            height: 48px;
+            border-radius: var(--radius-lg);
+            background: var(--primary);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: var(--space-2);
+            font-size: 1.5rem;
+            color: var(--text-inverse);
+            transition: all var(--transition-fast);
+        }
+
+        .action-btn:hover .action-icon {
+            transform: rotate(10deg) scale(1.1);
+        }
+
+        .action-label {
+            font-size: 0.8rem;
+            font-weight: 600;
+            color: var(--text-secondary);
+        }
+
+        /* Section Headers */
+        .section-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: var(--space-4);
+        }
+
+        .section-title {
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: var(--text-primary);
+            letter-spacing: -0.01em;
+        }
+
+        .see-all {
+            font-size: 0.875rem;
+            color: var(--primary-solid);
+            font-weight: 600;
+            text-decoration: none;
+            transition: all var(--transition-fast);
+        }
+
+        .see-all:hover {
+            color: var(--primary-dark);
+            transform: translateX(2px);
+        }
+
+        /* Transaction Items */
+        .transaction-item {
+            display: flex;
+            align-items: center;
+            padding: var(--space-4);
+            background: var(--surface-primary);
+            border-radius: var(--radius-md);
+            margin-bottom: var(--space-2);
+            cursor: pointer;
+            transition: all var(--transition-fast);
+            border: 1px solid var(--border-subtle);
+        }
+
+        .transaction-item:hover {
+            background: var(--surface-secondary);
+            transform: translateX(4px);
+            box-shadow: var(--shadow-soft);
+        }
+
+        .transaction-icon {
+            width: 44px;
+            height: 44px;
+            border-radius: var(--radius-md);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: var(--space-4);
+            font-size: 1.2rem;
+        }
+
+        .transaction-icon.credit {
+            background: linear-gradient(135deg, #10b981, #059669);
+            color: white;
+        }
+
+        .transaction-icon.debit {
+            background: linear-gradient(135deg, #ef4444, #dc2626);
+            color: white;
+        }
+
+        .transaction-details {
+            flex: 1;
+        }
+
+        .transaction-title {
+            font-size: 1rem;
+            font-weight: 600;
+            color: var(--text-primary);
+            margin-bottom: var(--space-1);
+        }
+
+        .transaction-date {
+            font-size: 0.8rem;
+            color: var(--text-tertiary);
+            font-weight: 500;
+        }
+
+        .transaction-amount {
+            font-size: 1rem;
+            font-weight: 700;
+            letter-spacing: -0.01em;
+        }
+
+        .transaction-amount.credit {
+            color: var(--success);
+        }
+
+        .transaction-amount.debit {
+            color: var(--text-primary);
+        }
+
+        /* Premium Statement Styles */
+        .statement-header {
+            background: linear-gradient(135deg, 
+                var(--primary-solid) 0%, 
+                rgba(103, 126, 234, 0.9) 50%, 
+                rgba(88, 166, 255, 0.8) 100%);
+            border-radius: var(--radius-xl);
+            padding: var(--space-6);
+            margin-bottom: var(--space-6);
+            color: white;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .statement-header::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -50%;
+            width: 100%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 70%);
+            animation: shimmer 4s ease-in-out infinite;
+        }
+
+        .statement-title-section {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: var(--space-4);
+        }
+
+        .statement-title {
+            font-size: 1.8rem;
+            font-weight: 800;
+            margin: 0;
+        }
+
+        .statement-period {
+            display: flex;
+            align-items: center;
+            gap: var(--space-2);
+            background: rgba(255, 255, 255, 0.15);
+            padding: var(--space-2) var(--space-3);
+            border-radius: var(--radius-md);
+            backdrop-filter: blur(10px);
+        }
+
+        .period-icon {
+            font-size: 1.1rem;
+        }
+
+        .balance-showcase {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-end;
+        }
+
+        .balance-main .balance-label {
+            font-size: 0.9rem;
+            opacity: 0.9;
+            margin-bottom: var(--space-1);
+        }
+
+        .balance-amount {
+            font-size: 2.5rem;
+            font-weight: 900;
+            letter-spacing: -0.02em;
+        }
+
+        .balance-trend {
+            text-align: right;
+        }
+
+        .trend-indicator {
+            display: flex;
+            align-items: center;
+            gap: var(--space-2);
+            padding: var(--space-2) var(--space-3);
+            border-radius: var(--radius-md);
+            backdrop-filter: blur(10px);
+        }
+
+        .trend-indicator.positive {
+            background: rgba(34, 197, 94, 0.2);
+        }
+
+        .trend-indicator.negative {
+            background: rgba(239, 68, 68, 0.2);
+        }
+
+        .trend-text {
+            font-size: 0.85rem;
+            font-weight: 600;
+        }
+
+        /* Analytics Cards */
+        .analytics-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: var(--space-4);
+            margin-bottom: var(--space-6);
+        }
+
+        .analytics-card {
+            background: var(--glass);
+            border: 1px solid var(--border-subtle);
+            border-radius: var(--radius-lg);
+            padding: var(--space-4);
+            backdrop-filter: blur(20px);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .analytics-card.income {
+            border-left: 4px solid var(--success);
+        }
+
+        .analytics-card.expenses {
+            border-left: 4px solid #ef4444;
+        }
+
+        .analytics-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(135deg, transparent 0%, rgba(255,255,255,0.03) 100%);
+        }
+
+        .analytics-icon {
+            font-size: 1.5rem;
+            margin-bottom: var(--space-3);
+        }
+
+        .analytics-label {
+            font-size: 0.8rem;
+            color: var(--text-secondary);
+            margin-bottom: var(--space-1);
+        }
+
+        .analytics-value {
+            font-size: 1.4rem;
+            font-weight: 800;
+            margin-bottom: var(--space-2);
+        }
+
+        .analytics-change {
+            font-size: 0.75rem;
+            opacity: 0.8;
+        }
+
+        /* Advanced Filters */
+        .advanced-filters {
+            margin-bottom: var(--space-6);
+        }
+
+        .filter-section {
+            display: flex;
+            flex-direction: column;
+            gap: var(--space-4);
+        }
+
+        .search-container {
+            position: relative;
+            display: flex;
+            align-items: center;
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-subtle);
+            border-radius: var(--radius-lg);
+            padding: var(--space-3) var(--space-4);
+        }
+
+        .search-icon {
+            margin-right: var(--space-3);
+            opacity: 0.6;
+        }
+
+        .search-input {
+            flex: 1;
+            background: transparent;
+            border: none;
+            outline: none;
+            font-size: 0.95rem;
+            color: var(--text-primary);
+        }
+
+        .search-input::placeholder {
+            color: var(--text-secondary);
+        }
+
+        .filter-chips {
+            display: flex;
+            gap: var(--space-2);
+            overflow-x: auto;
+            padding: var(--space-2) 0;
+        }
+
+        .filter-chip {
+            display: flex;
+            align-items: center;
+            gap: var(--space-2);
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-subtle);
+            border-radius: var(--radius-full);
+            padding: var(--space-2) var(--space-4);
+            font-size: 0.85rem;
+            font-weight: 600;
+            color: var(--text-secondary);
+            cursor: pointer;
+            transition: all 0.2s ease;
+            white-space: nowrap;
+        }
+
+        .filter-chip:hover {
+            background: var(--bg-hover);
+            transform: translateY(-1px);
+        }
+
+        .filter-chip.active {
+            background: var(--primary-solid);
+            color: white;
+            border-color: var(--primary-solid);
+        }
+
+        .chip-icon {
+            font-size: 0.9rem;
+        }
+
+        /* Professional Transaction Container */
+        .transaction-container {
+            background: var(--glass);
+            border: 1px solid var(--border-subtle);
+            border-radius: var(--radius-xl);
+            backdrop-filter: blur(20px);
+            overflow: hidden;
+        }
+
+        .container-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: var(--space-5) var(--space-5) var(--space-4) var(--space-5);
+            border-bottom: 1px solid var(--border-subtle);
+        }
+
+        .container-title {
+            font-size: 1.1rem;
+            font-weight: 700;
+            margin: 0;
+        }
+
+        .export-options {
+            display: flex;
+            gap: var(--space-2);
+        }
+
+        .export-btn {
+            display: flex;
+            align-items: center;
+            gap: var(--space-2);
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-subtle);
+            border-radius: var(--radius-md);
+            padding: var(--space-2) var(--space-3);
+            font-size: 0.8rem;
+            font-weight: 600;
+            color: var(--text-secondary);
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .export-btn:hover {
+            background: var(--primary-solid);
+            color: white;
+            transform: translateY(-1px);
+        }
+
+        .export-icon {
+            font-size: 0.9rem;
+        }
+
+        /* Professional Transaction Items */
+        .professional-transaction {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: var(--space-4) var(--space-5);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+            transition: all 0.2s ease;
+            cursor: pointer;
+        }
+
+        .professional-transaction:hover {
+            background: rgba(255, 255, 255, 0.02);
+        }
+
+        .professional-transaction:last-child {
+            border-bottom: none;
+        }
+
+        .transaction-left {
+            display: flex;
+            align-items: center;
+            gap: var(--space-4);
+            flex: 1;
+        }
+
+        .transaction-avatar {
+            width: 48px;
+            height: 48px;
+            border-radius: var(--radius-lg);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2rem;
+            font-weight: 700;
+            color: white;
+            position: relative;
+        }
+
+        .transaction-avatar.credit {
+            background: linear-gradient(135deg, var(--success) 0%, #10b981 100%);
+        }
+
+        .transaction-avatar.debit {
+            background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%);
+        }
+
+        .transaction-details {
+            flex: 1;
+            min-width: 0;
+        }
+
+        .transaction-company {
+            font-size: 0.95rem;
+            font-weight: 600;
+            margin-bottom: var(--space-1);
+            color: var(--text-primary);
+        }
+
+        .transaction-meta {
+            display: flex;
+            align-items: center;
+            gap: var(--space-3);
+            font-size: 0.8rem;
+            color: var(--text-secondary);
+        }
+
+        .transaction-date {
+            display: flex;
+            align-items: center;
+            gap: var(--space-1);
+        }
+
+        .transaction-reference {
+            display: flex;
+            align-items: center;
+            gap: var(--space-1);
+        }
+
+        .transaction-archive {
+            display: flex;
+            align-items: center;
+            gap: var(--space-1);
+        }
+
+        .transaction-right {
+            text-align: right;
+            min-width: 120px;
+        }
+
+        .professional-amount {
+            font-size: 1.1rem;
+            font-weight: 800;
+            margin-bottom: var(--space-1);
+        }
+
+        .professional-amount.credit {
+            color: var(--success);
+        }
+
+        .professional-amount.debit {
+            color: var(--text-primary);
+        }
+
+        .transaction-status {
+            font-size: 0.75rem;
+            font-weight: 600;
+            padding: var(--space-1) var(--space-2);
+            border-radius: var(--radius-sm);
+        }
+
+        .transaction-status.completed {
+            background: rgba(34, 197, 94, 0.1);
+            color: var(--success);
+        }
+
+        .transaction-status.pending {
+            background: rgba(251, 191, 36, 0.1);
+            color: #f59e0b;
+        }
+
+        /* Tab Navigation */
+        .tab-nav {
+            position: fixed;
+            bottom: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 100%;
+            max-width: 430px;
+            height: 80px;
+            background: var(--glass);
+            backdrop-filter: blur(20px) saturate(180%);
+            -webkit-backdrop-filter: blur(20px) saturate(180%);
+            border-top: 1px solid var(--border-subtle);
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+            z-index: 999;
+            padding: 0 var(--space-4);
+        }
+
+        .tab-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: var(--space-2);
+            cursor: pointer;
+            transition: all var(--transition-fast);
+            border-radius: var(--radius-md);
+            min-width: 60px;
+        }
+
+        .tab-item:hover {
+            background: var(--frosted-glass);
+            transform: translateY(-2px);
+        }
+
+        .tab-item.active {
+            background: var(--primary);
+            color: var(--text-inverse);
+            box-shadow: var(--shadow-soft);
+        }
+
+        .tab-icon {
+            font-size: 1.5rem;
+            margin-bottom: var(--space-1);
+        }
+
+        .tab-label {
+            font-size: 0.7rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        /* Forms */
+        .form-group {
+            margin-bottom: var(--space-6);
+        }
+
+        .form-label {
+            display: block;
+            font-size: 0.875rem;
+            font-weight: 600;
+            color: var(--text-secondary);
+            margin-bottom: var(--space-2);
+            letter-spacing: 0.01em;
+        }
+
+        .form-input {
+            width: 100%;
+            padding: var(--space-4);
+            border: 1px solid var(--border-medium);
+            border-radius: var(--radius-md);
+            font-size: 1rem;
+            background: var(--surface-primary);
+            color: var(--text-primary);
+            transition: all var(--transition-fast);
+        }
+
+        .form-input:focus {
+            outline: none;
+            border-color: var(--primary-solid);
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+
+        /* Buttons */
+        .btn {
+            padding: var(--space-4) var(--space-6);
+            border: none;
+            border-radius: var(--radius-md);
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all var(--transition-fast);
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: var(--space-2);
+            text-decoration: none;
+        }
+
+        .btn-primary {
+            background: var(--primary);
+            color: var(--text-inverse);
+            box-shadow: var(--shadow-soft);
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-medium);
+        }
+
+        .btn-secondary {
+            background: var(--surface-tertiary);
+            color: var(--text-primary);
+            border: 1px solid var(--border-medium);
+        }
+
+        .btn-secondary:hover {
+            background: var(--surface-secondary);
+            transform: translateY(-1px);
+        }
+
+        /* Filters */
+        .filter-tabs {
+            display: flex;
+            gap: var(--space-2);
+            margin-bottom: var(--space-6);
+            background: var(--surface-secondary);
+            padding: var(--space-1);
+            border-radius: var(--radius-lg);
+        }
+
+        .filter-tab {
+            flex: 1;
+            padding: var(--space-3) var(--space-4);
+            background: transparent;
+            border: none;
+            border-radius: var(--radius-md);
+            font-weight: 600;
+            cursor: pointer;
+            transition: all var(--transition-fast);
+            color: var(--text-secondary);
+        }
+
+        .filter-tab.active {
+            background: var(--surface-primary);
+            color: var(--text-primary);
+            box-shadow: var(--shadow-subtle);
+        }
+
+        /* Loading States */
+        .loading {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 2px solid var(--border-medium);
+            border-radius: 50%;
+            border-top-color: var(--primary-solid);
+            animation: spin 1s ease-in-out infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        /* Success States */
+        .success-modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.6);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 2000;
+        }
+
+        .success-content {
+            background: var(--surface-primary);
+            padding: var(--space-8);
+            border-radius: var(--radius-xl);
+            text-align: center;
+            max-width: 300px;
+            margin: var(--space-4);
+            box-shadow: var(--shadow-large);
+        }
+
+        .success-icon {
+            font-size: 3rem;
+            color: var(--success);
+            margin-bottom: var(--space-4);
+        }
+
+        /* Hidden class */
+        .hidden {
+            display: none !important;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 480px) {
+            .main-content {
+                padding: var(--space-4);
+            }
+            
+            .balance-amount {
+                font-size: 2rem;
+            }
+            
+            .quick-actions {
+                grid-template-columns: repeat(2, 1fr);
+                gap: var(--space-3);
+            }
+        }
+
+        /* Screen-specific styles */
+        .screen {
+            display: none;
+        }
+
+        .screen.active {
+            display: block;
+        }
+
+        /* Settings Page Styles */
+        .settings-section {
+            margin-bottom: var(--space-8);
+        }
+
+        .settings-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: var(--space-4);
+            background: var(--surface-primary);
+            border-radius: var(--radius-md);
+            margin-bottom: var(--space-2);
+            border: 1px solid var(--border-subtle);
+        }
+
+        .settings-info {
+            display: flex;
+            align-items: center;
+            gap: var(--space-3);
+        }
+
+        .settings-icon {
+            width: 36px;
+            height: 36px;
+            border-radius: var(--radius-md);
+            background: var(--surface-tertiary);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2rem;
+            color: var(--primary-solid);
+        }
+
+        .settings-text h4 {
+            font-size: 1rem;
+            font-weight: 600;
+            color: var(--text-primary);
+            margin-bottom: var(--space-1);
+        }
+
+        .settings-text p {
+            font-size: 0.875rem;
+            color: var(--text-secondary);
+        }
+
+        /* Toggle Switch */
+        .toggle {
+            position: relative;
+            width: 48px;
+            height: 28px;
+            background: var(--border-medium);
+            border-radius: 14px;
+            cursor: pointer;
+            transition: all var(--transition-fast);
+        }
+
+        .toggle.active {
+            background: var(--primary-solid);
+        }
+
+        .toggle::after {
+            content: '';
+            position: absolute;
+            top: 2px;
+            left: 2px;
+            width: 24px;
+            height: 24px;
+            background: var(--surface-primary);
+            border-radius: 50%;
+            transition: all var(--transition-fast);
+            box-shadow: var(--shadow-subtle);
+        }
+
+        .toggle.active::after {
+            transform: translateX(20px);
+        }
+
+        /* Premium Features */
+        .premium-features {
+            display: flex;
+            flex-direction: column;
+            gap: var(--space-4);
+            margin-bottom: var(--space-8);
+        }
+
+        .feature-card {
+            display: flex;
+            align-items: center;
+            background: var(--surface-primary);
+            padding: var(--space-6);
+            border-radius: var(--radius-xl);
+            box-shadow: var(--shadow-soft);
+            border: 1px solid var(--border-subtle);
+            transition: all var(--transition-medium);
+        }
+
+        .feature-card:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-medium);
+        }
+
+        .feature-icon {
+            font-size: 2rem;
+            margin-right: var(--space-4);
+            width: 60px;
+            height: 60px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: var(--primary);
+            border-radius: var(--radius-lg);
+            color: var(--text-inverse);
+        }
+
+        .feature-content h3 {
+            font-size: 1.1rem;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin-bottom: var(--space-1);
+        }
+
+        .feature-content p {
+            font-size: 0.9rem;
+            color: var(--text-secondary);
+            line-height: 1.4;
+        }
+
+        /* Card Styles */
+        .card-item {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border-radius: var(--radius-xl);
+            padding: var(--space-6);
+            margin-bottom: var(--space-4);
+            color: var(--text-inverse);
+            position: relative;
+            overflow: hidden;
+            box-shadow: var(--shadow-large);
+        }
+
+        .card-item::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -50%;
+            width: 100%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 70%);
+            animation: shimmer 3s ease-in-out infinite;
+        }
+
+        .card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: var(--space-4);
+        }
+
+        .card-type {
+            font-size: 0.8rem;
+            font-weight: 600;
+            opacity: 0.8;
+        }
+
+        .card-logo {
+            font-size: 1.5rem;
+            font-weight: 800;
+        }
+
+        .card-number {
+            font-size: 1.1rem;
+            font-family: 'SF Mono', 'Monaco', 'Cascadia Code', monospace;
+            font-weight: 500;
+            letter-spacing: 0.1em;
+            margin: var(--space-4) 0;
+        }
+
+        .card-footer {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-end;
+        }
+
+        .card-holder {
+            font-size: 0.9rem;
+            font-weight: 600;
+            opacity: 0.9;
+        }
+
+        .card-expiry {
+            font-size: 0.8rem;
+            font-weight: 500;
+            opacity: 0.8;
+        }
+
+        .card-actions {
+            display: flex;
+            gap: var(--space-2);
+            margin-top: var(--space-4);
+        }
+
+        /* Payment Flow Styles */
+        .payment-step {
+            display: none;
+        }
+
+        .payment-step.active {
+            display: block;
+        }
+
+        .payment-progress {
+            display: flex;
+            justify-content: center;
+            margin-bottom: var(--space-6);
+        }
+
+        .progress-step {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            background: var(--surface-tertiary);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 var(--space-2);
+            font-size: 0.8rem;
+            font-weight: 600;
+            color: var(--text-secondary);
+        }
+
+        .progress-step.active {
+            background: var(--primary-solid);
+            color: var(--text-inverse);
+        }
+
+        .progress-step.completed {
+            background: var(--success);
+            color: var(--text-inverse);
+        }
+
+        .loading-spinner {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 2px solid var(--border-medium);
+            border-radius: 50%;
+            border-top-color: var(--primary-solid);
+            animation: spin 1s linear infinite;
+            margin-right: var(--space-2);
+        }
+
+        /* Dark Mode */
+        body.dark-mode {
+            --surface-primary: #0d1117;
+            --surface-secondary: #161b22;
+            --surface-tertiary: #21262d;
+            --text-primary: #f0f6fc;
+            --text-secondary: #8b949e;
+            --text-tertiary: #6e7681;
+            --background: linear-gradient(135deg, #0d1117 0%, #161b22 100%);
+            --glass: rgba(13, 17, 23, 0.95);
+            --frosted-glass: rgba(22, 27, 34, 0.8);
+            --bg-primary: #0d1117;
+            --bg-secondary: #161b22;
+            --bg-soft: #21262d;
+            --bg-hover: #30363d;
+            --border: #30363d;
+            --border-subtle: #21262d;
+            --primary-solid: #58a6ff;
+            --primary-bg: #1c2128;
+            --text-inverse: #0d1117;
+        }
+
+        body.dark-mode .premium-card {
+            background: linear-gradient(135deg, 
+                rgba(13, 17, 23, 0.95) 0%, 
+                rgba(22, 27, 34, 0.95) 100%);
+            border: 1px solid rgba(240, 246, 252, 0.1);
+            backdrop-filter: blur(20px);
+            box-shadow: 
+                0 10px 40px rgba(0, 0, 0, 0.3),
+                0 0 0 1px rgba(240, 246, 252, 0.05) inset;
+        }
+
+        body.dark-mode .nav-tabs {
+            background: var(--surface-secondary);
+            border-bottom: 1px solid var(--border);
+        }
+
+        body.dark-mode .nav-tab.active {
+            background: var(--surface-primary);
+            color: var(--primary-solid);
+            border-bottom: 2px solid var(--primary-solid);
+        }
+
+        body.dark-mode .card-item {
+            background: linear-gradient(135deg, #1c2128 0%, #21262d 100%);
+            border: 1px solid rgba(88, 166, 255, 0.2);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+        }
+
+        body.dark-mode .progress-step.active {
+            background: var(--primary-solid);
+            color: var(--text-inverse);
+        }
+
+        body.dark-mode .btn-primary {
+            background: linear-gradient(135deg, var(--primary-solid) 0%, #4493f8 100%);
+            box-shadow: 0 4px 16px rgba(88, 166, 255, 0.3);
+        }
+
+        body.dark-mode .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(88, 166, 255, 0.4);
+        }
+
+        body.dark-mode .header-bar {
+            background: rgba(13, 17, 23, 0.95);
+            border-bottom: 1px solid var(--border);
+        }
+    </style>
+</head>
+<body>
+    <div class="app">
+        <!-- Status Bar -->
+        <div class="status-bar">
+            <div class="status-indicator"></div>
+        </div>
+
+        <!-- Header Bar -->
+        <div class="header-bar">
+            <div class="logo">SumUp</div>
+            <div class="header-actions">
+                <button class="header-btn" onclick="showNotifications()">
+                    <span style="font-size: 1.2rem;">🔔</span>
+                </button>
+                <button class="header-btn" onclick="showProfile()">
+                    <span style="font-size: 1.2rem;">👤</span>
+                </button>
+            </div>
+        </div>
+
+        <!-- Home Screen -->
+        <div id="home" class="screen active">
+            <div class="main-content">
+                <!-- Balance Card -->
+                <div class="card balance-card">
+                    <div class="balance-header">
+                        <div>
+                            <div class="balance-label">Kokonaissaldo</div>
+                            <div class="balance-amount" id="balance-amount">5,234.60 €</div>
+                            <div class="account-number">FI12 3456 7890 1234 56</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Quick Actions -->
+                <div class="quick-actions">
+                    <div class="action-btn" onclick="showScreen('payment')">
+                        <div class="action-icon">💸</div>
+                        <div class="action-label">Maksa</div>
+                    </div>
+                    <div class="action-btn" onclick="showScreen('cards')">
+                        <div class="action-icon">�</div>
+                        <div class="action-label">Kortit</div>
+                    </div>
+                    <div class="action-btn" onclick="showScreen('receipt')">
+                        <div class="action-icon">🧾</div>
+                        <div class="action-label">Kuitti</div>
+                    </div>
+                    <div class="action-btn" onclick="showScreen('settings')">
+                        <div class="action-icon">⚙️</div>
+                        <div class="action-label">Asetukset</div>
+                    </div>
+                </div>
+                
+                <!-- Premium Features Section -->
+                <div class="section-header">
+                    <h2 class="section-title">Premium Banking</h2>
+                </div>
+                
+                <div class="premium-features">
+                    <div class="feature-card">
+                        <div class="feature-icon">🌍</div>
+                        <div class="feature-content">
+                            <h3>Maailmanlaajuinen pankkitoiminta</h3>
+                            <p>Käytä korttejasi 200+ maassa ilman lisämaksuja</p>
+                        </div>
+                    </div>
+                    <div class="feature-card">
+                        <div class="feature-icon">🔒</div>
+                        <div class="feature-content">
+                            <h3>Pankkiluokan turvallisuus</h3>
+                            <p>256-bittinen salaus ja biometrinen tunnistus</p>
+                        </div>
+                    </div>
+                    <div class="feature-card">
+                        <div class="feature-icon">⚡</div>
+                        <div class="feature-content">
+                            <h3>Välittömät maksut</h3>
+                            <p>Reaaliaikaiset tilisiirrot 24/7</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Recent Transactions -->
+                <div class="section-header">
+                    <h2 class="section-title">Viimeisimmät tapahtumat</h2>
+                    <a href="#" class="see-all" onclick="showScreen('statement')">Näytä kaikki</a>
+                </div>
+
+                <div id="recent-transactions">
+                    <!-- Populated by JavaScript -->
+                </div>
+            </div>
+        </div>
+
+        <!-- Cards Screen -->
+        <div id="cards" class="screen">
+            <div class="main-content">
+                <div class="section-header">
+                    <h2 class="section-title">Yrityksen kortit</h2>
+                    <div style="font-size: 0.875rem; color: var(--text-secondary);">
+                        Yhteensä: <span id="card-count">1</span> korttia
+                    </div>
+                </div>
+
+                <!-- Card List -->
+                <div id="card-list">
+                    <div class="card-item">
+                        <div class="card-header">
+                            <div class="card-type">VISA DEBIT</div>
+                            <div class="card-logo">VISA</div>
+                        </div>
+                        <div class="card-number">**** **** **** 3456</div>
+                        <div class="card-footer">
+                            <div>
+                                <div style="font-size: 0.7rem; opacity: 0.7;">HALTIJA</div>
+                                <div class="card-holder" id="card-holder-name">FIRMA OY</div>
+                            </div>
+                            <div>
+                                <div style="font-size: 0.7rem; opacity: 0.7;">VOIMASSA</div>
+                                <div class="card-expiry">12/28</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Card Actions -->
+                <div class="card-actions">
+                    <button class="btn btn-primary" style="flex: 1;" onclick="requestNewCard()">
+                        📱 Hae uutta korttia
+                    </button>
+                    <button class="btn btn-secondary" style="flex: 1;" onclick="addToAppleWallet()">
+                        🍎 Lisää Apple Wallet
+                    </button>
+                </div>
+
+                <!-- Card Settings -->
+                <div class="card">
+                    <h3 style="margin-bottom: var(--space-4);">Korttiasetukset</h3>
+                    <div class="settings-item">
+                        <div class="settings-info">
+                            <div class="settings-text">
+                                <h4>Kontaktittomat maksut</h4>
+                                <p>Ota käyttöön tap-to-pay maksut</p>
+                            </div>
+                        </div>
+                        <div class="toggle active" onclick="toggleSetting(this, 'contactless')"></div>
+                    </div>
+                    <div class="settings-item">
+                        <div class="settings-info">
+                            <div class="settings-text">
+                                <h4>Verkkomaksut</h4>
+                                <p>Salli online-ostokset</p>
+                            </div>
+                        </div>
+                        <div class="toggle active" onclick="toggleSetting(this, 'online')"></div>
+                    </div>
+                    <div class="settings-item">
+                        <div class="settings-info">
+                            <div class="settings-text">
+                                <h4>Ulkomaan maksut</h4>
+                                <p>Kansainväliset tapahtumat</p>
+                            </div>
+                        </div>
+                        <div class="toggle" onclick="toggleSetting(this, 'international')"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Payment Screen -->
+        <div id="payment" class="screen">
+            <div class="main-content">
+                <!-- Payment Progress -->
+                <div class="payment-progress">
+                    <div class="progress-step active">1</div>
+                    <div class="progress-step">2</div>
+                    <div class="progress-step">3</div>
+                </div>
+
+                <!-- Step 1: Payment Details -->
+                <div id="payment-step-1" class="payment-step active">
+                    <div class="section-header">
+                        <h2 class="section-title">Uusi maksu</h2>
+                        <div style="font-size: 0.875rem; color: var(--text-secondary);">
+                            Käytettävissä: <span id="payment-balance">5,234.60 €</span>
+                        </div>
+                    </div>
+
+                    <div class="card">
+                        <form id="payment-form">
+                            <div class="form-group">
+                                <label class="form-label">Saajan tilinumero (IBAN)</label>
+                                <input type="text" id="payment-iban" class="form-input" placeholder="FI21 1234 5678 9012 34" required>
+                            </div>
+
+                            <div class="form-group">
+                                <label class="form-label">Summa (€)</label>
+                                <input type="number" id="payment-amount" class="form-input" placeholder="0.00" step="0.01" min="0.01" required>
+                            </div>
+
+                            <div class="form-group">
+                                <label class="form-label">Viitenumero</label>
+                                <input type="text" id="payment-reference" class="form-input" placeholder="1234567890123456789">
+                            </div>
+
+                            <div class="form-group">
+                                <label class="form-label">Viesti saajalle</label>
+                                <input type="text" id="payment-message" class="form-input" placeholder="Lasku 12/2025">
+                            </div>
+
+                            <div class="form-group">
+                                <label class="form-label">Eräpäivä</label>
+                                <input type="date" id="payment-due-date" class="form-input">
+                            </div>
+
+                            <button type="button" class="btn btn-primary" style="width: 100%; margin-top: var(--space-4);" onclick="startPaymentVerification()">
+                                Tarkista maksu
+                            </button>
+                        </form>
+                    </div>
+                </div>
+
+                <!-- Step 2: Verification -->
+                <div id="payment-step-2" class="payment-step">
+                    <div class="section-header">
+                        <h2 class="section-title">Tarkistetaan tiedot...</h2>
+                    </div>
+                    <div class="card" style="text-align: center; padding: var(--space-8);">
+                        <div class="loading-spinner"></div>
+                        <span>Odotetaan...</span>
+                        <div id="verification-result" style="margin-top: var(--space-6); display: none;">
+                            <div style="color: var(--success); font-size: 1.2rem; margin-bottom: var(--space-4);">
+                                ✅ Maksun saajan nimi ja IBAN täsmäävät toisiinsa.
+                            </div>
+                            <button class="btn btn-primary" onclick="showPaymentConfirmation()">
+                                Jatka hyväksymään
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Step 3: Confirmation -->
+                <div id="payment-step-3" class="payment-step">
+                    <div class="section-header">
+                        <h2 class="section-title">Hyväksy maksu</h2>
+                    </div>
+                    <div class="card">
+                        <div id="payment-summary">
+                            <!-- Populated by JavaScript -->
+                        </div>
+                        <div style="display: flex; gap: var(--space-3); margin-top: var(--space-6);">
+                            <button class="btn btn-secondary" onclick="editPayment()" style="flex: 1;">
+                                Muokkaa
+                            </button>
+                            <button class="btn btn-primary" onclick="executePayment()" style="flex: 1;">
+                                💸 Maksa nyt
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Statement Screen -->
+        <div id="statement" class="screen">
+            <div class="main-content">
+                <!-- Premium Header with Analytics -->
+                <div class="statement-header">
+                    <div class="statement-title-section">
+                        <h1 class="statement-title">Tiliote</h1>
+                        <div class="statement-period">
+                            <span class="period-icon">📅</span>
+                            <span>Marraskuu 2025</span>
+                        </div>
+                    </div>
+                    
+                    <div class="balance-showcase">
+                        <div class="balance-main">
+                            <div class="balance-label">Nykyinen saldo</div>
+                            <div class="balance-amount" id="statement-balance-main">5,234.60 €</div>
+                        </div>
+                        <div class="balance-trend">
+                            <div class="trend-indicator positive">
+                                <span class="trend-icon">📈</span>
+                                <span class="trend-text">+12.4% tässä kuussa</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Advanced Analytics Cards -->
+                <div class="analytics-grid">
+                    <div class="analytics-card income">
+                        <div class="analytics-icon">💰</div>
+                        <div class="analytics-content">
+                            <div class="analytics-label">Tulot yhteensä</div>
+                            <div class="analytics-value">+8,450.00 €</div>
+                            <div class="analytics-change">+5.2% edellisestä kuusta</div>
+                        </div>
+                    </div>
+                    
+                    <div class="analytics-card expenses">
+                        <div class="analytics-icon">💸</div>
+                        <div class="analytics-content">
+                            <div class="analytics-label">Menot yhteensä</div>
+                            <div class="analytics-value">-3,215.40 €</div>
+                            <div class="analytics-change">-8.1% edellisestä kuusta</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Premium Filters with Search -->
+                <div class="advanced-filters">
+                    <div class="filter-section">
+                        <div class="search-container">
+                            <div class="search-icon">🔍</div>
+                            <input 
+                                type="text" 
+                                placeholder="Hae tapahtumia..." 
+                                class="search-input"
+                                id="transaction-search"
+                            >
+                        </div>
+                        
+                        <div class="filter-chips">
+                            <button class="filter-chip active" onclick="filterTransactions('all')">
+                                <span class="chip-icon">📊</span>
+                                Kaikki
+                            </button>
+                            <button class="filter-chip" onclick="filterTransactions('credit')">
+                                <span class="chip-icon">💚</span>
+                                Tulot
+                            </button>
+                            <button class="filter-chip" onclick="filterTransactions('debit')">
+                                <span class="chip-icon">🔴</span>
+                                Menot
+                            </button>
+                            <button class="filter-chip" onclick="filterTransactions('pending')">
+                                <span class="chip-icon">⏳</span>
+                                Odottaa
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Professional Transaction List -->
+                <div class="transaction-container">
+                    <div class="container-header">
+                        <h3 class="container-title">Tapahtumat</h3>
+                        <div class="export-options">
+                            <button class="export-btn" onclick="exportToPDF()">
+                                <span class="export-icon">📄</span>
+                                PDF
+                            </button>
+                            <button class="export-btn" onclick="exportToExcel()">
+                                <span class="export-icon">📊</span>
+                                Excel
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <div id="professional-transactions">
+                        <!-- Populated by enhanced JavaScript -->
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Receipt Screen -->
+        <div id="receipt" class="screen">
+            <div class="main-content">
+                <div class="section-header">
+                    <h2 class="section-title">Kuitti</h2>
+                </div>
+
+                <div class="card" id="receipt-content">
+                    <div style="text-align: center; padding: var(--space-8); color: var(--text-tertiary);">
+                        <div style="font-size: 3rem; margin-bottom: var(--space-4);">🧾</div>
+                        <p>Valitse tapahtuma nähdäksesi kuitin</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Settings Screen -->
+        <div id="settings" class="screen">
+            <div class="main-content">
+                <div class="section-header">
+                    <h2 class="section-title">Asetukset</h2>
+                </div>
+
+                <!-- Account Info -->
+                <div class="settings-section">
+                    <h3 style="font-size: 1.1rem; font-weight: 600; color: var(--text-primary); margin-bottom: var(--space-4);">Tilin tiedot</h3>
+                    <div class="card">
+                        <div class="settings-item">
+                            <div class="settings-info">
+                                <div class="settings-icon">👤</div>
+                                <div class="settings-text">
+                                    <h4>Käyttäjä</h4>
+                                    <p id="user-name">Aku Ankka</p>
+                                </div>
+                            </div>
+                            <button class="btn btn-secondary" onclick="editProfile('name')">Muokkaa</button>
+                        </div>
+                        
+                        <div class="settings-item">
+                            <div class="settings-info">
+                                <div class="settings-icon">🏢</div>
+                                <div class="settings-text">
+                                    <h4>Yritys</h4>
+                                    <p id="company-name">Firma Oy</p>
+                                </div>
+                            </div>
+                            <button class="btn btn-secondary" onclick="editProfile('company')">Muokkaa</button>
+                        </div>
+                        
+                        <div class="settings-item">
+                            <div class="settings-info">
+                                <div class="settings-icon">💳</div>
+                                <div class="settings-text">
+                                    <h4>Tilinumero</h4>
+                                    <p>FI12 3456 7890 1234 56</p>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="settings-item">
+                            <div class="settings-info">
+                                <div class="settings-icon">💰</div>
+                                <div class="settings-text">
+                                    <h4>Saldo</h4>
+                                    <p id="settings-balance">5,234.60 €</p>
+                                </div>
+                            </div>
+                            <button class="btn btn-secondary" onclick="editBalance()">Muokkaa</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- App Settings -->
+                <div class="settings-section">
+                    <h3 style="font-size: 1.1rem; font-weight: 600; color: var(--text-primary); margin-bottom: var(--space-4);">Sovelluksen asetukset</h3>
+                    <div class="card">
+                        <div class="settings-item">
+                            <div class="settings-info">
+                                <div class="settings-icon">📳</div>
+                                <div class="settings-text">
+                                    <h4>Värinä</h4>
+                                    <p>Haptinen palaute toiminnoille</p>
+                                </div>
+                            </div>
+                            <div class="toggle active" onclick="toggleSetting(this, 'haptics')"></div>
+                        </div>
+                        
+                        <div class="settings-item">
+                            <div class="settings-info">
+                                <div class="settings-icon">🎭</div>
+                                <div class="settings-text">
+                                    <h4>Animaatiot</h4>
+                                    <p>Siirtymäanimaatiot ja tehosteet</p>
+                                </div>
+                            </div>
+                            <div class="toggle active" onclick="toggleSetting(this, 'animations')"></div>
+                        </div>
+                        
+                        <div class="settings-item">
+                            <div class="settings-info">
+                                <div class="settings-icon">🌙</div>
+                                <div class="settings-text">
+                                    <h4>Tumma teema</h4>
+                                    <p>Käytä tummaa väripalettia</p>
+                                </div>
+                            </div>
+                            <div class="toggle" onclick="toggleDarkMode(this)"></div>
+                        </div>
+
+                        <div class="settings-item">
+                            <div class="settings-info">
+                                <div class="settings-icon">💳</div>
+                                <div class="settings-text">
+                                    <h4>Korttien määrä</h4>
+                                    <p>Hallitse yrityksen kortteja</p>
+                                </div>
+                            </div>
+                            <select class="form-input" style="width: 80px;" onchange="updateCardCount(this.value)">
+                                <option value="1">1</option>
+                                <option value="2">2</option>
+                                <option value="3">3</option>
+                                <option value="5">5</option>
+                            </select>
+                        </div>
+
+                        <div class="settings-item">
+                            <div class="settings-info">
+                                <div class="settings-icon">📊</div>
+                                <div class="settings-text">
+                                    <h4>Kehittyneet analytiikka</h4>
+                                    <p>Yksityiskohtaiset raportit ja trendit</p>
+                                </div>
+                            </div>
+                            <div class="toggle active" onclick="toggleSetting(this, 'analytics')"></div>
+                        </div>
+
+                        <div class="settings-item">
+                            <div class="settings-info">
+                                <div class="settings-icon">🤖</div>
+                                <div class="settings-text">
+                                    <h4>AI-avustaja</h4>
+                                    <p>Älykkäät säästösuositukset</p>
+                                </div>
+                            </div>
+                            <div class="toggle" onclick="toggleSetting(this, 'aiAssistant')"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Security Settings -->
+                <div class="settings-section">
+                    <h3 style="font-size: 1.1rem; font-weight: 600; color: var(--text-primary); margin-bottom: var(--space-4);">Turvallisuus</h3>
+                    <div class="card">
+                        <div class="settings-item">
+                            <div class="settings-info">
+                                <div class="settings-icon">🔐</div>
+                                <div class="settings-text">
+                                    <h4>Biometrinen tunnistus</h4>
+                                    <p>Face ID tai Touch ID</p>
+                                </div>
+                            </div>
+                            <div class="toggle active" onclick="toggleSetting(this, 'biometrics')"></div>
+                        </div>
+                        
+                        <div class="settings-item">
+                            <div class="settings-info">
+                                <div class="settings-icon">🔔</div>
+                                <div class="settings-text">
+                                    <h4>Ilmoitukset</h4>
+                                    <p>Tapahtumat ja tietoturva</p>
+                                </div>
+                            </div>
+                            <div class="toggle active" onclick="toggleSetting(this, 'notifications')"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Transaction Management -->
+                <div class="settings-section">
+                    <h3 style="font-size: 1.1rem; font-weight: 600; color: var(--text-primary); margin-bottom: var(--space-4);">Tapahtumien hallinta</h3>
+                    <div class="card">
+                        <button class="btn btn-secondary" style="width: 100%; margin-bottom: var(--space-3);" onclick="exportTransactions()">
+                            📄 Vie tapahtumat
+                        </button>
+                        <button class="btn btn-secondary" style="width: 100%;" onclick="clearTransactions()">
+                            🗑️ Tyhjennä historia
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Tab Navigation -->
+        <div class="tab-nav">
+            <div class="tab-item active" onclick="showScreen('home')">
+                <div class="tab-icon">🏠</div>
+                <div class="tab-label">Koti</div>
+            </div>
+            <div class="tab-item" onclick="showScreen('payment')">
+                <div class="tab-icon">💸</div>
+                <div class="tab-label">Maksa</div>
+            </div>
+            <div class="tab-item" onclick="showScreen('cards')">
+                <div class="tab-icon">�</div>
+                <div class="tab-label">Kortit</div>
+            </div>
+            <div class="tab-item" onclick="showScreen('receipt')">
+                <div class="tab-icon">🧾</div>
+                <div class="tab-label">Kuitti</div>
+            </div>
+            <div class="tab-item" onclick="showScreen('settings')">
+                <div class="tab-icon">⚙️</div>
+                <div class="tab-label">Asetukset</div>
+            </div>
+        </div>
+
+        <!-- Success Modal -->
+        <div id="success-modal" class="success-modal hidden">
+            <div class="success-content">
+                <div class="success-icon">✅</div>
+                <h3 style="margin-bottom: var(--space-2);">Maksu onnistui!</h3>
+                <p style="color: var(--text-secondary);">Tapahtuma on tallennettu</p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Advanced State Management System
+        class BankingApp {
+            constructor() {
+                this.state = {
+                    balance: 5234.60,
+                    userName: 'Aku Ankka',
+                    companyName: 'Firma Oy',
+                    accountNumber: 'FI12 3456 7890 1234 56',
+                    transactions: this.loadTransactions(),
+                    settings: this.loadSettings(),
+                    currentScreen: 'home',
+                    currentFilter: 'all'
+                };
+                
+                this.init();
+            }
+
+            init() {
+                this.setupEventListeners();
+                this.renderTransactions();
+                this.updateBalance();
+                this.applySettings();
+                this.updateUserInfo();
+            }
+
+            // Data Management
+            loadTransactions() {
+                const stored = localStorage.getItem('sumup-transactions');
+                return stored ? JSON.parse(stored) : [
+                    { id: '1', title: 'Kauppa Oy', amount: -45.50, date: '2025-11-08', type: 'debit', category: 'Ostokset', status: 'Valmis' },
+                    { id: '2', title: 'Palkka', amount: 2500.00, date: '2025-11-07', type: 'credit', category: 'Tulot', status: 'Valmis' },
+                    { id: '3', title: 'Vuokra', amount: -850.00, date: '2025-11-06', type: 'debit', category: 'Asuminen', status: 'Valmis' },
+                    { id: '4', title: 'Asiakaslasku', amount: 1200.00, date: '2025-11-05', type: 'credit', category: 'Liiketoiminta', status: 'Valmis' },
+                    { id: '5', title: 'Verkkokauppa', amount: -99.90, date: '2025-11-04', type: 'debit', category: 'Ostokset', status: 'Valmis' }
+                ];
+            }
+
+            saveTransactions() {
+                localStorage.setItem('sumup-transactions', JSON.stringify(this.state.transactions));
+            }
+
+            loadSettings() {
+                const stored = localStorage.getItem('sumup-settings');
+                return stored ? JSON.parse(stored) : {
+                    haptics: true,
+                    animations: true,
+                    darkMode: false,
+                    biometrics: true,
+                    notifications: true
+                };
+            }
+
+            saveSettings() {
+                localStorage.setItem('sumup-settings', JSON.stringify(this.state.settings));
+            }
+
+            loadUserData() {
+                const stored = localStorage.getItem('sumup-user');
+                if (stored) {
+                    const userData = JSON.parse(stored);
+                    this.state.balance = userData.balance || this.state.balance;
+                    this.state.userName = userData.userName || this.state.userName;
+                    this.state.companyName = userData.companyName || this.state.companyName;
+                }
+            }
+
+            saveUserData() {
+                const userData = {
+                    balance: this.state.balance,
+                    userName: this.state.userName,
+                    companyName: this.state.companyName
+                };
+                localStorage.setItem('sumup-user', JSON.stringify(userData));
+            }
+
+            // Transaction Management
+            createPayment(amount, description = '') {
+                const transaction = {
+                    id: Date.now().toString(),
+                    title: description || 'Maksu',
+                    amount: -Math.abs(amount),
+                    date: new Date().toISOString().split('T')[0],
+                    type: 'debit',
+                    category: 'Maksut',
+                    status: 'Valmis'
+                };
+
+                this.state.transactions.unshift(transaction);
+                this.state.balance += transaction.amount;
+                this.saveTransactions();
+                this.saveUserData();
+                this.updateBalance();
+                this.renderTransactions();
+            }
+
+            // UI Management
+            showScreen(screenId) {
+                // Hide all screens
+                document.querySelectorAll('.screen').forEach(screen => {
+                    screen.classList.remove('active');
+                });
+
+                // Show target screen
+                document.getElementById(screenId).classList.add('active');
+
+                // Update tab navigation
+                document.querySelectorAll('.tab-item').forEach(tab => {
+                    tab.classList.remove('active');
+                });
+                
+                // Find and activate the correct tab
+                const targetTab = Array.from(document.querySelectorAll('.tab-item')).find(tab => {
+                    const onClick = tab.getAttribute('onclick');
+                    return onClick && onClick.includes(`'${screenId}'`);
+                });
+                if (targetTab) {
+                    targetTab.classList.add('active');
+                }
+
+                this.state.currentScreen = screenId;
+
+                // Screen-specific actions
+                if (screenId === 'statement') {
+                    this.renderAllTransactions();
+                }
+            }
+
+            updateBalance() {
+                const formatted = `${this.state.balance.toFixed(2)} €`;
+                const elements = [
+                    'balance-amount',
+                    'payment-balance',
+                    'statement-balance',
+                    'settings-balance'
+                ];
+                
+                elements.forEach(id => {
+                    const element = document.getElementById(id);
+                    if (element) {
+                        element.textContent = formatted;
+                    }
+                });
+            }
+
+            updateUserInfo() {
+                const userNameEl = document.getElementById('user-name');
+                const companyNameEl = document.getElementById('company-name');
+                
+                if (userNameEl) userNameEl.textContent = this.state.userName;
+                if (companyNameEl) companyNameEl.textContent = this.state.companyName;
+            }
+
+            formatCurrency(amount) {
+                return `${amount >= 0 ? '+' : ''}${amount.toFixed(2)} €`;
+            }
+
+            formatDate(dateString) {
+                const date = new Date(dateString);
+                return date.toLocaleDateString('fi-FI', {
+                    day: 'numeric',
+                    month: 'short',
+                    year: 'numeric'
+                });
+            }
+
+            renderTransactionItem(transaction, isRecent = false) {
+                return `
+                    <div class="transaction-item" onclick="showReceipt('${transaction.id}')">
+                        <div class="transaction-icon ${transaction.type}">
+                            ${transaction.type === 'credit' ? '↓' : '↑'}
+                        </div>
+                        <div class="transaction-details">
+                            <div class="transaction-title">${transaction.title}</div>
+                            <div class="transaction-date">${this.formatDate(transaction.date)}</div>
+                        </div>
+                        <div class="transaction-amount ${transaction.type}">
+                            ${this.formatCurrency(transaction.amount)}
+                        </div>
+                    </div>
+                `;
+            }
+
+            renderTransactions() {
+                const recentContainer = document.getElementById('recent-transactions');
+                if (recentContainer) {
+                    const recent = this.state.transactions.slice(0, 5);
+                    recentContainer.innerHTML = recent
+                        .map(transaction => this.renderTransactionItem(transaction, true))
+                        .join('');
+                }
+            }
+
+            renderAllTransactions() {
+                const container = document.getElementById('professional-transactions');
+                if (!container) return;
+                
+                const filtered = this.getFilteredTransactions();
+                
+                if (filtered.length === 0) {
+                    container.innerHTML = `
+                        <div style="text-align: center; padding: var(--space-8);">
+                            <div style="font-size: 3rem; margin-bottom: var(--space-4); opacity: 0.3;">📊</div>
+                            <p style="color: var(--text-secondary); font-size: 0.9rem;">Ei tapahtumia valitulle suodattimelle</p>
+                        </div>
+                    `;
+                } else {
+                    container.innerHTML = filtered
+                        .map(transaction => this.renderProfessionalTransaction(transaction))
+                        .join('');
+                }
+            }
+
+            renderProfessionalTransaction(transaction) {
+                const date = new Date(transaction.date);
+                const formattedDate = date.toLocaleDateString('fi-FI', { 
+                    day: 'numeric', 
+                    month: 'short', 
+                    year: 'numeric' 
+                });
+                
+                const processedDate = new Date(date.getTime() + Math.random() * 24 * 60 * 60 * 1000);
+                const formattedProcessedDate = processedDate.toLocaleDateString('fi-FI', {
+                    day: 'numeric',
+                    month: 'short'
+                });
+
+                const referenceNumber = this.generateReferenceNumber();
+                const archiveId = `ARC-${Date.now()}-${Math.floor(Math.random() * 1000)}`;
+                const companyInitials = this.getCompanyInitials(transaction.description);
+                
+                const isCredit = transaction.type === 'credit';
+                const status = Math.random() > 0.1 ? 'completed' : 'pending';
+                const statusText = status === 'completed' ? 'Kirjattu' : 'Käsitellään';
+
+                return `
+                    <div class="professional-transaction" onclick="showTransactionDetails('${transaction.id}')">
+                        <div class="transaction-left">
+                            <div class="transaction-avatar ${transaction.type}">
+                                ${companyInitials}
+                            </div>
+                            <div class="transaction-details">
+                                <div class="transaction-company">${transaction.description}</div>
+                                <div class="transaction-meta">
+                                    <div class="transaction-date">
+                                        <span>📅</span>
+                                        <span>${formattedDate}</span>
+                                    </div>
+                                    <div class="transaction-reference">
+                                        <span>🔗</span>
+                                        <span>${referenceNumber}</span>
+                                    </div>
+                                    <div class="transaction-archive">
+                                        <span>📁</span>
+                                        <span>${archiveId}</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="transaction-right">
+                            <div class="professional-amount ${transaction.type}">
+                                ${isCredit ? '+' : ''}${this.formatCurrency(transaction.amount)}
+                            </div>
+                            <div class="transaction-status ${status}">
+                                ${statusText} ${formattedProcessedDate}
+                            </div>
+                        </div>
+                    </div>
+                `;
+            }
+
+            getCompanyInitials(description) {
+                const words = description.split(' ');
+                if (words.length >= 2) {
+                    return (words[0][0] + words[1][0]).toUpperCase();
+                }
+                return description.substring(0, 2).toUpperCase();
+            }
+
+            generateReferenceNumber() {
+                const numbers = [];
+                for (let i = 0; i < 8; i++) {
+                    numbers.push(Math.floor(Math.random() * 10));
+                }
+                return numbers.join('');
+            }
+
+            getFilteredTransactions() {
+                if (this.state.currentFilter === 'all') {
+                    return this.state.transactions;
+                }
+                return this.state.transactions.filter(t => t.type === this.state.currentFilter);
+            }
+
+            filterTransactions(type) {
+                this.state.currentFilter = type;
+                
+                // Update filter chips
+                document.querySelectorAll('.filter-chip').forEach(chip => {
+                    chip.classList.remove('active');
+                });
+                
+                // Find and activate the clicked chip
+                const activeChip = Array.from(document.querySelectorAll('.filter-chip')).find(chip => {
+                    const chipText = chip.textContent.toLowerCase().trim();
+                    return (type === 'all' && chipText.includes('kaikki')) ||
+                           (type === 'credit' && chipText.includes('tulot')) ||
+                           (type === 'debit' && chipText.includes('menot')) ||
+                           (type === 'pending' && chipText.includes('odottaa'));
+                });
+                
+                if (activeChip) {
+                    activeChip.classList.add('active');
+                }
+                
+                this.renderAllTransactions();
+            }
+
+            // Event Handlers
+            setupEventListeners() {
+                // Payment form
+                const paymentForm = document.getElementById('payment-form');
+                if (paymentForm) {
+                    paymentForm.addEventListener('submit', (e) => {
+                        e.preventDefault();
+                        this.handlePaymentSubmit();
+                    });
+                }
+
+                // Load user data on init
+                this.loadUserData();
+
+                // Window events
+                window.addEventListener('beforeunload', () => {
+                    this.saveTransactions();
+                    this.saveSettings();
+                    this.saveUserData();
+                });
+            }
+
+            handlePaymentSubmit() {
+                const amount = parseFloat(document.getElementById('payment-amount').value);
+                const description = document.getElementById('payment-description').value;
+
+                if (!amount || amount <= 0) {
+                    this.showError('Syötä kelvollinen summa');
+                    return;
+                }
+
+                if (amount > this.state.balance) {
+                    this.showError('Ei riittävästi saldoa');
+                    return;
+                }
+
+                this.createPayment(amount, description);
+                this.showSuccess();
+                
+                // Clear form
+                document.getElementById('payment-form').reset();
+                
+                // Redirect to statement after success
+                setTimeout(() => {
+                    this.showScreen('statement');
+                }, 2500);
+            }
+
+            showSuccess() {
+                const modal = document.getElementById('success-modal');
+                if (modal) {
+                    modal.classList.remove('hidden');
+                    
+                    setTimeout(() => {
+                        modal.classList.add('hidden');
+                    }, 2000);
+                }
+            }
+
+            showError(message) {
+                alert(message);
+            }
+
+            showReceipt(transactionId) {
+                const transaction = this.state.transactions.find(t => t.id === transactionId);
+                if (!transaction) return;
+
+                const content = document.getElementById('receipt-content');
+                if (content) {
+                    content.innerHTML = `
+                        <div style="text-align: center; margin-bottom: var(--space-6);">
+                            <div style="font-size: 2rem; margin-bottom: var(--space-2);">🧾</div>
+                            <h3>Maksukuitti</h3>
+                        </div>
+                        
+                        <div style="border-bottom: 1px solid var(--border-subtle); padding-bottom: var(--space-4); margin-bottom: var(--space-4);">
+                            <div style="display: flex; justify-content: space-between; margin-bottom: var(--space-2);">
+                                <span style="color: var(--text-secondary);">Summa:</span>
+                                <span style="font-weight: 700; color: ${transaction.type === 'credit' ? 'var(--success)' : 'var(--text-primary)'}">
+                                    ${this.formatCurrency(transaction.amount)}
+                                </span>
+                            </div>
+                            <div style="display: flex; justify-content: space-between; margin-bottom: var(--space-2);">
+                                <span style="color: var(--text-secondary);">Päivämäärä:</span>
+                                <span>${this.formatDate(transaction.date)}</span>
+                            </div>
+                            <div style="display: flex; justify-content: space-between; margin-bottom: var(--space-2);">
+                                <span style="color: var(--text-secondary);">Tila:</span>
+                                <span>${transaction.status}</span>
+                            </div>
+                            <div style="display: flex; justify-content: space-between;">
+                                <span style="color: var(--text-secondary);">Kategoria:</span>
+                                <span>${transaction.category}</span>
+                            </div>
+                        </div>
+                        
+                        <div style="text-align: center; color: var(--text-tertiary); font-size: 0.875rem;">
+                            <p>Tapahtuma-ID: ${transaction.id}</p>
+                            <p style="margin-top: var(--space-2);">SumUp Banking</p>
+                        </div>
+                    `;
+                }
+
+                this.showScreen('receipt');
+            }
+
+            // Settings Management
+            toggleSetting(element, setting) {
+                element.classList.toggle('active');
+                this.state.settings[setting] = element.classList.contains('active');
+                this.saveSettings();
+                this.applySettings();
+            }
+
+            applySettings() {
+                if (!this.state.settings.animations) {
+                    document.documentElement.style.setProperty('--transition-fast', '0ms');
+                    document.documentElement.style.setProperty('--transition-medium', '0ms');
+                    document.documentElement.style.setProperty('--transition-slow', '0ms');
+                } else {
+                    document.documentElement.style.setProperty('--transition-fast', '150ms cubic-bezier(0.4, 0, 0.2, 1)');
+                    document.documentElement.style.setProperty('--transition-medium', '250ms cubic-bezier(0.4, 0, 0.2, 1)');
+                    document.documentElement.style.setProperty('--transition-slow', '350ms cubic-bezier(0.4, 0, 0.2, 1)');
+                }
+            }
+
+            editProfile(field) {
+                const current = field === 'name' ? this.state.userName : this.state.companyName;
+                const label = field === 'name' ? 'nimi' : 'yrityksen nimi';
+                const newValue = prompt(`Syötä uusi ${label}:`, current);
+                
+                if (newValue && newValue.trim()) {
+                    if (field === 'name') {
+                        this.state.userName = newValue.trim();
+                    } else {
+                        this.state.companyName = newValue.trim();
+                    }
+                    this.saveUserData();
+                    this.updateUserInfo();
+                }
+            }
+
+            editBalance() {
+                const newBalance = prompt('Syötä uusi saldo (€):', this.state.balance.toFixed(2));
+                const balance = parseFloat(newBalance);
+                
+                if (!isNaN(balance) && balance >= 0) {
+                    this.state.balance = balance;
+                    this.saveUserData();
+                    this.updateBalance();
+                }
+            }
+
+            exportTransactions() {
+                const data = JSON.stringify(this.state.transactions, null, 2);
+                const blob = new Blob([data], { type: 'application/json' });
+                const url = URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = 'sumup-transactions.json';
+                a.click();
+                URL.revokeObjectURL(url);
+            }
+
+            clearTransactions() {
+                if (confirm('Haluatko varmasti tyhjentää koko tapahtumahistorian?')) {
+                    this.state.transactions = [];
+                    this.saveTransactions();
+                    this.renderTransactions();
+                    this.renderAllTransactions();
+                    alert('Tapahtumahistoria tyhjennetty');
+                }
+            }
+        }
+
+        // Global functions for inline event handlers
+        let app;
+
+        function showScreen(screenId) {
+            app.showScreen(screenId);
+        }
+
+        function filterTransactions(type) {
+            app.filterTransactions(type);
+        }
+
+        function showReceipt(transactionId) {
+            app.showReceipt(transactionId);
+        }
+
+        function toggleSetting(element, setting) {
+            app.toggleSetting(element, setting);
+        }
+
+        function editProfile(field) {
+            app.editProfile(field);
+        }
+
+        function editBalance() {
+            app.editBalance();
+        }
+
+        function exportTransactions() {
+            app.exportTransactions();
+        }
+
+        function clearTransactions() {
+            app.clearTransactions();
+        }
+
+        function showNotifications() {
+            alert('🔔 Ilmoitukset\n\n• Maksu suoritettu: -45.50 €\n• Saldo päivitetty\n• Turvallisuusasetusten tarkistus suositeltu');
+        }
+
+        function showProfile() {
+            app.showScreen('settings');
+        }
+
+        // New Payment Flow Functions
+        function startPaymentVerification() {
+            console.log('🚀 Starting payment verification...');
+            
+            const iban = document.getElementById('payment-iban').value;
+            const amount = document.getElementById('payment-amount').value;
+            const reference = document.getElementById('payment-reference').value;
+            const message = document.getElementById('payment-message').value;
+
+            console.log('📋 Form values:', { iban, amount, reference, message });
+
+            if (!iban || !amount || (!reference && !message)) {
+                alert('Täytä kaikki pakolliset kentät. Viitenumero tai viesti on pakollinen.');
+                return;
+            }
+
+            console.log('✅ Validation passed, proceeding to step 2');
+
+            // Show verification step
+            document.getElementById('payment-step-1').classList.remove('active');
+            document.getElementById('payment-step-2').classList.add('active');
+            document.querySelectorAll('.progress-step')[1].classList.add('active');
+
+            // Simulate verification delay
+            setTimeout(() => {
+                document.getElementById('verification-result').style.display = 'block';
+            }, 2000);
+        }
+
+        function showPaymentConfirmation() {
+            const iban = document.getElementById('payment-iban').value;
+            const amount = document.getElementById('payment-amount').value;
+            const reference = document.getElementById('payment-reference').value;
+            const message = document.getElementById('payment-message').value;
+            const dueDate = document.getElementById('payment-due-date').value;
+
+            const summary = `
+                <div style="border-bottom: 1px solid var(--border-subtle); padding-bottom: var(--space-4); margin-bottom: var(--space-4);">
+                    <div style="display: flex; justify-content: space-between; margin-bottom: var(--space-2);">
+                        <span>Saajan tili:</span>
+                        <span style="font-family: monospace;">${iban}</span>
+                    </div>
+                    <div style="display: flex; justify-content: space-between; margin-bottom: var(--space-2);">
+                        <span>Summa:</span>
+                        <span style="font-weight: 700; color: var(--primary-solid);">${amount} €</span>
+                    </div>
+                    <div style="display: flex; justify-content: space-between; margin-bottom: var(--space-2);">
+                        <span>Viitenumero:</span>
+                        <span>${reference || '-'}</span>
+                    </div>
+                    <div style="display: flex; justify-content: space-between; margin-bottom: var(--space-2);">
+                        <span>Viesti:</span>
+                        <span>${message || '-'}</span>
+                    </div>
+                    <div style="display: flex; justify-content: space-between;">
+                        <span>Eräpäivä:</span>
+                        <span>${new Date(dueDate).toLocaleDateString('fi-FI')}</span>
+                    </div>
+                </div>
+            `;
+
+            document.getElementById('payment-summary').innerHTML = summary;
+            document.getElementById('payment-step-2').classList.remove('active');
+            document.getElementById('payment-step-3').classList.add('active');
+            document.querySelectorAll('.progress-step')[2].classList.add('active');
+        }
+
+        function editPayment() {
+            document.getElementById('payment-step-3').classList.remove('active');
+            document.getElementById('payment-step-1').classList.add('active');
+            document.querySelectorAll('.progress-step').forEach((step, index) => {
+                if (index === 0) step.classList.add('active');
+                else step.classList.remove('active');
+            });
+        }
+
+        function executePayment() {
+            const amount = document.getElementById('payment-amount').value;
+            const iban = document.getElementById('payment-iban').value;
+            const reference = document.getElementById('payment-reference').value;
+            const message = document.getElementById('payment-message').value;
+
+            // Create payment transaction
+            app.createPayment(parseFloat(amount), `${reference ? 'Viite: ' + reference : ''}${message ? ' - ' + message : ''}`);
+            
+            // Store receipt data
+            app.state.lastPayment = {
+                iban,
+                amount: parseFloat(amount),
+                reference,
+                message,
+                date: new Date().toISOString()
+            };
+
+            // Show success and redirect to receipt
+            app.showSuccess();
+            setTimeout(() => {
+                showScreen('receipt');
+                // Reset payment form
+                document.getElementById('payment-form').reset();
+                document.getElementById('payment-step-3').classList.remove('active');
+                document.getElementById('payment-step-1').classList.add('active');
+                document.querySelectorAll('.progress-step').forEach((step, index) => {
+                    if (index === 0) step.classList.add('active');
+                    else step.classList.remove('active');
+                });
+            }, 2500);
+        }
+
+        // Cards Functions
+        function requestNewCard() {
+            alert('🏧 Uuden kortin hakeminen aloitettu!\n\nKortti saapuu 5-7 arkipäivässä.');
+        }
+
+        function addToAppleWallet() {
+            alert('🍎 Kortti lisätty Apple Wallet -jonoon!\n\nVarmista henkilöllisyytesi Apple Pay -asetuksissa.');
+        }
+
+        function updateCardCount(count) {
+            document.getElementById('card-count').textContent = count;
+            // Update card list (simplified)
+            const cardList = document.getElementById('card-list');
+            cardList.innerHTML = '';
+            for (let i = 0; i < count; i++) {
+                const cardNumber = `**** **** **** ${3456 + i}`;
+                cardList.innerHTML += `
+                    <div class="card-item">
+                        <div class="card-header">
+                            <div class="card-type">VISA DEBIT</div>
+                            <div class="card-logo">VISA</div>
+                        </div>
+                        <div class="card-number">${cardNumber}</div>
+                        <div class="card-footer">
+                            <div>
+                                <div style="font-size: 0.7rem; opacity: 0.7;">HALTIJA</div>
+                                <div class="card-holder">FIRMA OY</div>
+                            </div>
+                            <div>
+                                <div style="font-size: 0.7rem; opacity: 0.7;">VOIMASSA</div>
+                                <div class="card-expiry">12/28</div>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            }
+        }
+
+        // Dark Mode Toggle
+        function toggleDarkMode(element) {
+            element.classList.toggle('active');
+            document.body.classList.toggle('dark-mode');
+            
+            // Save preference
+            const isDark = document.body.classList.contains('dark-mode');
+            localStorage.setItem('darkMode', isDark);
+        }
+
+        // Download Receipt as PNG
+        function downloadReceipt() {
+            // Create a canvas with receipt content
+            const canvas = document.createElement('canvas');
+            const ctx = canvas.getContext('2d');
+            canvas.width = 400;
+            canvas.height = 600;
+
+            // White background
+            ctx.fillStyle = '#ffffff';
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+            // Header
+            ctx.fillStyle = '#667eea';
+            ctx.fillRect(0, 0, canvas.width, 100);
+            ctx.fillStyle = '#ffffff';
+            ctx.font = 'bold 24px Arial';
+            ctx.textAlign = 'center';
+            ctx.fillText('SumUp Banking', canvas.width / 2, 40);
+            ctx.font = '16px Arial';
+            ctx.fillText('Maksukuitti', canvas.width / 2, 70);
+
+            // Transaction details
+            ctx.fillStyle = '#000000';
+            ctx.font = '14px Arial';
+            ctx.textAlign = 'left';
+            const lastPayment = app.state.lastPayment || {};
+            
+            let y = 150;
+            ctx.fillText(`Summa: ${lastPayment.amount || '0.00'} €`, 50, y);
+            y += 30;
+            ctx.fillText(`IBAN: ${lastPayment.iban || 'N/A'}`, 50, y);
+            y += 30;
+            ctx.fillText(`Viitenumero: ${lastPayment.reference || '-'}`, 50, y);
+            y += 30;
+            ctx.fillText(`Viesti: ${lastPayment.message || '-'}`, 50, y);
+            y += 30;
+            ctx.fillText(`Päivämäärä: ${new Date().toLocaleDateString('fi-FI')}`, 50, y);
+            y += 50;
+            ctx.fillText(`Tapahtuma-ID: ${Date.now()}`, 50, y);
+
+            // Convert to blob and download
+            canvas.toBlob((blob) => {
+                const url = URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = 'sumup-kuitti.png';
+                a.click();
+                URL.revokeObjectURL(url);
+            });
+        }
+
+        // Export Functions
+        function exportToPDF() {
+            alert('📄 PDF-vienti aloitettu!\n\nTiliote ladataan hetkessä...');
+            // Simulate PDF generation delay
+            setTimeout(() => {
+                const link = document.createElement('a');
+                link.href = '#';
+                link.download = 'tiliote-marraskuu-2025.pdf';
+                document.body.appendChild(link);
+                link.click();
+                document.body.removeChild(link);
+            }, 1500);
+        }
+
+        function exportToExcel() {
+            alert('📊 Excel-vienti aloitettu!\n\nTiedosto valmistuu hetkessä...');
+            // Simulate Excel generation delay
+            setTimeout(() => {
+                const link = document.createElement('a');
+                link.href = '#';
+                link.download = 'tiliote-marraskuu-2025.xlsx';
+                document.body.appendChild(link);
+                link.click();
+                document.body.removeChild(link);
+            }, 2000);
+        }
+
+        // Transaction Search and Details
+        function showTransactionDetails(transactionId) {
+            const transaction = app.state.transactions.find(t => t.id === transactionId);
+            if (!transaction) return;
+
+            const details = `
+                🏦 TAPAHTUMAN TIEDOT
+                
+                📋 Kuvaus: ${transaction.description}
+                💰 Summa: ${app.formatCurrency(transaction.amount)}
+                📅 Päivämäärä: ${new Date(transaction.date).toLocaleDateString('fi-FI')}
+                🔗 Viitenumero: ${Math.floor(Math.random() * 100000000)}
+                📁 Arkistointitunnus: ARC-${Date.now()}-${Math.floor(Math.random() * 1000)}
+                ⏰ Kirjattu: ${new Date().toLocaleDateString('fi-FI')} ${new Date().toLocaleTimeString('fi-FI', {hour: '2-digit', minute: '2-digit'})}
+                
+                Haluatko ladata kuitin?
+            `;
+            
+            if (confirm(details)) {
+                downloadReceipt();
+            }
+        }
+
+        // Search functionality
+        document.addEventListener('DOMContentLoaded', () => {
+            const searchInput = document.getElementById('transaction-search');
+            if (searchInput) {
+                searchInput.addEventListener('input', (e) => {
+                    const query = e.target.value.toLowerCase();
+                    const transactions = document.querySelectorAll('.professional-transaction');
+                    
+                    transactions.forEach(transaction => {
+                        const company = transaction.querySelector('.transaction-company').textContent.toLowerCase();
+                        const visible = company.includes(query);
+                        transaction.style.display = visible ? 'flex' : 'none';
+                    });
+                });
+            }
+        });
+
+        // Initialize app
+        document.addEventListener('DOMContentLoaded', () => {
+            app = new BankingApp();
+            
+            // Load dark mode preference
+            const isDark = localStorage.getItem('darkMode') === 'true';
+            if (isDark) {
+                document.body.classList.add('dark-mode');
+                const darkToggle = document.querySelector('.toggle[onclick*="toggleDarkMode"]');
+                if (darkToggle) darkToggle.classList.add('active');
+            }
+            
+            // Add premium loading animation
+            setTimeout(() => {
+                document.body.style.opacity = '1';
+            }, 100);
+        });
+
+        // Register service worker
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('./sw.js')
+                    .then(registration => {
+                        console.log('SW registered: ', registration);
+                    })
+                    .catch(registrationError => {
+                        console.log('SW registration failed: ', registrationError);
+                    });
+            });
+        }
+    </script>
+</body>
+</html>

@@ -46,3 +46,11 @@ __pycache__/
 # generated native folders
 /ios
 /android
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+dist
