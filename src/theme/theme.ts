@@ -31,9 +31,16 @@ export const Colors = {
   textLight: '#999999',
   textWhite: '#FFFFFF',
   
-  // UI colors
+  // Additional colors for layout
+  background: '#F5F5F5',
   border: '#E5E5E5',
-  overlay: 'rgba(0, 0, 0, 0.5)',
+  primary: '#0A84FF',
+  primaryLight: '#64B5F6',
+  text: '#0B0B0B',
+  textMuted: '#666666',
+  backgroundSecondary: '#FBFBFB',
+  card: '#FFFFFF',
+  error: '#FF3B30',
 };
 
 export const Spacing = {
@@ -108,8 +115,17 @@ export const FontWeight = {
 };
 
 // Common gradients for cards
+export const Layout = {
+  tabBarHeight: 60,
+  headerHeight: 44,
+  screenPadding: 16,
+};
+
 export const Gradients = {
   blueCard: [Colors.primaryBlue, Colors.accentCyan],
   whiteCard: [Colors.white, Colors.veryLightGray],
   darkCard: [Colors.darkGray, Colors.black],
 };
+
+// Re-export useTheme from the context file
+export { useTheme, ThemeProvider } from './themeContext';

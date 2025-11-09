@@ -13,6 +13,7 @@ import { Ionicons } from '@expo/vector-icons';
 import { Colors, Spacing, BorderRadius, FontSize, Shadow, FontWeight } from '../src/theme/theme';
 import { useAccount } from '../src/context/AccountContext';
 import Card from '../src/components/Card';
+import HeaderBar from '../src/components/HeaderBar';
 
 export default function ReceiptScreen() {
   const { transactions } = useAccount();
@@ -384,7 +385,7 @@ const styles = StyleSheet.create({
     flexDirection: 'column',
     alignItems: 'center',
     justifyContent: 'center',
-    backgroundColor: Colors.cardBackground,
+    backgroundColor: Colors.card,
     paddingVertical: Spacing.lg,
     borderRadius: BorderRadius.md,
     borderWidth: 1,

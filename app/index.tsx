@@ -6,6 +6,7 @@ import {
   ScrollView,
   TouchableOpacity,
   Animated,
+  Platform,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useRouter } from 'expo-router';
@@ -60,8 +61,6 @@ export default function HomeScreen() {
         style={styles.scrollView}
         showsVerticalScrollIndicator={false}
       >
-        {/* Header */}
-        <HeaderBar onProfilePress={handlePress} />
 
         {/* Balance Card */}
         <Animated.View style={[styles.balanceCard, { transform: [{ scale: scaleAnim }] }]}>
@@ -261,7 +260,7 @@ const styles = StyleSheet.create({
   },
   actionText: {
     fontSize: FontSize.xs,
-    color: Colors.text,
+    color: Colors.textPrimary,
     fontWeight: FontWeight.semibold,
   },
   section: {
@@ -277,7 +276,7 @@ const styles = StyleSheet.create({
   sectionTitle: {
     fontSize: FontSize.lg,
     fontWeight: FontWeight.bold,
-    color: Colors.text,
+    color: Colors.textPrimary,
   },
   seeAll: {
     fontSize: FontSize.sm,
@@ -317,7 +316,7 @@ const styles = StyleSheet.create({
   transactionTitle: {
     fontSize: FontSize.md,
     fontWeight: FontWeight.semibold,
-    color: Colors.text,
+    color: Colors.textPrimary,
     marginBottom: Spacing.xs - 2,
   },
   transactionDate: {
@@ -327,7 +326,7 @@ const styles = StyleSheet.create({
   transactionAmount: {
     fontSize: FontSize.md,
     fontWeight: FontWeight.bold,
-    color: Colors.text,
+    color: Colors.textPrimary,
   },
   transactionAmountCredit: {
     color: Colors.success,

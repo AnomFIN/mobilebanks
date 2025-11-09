@@ -1,15 +1,17 @@
 import React from 'react';
 import { Tabs } from 'expo-router';
 import { StyleSheet, View, Platform } from 'react-native';
-import { Colors, Layout, Spacing, FontSize } from '../src/theme/theme';
+import { Colors, Layout, Spacing, FontSize, FontWeight } from '../src/theme/theme';
 import { Ionicons } from '@expo/vector-icons';
 import { AccountProvider } from '../src/context/AccountContext';
+import { ThemeProvider } from '../src/theme/themeContext';
 
 export default function TabLayout() {
   return (
-    <AccountProvider>
-      <Tabs
-        screenOptions={{
+    <ThemeProvider>
+      <AccountProvider>
+        <Tabs
+          screenOptions={{
           headerShown: false,
           tabBarStyle: styles.tabBar,
           tabBarActiveTintColor: Colors.primary,
@@ -64,7 +66,8 @@ export default function TabLayout() {
           }}
         />
       </Tabs>
-    </AccountProvider>
+      </AccountProvider>
+    </ThemeProvider>
   );
 }
 
@@ -76,18 +79,14 @@ const styles = StyleSheet.create({
     height: Layout.tabBarHeight,
     paddingBottom: Platform.OS === 'ios' ? 20 : 10,
     paddingTop: 10,
-    ...StyleSheet.create({
-      shadow: {
-        shadowColor: Colors.shadow,
-        shadowOffset: { width: 0, height: -2 },
-        shadowOpacity: 0.1,
-        shadowRadius: 4,
-        elevation: 8,
-      },
-    }).shadow,
+    shadowColor: Colors.black,
+    shadowOffset: { width: 0, height: -2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+    elevation: 8,
   },
   tabBarLabel: {
     fontSize: FontSize.xs,
-    fontWeight: '600',
+    fontWeight: FontWeight.semibold,
   },
 });

@@ -10,8 +10,8 @@ import {
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
 import * as Haptics from 'expo-haptics';
-import { HeaderBar } from '../src/components/HeaderBar';
-import { Card } from '../src/components/Card';
+import HeaderBar from '../src/components/HeaderBar';
+import Card from '../src/components/Card';
 import { Colors, Spacing, BorderRadius, FontSize, FontWeight, Shadow } from '../src/theme/theme';
 
 export default function SettingsScreen() {
