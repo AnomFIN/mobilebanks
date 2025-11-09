@@ -76,13 +76,23 @@ python launch_web_server.py --local --port 8080
 - 🔗 Easy sharing with others
 - 🔒 HTTPS encryption
 - ⚡ Requires active internet connection
+- 🎯 **NEW**: Automatic authentication setup wizard
+- 🌐 **NEW**: Public URL displayed automatically (no need to look elsewhere!)
 
 **Use when:**
 - Sharing with remote users
 - Testing on external devices
 - Demonstrating to clients
 
+**First-time setup:**
+The launcher will guide you through:
+1. Creating a free ngrok account (if needed)
+2. Getting your authtoken
+3. Automatic configuration
+4. Everything works first time!
+
 **ngrok URL format:** `https://xxxxx-xx-xxx-xxx-xx.ngrok.io`
+The public URL is now displayed prominently in the launcher and automatically opened in your browser!
 
 ## 🖥️ Desktop Shortcut (Windows)
 
@@ -111,11 +121,13 @@ python create_desktop_shortcut.py
 2. Extract and place `ngrok.exe` in a folder in your PATH
 3. Or place it in the same folder as the launcher scripts
 
-**Quick ngrok setup:**
-```bash
-# After downloading ngrok
-ngrok authtoken <your-auth-token>
-```
+**Ngrok Authentication (NEW - Automatic!):**
+Starting with the latest version, the launcher will automatically guide you through ngrok setup:
+- When you select the ngrok option, the script checks if authentication is needed
+- If needed, it shows an interactive setup wizard
+- Just follow the on-screen instructions to get your free authtoken
+- The script will automatically configure ngrok for you
+- No manual command entry required!
 
 ### "web/ directory not found"
 **Solution:**
