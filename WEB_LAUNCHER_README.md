@@ -4,24 +4,43 @@ This guide explains how to launch the MobileBanks web application using the prov
 
 ## 🚀 Quick Start
 
-### Option 1: Double-Click (Windows)
+### Option 1: Interactive Menu (Recommended)
 
-1. **Double-click** `Launch_Web_Server.bat`
-2. Choose your preferred access method:
-   - **Local network only** - Access from your computer or local network
-   - **Public internet** - Access from anywhere using ngrok
-3. Your browser will automatically open the application
+**Windows:** Double-click `Launch_Web_Server.bat`
 
-### Option 2: Command Line
-
-#### Windows
+**Command Line:**
 ```bash
-python launch_web_server.py
+python launch_web_server.py              # Interactive menu
 ```
 
-#### Linux/Mac
+Choose your preferred access method:
+- **Local network only** - Access from your computer or local network
+- **Public internet** - Access from anywhere using ngrok
+
+### Option 2: Direct Launch (No Menu)
+
+**Local Server:**
 ```bash
-python3 launch_web_server.py
+# Windows
+Launch_Local_Server.bat
+
+# Command line
+python launch_web_server.py --local
+```
+
+**Public Server with Ngrok:**
+```bash
+# Windows
+Launch_Public_Server.bat
+
+# Command line
+python launch_web_server.py --ngrok
+```
+
+### Option 3: Custom Port
+
+```bash
+python launch_web_server.py --local --port 8080
 ```
 
 ## 📋 Prerequisites
@@ -137,16 +156,30 @@ The script will automatically use port 8000. If it's busy:
 
 ```
 mobilebanks/
-├── Launch_Web_Server.bat          # Windows launcher (double-click)
+├── Launch_Web_Server.bat          # Interactive menu launcher (Windows)
+├── Launch_Local_Server.bat        # Direct local server launcher (Windows)
+├── Launch_Public_Server.bat       # Direct ngrok launcher (Windows)
+├── Launch_Web_Server_Silent.vbs   # Silent launcher (no console flash)
 ├── launch_web_server.py           # Main Python launcher script
 ├── create_desktop_shortcut.py     # Desktop shortcut creator
+├── test_launcher.py               # Test suite for launcher
 ├── WEB_LAUNCHER_README.md         # This file
 └── web/                           # Web application files
-    ├── index.html
-    ├── manifest.json
-    ├── sw.js
+    ├── index.html                 # Main web application
+    ├── manifest.json              # PWA manifest
+    ├── sw.js                      # Service worker
     └── ...
 ```
+
+## 🎛️ Available Launchers
+
+| File | Type | Description | Use When |
+|------|------|-------------|----------|
+| `Launch_Web_Server.bat` | Interactive | Shows menu to choose local/ngrok | First time or prefer options |
+| `Launch_Local_Server.bat` | Direct | Starts local server immediately | Quick testing locally |
+| `Launch_Public_Server.bat` | Direct | Starts ngrok immediately | Quick sharing publicly |
+| `Launch_Web_Server_Silent.vbs` | Silent | Launches without console flash | Cleaner desktop experience |
+| `launch_web_server.py` | Script | Python script with CLI args | Automation or scripting |
 
 ## 🔧 Advanced Usage
 

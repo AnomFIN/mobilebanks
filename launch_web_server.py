@@ -8,7 +8,11 @@ This script launches a web server for the web/ folder and provides options to:
 2. Run with ngrok for public internet access
 
 Usage:
-    python launch_web_server.py
+    python launch_web_server.py              # Interactive mode (menu)
+    python launch_web_server.py --local      # Start local server directly
+    python launch_web_server.py --ngrok      # Start with ngrok directly
+    python launch_web_server.py --port 8080  # Use custom port
+    
     Or double-click the .bat file on Windows
 """
 
@@ -18,6 +22,7 @@ import subprocess
 import shutil
 import time
 import webbrowser
+import argparse
 from pathlib import Path
 
 # Color codes for terminal output
@@ -190,15 +195,84 @@ def show_menu():
         else:
             print_color("❌ Invalid choice. Please enter 1, 2, or 3.", Colors.RED)
 
+def parse_arguments():
+    """Parse command line arguments"""
+    parser = argparse.ArgumentParser(
+        description='Launch MobileBanks web server',
+        formatter_class=argparse.RawDescriptionHelpFormatter,
+        epilog="""
+Examples:
+  python launch_web_server.py              # Interactive menu
+  python launch_web_server.py --local      # Start local server
+  python launch_web_server.py --ngrok      # Start with ngrok
+  python launch_web_server.py --port 8080  # Use port 8080
+        """
+    )
+    
+    parser.add_argument(
+        '--local',
+        action='store_true',
+        help='Start local server directly (no menu)'
+    )
+    
+    parser.add_argument(
+        '--ngrok',
+        action='store_true',
+        help='Start with ngrok directly (no menu)'
+    )
+    
+    parser.add_argument(
+        '--port',
+        type=int,
+        default=8000,
+        help='Port to use (default: 8000)'
+    )
+    
+    parser.add_argument(
+        '--no-browser',
+        action='store_true',
+        help='Do not open browser automatically'
+    )
+    
+    return parser.parse_args()
+
 def main():
     """Main application entry point"""
-    print_banner()
+    # Parse command line arguments
+    args = parse_arguments()
     
     # Get web directory
     web_dir = get_web_directory()
     
-    # Default port
-    port = 8000
+    # Use custom port if specified
+    port = args.port
+    
+    # Check for direct mode (skip menu)
+    if args.local:
+        print_banner()
+        print_color("🚀 Starting in LOCAL mode...\n", Colors.GREEN)
+        start_local_server(web_dir, port)
+        return
+    
+    if args.ngrok:
+        print_banner()
+        if not check_ngrok_installed():
+            print_color("\n❌ Error: ngrok is not installed!", Colors.RED)
+            print_color("\n📥 To install ngrok:", Colors.YELLOW)
+            print_color("   1. Visit: https://ngrok.com/download", Colors.CYAN)
+            print_color("   2. Download and install ngrok", Colors.CYAN)
+            print_color("   3. Sign up for a free account at https://ngrok.com", Colors.CYAN)
+            print_color("   4. Run 'ngrok authtoken <your-token>' to authenticate", Colors.CYAN)
+            print()
+            input("Press Enter to exit...")
+            sys.exit(1)
+        
+        print_color("🌍 Starting in NGROK mode...\n", Colors.CYAN)
+        start_ngrok_server(web_dir, port)
+        return
+    
+    # Interactive mode (default)
+    print_banner()
     
     # Show menu and get choice
     choice = show_menu()

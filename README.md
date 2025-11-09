@@ -71,9 +71,28 @@ This script automatically handles port conflicts on Windows and other platforms.
 
 **Detailed instructions**: See [SETUP.md](SETUP.md)
 
+### Web Version Quick Start
+
+Launch the web version with a simple launcher:
+
+```bash
+# Windows: Double-click
+Launch_Web_Server.bat
+
+# Or run Python script directly
+python3 launch_web_server.py
+```
+
+Choose between:
+- **Local network** - Access via localhost or local IP
+- **Public internet** - Share via ngrok tunnel
+
+See [WEB_LAUNCHER_README.md](WEB_LAUNCHER_README.md) for detailed instructions.
+
 ## 📚 Documentation
 
 - **[SETUP.md](SETUP.md)**: Complete setup guide and quick start
+- **[WEB_LAUNCHER_README.md](WEB_LAUNCHER_README.md)**: Web server launcher guide (local & public access)
 - **[README_INSTALL.md](README_INSTALL.md)**: install.py käyttöohjeet (tekstipohjainen valikko, Windows-parannukset, porttikäsittely)
 - **[INSTALL_SCRIPT.md](INSTALL_SCRIPT.md)**: Python installation script documentation (vanha versio)
 - **[UI_DESIGN.md](UI_DESIGN.md)**: Comprehensive UI design documentation
