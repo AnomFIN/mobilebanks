@@ -75,6 +75,8 @@ This script automatically handles port conflicts on Windows and other platforms.
 
 Launch the web version with a simple launcher:
 
+**Windows Users:** See [WINDOWS_QUICK_START.md](WINDOWS_QUICK_START.md) for step-by-step guide
+
 ```bash
 # Windows: Double-click
 Launch_Web_Server.bat
@@ -87,7 +89,9 @@ Choose between:
 - **Local network** - Access via localhost or local IP
 - **Public internet** - Share via ngrok tunnel
 
-See [WEB_LAUNCHER_README.md](WEB_LAUNCHER_README.md) for detailed instructions.
+**Documentation:**
+- [WINDOWS_QUICK_START.md](WINDOWS_QUICK_START.md) - Complete Windows guide with troubleshooting
+- [WEB_LAUNCHER_README.md](WEB_LAUNCHER_README.md) - Technical documentation for all platforms
 
 ## 📚 Documentation
 
