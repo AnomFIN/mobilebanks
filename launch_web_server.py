@@ -23,6 +23,9 @@ import shutil
 import time
 import webbrowser
 import argparse
+import json
+import urllib.request
+import urllib.error
 from pathlib import Path
 
 # Color codes for terminal output
@@ -54,6 +57,156 @@ def print_banner():
 def check_ngrok_installed():
     """Check if ngrok is installed and available"""
     return shutil.which('ngrok') is not None
+
+def check_ngrok_authenticated():
+    """Check if ngrok is authenticated with an authtoken"""
+    try:
+        # Try to get ngrok config
+        result = subprocess.run(
+            ['ngrok', 'config', 'check'],
+            capture_output=True,
+            text=True,
+            timeout=5
+        )
+        # If config check succeeds, ngrok is properly configured
+        return result.returncode == 0
+    except (subprocess.TimeoutExpired, FileNotFoundError, Exception):
+        # If command fails or times out, try another method
+        pass
+    
+    # Alternative: Try to start ngrok briefly and see if it complains about auth
+    try:
+        # Run ngrok with a quick test
+        result = subprocess.run(
+            ['ngrok', 'version'],
+            capture_output=True,
+            text=True,
+            timeout=5
+        )
+        if result.returncode == 0:
+            # ngrok is installed, but we can't easily check auth without starting it
+            # We'll return True and let the actual start handle auth issues
+            return True
+    except (subprocess.TimeoutExpired, FileNotFoundError, Exception):
+        pass
+    
+    return False
+
+def setup_ngrok_authtoken():
+    """Interactively setup ngrok authtoken"""
+    print_color("\n" + "="*60, Colors.YELLOW)
+    print_color("  🔑 Ngrok Authentication Required", Colors.BOLD + Colors.YELLOW)
+    print_color("="*60, Colors.YELLOW)
+    print()
+    
+    print_color("Ngrok requires a free account and authtoken to work.", Colors.CYAN)
+    print_color("Don't worry, it's quick and free! Follow these steps:", Colors.CYAN)
+    print()
+    
+    print_color("📋 Steps to get your authtoken:", Colors.BOLD)
+    print_color("   1. Visit: https://dashboard.ngrok.com/signup", Colors.CYAN)
+    print_color("   2. Sign up for a free account (takes 1 minute)", Colors.CYAN)
+    print_color("   3. After login, go to: https://dashboard.ngrok.com/get-started/your-authtoken", Colors.CYAN)
+    print_color("   4. Copy your authtoken from the dashboard", Colors.CYAN)
+    print()
+    
+    # Ask user if they want to continue
+    print_color("Do you have an ngrok account or want to create one now?", Colors.BOLD)
+    response = input(f"{Colors.CYAN}Enter 'yes' to continue, or 'no' to exit: {Colors.ENDC}").strip().lower()
+    
+    if response not in ['yes', 'y']:
+        print_color("\n👋 Setup cancelled. You can run this again when you have an authtoken.", Colors.YELLOW)
+        return False
+    
+    print()
+    print_color("="*60, Colors.CYAN)
+    print_color("  Enter Your Authtoken", Colors.BOLD)
+    print_color("="*60, Colors.CYAN)
+    print()
+    
+    print_color("Paste your ngrok authtoken here:", Colors.BOLD)
+    print_color("(It should look like: 2abc...xyz123)", Colors.BLUE)
+    print()
+    
+    authtoken = input(f"{Colors.CYAN}Authtoken: {Colors.ENDC}").strip()
+    
+    if not authtoken:
+        print_color("\n❌ No authtoken provided. Setup cancelled.", Colors.RED)
+        return False
+    
+    # Validate authtoken format (basic check)
+    if len(authtoken) < 20:
+        print_color("\n⚠️  Warning: This authtoken looks too short. It might be invalid.", Colors.YELLOW)
+        response = input(f"{Colors.CYAN}Continue anyway? (yes/no): {Colors.ENDC}").strip().lower()
+        if response not in ['yes', 'y']:
+            print_color("\n👋 Setup cancelled.", Colors.YELLOW)
+            return False
+    
+    print()
+    print_color("🔧 Configuring ngrok with your authtoken...", Colors.BLUE)
+    
+    try:
+        # Configure ngrok with the authtoken
+        result = subprocess.run(
+            ['ngrok', 'config', 'add-authtoken', authtoken],
+            capture_output=True,
+            text=True,
+            timeout=10
+        )
+        
+        if result.returncode == 0:
+            print_color("✅ Authtoken configured successfully!", Colors.GREEN)
+            print_color("\n🎉 You're all set! Ngrok is now ready to use.", Colors.GREEN)
+            print()
+            return True
+        else:
+            print_color(f"\n❌ Failed to configure authtoken.", Colors.RED)
+            if result.stderr:
+                print_color(f"Error: {result.stderr}", Colors.RED)
+            return False
+            
+    except subprocess.TimeoutExpired:
+        print_color("\n❌ Configuration timed out. Please try again.", Colors.RED)
+        return False
+    except Exception as e:
+        print_color(f"\n❌ Error configuring authtoken: {e}", Colors.RED)
+        return False
+
+def get_ngrok_public_url(max_attempts=10, delay=1):
+    """
+    Get the public URL from ngrok's local API
+    
+    Args:
+        max_attempts: Maximum number of attempts to get the URL
+        delay: Delay between attempts in seconds
+        
+    Returns:
+        The public URL or None if not found
+    """
+    api_url = "http://localhost:4040/api/tunnels"
+    
+    for attempt in range(max_attempts):
+        try:
+            # Query ngrok's local API
+            with urllib.request.urlopen(api_url, timeout=2) as response:
+                data = json.loads(response.read().decode())
+                
+                # Extract tunnels
+                tunnels = data.get('tunnels', [])
+                
+                # Find the public HTTPS URL
+                for tunnel in tunnels:
+                    public_url = tunnel.get('public_url', '')
+                    if public_url.startswith('https://'):
+                        return public_url
+                    
+        except (urllib.error.URLError, urllib.error.HTTPError, json.JSONDecodeError, Exception):
+            # API not ready yet, wait and retry
+            if attempt < max_attempts - 1:
+                time.sleep(delay)
+            continue
+    
+    return None
 
 def get_web_directory():
     """Get the web directory path"""
@@ -119,48 +272,97 @@ def start_ngrok_server(web_dir, port=8000):
     
     # Start ngrok
     print_color("🌍 Starting ngrok tunnel...", Colors.CYAN)
+    print_color("⏳ Please wait while we establish the connection...", Colors.BLUE)
     print()
     
+    ngrok_process = None
     try:
         ngrok_process = subprocess.Popen(
-            ['ngrok', 'http', str(port)],
+            ['ngrok', 'http', str(port), '--log=stdout'],
             stdout=subprocess.PIPE,
-            stderr=subprocess.PIPE
+            stderr=subprocess.PIPE,
+            text=True
         )
         
-        print_color("✅ Ngrok tunnel started!", Colors.GREEN)
-        print_color("🌐 Public URL will be displayed in the ngrok window", Colors.CYAN)
-        print()
-        print_color("📝 Instructions:", Colors.YELLOW)
-        print_color("   1. Look for the 'Forwarding' line in the ngrok window", Colors.CYAN)
-        print_color("   2. Copy the https://xxxxx.ngrok.io URL", Colors.CYAN)
-        print_color("   3. Share that URL to access your app from anywhere!", Colors.CYAN)
-        print()
+        # Wait for ngrok to start and get the public URL
+        print_color("🔍 Retrieving your public URL...", Colors.BLUE)
+        public_url = get_ngrok_public_url(max_attempts=15, delay=1)
+        
+        if public_url:
+            print_color("\n" + "="*60, Colors.GREEN)
+            print_color("  ✅ SUCCESS! Your app is now publicly accessible!", Colors.BOLD + Colors.GREEN)
+            print_color("="*60, Colors.GREEN)
+            print()
+            print_color("🌐 Public URL:", Colors.BOLD)
+            print_color(f"   {public_url}", Colors.CYAN + Colors.BOLD)
+            print()
+            print_color("📱 Share this URL with anyone to give them access!", Colors.CYAN)
+            print_color("🔒 The URL uses HTTPS for secure access", Colors.CYAN)
+            print()
+            print_color("💡 Tips:", Colors.YELLOW)
+            print_color("   • This URL works from anywhere on the internet", Colors.BLUE)
+            print_color("   • The URL is temporary and will change when you restart", Colors.BLUE)
+            print_color("   • Keep this window open to maintain the connection", Colors.BLUE)
+            print()
+            print_color("="*60, Colors.GREEN)
+            print()
+            
+            # Try to open the URL in browser
+            try:
+                print_color("🌐 Opening public URL in browser...", Colors.BLUE)
+                webbrowser.open(public_url)
+            except:
+                pass
+                
+        else:
+            print_color("\n⚠️  Warning: Could not retrieve public URL from ngrok", Colors.YELLOW)
+            print_color("The tunnel may still be running. Check the ngrok dashboard:", Colors.YELLOW)
+            print_color("   https://dashboard.ngrok.com/tunnels/agents", Colors.CYAN)
+            print()
+        
         print_color("💡 Press Ctrl+C to stop both servers", Colors.YELLOW)
         print()
         
-        # Wait for ngrok to be stopped
+        # Keep the process running
         ngrok_process.wait()
         
     except KeyboardInterrupt:
         print_color("\n\n✋ Stopping servers...", Colors.YELLOW)
+    except FileNotFoundError:
+        print_color("\n❌ Error: ngrok command not found!", Colors.RED)
+        print_color("Please make sure ngrok is installed and in your PATH.", Colors.RED)
     except Exception as e:
-        print_color(f"\n❌ Error: {e}", Colors.RED)
+        print_color(f"\n❌ Error starting ngrok: {e}", Colors.RED)
+        
+        # Check if it's an authentication error
+        error_msg = str(e).lower()
+        if 'auth' in error_msg or 'token' in error_msg:
+            print_color("\n🔑 This might be an authentication issue.", Colors.YELLOW)
+            print_color("Please make sure you've set up your ngrok authtoken.", Colors.YELLOW)
+            print_color("Run: ngrok config add-authtoken <your-token>", Colors.CYAN)
     finally:
         # Clean up processes
+        print_color("\n🧹 Cleaning up...", Colors.BLUE)
+        
         try:
             server_process.terminate()
             server_process.wait(timeout=5)
         except:
-            server_process.kill()
+            try:
+                server_process.kill()
+            except:
+                pass
         
         try:
-            if 'ngrok_process' in locals():
+            if ngrok_process:
                 ngrok_process.terminate()
                 ngrok_process.wait(timeout=5)
         except:
-            if 'ngrok_process' in locals():
-                ngrok_process.kill()
+            try:
+                if ngrok_process:
+                    ngrok_process.kill()
+            except:
+                pass
         
         print_color("✅ Servers stopped", Colors.GREEN)
 
@@ -262,10 +464,19 @@ def main():
             print_color("   1. Visit: https://ngrok.com/download", Colors.CYAN)
             print_color("   2. Download and install ngrok", Colors.CYAN)
             print_color("   3. Sign up for a free account at https://ngrok.com", Colors.CYAN)
-            print_color("   4. Run 'ngrok authtoken <your-token>' to authenticate", Colors.CYAN)
+            print_color("   4. Run 'ngrok config add-authtoken <your-token>' to authenticate", Colors.CYAN)
             print()
             input("Press Enter to exit...")
             sys.exit(1)
+        
+        # Check if ngrok needs authentication setup
+        if not check_ngrok_authenticated():
+            print_color("\n🔑 Ngrok authentication check...", Colors.YELLOW)
+            if not setup_ngrok_authtoken():
+                print_color("\n❌ Cannot start ngrok without authentication.", Colors.RED)
+                print()
+                input("Press Enter to exit...")
+                sys.exit(1)
         
         print_color("🌍 Starting in NGROK mode...\n", Colors.CYAN)
         start_ngrok_server(web_dir, port)
@@ -289,10 +500,18 @@ def main():
             print_color("   1. Visit: https://ngrok.com/download", Colors.CYAN)
             print_color("   2. Download and install ngrok", Colors.CYAN)
             print_color("   3. Sign up for a free account at https://ngrok.com", Colors.CYAN)
-            print_color("   4. Run 'ngrok authtoken <your-token>' to authenticate", Colors.CYAN)
+            print_color("   4. Run 'ngrok config add-authtoken <your-token>' to authenticate", Colors.CYAN)
             print()
             input("Press Enter to exit...")
             sys.exit(1)
+        
+        # Check if ngrok needs authentication setup
+        if not check_ngrok_authenticated():
+            if not setup_ngrok_authtoken():
+                print_color("\n❌ Cannot start ngrok without authentication.", Colors.RED)
+                print()
+                input("Press Enter to exit...")
+                sys.exit(1)
         
         start_ngrok_server(web_dir, port)
     
