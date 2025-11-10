@@ -19,6 +19,7 @@ import { Colors, Spacing, BorderRadius, FontSize, Shadow, FontWeight } from '../
 import { useAccount } from '../src/context/AccountContext';
 import HeaderBar from '../src/components/HeaderBar';
 import Card from '../src/components/Card';
+import HeaderBar from '../src/components/HeaderBar';
 
 export default function PaymentScreen() {
   const [amount, setAmount] = useState('');
@@ -212,14 +213,7 @@ export default function PaymentScreen() {
               <Text style={styles.sendButtonText}>Luo maksu</Text>
               <Ionicons name="arrow-forward" size={20} color={Colors.white} />
             </TouchableOpacity>
-
-            {/* Validation message (appears after 2s) */}
-            {showValidation && (
-              <View style={styles.validationContainer}>
-                <Text style={styles.validationText}>Maksun saajan nimi ja IBAN täsmää</Text>
-              </View>
-            )}
-          </View>
+          </Animated.View>
         </ScrollView>
       </KeyboardAvoidingView>
 
@@ -269,7 +263,7 @@ const styles = StyleSheet.create({
   scrollView: {
     flex: 1,
   },
-  titleSection: {
+  header: {
     paddingHorizontal: Spacing.lg,
     paddingTop: Spacing.lg,
     paddingBottom: Spacing.md,
