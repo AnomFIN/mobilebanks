@@ -1,0 +1,4 @@
+# GitHub Pages Configuration
+
+# To be used for GitHub Pages deployment
+.github/workflows/deploy.yml

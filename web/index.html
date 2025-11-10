@@ -1,0 +1,3680 @@
+
+<!DOCTYPE html>
+<html lang="fi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <title>SumUp Banking</title>
+    
+    <!-- PWA Meta Tags -->
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="SumUp Banking">
+    <meta name="theme-color" content="#1a1a1a">
+    
+    <!-- Icons -->
+    <link rel="apple-touch-icon" href="icon-192.svg">
+    <link rel="icon" href="icon-192.svg">
+    <link rel="manifest" href="manifest.json">
+    
+    <style>
+        /* Premium Design System */
+        :root {
+            /* Color Palette - Tesla/Apple Inspired */
+            --primary: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            --primary-solid: #667eea;
+            --primary-dark: #5a67d8;
+            --accent: #00d4ff;
+            --success: #10b981;
+            --error: #ef4444;
+            --warning: #f59e0b;
+            
+            /* Premium Neutrals */
+            --surface-primary: #ffffff;
+            --surface-secondary: #f8fafc;
+            --surface-tertiary: #f1f5f9;
+            --background: linear-gradient(135deg, #fafbfc 0%, #f1f5f9 100%);
+            --glass: rgba(255, 255, 255, 0.9);
+            --frosted-glass: rgba(255, 255, 255, 0.7);
+            
+            /* Typography */
+            --text-primary: #0f172a;
+            --text-secondary: #475569;
+            --text-tertiary: #94a3b8;
+            --text-inverse: #ffffff;
+            
+            /* Borders & Shadows */
+            --border-subtle: rgba(148, 163, 184, 0.1);
+            --border-medium: rgba(148, 163, 184, 0.2);
+            --shadow-subtle: 0 1px 2px rgba(0, 0, 0, 0.04);
+            --shadow-soft: 0 4px 6px -1px rgba(0, 0, 0, 0.07), 0 2px 4px -1px rgba(0, 0, 0, 0.04);
+            --shadow-medium: 0 10px 15px -3px rgba(0, 0, 0, 0.08), 0 4px 6px -2px rgba(0, 0, 0, 0.04);
+            --shadow-large: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+            
+            /* Spacing System */
+            --space-1: 0.25rem;
+            --space-2: 0.5rem;
+            --space-3: 0.75rem;
+            --space-4: 1rem;
+            --space-6: 1.5rem;
+            --space-8: 2rem;
+            --space-12: 3rem;
+            
+            /* Border Radius */
+            --radius-sm: 0.5rem;
+            --radius-md: 0.75rem;
+            --radius-lg: 1rem;
+            --radius-xl: 1.5rem;
+            --radius-2xl: 2rem;
+            
+            /* Transitions */
+            --transition-fast: 150ms cubic-bezier(0.4, 0, 0.2, 1);
+            --transition-medium: 250ms cubic-bezier(0.4, 0, 0.2, 1);
+            --transition-slow: 350ms cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            background: var(--background);
+            color: var(--text-primary);
+            line-height: 1.6;
+            font-weight: 400;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+            text-rendering: optimizeLegibility;
+            overflow-x: hidden;
+            -webkit-tap-highlight-color: transparent;
+            user-select: none;
+        }
+
+        /* App Container */
+        .app {
+            max-width: 430px;
+            margin: 0 auto;
+            min-height: 100vh;
+            background: var(--surface-primary);
+            box-shadow: var(--shadow-large);
+            position: relative;
+            overflow: hidden;
+        }
+
+        /* Status Bar */
+        .status-bar {
+            height: 44px;
+            background: var(--glass);
+            backdrop-filter: blur(20px) saturate(180%);
+            -webkit-backdrop-filter: blur(20px) saturate(180%);
+            position: fixed;
+            top: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 100%;
+            max-width: 430px;
+            z-index: 1000;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-bottom: 1px solid var(--border-subtle);
+        }
+
+        .status-indicator {
+            width: 3px;
+            height: 3px;
+            border-radius: 50%;
+            background: var(--text-primary);
+        }
+
+        /* Header Bar */
+        .header-bar {
+            height: 60px;
+            background: var(--glass);
+            backdrop-filter: blur(20px) saturate(180%);
+            -webkit-backdrop-filter: blur(20px) saturate(180%);
+            position: fixed;
+            top: 44px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 100%;
+            max-width: 430px;
+            z-index: 999;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 var(--space-6);
+            border-bottom: 1px solid var(--border-subtle);
+        }
+
+        .logo {
+            font-size: 1.25rem;
+            font-weight: 700;
+            background: var(--primary);
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+            letter-spacing: -0.02em;
+        }
+
+        .header-actions {
+            display: flex;
+            gap: var(--space-3);
+        }
+
+        .revolut-header-btn {
+            width: 42px;
+            height: 42px;
+            border: none;
+            border-radius: 12px;
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            color: white;
+        }
+
+        .revolut-header-btn:hover {
+            background: rgba(255, 255, 255, 0.2);
+            transform: translateY(-1px);
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+        }
+
+        .revolut-header-btn svg {
+            width: 20px;
+            height: 20px;
+            opacity: 0.9;
+        }
+
+        /* Main Content */
+        .main-content {
+            margin-top: 104px;
+            padding: var(--space-6);
+            padding-bottom: calc(80px + var(--space-6));
+            min-height: calc(100vh - 104px);
+        }
+
+        /* Cards */
+        .card {
+            background: var(--surface-primary);
+            border-radius: var(--radius-xl);
+            padding: var(--space-6);
+            margin-bottom: var(--space-4);
+            box-shadow: var(--shadow-soft);
+            border: 1px solid var(--border-subtle);
+            transition: all var(--transition-medium);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .card:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-medium);
+        }
+
+        .card.glass {
+            background: var(--glass);
+            backdrop-filter: blur(20px) saturate(180%);
+            -webkit-backdrop-filter: blur(20px) saturate(180%);
+        }
+
+        /* Balance Card */
+        .balance-card {
+            background: var(--primary);
+            color: var(--text-inverse);
+            margin-bottom: var(--space-6);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .balance-card::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -50%;
+            width: 100%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 70%);
+            animation: shimmer 3s ease-in-out infinite;
+        }
+
+        @keyframes shimmer {
+            0%, 100% { transform: rotate(0deg) scale(1); }
+            50% { transform: rotate(180deg) scale(1.1); }
+        }
+
+        .balance-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: var(--space-4);
+        }
+
+        .balance-label {
+            font-size: 0.875rem;
+            opacity: 0.9;
+            font-weight: 500;
+            letter-spacing: 0.02em;
+        }
+
+        .balance-amount {
+            font-size: 2.5rem;
+            font-weight: 700;
+            letter-spacing: -0.02em;
+            margin: var(--space-2) 0;
+        }
+
+        .account-number {
+            font-size: 0.875rem;
+            opacity: 0.8;
+            font-family: 'SF Mono', 'Monaco', 'Cascadia Code', monospace;
+            font-weight: 500;
+        }
+
+        /* Quick Actions */
+        .quick-actions {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: var(--space-4);
+            margin-bottom: var(--space-8);
+        }
+
+        .action-btn {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: var(--space-4);
+            background: var(--surface-primary);
+            border: 1px solid var(--border-subtle);
+            border-radius: var(--radius-lg);
+            cursor: pointer;
+            transition: all var(--transition-fast);
+            text-decoration: none;
+            box-shadow: var(--shadow-subtle);
+        }
+
+        .action-btn:hover {
+            transform: translateY(-3px) scale(1.02);
+            box-shadow: var(--shadow-soft);
+            border-color: var(--primary-solid);
+        }
+
+        .action-btn:active {
+            transform: translateY(-1px) scale(0.98);
+        }
+
+        .action-icon {
+            width: 48px;
+            height: 48px;
+            border-radius: var(--radius-lg);
+            background: var(--primary);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: var(--space-2);
+            font-size: 1.5rem;
+            color: var(--text-inverse);
+            transition: all var(--transition-fast);
+        }
+
+        .action-btn:hover .action-icon {
+            transform: rotate(10deg) scale(1.1);
+        }
+
+        .action-label {
+            font-size: 0.8rem;
+            font-weight: 600;
+            color: var(--text-secondary);
+        }
+
+        /* Section Headers */
+        .section-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: var(--space-4);
+        }
+
+        .section-title {
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: var(--text-primary);
+            letter-spacing: -0.01em;
+        }
+
+        .see-all {
+            font-size: 0.875rem;
+            color: var(--primary-solid);
+            font-weight: 600;
+            text-decoration: none;
+            transition: all var(--transition-fast);
+        }
+
+        .see-all:hover {
+            color: var(--primary-dark);
+            transform: translateX(2px);
+        }
+
+        /* Transaction Items */
+        .transaction-item {
+            display: flex;
+            align-items: center;
+            padding: var(--space-4);
+            background: var(--surface-primary);
+            border-radius: var(--radius-md);
+            margin-bottom: var(--space-2);
+            cursor: pointer;
+            transition: all var(--transition-fast);
+            border: 1px solid var(--border-subtle);
+        }
+
+        .transaction-item:hover {
+            background: var(--surface-secondary);
+            transform: translateX(4px);
+            box-shadow: var(--shadow-soft);
+        }
+
+        .transaction-icon {
+            width: 44px;
+            height: 44px;
+            border-radius: var(--radius-md);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: var(--space-4);
+            font-size: 1.2rem;
+        }
+
+        .transaction-icon.credit {
+            background: linear-gradient(135deg, #10b981, #059669);
+            color: white;
+        }
+
+        .transaction-icon.debit {
+            background: linear-gradient(135deg, #ef4444, #dc2626);
+            color: white;
+        }
+
+        .transaction-details {
+            flex: 1;
+        }
+
+        .transaction-title {
+            font-size: 1rem;
+            font-weight: 600;
+            color: var(--text-primary);
+            margin-bottom: var(--space-1);
+        }
+
+        .transaction-date {
+            font-size: 0.8rem;
+            color: var(--text-tertiary);
+            font-weight: 500;
+        }
+
+        .transaction-amount {
+            font-size: 1rem;
+            font-weight: 700;
+            letter-spacing: -0.01em;
+        }
+
+        .transaction-amount.credit {
+            color: var(--success);
+        }
+
+        .transaction-amount.debit {
+            color: var(--text-primary);
+        }
+
+        /* Professional Receipt Styles */
+        .receipt-container {
+            display: flex;
+            justify-content: center;
+            margin-top: var(--space-4);
+        }
+
+        .receipt-paper {
+            background: white;
+            color: #000;
+            width: 100%;
+            max-width: 400px;
+            padding: var(--space-6);
+            border-radius: var(--radius-lg);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+            font-family: 'SF Mono', 'Monaco', 'Cascadia Code', monospace;
+            line-height: 1.4;
+        }
+
+        .receipt-header {
+            text-align: center;
+            border-bottom: 2px solid #000;
+            padding-bottom: var(--space-4);
+            margin-bottom: var(--space-5);
+        }
+
+        .bank-logo {
+            font-size: 1.5rem;
+            font-weight: 800;
+            margin-bottom: var(--space-2);
+        }
+
+        .receipt-type {
+            font-size: 1.1rem;
+            font-weight: 700;
+            margin-bottom: var(--space-2);
+        }
+
+        .receipt-date {
+            font-size: 0.9rem;
+            color: #666;
+        }
+
+        .receipt-section {
+            margin-bottom: var(--space-5);
+            padding-bottom: var(--space-3);
+            border-bottom: 1px solid #ddd;
+        }
+
+        .receipt-section:last-of-type {
+            border-bottom: none;
+        }
+
+        .receipt-section .section-title {
+            font-size: 0.8rem;
+            font-weight: 700;
+            margin-bottom: var(--space-3);
+            color: #333;
+            letter-spacing: 0.5px;
+        }
+
+        .receipt-line {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: var(--space-2);
+            font-size: 0.9rem;
+        }
+
+        .receipt-line .label {
+            color: #666;
+            flex: 1;
+        }
+
+        .receipt-line .value {
+            font-weight: 600;
+            text-align: right;
+            flex: 1;
+            color: #000;
+        }
+
+        .receipt-line .value.amount {
+            font-weight: 800;
+            font-size: 1.1rem;
+        }
+
+        .receipt-footer {
+            text-align: center;
+            margin-top: var(--space-5);
+            padding-top: var(--space-4);
+            border-top: 2px solid #000;
+        }
+
+        .footer-text {
+            font-size: 0.8rem;
+            color: #666;
+            margin-bottom: var(--space-3);
+            line-height: 1.5;
+        }
+
+        .verification-code {
+            font-size: 0.75rem;
+            font-weight: 700;
+            color: #333;
+            padding: var(--space-2);
+            background: #f5f5f5;
+            border-radius: var(--radius-sm);
+        }
+
+        /* Premium Statement Styles */
+        .statement-header {
+            background: linear-gradient(135deg, 
+                var(--primary-solid) 0%, 
+                rgba(103, 126, 234, 0.9) 50%, 
+                rgba(88, 166, 255, 0.8) 100%);
+            border-radius: var(--radius-xl);
+            padding: var(--space-6);
+            margin-bottom: var(--space-6);
+            color: white;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .statement-header::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -50%;
+            width: 100%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 70%);
+            animation: shimmer 4s ease-in-out infinite;
+        }
+
+        .statement-title-section {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: var(--space-4);
+        }
+
+        .statement-title {
+            font-size: 1.8rem;
+            font-weight: 800;
+            margin: 0;
+        }
+
+        .statement-period {
+            display: flex;
+            align-items: center;
+            gap: var(--space-2);
+            background: rgba(255, 255, 255, 0.15);
+            padding: var(--space-2) var(--space-3);
+            border-radius: var(--radius-md);
+            backdrop-filter: blur(10px);
+        }
+
+        .period-icon {
+            font-size: 1.1rem;
+        }
+
+        .balance-showcase {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-end;
+        }
+
+        .balance-main .balance-label {
+            font-size: 0.9rem;
+            opacity: 0.9;
+            margin-bottom: var(--space-1);
+        }
+
+        .balance-amount {
+            font-size: 2.5rem;
+            font-weight: 900;
+            letter-spacing: -0.02em;
+        }
+
+        .balance-trend {
+            text-align: right;
+        }
+
+        .trend-indicator {
+            display: flex;
+            align-items: center;
+            gap: var(--space-2);
+            padding: var(--space-2) var(--space-3);
+            border-radius: var(--radius-md);
+            backdrop-filter: blur(10px);
+        }
+
+        .trend-indicator.positive {
+            background: rgba(34, 197, 94, 0.2);
+        }
+
+        .trend-indicator.negative {
+            background: rgba(239, 68, 68, 0.2);
+        }
+
+        .trend-text {
+            font-size: 0.85rem;
+            font-weight: 600;
+        }
+
+        /* Analytics Cards */
+        .analytics-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: var(--space-4);
+            margin-bottom: var(--space-6);
+        }
+
+        .analytics-card {
+            background: var(--glass);
+            border: 1px solid var(--border-subtle);
+            border-radius: var(--radius-lg);
+            padding: var(--space-4);
+            backdrop-filter: blur(20px);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .analytics-card.income {
+            border-left: 4px solid var(--success);
+        }
+
+        .analytics-card.expenses {
+            border-left: 4px solid #ef4444;
+        }
+
+        .analytics-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(135deg, transparent 0%, rgba(255,255,255,0.03) 100%);
+        }
+
+        .analytics-icon {
+            font-size: 1.5rem;
+            margin-bottom: var(--space-3);
+        }
+
+        .analytics-label {
+            font-size: 0.8rem;
+            color: var(--text-secondary);
+            margin-bottom: var(--space-1);
+        }
+
+        .analytics-value {
+            font-size: 1.4rem;
+            font-weight: 800;
+            margin-bottom: var(--space-2);
+        }
+
+        .analytics-change {
+            font-size: 0.75rem;
+            opacity: 0.8;
+        }
+
+        /* Advanced Filters */
+        .advanced-filters {
+            margin-bottom: var(--space-6);
+        }
+
+        .filter-section {
+            display: flex;
+            flex-direction: column;
+            gap: var(--space-4);
+        }
+
+        .search-container {
+            position: relative;
+            display: flex;
+            align-items: center;
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-subtle);
+            border-radius: var(--radius-lg);
+            padding: var(--space-3) var(--space-4);
+        }
+
+        .search-icon {
+            margin-right: var(--space-3);
+            opacity: 0.6;
+        }
+
+        .search-input {
+            flex: 1;
+            background: transparent;
+            border: none;
+            outline: none;
+            font-size: 0.95rem;
+            color: var(--text-primary);
+        }
+
+        .search-input::placeholder {
+            color: var(--text-secondary);
+        }
+
+        .filter-chips {
+            display: flex;
+            gap: var(--space-2);
+            overflow-x: auto;
+            padding: var(--space-2) 0;
+        }
+
+        .filter-chip {
+            display: flex;
+            align-items: center;
+            gap: var(--space-2);
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-subtle);
+            border-radius: var(--radius-full);
+            padding: var(--space-2) var(--space-4);
+            font-size: 0.85rem;
+            font-weight: 600;
+            color: var(--text-secondary);
+            cursor: pointer;
+            transition: all 0.2s ease;
+            white-space: nowrap;
+        }
+
+        .filter-chip:hover {
+            background: var(--bg-hover);
+            transform: translateY(-1px);
+        }
+
+        .filter-chip.active {
+            background: var(--primary-solid);
+            color: white;
+            border-color: var(--primary-solid);
+        }
+
+        .chip-icon {
+            font-size: 0.9rem;
+        }
+
+        /* Professional Transaction Container */
+        .transaction-container {
+            background: var(--glass);
+            border: 1px solid var(--border-subtle);
+            border-radius: var(--radius-xl);
+            backdrop-filter: blur(20px);
+            overflow: hidden;
+        }
+
+        .container-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: var(--space-5) var(--space-5) var(--space-4) var(--space-5);
+            border-bottom: 1px solid var(--border-subtle);
+        }
+
+        .container-title {
+            font-size: 1.1rem;
+            font-weight: 700;
+            margin: 0;
+        }
+
+        .export-options {
+            display: flex;
+            gap: var(--space-2);
+        }
+
+        .export-btn {
+            display: flex;
+            align-items: center;
+            gap: var(--space-2);
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-subtle);
+            border-radius: var(--radius-md);
+            padding: var(--space-2) var(--space-3);
+            font-size: 0.8rem;
+            font-weight: 600;
+            color: var(--text-secondary);
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .export-btn:hover {
+            background: var(--primary-solid);
+            color: white;
+            transform: translateY(-1px);
+        }
+
+        .export-icon {
+            font-size: 0.9rem;
+        }
+
+        /* Professional Transaction Items */
+        .professional-transaction {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: var(--space-4) var(--space-5);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+            transition: all 0.2s ease;
+            cursor: pointer;
+        }
+
+        .professional-transaction:hover {
+            background: rgba(255, 255, 255, 0.02);
+        }
+
+        .professional-transaction:last-child {
+            border-bottom: none;
+        }
+
+        .transaction-left {
+            display: flex;
+            align-items: center;
+            gap: var(--space-4);
+            flex: 1;
+        }
+
+        .transaction-avatar {
+            width: 48px;
+            height: 48px;
+            border-radius: var(--radius-lg);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2rem;
+            font-weight: 700;
+            color: white;
+            position: relative;
+        }
+
+        .transaction-avatar.credit {
+            background: linear-gradient(135deg, var(--success) 0%, #10b981 100%);
+        }
+
+        .transaction-avatar.debit {
+            background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%);
+        }
+
+        .transaction-details {
+            flex: 1;
+            min-width: 0;
+        }
+
+        .transaction-company {
+            font-size: 0.95rem;
+            font-weight: 600;
+            margin-bottom: var(--space-1);
+            color: var(--text-primary);
+        }
+
+        .transaction-meta {
+            display: flex;
+            align-items: center;
+            gap: var(--space-3);
+            font-size: 0.8rem;
+            color: var(--text-secondary);
+        }
+
+        .transaction-date {
+            display: flex;
+            align-items: center;
+            gap: var(--space-1);
+        }
+
+        .transaction-reference {
+            display: flex;
+            align-items: center;
+            gap: var(--space-1);
+        }
+
+        .transaction-archive {
+            display: flex;
+            align-items: center;
+            gap: var(--space-1);
+        }
+
+        .transaction-right {
+            text-align: right;
+            min-width: 120px;
+        }
+
+        .professional-amount {
+            font-size: 1.1rem;
+            font-weight: 800;
+            margin-bottom: var(--space-1);
+        }
+
+        .professional-amount.credit {
+            color: var(--success);
+        }
+
+        .professional-amount.debit {
+            color: var(--text-primary);
+        }
+
+        .transaction-status {
+            font-size: 0.75rem;
+            font-weight: 600;
+            padding: var(--space-1) var(--space-2);
+            border-radius: var(--radius-sm);
+        }
+
+        .transaction-status.completed {
+            background: rgba(34, 197, 94, 0.1);
+            color: var(--success);
+        }
+
+        .transaction-status.pending {
+            background: rgba(251, 191, 36, 0.1);
+            color: #f59e0b;
+        }
+
+        /* Tab Navigation */
+        .tab-nav {
+            position: fixed;
+            bottom: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 100%;
+            max-width: 430px;
+            height: 80px;
+            background: var(--glass);
+            backdrop-filter: blur(20px) saturate(180%);
+            -webkit-backdrop-filter: blur(20px) saturate(180%);
+            border-top: 1px solid var(--border-subtle);
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+            z-index: 999;
+            padding: 0 var(--space-4);
+        }
+
+        .tab-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: var(--space-2);
+            cursor: pointer;
+            transition: all var(--transition-fast);
+            border-radius: var(--radius-md);
+            min-width: 60px;
+        }
+
+        .tab-item:hover {
+            background: var(--frosted-glass);
+            transform: translateY(-2px);
+        }
+
+        .tab-item.active {
+            background: var(--primary);
+            color: var(--text-inverse);
+            box-shadow: var(--shadow-soft);
+        }
+
+        .revolut-tab-icon {
+            margin-bottom: var(--space-2);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .revolut-tab-icon svg {
+            width: 22px;
+            height: 22px;
+            opacity: 0.7;
+            transition: all var(--transition-fast);
+        }
+
+        .tab-item.active .revolut-tab-icon svg {
+            opacity: 1;
+        }
+
+        .tab-label {
+            font-size: 0.7rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        /* Forms */
+        .form-group {
+            margin-bottom: var(--space-6);
+        }
+
+        .form-label {
+            display: block;
+            font-size: 0.875rem;
+            font-weight: 600;
+            color: var(--text-secondary);
+            margin-bottom: var(--space-2);
+            letter-spacing: 0.01em;
+        }
+
+        .form-input {
+            width: 100%;
+            padding: var(--space-4);
+            border: 1px solid var(--border-medium);
+            border-radius: var(--radius-md);
+            font-size: 1rem;
+            background: var(--surface-primary);
+            color: var(--text-primary);
+            transition: all var(--transition-fast);
+        }
+
+        .form-input:focus {
+            outline: none;
+            border-color: var(--primary-solid);
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+
+        /* Buttons */
+        .btn {
+            padding: var(--space-4) var(--space-6);
+            border: none;
+            border-radius: var(--radius-md);
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all var(--transition-fast);
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: var(--space-2);
+            text-decoration: none;
+        }
+
+        .btn-primary {
+            background: var(--primary);
+            color: var(--text-inverse);
+            box-shadow: var(--shadow-soft);
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-medium);
+        }
+
+        .btn-secondary {
+            background: var(--surface-tertiary);
+            color: var(--text-primary);
+            border: 1px solid var(--border-medium);
+        }
+
+        .btn-secondary:hover {
+            background: var(--surface-secondary);
+            transform: translateY(-1px);
+        }
+
+        /* Filters */
+        .filter-tabs {
+            display: flex;
+            gap: var(--space-2);
+            margin-bottom: var(--space-6);
+            background: var(--surface-secondary);
+            padding: var(--space-1);
+            border-radius: var(--radius-lg);
+        }
+
+        .filter-tab {
+            flex: 1;
+            padding: var(--space-3) var(--space-4);
+            background: transparent;
+            border: none;
+            border-radius: var(--radius-md);
+            font-weight: 600;
+            cursor: pointer;
+            transition: all var(--transition-fast);
+            color: var(--text-secondary);
+        }
+
+        .filter-tab.active {
+            background: var(--surface-primary);
+            color: var(--text-primary);
+            box-shadow: var(--shadow-subtle);
+        }
+
+        /* Loading States */
+        .loading {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 2px solid var(--border-medium);
+            border-radius: 50%;
+            border-top-color: var(--primary-solid);
+            animation: spin 1s ease-in-out infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        /* Success States */
+        .success-modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.6);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 2000;
+        }
+
+        .success-content {
+            background: var(--surface-primary);
+            padding: var(--space-8);
+            border-radius: var(--radius-xl);
+            text-align: center;
+            max-width: 300px;
+            margin: var(--space-4);
+            box-shadow: var(--shadow-large);
+        }
+
+        .success-icon {
+            font-size: 3rem;
+            color: var(--success);
+            margin-bottom: var(--space-4);
+        }
+
+        /* Hidden class */
+        .hidden {
+            display: none !important;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 480px) {
+            .main-content {
+                padding: var(--space-4);
+            }
+            
+            .balance-amount {
+                font-size: 2rem;
+            }
+            
+            .quick-actions {
+                grid-template-columns: repeat(2, 1fr);
+                gap: var(--space-3);
+            }
+        }
+
+        /* Screen-specific styles */
+        .screen {
+            display: none;
+        }
+
+        .screen.active {
+            display: block;
+        }
+
+        /* Settings Page Styles */
+        .settings-section {
+            margin-bottom: var(--space-8);
+        }
+
+        .settings-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: var(--space-4);
+            background: var(--surface-primary);
+            border-radius: var(--radius-md);
+            margin-bottom: var(--space-2);
+            border: 1px solid var(--border-subtle);
+        }
+
+        .settings-info {
+            display: flex;
+            align-items: center;
+            gap: var(--space-3);
+        }
+
+        .revolut-settings-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 12px;
+            background: linear-gradient(135deg, rgba(139, 69, 255, 0.1), rgba(59, 130, 246, 0.1));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: var(--space-3);
+            flex-shrink: 0;
+        }
+
+        .revolut-settings-icon svg {
+            width: 20px;
+            height: 20px;
+            color: var(--primary-color);
+        }
+
+        .revolut-analytics-icon {
+            width: 32px;
+            height: 32px;
+            border-radius: 8px;
+            background: linear-gradient(135deg, #8b45ff, #3b82f6);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: var(--space-3);
+        }
+
+        .revolut-analytics-icon svg {
+            width: 16px;
+            height: 16px;
+            color: white;
+        }
+
+        .revolut-trend-icon, .revolut-chip-icon, .revolut-export-icon {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .revolut-trend-icon svg, .revolut-chip-icon svg, .revolut-export-icon svg {
+            width: 16px;
+            height: 16px;
+            color: #10b981;
+        }
+
+        .revolut-feature-icon {
+            width: 48px;
+            height: 48px;
+            border-radius: 12px;
+            background: linear-gradient(135deg, #8b45ff, #3b82f6);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: var(--space-3);
+        }
+
+        .revolut-feature-icon svg {
+            width: 24px;
+            height: 24px;
+            color: white;
+        }
+
+        .revolut-empty-icon {
+            width: 64px;
+            height: 64px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            opacity: 0.3;
+            margin: 0 auto var(--space-4);
+        }
+
+        .revolut-empty-icon svg {
+            width: 48px;
+            height: 48px;
+            color: var(--text-secondary);
+        }
+
+        .revolut-receipt-icon {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: var(--space-2);
+        }
+
+        .revolut-receipt-icon svg {
+            width: 32px;
+            height: 32px;
+            color: var(--primary-color);
+        }
+
+        .settings-text h4 {
+            font-size: 1rem;
+            font-weight: 600;
+            color: var(--text-primary);
+            margin-bottom: var(--space-1);
+        }
+
+        .settings-text p {
+            font-size: 0.875rem;
+            color: var(--text-secondary);
+        }
+
+        /* Toggle Switch */
+        .toggle {
+            position: relative;
+            width: 48px;
+            height: 28px;
+            background: var(--border-medium);
+            border-radius: 14px;
+            cursor: pointer;
+            transition: all var(--transition-fast);
+        }
+
+        .toggle.active {
+            background: var(--primary-solid);
+        }
+
+        .toggle::after {
+            content: '';
+            position: absolute;
+            top: 2px;
+            left: 2px;
+            width: 24px;
+            height: 24px;
+            background: var(--surface-primary);
+            border-radius: 50%;
+            transition: all var(--transition-fast);
+            box-shadow: var(--shadow-subtle);
+        }
+
+        .toggle.active::after {
+            transform: translateX(20px);
+        }
+
+        /* Premium Features */
+        .premium-features {
+            display: flex;
+            flex-direction: column;
+            gap: var(--space-4);
+            margin-bottom: var(--space-8);
+        }
+
+        .feature-card {
+            display: flex;
+            align-items: center;
+            background: var(--surface-primary);
+            padding: var(--space-6);
+            border-radius: var(--radius-xl);
+            box-shadow: var(--shadow-soft);
+            border: 1px solid var(--border-subtle);
+            transition: all var(--transition-medium);
+        }
+
+        .feature-card:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-medium);
+        }
+
+        .feature-icon {
+            font-size: 2rem;
+            margin-right: var(--space-4);
+            width: 60px;
+            height: 60px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: var(--primary);
+            border-radius: var(--radius-lg);
+            color: var(--text-inverse);
+        }
+
+        .feature-content {
+            margin-left: var(--space-4);
+        }
+
+        .feature-content h3 {
+            font-size: 1.1rem;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin-bottom: var(--space-1);
+        }
+
+        .feature-content p {
+            font-size: 0.9rem;
+            color: var(--text-secondary);
+            line-height: 1.4;
+        }
+
+        /* Revolut-Style Premium Cards */
+        .premium-card-grid {
+            display: flex;
+            flex-direction: column;
+            gap: var(--space-4);
+            margin-bottom: var(--space-6);
+        }
+
+        .revolut-card {
+            background: #1a1a1a;
+            border-radius: 16px;
+            padding: 24px;
+            height: 200px;
+            position: relative;
+            overflow: hidden;
+            color: white;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .revolut-card.purple-gradient {
+            background: linear-gradient(135deg, #8b5cf6 0%, #6d28d9 100%);
+        }
+
+        .revolut-card.blue-gradient {
+            background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%);
+        }
+
+        .card-chip {
+            width: 32px;
+            height: 24px;
+            background: linear-gradient(135deg, #ffd700 0%, #ffed4e 100%);
+            border-radius: 4px;
+            position: absolute;
+            top: 24px;
+            left: 24px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+        }
+
+        .card-chip.virtual {
+            background: linear-gradient(135deg, #e5e7eb 0%, #9ca3af 100%);
+        }
+
+        .card-network {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-top: 0;
+        }
+
+        .network-logo {
+            font-size: 18px;
+            font-weight: 800;
+            letter-spacing: 2px;
+        }
+
+        .card-tier {
+            font-size: 12px;
+            font-weight: 600;
+            opacity: 0.8;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .card-number-section {
+            margin: 20px 0;
+        }
+
+        .card-number {
+            font-size: 20px;
+            font-weight: 500;
+            letter-spacing: 4px;
+            font-family: 'SF Mono', 'Monaco', monospace;
+        }
+
+        .card-details {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 12px;
+        }
+
+        .card-details .label {
+            font-size: 10px;
+            opacity: 0.7;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 4px;
+        }
+
+        .holder-name {
+            font-size: 14px;
+            font-weight: 600;
+        }
+
+        .expiry {
+            font-size: 14px;
+            font-weight: 600;
+        }
+
+        .card-status {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 12px;
+            opacity: 0.9;
+        }
+
+        .status-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: #10b981;
+        }
+
+        .status-dot.active {
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0% { opacity: 1; }
+            50% { opacity: 0.6; }
+            100% { opacity: 1; }
+        }
+
+        /* Revolut-Style Action Buttons */
+        .card-action-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: var(--space-3);
+            margin-bottom: var(--space-6);
+        }
+
+        .revolut-action-btn {
+            background: white;
+            border: 1px solid #e5e7eb;
+            border-radius: 12px;
+            padding: 16px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            text-align: left;
+        }
+
+        .revolut-action-btn:hover {
+            background: #f9fafb;
+            border-color: #d1d5db;
+            transform: translateY(-1px);
+        }
+
+        .revolut-action-btn.primary {
+            background: #3b82f6;
+            border-color: #3b82f6;
+            color: white;
+        }
+
+        .revolut-action-btn.primary:hover {
+            background: #2563eb;
+            border-color: #2563eb;
+        }
+
+        .action-content {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .action-icon-bg {
+            width: 40px;
+            height: 40px;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: rgba(255, 255, 255, 0.2);
+            flex-shrink: 0;
+        }
+
+        .revolut-action-btn.secondary .action-icon-bg {
+            background: #f3f4f6;
+        }
+
+        .revolut-action-btn.secondary .action-icon-bg.wallet {
+            background: #000;
+        }
+
+        .action-icon {
+            font-size: 18px;
+            font-weight: 600;
+        }
+
+        .action-text {
+            flex: 1;
+        }
+
+        .action-title {
+            font-size: 14px;
+            font-weight: 600;
+            margin-bottom: 2px;
+        }
+
+        .action-subtitle {
+            font-size: 12px;
+            opacity: 0.7;
+        }
+
+        .revolut-action-btn.primary .action-subtitle {
+            opacity: 0.9;
+        }
+
+        /* Revolut-Style Quick Actions */
+        .revolut-quick-actions {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: var(--space-4);
+            margin: var(--space-6) 0;
+            padding: 0 var(--space-2);
+        }
+
+        .revolut-action-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: var(--space-4);
+            cursor: pointer;
+            transition: all 0.2s ease;
+            border-radius: var(--radius-lg);
+        }
+
+        .revolut-action-item:hover {
+            background: var(--bg-hover);
+            transform: translateY(-2px);
+        }
+
+        .revolut-action-icon {
+            width: 48px;
+            height: 48px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: var(--space-3);
+            position: relative;
+        }
+
+        .revolut-action-icon svg {
+            width: 24px;
+            height: 24px;
+            color: white;
+        }
+
+        .revolut-action-icon.send {
+            background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%);
+        }
+
+        .revolut-action-icon.card {
+            background: linear-gradient(135deg, #8b5cf6 0%, #6d28d9 100%);
+        }
+
+        .revolut-action-icon.receipt {
+            background: linear-gradient(135deg, #10b981 0%, #047857 100%);
+        }
+
+        .revolut-action-icon.settings {
+            background: linear-gradient(135deg, #6b7280 0%, #374151 100%);
+        }
+
+        .revolut-action-label {
+            font-size: 0.875rem;
+            font-weight: 600;
+            color: var(--text-primary);
+            text-align: center;
+        }
+
+        /* Legacy Card Styles */
+        .card-item {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border-radius: var(--radius-xl);
+            padding: var(--space-6);
+            margin-bottom: var(--space-4);
+            color: var(--text-inverse);
+            position: relative;
+            overflow: hidden;
+            box-shadow: var(--shadow-large);
+        }
+
+        .card-item::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -50%;
+            width: 100%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 70%);
+            animation: shimmer 3s ease-in-out infinite;
+        }
+
+        .card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: var(--space-4);
+        }
+
+        .card-type {
+            font-size: 0.8rem;
+            font-weight: 600;
+            opacity: 0.8;
+        }
+
+        .card-logo {
+            font-size: 1.5rem;
+            font-weight: 800;
+        }
+
+        .card-number {
+            font-size: 1.1rem;
+            font-family: 'SF Mono', 'Monaco', 'Cascadia Code', monospace;
+            font-weight: 500;
+            letter-spacing: 0.1em;
+            margin: var(--space-4) 0;
+        }
+
+        .card-footer {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-end;
+        }
+
+        .card-holder {
+            font-size: 0.9rem;
+            font-weight: 600;
+            opacity: 0.9;
+        }
+
+        .card-expiry {
+            font-size: 0.8rem;
+            font-weight: 500;
+            opacity: 0.8;
+        }
+
+        .card-actions {
+            display: flex;
+            gap: var(--space-2);
+            margin-top: var(--space-4);
+        }
+
+        /* Payment Flow Styles */
+        .payment-step {
+            display: none;
+        }
+
+        .payment-step.active {
+            display: block;
+        }
+
+        .payment-progress {
+            display: flex;
+            justify-content: center;
+            margin-bottom: var(--space-6);
+        }
+
+        .progress-step {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            background: var(--surface-tertiary);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 var(--space-2);
+            font-size: 0.8rem;
+            font-weight: 600;
+            color: var(--text-secondary);
+        }
+
+        .progress-step.active {
+            background: var(--primary-solid);
+            color: var(--text-inverse);
+        }
+
+        .progress-step.completed {
+            background: var(--success);
+            color: var(--text-inverse);
+        }
+
+        .loading-spinner {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 2px solid var(--border-medium);
+            border-radius: 50%;
+            border-top-color: var(--primary-solid);
+            animation: spin 1s linear infinite;
+            margin-right: var(--space-2);
+        }
+
+        /* Dark Mode */
+        body.dark-mode {
+            --surface-primary: #0d1117;
+            --surface-secondary: #161b22;
+            --surface-tertiary: #21262d;
+            --text-primary: #f0f6fc;
+            --text-secondary: #8b949e;
+            --text-tertiary: #6e7681;
+            --background: linear-gradient(135deg, #0d1117 0%, #161b22 100%);
+            --glass: rgba(13, 17, 23, 0.95);
+            --frosted-glass: rgba(22, 27, 34, 0.8);
+            --bg-primary: #0d1117;
+            --bg-secondary: #161b22;
+            --bg-soft: #21262d;
+            --bg-hover: #30363d;
+            --border: #30363d;
+            --border-subtle: #21262d;
+            --primary-solid: #58a6ff;
+            --primary-bg: #1c2128;
+            --text-inverse: #0d1117;
+        }
+
+        body.dark-mode .premium-card {
+            background: linear-gradient(135deg, 
+                rgba(13, 17, 23, 0.95) 0%, 
+                rgba(22, 27, 34, 0.95) 100%);
+            border: 1px solid rgba(240, 246, 252, 0.1);
+            backdrop-filter: blur(20px);
+            box-shadow: 
+                0 10px 40px rgba(0, 0, 0, 0.3),
+                0 0 0 1px rgba(240, 246, 252, 0.05) inset;
+        }
+
+        body.dark-mode .nav-tabs {
+            background: var(--surface-secondary);
+            border-bottom: 1px solid var(--border);
+        }
+
+        body.dark-mode .nav-tab.active {
+            background: var(--surface-primary);
+            color: var(--primary-solid);
+            border-bottom: 2px solid var(--primary-solid);
+        }
+
+        body.dark-mode .card-item {
+            background: linear-gradient(135deg, #1c2128 0%, #21262d 100%);
+            border: 1px solid rgba(88, 166, 255, 0.2);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+        }
+
+        body.dark-mode .progress-step.active {
+            background: var(--primary-solid);
+            color: var(--text-inverse);
+        }
+
+        body.dark-mode .btn-primary {
+            background: linear-gradient(135deg, var(--primary-solid) 0%, #4493f8 100%);
+            box-shadow: 0 4px 16px rgba(88, 166, 255, 0.3);
+        }
+
+        body.dark-mode .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(88, 166, 255, 0.4);
+        }
+
+        body.dark-mode .header-bar {
+            background: rgba(13, 17, 23, 0.95);
+            border-bottom: 1px solid var(--border);
+        }
+    </style>
+</head>
+<body>
+    <div class="app">
+        <!-- Status Bar -->
+        <div class="status-bar">
+            <div class="status-indicator"></div>
+        </div>
+
+        <!-- Header Bar -->
+        <div class="header-bar">
+            <div class="logo">SumUp</div>
+            <div class="header-actions">
+                <button class="revolut-header-btn" onclick="showNotifications()">
+                    <svg viewBox="0 0 24 24" fill="currentColor">
+                        <path d="M12 22c1.1 0 2-.9 2-2h-4c0 1.1.89 2 2 2zm6-6v-5c0-3.07-1.64-5.64-4.5-6.32V4c0-.83-.67-1.5-1.5-1.5s-1.5.67-1.5 1.5v.68C7.63 5.36 6 7.92 6 11v5l-2 2v1h16v-1l-2-2z"/>
+                    </svg>
+                </button>
+                <button class="revolut-header-btn" onclick="showProfile()">
+                    <svg viewBox="0 0 24 24" fill="currentColor">
+                        <path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/>
+                    </svg>
+                </button>
+            </div>
+        </div>
+
+        <!-- Home Screen -->
+        <div id="home" class="screen active">
+            <div class="main-content">
+                <!-- Balance Card -->
+                <div class="card balance-card">
+                    <div class="balance-header">
+                        <div>
+                            <div class="balance-label">Kokonaissaldo</div>
+                            <div class="balance-amount" id="balance-amount">5,234.60 €</div>
+                            <div class="account-number">FI12 3456 7890 1234 56</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Revolut-Style Quick Actions -->
+                <div class="revolut-quick-actions">
+                    <div class="revolut-action-item" onclick="showScreen('payment')">
+                        <div class="revolut-action-icon send">
+                            <svg viewBox="0 0 24 24" fill="currentColor">
+                                <path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z"/>
+                            </svg>
+                        </div>
+                        <div class="revolut-action-label">Maksa</div>
+                    </div>
+                    
+                    <div class="revolut-action-item" onclick="showScreen('cards')">
+                        <div class="revolut-action-icon card">
+                            <svg viewBox="0 0 24 24" fill="currentColor">
+                                <path d="M20 4H4c-1.11 0-1.99.89-1.99 2L2 18c0 1.11.89 2 2 2h16c1.11 0 2-.89 2-2V6c0-1.11-.89-2-2-2zm0 14H4v-6h16v6zm0-10H4V6h16v2z"/>
+                            </svg>
+                        </div>
+                        <div class="revolut-action-label">Kortit</div>
+                    </div>
+                    
+                    <div class="revolut-action-item" onclick="showScreen('receipt')">
+                        <div class="revolut-action-icon receipt">
+                            <svg viewBox="0 0 24 24" fill="currentColor">
+                                <path d="M18 17H6v-2h12v2zm0-4H6v-2h12v2zm0-4H6V7h12v2zM3 22l1.5-1.5L6 22l1.5-1.5L9 22l1.5-1.5L12 22l1.5-1.5L15 22l1.5-1.5L18 22l1.5-1.5L21 22V2l-1.5 1.5L18 2l-1.5 1.5L15 2l-1.5 1.5L12 2l-1.5 1.5L9 2 7.5 3.5 6 2 4.5 3.5 3 2v20z"/>
+                            </svg>
+                        </div>
+                        <div class="revolut-action-label">Kuitti</div>
+                    </div>
+                    
+                    <div class="revolut-action-item" onclick="showScreen('settings')">
+                        <div class="revolut-action-icon settings">
+                            <svg viewBox="0 0 24 24" fill="currentColor">
+                                <path d="M19.14,12.94c0.04-0.3,0.06-0.61,0.06-0.94c0-0.32-0.02-0.64-0.07-0.94l2.03-1.58c0.18-0.14,0.23-0.41,0.12-0.61 l-1.92-3.32c-0.12-0.22-0.37-0.29-0.59-0.22l-2.39,0.96c-0.5-0.38-1.03-0.7-1.62-0.94L14.4,2.81c-0.04-0.24-0.24-0.41-0.48-0.41 h-3.84c-0.24,0-0.43,0.17-0.47,0.41L9.25,5.35C8.66,5.59,8.12,5.92,7.63,6.29L5.24,5.33c-0.22-0.08-0.47,0-0.59,0.22L2.74,8.87 C2.62,9.08,2.66,9.34,2.86,9.48l2.03,1.58C4.84,11.36,4.82,11.69,4.82,12s0.02,0.64,0.07,0.94l-2.03,1.58 c-0.18,0.14-0.23,0.41-0.12,0.61l1.92,3.32c0.12,0.22,0.37,0.29,0.59,0.22l2.39-0.96c0.5,0.38,1.03,0.7,1.62,0.94l0.36,2.54 c0.05,0.24,0.24,0.41,0.48,0.41h3.84c0.24,0,0.44-0.17,0.47-0.41l0.36-2.54c0.59-0.24,1.13-0.56,1.62-0.94l2.39,0.96 c0.22,0.08,0.47,0,0.59-0.22l1.92-3.32c0.12-0.22,0.07-0.47-0.12-0.61L19.14,12.94z M12,15.6c-1.98,0-3.6-1.62-3.6-3.6 s1.62-3.6,3.6-3.6s3.6,1.62,3.6,3.6S13.98,15.6,12,15.6z"/>
+                            </svg>
+                        </div>
+                        <div class="revolut-action-label">Asetukset</div>
+                    </div>
+                </div>
+                
+                <!-- Premium Features Section -->
+                <div class="section-header">
+                    <h2 class="section-title">Premium Banking</h2>
+                </div>
+                
+                <div class="premium-features">
+                    <div class="feature-card">
+                        <div class="revolut-feature-icon">
+                            <svg viewBox="0 0 24 24" fill="currentColor">
+                                <path d="M12,2A10,10 0 0,0 2,12A10,10 0 0,0 12,22A10,10 0 0,0 22,12C22,6.47 17.5,2 12,2Z"/>
+                            </svg>
+                        </div>
+                        <div class="feature-content">
+                            <h3>Maailmanlaajuinen pankkitoiminta</h3>
+                            <p>Käytä korttejasi 200+ maassa ilman lisämaksuja</p>
+                        </div>
+                    </div>
+                    <div class="feature-card">
+                        <div class="revolut-feature-icon">
+                            <svg viewBox="0 0 24 24" fill="currentColor">
+                                <path d="M12,1L3,5V11C3,16.55 6.84,21.74 12,23C17.16,21.74 21,16.55 21,11V5L12,1M12,7C13.4,7 14.8,8.6 14.8,10V11H16V18H8V11H9.2V10C9.2,8.6 10.6,7 12,7M12,8.2C11.2,8.2 10.4,8.7 10.4,10V11H13.6V10C13.6,8.7 12.8,8.2 12,8.2Z"/>
+                            </svg>
+                        </div>
+                        <div class="feature-content">
+                            <h3>Pankkiluokan turvallisuus</h3>
+                            <p>256-bittinen salaus ja biometrinen tunnistus</p>
+                        </div>
+                    </div>
+                    <div class="feature-card">
+                        <div class="revolut-feature-icon">
+                            <svg viewBox="0 0 24 24" fill="currentColor">
+                                <path d="M7,2V13H10V22L17,10H13L17,2H7Z"/>
+                            </svg>
+                        </div>
+                        <div class="feature-content">
+                            <h3>Välittömät maksut</h3>
+                            <p>Reaaliaikaiset tilisiirrot 24/7</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Recent Transactions -->
+                <div class="section-header">
+                    <h2 class="section-title">Viimeisimmät tapahtumat</h2>
+                    <a href="#" class="see-all" onclick="showScreen('statement')">Näytä kaikki</a>
+                </div>
+
+                <div id="recent-transactions">
+                    <!-- Populated by JavaScript -->
+                </div>
+            </div>
+        </div>
+
+        <!-- Cards Screen -->
+        <div id="cards" class="screen">
+            <div class="main-content">
+                <div class="section-header">
+                    <h2 class="section-title">Yrityksen kortit</h2>
+                    <div style="font-size: 0.875rem; color: var(--text-secondary);">
+                        Yhteensä: <span id="card-count">1</span> korttia
+                    </div>
+                </div>
+
+                <!-- Premium Card Collection -->
+                <div class="premium-card-grid" id="card-list">
+                    <!-- Business Debit Card - Dark Purple -->
+                    <div class="revolut-card purple-gradient">
+                        <div class="card-chip"></div>
+                        <div class="card-network">
+                            <div class="network-logo">VISA</div>
+                            <div class="card-tier">Business</div>
+                        </div>
+                        
+                        <div class="card-number-section">
+                            <div class="card-number">•••• •••• •••• 3456</div>
+                        </div>
+                        
+                        <div class="card-details">
+                            <div class="card-holder-section">
+                                <div class="label">Kortinhaltija</div>
+                                <div class="holder-name">FIRMA OY</div>
+                            </div>
+                            <div class="card-validity">
+                                <div class="label">Voimassa</div>
+                                <div class="expiry">12/28</div>
+                            </div>
+                        </div>
+                        
+                        <div class="card-status">
+                            <div class="status-dot active"></div>
+                            <span>Aktiivinen</span>
+                        </div>
+                    </div>
+
+                    <!-- Virtual Card - Blue Gradient -->
+                    <div class="revolut-card blue-gradient">
+                        <div class="card-chip virtual"></div>
+                        <div class="card-network">
+                            <div class="network-logo">MASTERCARD</div>
+                            <div class="card-tier">Virtual</div>
+                        </div>
+                        
+                        <div class="card-number-section">
+                            <div class="card-number">•••• •••• •••• 7892</div>
+                        </div>
+                        
+                        <div class="card-details">
+                            <div class="card-holder-section">
+                                <div class="label">Virtuaalikortti</div>
+                                <div class="holder-name">ONLINE PAYMENTS</div>
+                            </div>
+                            <div class="card-validity">
+                                <div class="label">Voimassa</div>
+                                <div class="expiry">03/27</div>
+                            </div>
+                        </div>
+                        
+                        <div class="card-status">
+                            <div class="status-dot active"></div>
+                            <span>Käytössä</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Professional Card Actions -->
+                <div class="card-action-grid">
+                    <button class="revolut-action-btn primary" onclick="requestNewCard()">
+                        <div class="action-content">
+                            <div class="action-icon-bg">
+                                <div class="action-icon">+</div>
+                            </div>
+                            <div class="action-text">
+                                <div class="action-title">Tilaa uusi kortti</div>
+                                <div class="action-subtitle">Fyysinen tai virtuaalinen</div>
+                            </div>
+                        </div>
+                    </button>
+                    
+                    <button class="revolut-action-btn secondary" onclick="addToAppleWallet()">
+                        <div class="action-content">
+                            <div class="action-icon-bg wallet">
+                                <div class="action-icon"></div>
+                            </div>
+                            <div class="action-text">
+                                <div class="action-title">Apple Pay</div>
+                                <div class="action-subtitle">Lisää lompakkoon</div>
+                            </div>
+                        </div>
+                    </button>
+                </div>
+
+                <!-- Card Settings -->
+                <div class="card">
+                    <h3 style="margin-bottom: var(--space-4);">Korttiasetukset</h3>
+                    <div class="settings-item">
+                        <div class="settings-info">
+                            <div class="settings-text">
+                                <h4>Kontaktittomat maksut</h4>
+                                <p>Ota käyttöön tap-to-pay maksut</p>
+                            </div>
+                        </div>
+                        <div class="toggle active" onclick="toggleSetting(this, 'contactless')"></div>
+                    </div>
+                    <div class="settings-item">
+                        <div class="settings-info">
+                            <div class="settings-text">
+                                <h4>Verkkomaksut</h4>
+                                <p>Salli online-ostokset</p>
+                            </div>
+                        </div>
+                        <div class="toggle active" onclick="toggleSetting(this, 'online')"></div>
+                    </div>
+                    <div class="settings-item">
+                        <div class="settings-info">
+                            <div class="settings-text">
+                                <h4>Ulkomaan maksut</h4>
+                                <p>Kansainväliset tapahtumat</p>
+                            </div>
+                        </div>
+                        <div class="toggle" onclick="toggleSetting(this, 'international')"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Payment Screen -->
+        <div id="payment" class="screen">
+            <div class="main-content">
+                <!-- Payment Progress -->
+                <div class="payment-progress">
+                    <div class="progress-step active">1</div>
+                    <div class="progress-step">2</div>
+                    <div class="progress-step">3</div>
+                </div>
+
+                <!-- Step 1: Payment Details -->
+                <div id="payment-step-1" class="payment-step active">
+                    <div class="section-header">
+                        <h2 class="section-title">Uusi maksu</h2>
+                        <div style="font-size: 0.875rem; color: var(--text-secondary);">
+                            Käytettävissä: <span id="payment-balance">5,234.60 €</span>
+                        </div>
+                    </div>
+
+                    <div class="card">
+                        <form id="payment-form">
+                            <div class="form-group">
+                                <label class="form-label">Saajan tilinumero (IBAN)</label>
+                                <input type="text" id="payment-iban" class="form-input" placeholder="FI21 1234 5678 9012 34" required>
+                            </div>
+
+                            <div class="form-group">
+                                <label class="form-label">Summa (€)</label>
+                                <input type="number" id="payment-amount" class="form-input" placeholder="0.00" step="0.01" min="0.01" required>
+                            </div>
+
+                            <div class="form-group">
+                                <label class="form-label">Viitenumero</label>
+                                <input type="text" id="payment-reference" class="form-input" placeholder="1234567890123456789">
+                            </div>
+
+                            <div class="form-group">
+                                <label class="form-label">Viesti saajalle</label>
+                                <input type="text" id="payment-message" class="form-input" placeholder="Lasku 12/2025">
+                            </div>
+
+                            <div class="form-group">
+                                <label class="form-label">Eräpäivä</label>
+                                <input type="date" id="payment-due-date" class="form-input">
+                            </div>
+
+                            <button type="button" class="btn btn-primary" style="width: 100%; margin-top: var(--space-4);" onclick="startPaymentVerification()">
+                                Tarkista maksu
+                            </button>
+                        </form>
+                    </div>
+                </div>
+
+                <!-- Step 2: Verification -->
+                <div id="payment-step-2" class="payment-step">
+                    <div class="section-header">
+                        <h2 class="section-title">Tarkistetaan tiedot...</h2>
+                    </div>
+                    <div class="card" style="text-align: center; padding: var(--space-8);">
+                        <div class="loading-spinner"></div>
+                        <span>Odotetaan...</span>
+                        <div id="verification-result" style="margin-top: var(--space-6); display: none;">
+                            <div style="color: var(--success); font-size: 1.2rem; margin-bottom: var(--space-4);">
+                                ✅ Maksun saajan nimi ja IBAN täsmäävät toisiinsa.
+                            </div>
+                            <button class="btn btn-primary" onclick="showPaymentConfirmation()">
+                                Jatka hyväksymään
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Step 3: Confirmation -->
+                <div id="payment-step-3" class="payment-step">
+                    <div class="section-header">
+                        <h2 class="section-title">Hyväksy maksu</h2>
+                    </div>
+                    <div class="card">
+                        <div id="payment-summary">
+                            <!-- Populated by JavaScript -->
+                        </div>
+                        <div style="display: flex; gap: var(--space-3); margin-top: var(--space-6);">
+                            <button class="btn btn-secondary" onclick="editPayment()" style="flex: 1;">
+                                Muokkaa
+                            </button>
+                            <button class="btn btn-primary" onclick="executePayment()" style="flex: 1;">
+                                Maksa nyt
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Statement Screen -->
+        <div id="statement" class="screen">
+            <div class="main-content">
+                <!-- Premium Header with Analytics -->
+                <div class="statement-header">
+                    <div class="statement-title-section">
+                        <h1 class="statement-title">Tiliote</h1>
+                        <div class="statement-period">
+                            <span class="period-icon">📅</span>
+                            <span>Marraskuu 2025</span>
+                        </div>
+                    </div>
+                    
+                    <div class="balance-showcase">
+                        <div class="balance-main">
+                            <div class="balance-label">Nykyinen saldo</div>
+                            <div class="balance-amount" id="statement-balance-main">5,234.60 €</div>
+                        </div>
+                        <div class="balance-trend">
+                            <div class="trend-indicator positive">
+                                <span class="revolut-trend-icon">
+                                    <svg viewBox="0 0 24 24" fill="currentColor">
+                                        <path d="M16,6L18.29,8.29L13.41,13.17L9.41,9.17L2,16.59L3.41,18L9.41,12L13.41,16L19.71,9.71L22,12V6"/>
+                                    </svg>
+                                </span>
+                                <span class="trend-text">+12.4% tässä kuussa</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Advanced Analytics Cards -->
+                <div class="analytics-grid">
+                    <div class="analytics-card income">
+                        <div class="revolut-analytics-icon">
+                            <svg viewBox="0 0 24 24" fill="currentColor">
+                                <path d="M11.8 10.9c-2.27-.59-3-1.2-3-2.15 0-1.09 1.01-1.85 2.7-1.85 1.78 0 2.44.85 2.5 2.1h2.21c-.07-1.72-1.12-3.3-3.21-3.81V3h-3v2.16c-1.94.42-3.5 1.68-3.5 3.61 0 2.31 1.91 3.46 4.7 4.13 2.5.6 3 1.48 3 2.41 0 .69-.49 1.79-2.7 1.79-2.06 0-2.87-.92-2.98-2.1h-2.2c.12 2.19 1.76 3.42 3.68 3.83V21h3v-2.15c1.95-.37 3.5-1.5 3.5-3.55 0-2.84-2.43-3.81-4.7-4.4z"/>
+                            </svg>
+                        </div>
+                        <div class="analytics-content">
+                            <div class="analytics-label">Tulot yhteensä</div>
+                            <div class="analytics-value">+8,450.00 €</div>
+                            <div class="analytics-change">+5.2% edellisestä kuusta</div>
+                        </div>
+                    </div>
+                    
+                    <div class="analytics-card expenses">
+                        <div class="revolut-analytics-icon">
+                            <svg viewBox="0 0 24 24" fill="currentColor">
+                                <path d="M12,2A10,10 0 0,1 22,12A10,10 0 0,1 12,22A10,10 0 0,1 2,12A10,10 0 0,1 12,2M12,4A8,8 0 0,0 4,12A8,8 0 0,0 12,20A8,8 0 0,0 20,12A8,8 0 0,0 12,4M12,6A6,6 0 0,1 18,12C18,14.97 15.84,17.44 13,17.92V18H11V17.92C8.16,17.44 6,14.97 6,12A6,6 0 0,1 12,6M12,8A4,4 0 0,0 8,12A4,4 0 0,0 12,16A4,4 0 0,0 16,12A4,4 0 0,0 12,8Z"/>
+                            </svg>
+                        </div>
+                        <div class="analytics-content">
+                            <div class="analytics-label">Menot yhteensä</div>
+                            <div class="analytics-value">-3,215.40 €</div>
+                            <div class="analytics-change">-8.1% edellisestä kuusta</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Premium Filters with Search -->
+                <div class="advanced-filters">
+                    <div class="filter-section">
+                        <div class="search-container">
+                            <div class="search-icon">🔍</div>
+                            <input 
+                                type="text" 
+                                placeholder="Hae tapahtumia..." 
+                                class="search-input"
+                                id="transaction-search"
+                            >
+                        </div>
+                        
+                        <div class="filter-chips">
+                            <button class="filter-chip active" onclick="filterTransactions('all')">
+                                <span class="revolut-chip-icon">
+                                    <svg viewBox="0 0 24 24" fill="currentColor">
+                                        <path d="M9 17H7v-7h2v7zm4 0h-2V7h2v10zm4 0h-2v-4h2v4zm2 2H5V5h14v14z"/>
+                                    </svg>
+                                </span>
+                                Kaikki
+                            </button>
+                            <button class="filter-chip" onclick="filterTransactions('credit')">
+                                <span class="chip-icon">💚</span>
+                                Tulot
+                            </button>
+                            <button class="filter-chip" onclick="filterTransactions('debit')">
+                                <span class="chip-icon">🔴</span>
+                                Menot
+                            </button>
+                            <button class="filter-chip" onclick="filterTransactions('pending')">
+                                <span class="chip-icon">⏳</span>
+                                Odottaa
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Professional Transaction List -->
+                <div class="transaction-container">
+                    <div class="container-header">
+                        <h3 class="container-title">Tapahtumat</h3>
+                        <div class="export-options">
+                            <button class="export-btn" onclick="exportToPDF()">
+                                <span class="export-icon">📄</span>
+                                PDF
+                            </button>
+                            <button class="export-btn" onclick="exportToExcel()">
+                                <span class="revolut-export-icon">
+                                    <svg viewBox="0 0 24 24" fill="currentColor">
+                                        <path d="M14,2H6A2,2 0 0,0 4,4V20A2,2 0 0,0 6,22H18A2,2 0 0,0 20,20V8L14,2M18,20H6V4H13V9H18V20Z"/>
+                                    </svg>
+                                </span>
+                                Excel
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <div id="professional-transactions">
+                        <!-- Populated by enhanced JavaScript -->
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Receipt Screen -->
+        <div id="receipt" class="screen">
+            <div class="main-content">
+                <div class="section-header">
+                    <h2 class="section-title">Maksukuitti</h2>
+                    <button class="btn btn-primary" onclick="downloadReceipt()" style="font-size: 0.9rem;">
+                        Lataa kuitti (.PNG)
+                    </button>
+                </div>
+
+                <div class="receipt-container">
+                    <div class="receipt-paper" id="receipt-content">
+                        <!-- Receipt Header -->
+                        <div class="receipt-header">
+                            <div class="bank-logo">SumUp Banking</div>
+                            <div class="receipt-type">MAKSUKUITTI</div>
+                            <div class="receipt-date" id="receipt-current-date">8. marraskuuta 2025</div>
+                        </div>
+
+                        <!-- Transaction Details -->
+                        <div class="receipt-section">
+                            <h4 class="section-title">TAPAHTUMAN TIEDOT</h4>
+                            <div class="receipt-line">
+                                <span class="label">Maksun saaja:</span>
+                                <span class="value" id="receipt-payee">Teknologia Yritys Oy</span>
+                            </div>
+                            <div class="receipt-line">
+                                <span class="label">Saajan tili (IBAN):</span>
+                                <span class="value" id="receipt-iban">FI21 1234 5678 9012 34</span>
+                            </div>
+                            <div class="receipt-line">
+                                <span class="label">Summa:</span>
+                                <span class="value amount" id="receipt-amount">1 250,00 EUR</span>
+                            </div>
+                            <div class="receipt-line">
+                                <span class="label">Viitenumero:</span>
+                                <span class="value" id="receipt-reference">12345678901234567890</span>
+                            </div>
+                            <div class="receipt-line">
+                                <span class="label">Viesti:</span>
+                                <span class="value" id="receipt-message">Lasku 2025-11-001</span>
+                            </div>
+                        </div>
+
+                        <!-- Timing Information -->
+                        <div class="receipt-section">
+                            <h4 class="section-title">AJOITUS</h4>
+                            <div class="receipt-line">
+                                <span class="label">Maksupäivä:</span>
+                                <span class="value" id="receipt-payment-date">8.11.2025</span>
+                            </div>
+                            <div class="receipt-line">
+                                <span class="label">Kirjausaika:</span>
+                                <span class="value" id="receipt-booking-time">22:15:30</span>
+                            </div>
+                            <div class="receipt-line">
+                                <span class="label">Eräpäivä:</span>
+                                <span class="value" id="receipt-due-date">11.11.2025</span>
+                            </div>
+                        </div>
+
+                        <!-- Bank Information -->
+                        <div class="receipt-section">
+                            <h4 class="section-title">PANKKITIEDOT</h4>
+                            <div class="receipt-line">
+                                <span class="label">Maksajan tili:</span>
+                                <span class="value">FI12 3456 7890 1234 56</span>
+                            </div>
+                            <div class="receipt-line">
+                                <span class="label">Tilinomistaja:</span>
+                                <span class="value">Firma Oy</span>
+                            </div>
+                            <div class="receipt-line">
+                                <span class="label">Y-tunnus:</span>
+                                <span class="value">1234567-8</span>
+                            </div>
+                        </div>
+
+                        <!-- Technical Information -->
+                        <div class="receipt-section">
+                            <h4 class="section-title">TEKNINEN TIETO</h4>
+                            <div class="receipt-line">
+                                <span class="label">Tapahtuma-ID:</span>
+                                <span class="value" id="receipt-transaction-id">1731097200000</span>
+                            </div>
+                            <div class="receipt-line">
+                                <span class="label">Arkistointitunnus:</span>
+                                <span class="value" id="receipt-archive-id">ARC-2025-097200</span>
+                            </div>
+                            <div class="receipt-line">
+                                <span class="label">Palvelutunnus:</span>
+                                <span class="value" id="receipt-service-id">SB-PROD-7834</span>
+                            </div>
+                        </div>
+
+                        <!-- Footer -->
+                        <div class="receipt-footer">
+                            <div class="footer-text">
+                                SumUp Banking - Yrityspalvelut<br>
+                                Puh: 020 123 4567 | www.sumup.fi<br>
+                                Säilytä kuitti maksutositteena
+                            </div>
+                            <div class="verification-code" id="receipt-verification-code">
+                                Varmennuskoodi: 673829
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Settings Screen -->
+        <div id="settings" class="screen">
+            <div class="main-content">
+                <div class="section-header">
+                    <h2 class="section-title">Asetukset</h2>
+                </div>
+
+                <!-- Account Info -->
+                <div class="settings-section">
+                    <h3 style="font-size: 1.1rem; font-weight: 600; color: var(--text-primary); margin-bottom: var(--space-4);">Tilin tiedot</h3>
+                    <div class="card">
+                        <div class="settings-item">
+                            <div class="settings-info">
+                                <div class="revolut-settings-icon">
+                                    <svg viewBox="0 0 24 24" fill="currentColor">
+                                        <path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/>
+                                    </svg>
+                                </div>
+                                <div class="settings-text">
+                                    <h4>Käyttäjä</h4>
+                                    <p id="user-name">Aku Ankka</p>
+                                </div>
+                            </div>
+                            <button class="btn btn-secondary" onclick="editProfile('name')">Muokkaa</button>
+                        </div>
+                        
+                        <div class="settings-item">
+                            <div class="settings-info">
+                                <div class="revolut-settings-icon">
+                                    <svg viewBox="0 0 24 24" fill="currentColor">
+                                        <path d="M12 7V3H2v18h20V7H12zM6 19H4v-2h2v2zm0-4H4v-2h2v2zm0-4H4V9h2v2zm0-4H4V5h2v2zm4 12H8v-2h2v2zm0-4H8v-2h2v2zm0-4H8V9h2v2zm0-4H8V5h2v2zm10 12h-8v-2h2v-2h-2v-2h2v-2h-2V9h8v10z"/>
+                                    </svg>
+                                </div>
+                                <div class="settings-text">
+                                    <h4>Yritys</h4>
+                                    <p id="company-name">Firma Oy</p>
+                                </div>
+                            </div>
+                            <button class="btn btn-secondary" onclick="editProfile('company')">Muokkaa</button>
+                        </div>
+                        
+                        <div class="settings-item">
+                            <div class="settings-info">
+                                <div class="revolut-settings-icon">
+                                    <svg viewBox="0 0 24 24" fill="currentColor">
+                                        <path d="M20 4H4c-1.11 0-1.99.89-1.99 2L2 18c0 1.11.89 2 2 2h16c1.11 0 2-.89 2-2V6c0-1.11-.89-2-2-2zm0 14H4v-6h16v6zm0-10H4V6h16v2z"/>
+                                    </svg>
+                                </div>
+                                <div class="settings-text">
+                                    <h4>Tilinumero</h4>
+                                    <p>FI12 3456 7890 1234 56</p>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="settings-item">
+                            <div class="settings-info">
+                                <div class="revolut-settings-icon">
+                                    <svg viewBox="0 0 24 24" fill="currentColor">
+                                        <path d="M11.8 10.9c-2.27-.59-3-1.2-3-2.15 0-1.09 1.01-1.85 2.7-1.85 1.78 0 2.44.85 2.5 2.1h2.21c-.07-1.72-1.12-3.3-3.21-3.81V3h-3v2.16c-1.94.42-3.5 1.68-3.5 3.61 0 2.31 1.91 3.46 4.7 4.13 2.5.6 3 1.48 3 2.41 0 .69-.49 1.79-2.7 1.79-2.06 0-2.87-.92-2.98-2.1h-2.2c.12 2.19 1.76 3.42 3.68 3.83V21h3v-2.15c1.95-.37 3.5-1.5 3.5-3.55 0-2.84-2.43-3.81-4.7-4.4z"/>
+                                    </svg>
+                                </div>
+                                <div class="settings-text">
+                                    <h4>Saldo</h4>
+                                    <p id="settings-balance">5,234.60 €</p>
+                                </div>
+                            </div>
+                            <button class="btn btn-secondary" onclick="editBalance()">Muokkaa</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- App Settings -->
+                <div class="settings-section">
+                    <h3 style="font-size: 1.1rem; font-weight: 600; color: var(--text-primary); margin-bottom: var(--space-4);">Sovelluksen asetukset</h3>
+                    <div class="card">
+                        <div class="settings-item">
+                            <div class="settings-info">
+                                <div class="revolut-settings-icon">
+                                    <svg viewBox="0 0 24 24" fill="currentColor">
+                                        <path d="M5,2C3.9,2 3,2.9 3,4V8H5V4H19V8H21V4C21,2.9 20.1,2 19,2H5M7,10V12H9V10H7M11,10V12H13V10H11M15,10V12H17V10H15M7,14V16H9V14H7M11,14V16H13V14H11M15,14V16H17V14H15M7,18V20H9V18H7M11,18V20H13V18H11M15,18V20H17V18H15Z"/>
+                                    </svg>
+                                </div>
+                                <div class="settings-text">
+                                    <h4>Värinä</h4>
+                                    <p>Haptinen palaute toiminnoille</p>
+                                </div>
+                            </div>
+                            <div class="toggle active" onclick="toggleSetting(this, 'haptics')"></div>
+                        </div>
+                        
+                        <div class="settings-item">
+                            <div class="settings-info">
+                                <div class="revolut-settings-icon">
+                                    <svg viewBox="0 0 24 24" fill="currentColor">
+                                        <path d="M12,18.5L10,16.5L7.5,19L5,16.5L3,18.5L5,20.5L7.5,23L10,20.5L12,22.5L14,20.5L16.5,23L19,20.5L21,22.5L23,20.5L21,18.5L19,16.5L16.5,19L14,16.5L12,18.5Z"/>
+                                    </svg>
+                                </div>
+                                <div class="settings-text">
+                                    <h4>Animaatiot</h4>
+                                    <p>Siirtymäanimaatiot ja tehosteet</p>
+                                </div>
+                            </div>
+                            <div class="toggle active" onclick="toggleSetting(this, 'animations')"></div>
+                        </div>
+                        
+                        <div class="settings-item">
+                            <div class="settings-info">
+                                <div class="revolut-settings-icon">
+                                    <svg viewBox="0 0 24 24" fill="currentColor">
+                                        <path d="M17.75,4.09L15.22,6.03L16.13,9.09L13.5,7.28L10.87,9.09L11.78,6.03L9.25,4.09L12.44,4L13.5,1L14.56,4L17.75,4.09M21.25,11L19.61,12.25L20.2,14.23L18.5,13.06L16.8,14.23L17.39,12.25L15.75,11L17.81,10.95L18.5,9L19.19,10.95L21.25,11M18.97,15.95C19.8,15.87 20.69,17.05 20.16,17.8C19.84,18.25 19.5,18.67 19.08,19.07C15.17,23 8.84,23 4.94,19.07C1.03,15.17 1.03,8.83 4.94,4.93C5.34,4.53 5.76,4.17 6.21,3.85C6.96,3.32 8.14,4.21 8.06,5.04C7.79,7.9 8.75,10.87 10.95,13.06C13.14,15.26 16.1,16.22 18.97,15.95M17.33,17.97C14.5,17.81 11.7,16.64 9.53,14.5C7.36,12.31 6.2,9.5 6.04,6.68C3.23,9.82 3.34,14.4 6.35,17.41C9.37,20.43 14,20.54 17.33,17.97Z"/>
+                                    </svg>
+                                </div>
+                                <div class="settings-text">
+                                    <h4>Tumma teema</h4>
+                                    <p>Käytä tummaa väripalettia</p>
+                                </div>
+                            </div>
+                            <div class="toggle" onclick="toggleDarkMode(this)"></div>
+                        </div>
+
+                        <div class="settings-item">
+                            <div class="settings-info">
+                                <div class="revolut-settings-icon">
+                                    <svg viewBox="0 0 24 24" fill="currentColor">
+                                        <path d="M20 4H4c-1.11 0-1.99.89-1.99 2L2 18c0 1.11.89 2 2 2h16c1.11 0 2-.89 2-2V6c0-1.11-.89-2-2-2zm0 14H4v-6h16v6zm0-10H4V6h16v2z"/>
+                                    </svg>
+                                </div>
+                                <div class="settings-text">
+                                    <h4>Korttien määrä</h4>
+                                    <p>Hallitse yrityksen kortteja</p>
+                                </div>
+                            </div>
+                            <select class="form-input" style="width: 80px;" onchange="updateCardCount(this.value)">
+                                <option value="1">1</option>
+                                <option value="2">2</option>
+                                <option value="3">3</option>
+                                <option value="5">5</option>
+                            </select>
+                        </div>
+
+                        <div class="settings-item">
+                            <div class="settings-info">
+                                <div class="revolut-settings-icon">
+                                    <svg viewBox="0 0 24 24" fill="currentColor">
+                                        <path d="M9 17H7v-7h2v7zm4 0h-2V7h2v10zm4 0h-2v-4h2v4zm2 2H5V5h14v14z"/>
+                                    </svg>
+                                </div>
+                                <div class="settings-text">
+                                    <h4>Kehittyneet analytiikka</h4>
+                                    <p>Yksityiskohtaiset raportit ja trendit</p>
+                                </div>
+                            </div>
+                            <div class="toggle active" onclick="toggleSetting(this, 'analytics')"></div>
+                        </div>
+
+                        <div class="settings-item">
+                            <div class="settings-info">
+                                <div class="revolut-settings-icon">
+                                    <svg viewBox="0 0 24 24" fill="currentColor">
+                                        <path d="M20.5 2H3.5C2.67 2 2 2.67 2 3.5V20.5C2 21.33 2.67 22 3.5 22H20.5C21.33 22 22 21.33 22 20.5V3.5C22 2.67 21.33 2 20.5 2M20 20H4V4H20V20M17.5 14C17.5 12.07 15.93 10.5 14 10.5H11V9H17V7H9V12H14C14.83 12 15.5 12.67 15.5 13.5S14.83 15 14 15H9V17H14C15.93 17 17.5 15.43 17.5 14Z"/>
+                                    </svg>
+                                </div>
+                                <div class="settings-text">
+                                    <h4>AI-avustaja</h4>
+                                    <p>Älykkäät säästösuositukset</p>
+                                </div>
+                            </div>
+                            <div class="toggle" onclick="toggleSetting(this, 'aiAssistant')"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Security Settings -->
+                <div class="settings-section">
+                    <h3 style="font-size: 1.1rem; font-weight: 600; color: var(--text-primary); margin-bottom: var(--space-4);">Turvallisuus</h3>
+                    <div class="card">
+                        <div class="settings-item">
+                            <div class="settings-info">
+                                <div class="revolut-settings-icon">
+                                    <svg viewBox="0 0 24 24" fill="currentColor">
+                                        <path d="M12,1L3,5V11C3,16.55 6.84,21.74 12,23C17.16,21.74 21,16.55 21,11V5L12,1M12,7C13.4,7 14.8,8.6 14.8,10V11H16V18H8V11H9.2V10C9.2,8.6 10.6,7 12,7M12,8.2C11.2,8.2 10.4,8.7 10.4,10V11H13.6V10C13.6,8.7 12.8,8.2 12,8.2Z"/>
+                                    </svg>
+                                </div>
+                                <div class="settings-text">
+                                    <h4>Biometrinen tunnistus</h4>
+                                    <p>Face ID tai Touch ID</p>
+                                </div>
+                            </div>
+                            <div class="toggle active" onclick="toggleSetting(this, 'biometrics')"></div>
+                        </div>
+                        
+                        <div class="settings-item">
+                            <div class="settings-info">
+                                <div class="revolut-settings-icon">
+                                    <svg viewBox="0 0 24 24" fill="currentColor">
+                                        <path d="M12 22c1.1 0 2-.9 2-2h-4c0 1.1.89 2 2 2zm6-6v-5c0-3.07-1.64-5.64-4.5-6.32V4c0-.83-.67-1.5-1.5-1.5s-1.5.67-1.5 1.5v.68C7.63 5.36 6 7.92 6 11v5l-2 2v1h16v-1l-2-2z"/>
+                                    </svg>
+                                </div>
+                                <div class="settings-text">
+                                    <h4>Ilmoitukset</h4>
+                                    <p>Tapahtumat ja tietoturva</p>
+                                </div>
+                            </div>
+                            <div class="toggle active" onclick="toggleSetting(this, 'notifications')"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Transaction Management -->
+                <div class="settings-section">
+                    <h3 style="font-size: 1.1rem; font-weight: 600; color: var(--text-primary); margin-bottom: var(--space-4);">Tapahtumien hallinta</h3>
+                    <div class="card">
+                        <button class="btn btn-secondary" style="width: 100%; margin-bottom: var(--space-3);" onclick="exportTransactions()">
+                            📄 Vie tapahtumat
+                        </button>
+                        <button class="btn btn-secondary" style="width: 100%;" onclick="clearTransactions()">
+                            Tyhjennä historia
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Tab Navigation -->
+        <div class="tab-nav">
+            <div class="tab-item active" onclick="showScreen('home')">
+                <div class="revolut-tab-icon">
+                    <svg viewBox="0 0 24 24" fill="currentColor">
+                        <path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/>
+                    </svg>
+                </div>
+                <div class="tab-label">Koti</div>
+            </div>
+            <div class="tab-item" onclick="showScreen('payment')">
+                <div class="revolut-tab-icon">
+                    <svg viewBox="0 0 24 24" fill="currentColor">
+                        <path d="M19 14V6c0-1.1-.9-2-2-2H3c-1.1 0-2 .9-2 2v8c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2zm-9-1c-1.66 0-3-1.34-3-3s1.34-3 3-3 3 1.34 3 3-1.34 3-3 3zm13-6v11c0 1.1-.9 2-2 2H4v-2h17V7h2z"/>
+                    </svg>
+                </div>
+                <div class="tab-label">Maksa</div>
+            </div>
+            <div class="tab-item" onclick="showScreen('cards')">
+                <div class="revolut-tab-icon">
+                    <svg viewBox="0 0 24 24" fill="currentColor">
+                        <path d="M20 4H4c-1.11 0-1.99.89-1.99 2L2 18c0 1.11.89 2 2 2h16c1.11 0 2-.89 2-2V6c0-1.11-.89-2-2-2zm0 14H4v-6h16v6zm0-10H4V6h16v2z"/>
+                    </svg>
+                </div>
+                <div class="tab-label">Kortit</div>
+            </div>
+            <div class="tab-item" onclick="showScreen('receipt')">
+                <div class="revolut-tab-icon">
+                    <svg viewBox="0 0 24 24" fill="currentColor">
+                        <path d="M14 2H6c-1.1 0-1.99.9-1.99 2L4 20c0 1.1.89 2 2 2h10c1.1 0 2-.9 2-2V8l-6-6zm2 16H8v-2h8v2zm0-4H8v-2h8v2zm-3-5V3.5L18.5 9H13z"/>
+                    </svg>
+                </div>
+                <div class="tab-label">Kuitti</div>
+            </div>
+            <div class="tab-item" onclick="showScreen('settings')">
+                <div class="revolut-tab-icon">
+                    <svg viewBox="0 0 24 24" fill="currentColor">
+                        <path d="M19.14,12.94c0.04-0.3,0.06-0.61,0.06-0.94c0-0.32-0.02-0.64-0.07-0.94l2.03-1.58c0.18-0.14,0.23-0.41,0.12-0.61 l-1.92-3.32c-0.12-0.22-0.37-0.29-0.59-0.22l-2.39,0.96c-0.5-0.38-1.03-0.7-1.62-0.94L14.4,2.81c-0.04-0.24-0.24-0.41-0.48-0.41 h-3.84c-0.24,0-0.43,0.17-0.47,0.41L9.25,5.35C8.66,5.59,8.12,5.92,7.63,6.29L5.24,5.33c-0.22-0.08-0.47,0-0.59,0.22L2.74,8.87 C2.62,9.08,2.66,9.34,2.86,9.48l2.03,1.58C4.84,11.36,4.8,11.69,4.8,12s0.02,0.64,0.07,0.94l-2.03,1.58 c-0.18,0.14-0.23,0.41-0.12,0.61l1.92,3.32c0.12,0.22,0.37,0.29,0.59,0.22l2.39-0.96c0.5,0.38,1.03,0.7,1.62,0.94l0.36,2.54 c0.05,0.24,0.24,0.41,0.48,0.41h3.84c0.24,0,0.44-0.17,0.47-0.41l0.36-2.54c0.59-0.24,1.13-0.56,1.62-0.94l2.39,0.96 c0.22,0.08,0.47,0,0.59-0.22l1.92-3.32c0.12-0.22,0.07-0.47-0.12-0.61L19.14,12.94z M12,15.6c-1.98,0-3.6-1.62-3.6-3.6 s1.62-3.6,3.6-3.6s3.6,1.62,3.6,3.6S13.98,15.6,12,15.6z"/>
+                    </svg>
+                </div>
+                <div class="tab-label">Asetukset</div>
+            </div>
+        </div>
+
+        <!-- Success Modal -->
+        <div id="success-modal" class="success-modal hidden">
+            <div class="success-content">
+                <div class="success-icon">✅</div>
+                <h3 style="margin-bottom: var(--space-2);">Maksu onnistui!</h3>
+                <p style="color: var(--text-secondary);">Maksu on hyväksytty</p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Advanced State Management System
+        class BankingApp {
+            constructor() {
+                this.state = {
+                    balance: 5234.60,
+                    userName: 'Aku Ankka',
+                    companyName: 'Firma Oy',
+                    accountNumber: 'FI12 3456 7890 1234 56',
+                    transactions: this.loadTransactions(),
+                    settings: this.loadSettings(),
+                    currentScreen: 'home',
+                    currentFilter: 'all'
+                };
+                
+                this.init();
+            }
+
+            init() {
+                this.setupEventListeners();
+                this.renderTransactions();
+                this.updateBalance();
+                this.applySettings();
+                this.updateUserInfo();
+            }
+
+            // Data Management
+            loadTransactions() {
+                const stored = localStorage.getItem('sumup-transactions');
+                return stored ? JSON.parse(stored) : [
+                    { id: '1', title: 'Kauppa Oy', amount: -45.50, date: '2025-11-08', type: 'debit', category: 'Ostokset', status: 'Valmis' },
+                    { id: '2', title: 'Palkka', amount: 2500.00, date: '2025-11-07', type: 'credit', category: 'Tulot', status: 'Valmis' },
+                    { id: '3', title: 'Vuokra', amount: -850.00, date: '2025-11-06', type: 'debit', category: 'Asuminen', status: 'Valmis' },
+                    { id: '4', title: 'Asiakaslasku', amount: 1200.00, date: '2025-11-05', type: 'credit', category: 'Liiketoiminta', status: 'Valmis' },
+                    { id: '5', title: 'Verkkokauppa', amount: -99.90, date: '2025-11-04', type: 'debit', category: 'Ostokset', status: 'Valmis' }
+                ];
+            }
+
+            saveTransactions() {
+                localStorage.setItem('sumup-transactions', JSON.stringify(this.state.transactions));
+            }
+
+            loadSettings() {
+                const stored = localStorage.getItem('sumup-settings');
+                return stored ? JSON.parse(stored) : {
+                    haptics: true,
+                    animations: true,
+                    darkMode: false,
+                    biometrics: true,
+                    notifications: true
+                };
+            }
+
+            saveSettings() {
+                localStorage.setItem('sumup-settings', JSON.stringify(this.state.settings));
+            }
+
+            loadUserData() {
+                const stored = localStorage.getItem('sumup-user');
+                if (stored) {
+                    const userData = JSON.parse(stored);
+                    this.state.balance = userData.balance || this.state.balance;
+                    this.state.userName = userData.userName || this.state.userName;
+                    this.state.companyName = userData.companyName || this.state.companyName;
+                }
+            }
+
+            saveUserData() {
+                const userData = {
+                    balance: this.state.balance,
+                    userName: this.state.userName,
+                    companyName: this.state.companyName
+                };
+                localStorage.setItem('sumup-user', JSON.stringify(userData));
+            }
+
+            // Transaction Management
+            createPayment(amount, description = '') {
+                const transaction = {
+                    id: Date.now().toString(),
+                    title: description || 'Maksu',
+                    amount: -Math.abs(amount),
+                    date: new Date().toISOString().split('T')[0],
+                    type: 'debit',
+                    category: 'Maksut',
+                    status: 'Valmis'
+                };
+
+                this.state.transactions.unshift(transaction);
+                this.state.balance += transaction.amount;
+                this.saveTransactions();
+                this.saveUserData();
+                this.updateBalance();
+                this.renderTransactions();
+            }
+
+            // UI Management
+            showScreen(screenId) {
+                // Hide all screens
+                document.querySelectorAll('.screen').forEach(screen => {
+                    screen.classList.remove('active');
+                });
+
+                // Show target screen
+                document.getElementById(screenId).classList.add('active');
+
+                // Update tab navigation
+                document.querySelectorAll('.tab-item').forEach(tab => {
+                    tab.classList.remove('active');
+                });
+                
+                // Find and activate the correct tab
+                const targetTab = Array.from(document.querySelectorAll('.tab-item')).find(tab => {
+                    const onClick = tab.getAttribute('onclick');
+                    return onClick && onClick.includes(`'${screenId}'`);
+                });
+                if (targetTab) {
+                    targetTab.classList.add('active');
+                }
+
+                this.state.currentScreen = screenId;
+
+                // Screen-specific actions
+                if (screenId === 'statement') {
+                    this.renderAllTransactions();
+                }
+            }
+
+            updateBalance() {
+                const formatted = `${this.state.balance.toFixed(2)} €`;
+                const elements = [
+                    'balance-amount',
+                    'payment-balance',
+                    'statement-balance',
+                    'settings-balance'
+                ];
+                
+                elements.forEach(id => {
+                    const element = document.getElementById(id);
+                    if (element) {
+                        element.textContent = formatted;
+                    }
+                });
+            }
+
+            updateUserInfo() {
+                const userNameEl = document.getElementById('user-name');
+                const companyNameEl = document.getElementById('company-name');
+                
+                if (userNameEl) userNameEl.textContent = this.state.userName;
+                if (companyNameEl) companyNameEl.textContent = this.state.companyName;
+            }
+
+            formatCurrency(amount) {
+                return `${amount >= 0 ? '+' : ''}${amount.toFixed(2)} €`;
+            }
+
+            formatDate(dateString) {
+                const date = new Date(dateString);
+                return date.toLocaleDateString('fi-FI', {
+                    day: 'numeric',
+                    month: 'short',
+                    year: 'numeric'
+                });
+            }
+
+            renderTransactionItem(transaction, isRecent = false) {
+                return `
+                    <div class="transaction-item" onclick="showReceipt('${transaction.id}')">
+                        <div class="transaction-icon ${transaction.type}">
+                            ${transaction.type === 'credit' ? '↓' : '↑'}
+                        </div>
+                        <div class="transaction-details">
+                            <div class="transaction-title">${transaction.title}</div>
+                            <div class="transaction-date">${this.formatDate(transaction.date)}</div>
+                        </div>
+                        <div class="transaction-amount ${transaction.type}">
+                            ${this.formatCurrency(transaction.amount)}
+                        </div>
+                    </div>
+                `;
+            }
+
+            renderTransactions() {
+                const recentContainer = document.getElementById('recent-transactions');
+                if (recentContainer) {
+                    const recent = this.state.transactions.slice(0, 5);
+                    recentContainer.innerHTML = recent
+                        .map(transaction => this.renderTransactionItem(transaction, true))
+                        .join('');
+                }
+            }
+
+            renderAllTransactions() {
+                const container = document.getElementById('professional-transactions');
+                if (!container) return;
+                
+                const filtered = this.getFilteredTransactions();
+                
+                if (filtered.length === 0) {
+                    container.innerHTML = `
+                        <div style="text-align: center; padding: var(--space-8);">
+                            <div class="revolut-empty-icon">
+                                <svg viewBox="0 0 24 24" fill="currentColor">
+                                    <path d="M9 17H7v-7h2v7zm4 0h-2V7h2v10zm4 0h-2v-4h2v4zm2 2H5V5h14v14z"/>
+                                </svg>
+                            </div>
+                            <p style="color: var(--text-secondary); font-size: 0.9rem;">Ei tapahtumia valitulle suodattimelle</p>
+                        </div>
+                    `;
+                } else {
+                    container.innerHTML = filtered
+                        .map(transaction => this.renderProfessionalTransaction(transaction))
+                        .join('');
+                }
+            }
+
+            renderProfessionalTransaction(transaction) {
+                const date = new Date(transaction.date);
+                const formattedDate = date.toLocaleDateString('fi-FI', { 
+                    day: 'numeric', 
+                    month: 'short', 
+                    year: 'numeric' 
+                });
+                
+                const processedDate = new Date(date.getTime() + Math.random() * 24 * 60 * 60 * 1000);
+                const formattedProcessedDate = processedDate.toLocaleDateString('fi-FI', {
+                    day: 'numeric',
+                    month: 'short'
+                });
+
+                const referenceNumber = this.generateReferenceNumber();
+                const archiveId = `ARC-${Date.now()}-${Math.floor(Math.random() * 1000)}`;
+                const companyInitials = this.getCompanyInitials(transaction.description);
+                
+                const isCredit = transaction.type === 'credit';
+                const status = Math.random() > 0.1 ? 'completed' : 'pending';
+                const statusText = status === 'completed' ? 'Kirjattu' : 'Käsitellään';
+
+                return `
+                    <div class="professional-transaction" onclick="showTransactionDetails('${transaction.id}')">
+                        <div class="transaction-left">
+                            <div class="transaction-avatar ${transaction.type}">
+                                ${companyInitials}
+                            </div>
+                            <div class="transaction-details">
+                                <div class="transaction-company">${transaction.description}</div>
+                                <div class="transaction-meta">
+                                    <div class="transaction-date">
+                                        <span>Pvm:</span>
+                                        <span>${formattedDate}</span>
+                                    </div>
+                                    <div class="transaction-reference">
+                                        <span>Viite:</span>
+                                        <span>${referenceNumber}</span>
+                                    </div>
+                                    <div class="transaction-archive">
+                                        <span>Arkisto:</span>
+                                        <span>${archiveId}</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="transaction-right">
+                            <div class="professional-amount ${transaction.type}">
+                                ${isCredit ? '+' : ''}${this.formatCurrency(transaction.amount)}
+                            </div>
+                            <div class="transaction-status ${status}">
+                                ${statusText} ${formattedProcessedDate}
+                            </div>
+                        </div>
+                    </div>
+                `;
+            }
+
+            getCompanyInitials(description) {
+                const words = description.split(' ');
+                if (words.length >= 2) {
+                    return (words[0][0] + words[1][0]).toUpperCase();
+                }
+                return description.substring(0, 2).toUpperCase();
+            }
+
+            generateReferenceNumber() {
+                const numbers = [];
+                for (let i = 0; i < 8; i++) {
+                    numbers.push(Math.floor(Math.random() * 10));
+                }
+                return numbers.join('');
+            }
+
+            getFilteredTransactions() {
+                if (this.state.currentFilter === 'all') {
+                    return this.state.transactions;
+                }
+                return this.state.transactions.filter(t => t.type === this.state.currentFilter);
+            }
+
+            filterTransactions(type) {
+                this.state.currentFilter = type;
+                
+                // Update filter chips
+                document.querySelectorAll('.filter-chip').forEach(chip => {
+                    chip.classList.remove('active');
+                });
+                
+                // Find and activate the clicked chip
+                const activeChip = Array.from(document.querySelectorAll('.filter-chip')).find(chip => {
+                    const chipText = chip.textContent.toLowerCase().trim();
+                    return (type === 'all' && chipText.includes('kaikki')) ||
+                           (type === 'credit' && chipText.includes('tulot')) ||
+                           (type === 'debit' && chipText.includes('menot')) ||
+                           (type === 'pending' && chipText.includes('odottaa'));
+                });
+                
+                if (activeChip) {
+                    activeChip.classList.add('active');
+                }
+                
+                this.renderAllTransactions();
+            }
+
+            // Event Handlers
+            setupEventListeners() {
+                // Payment form
+                const paymentForm = document.getElementById('payment-form');
+                if (paymentForm) {
+                    paymentForm.addEventListener('submit', (e) => {
+                        e.preventDefault();
+                        this.handlePaymentSubmit();
+                    });
+                }
+
+                // Load user data on init
+                this.loadUserData();
+
+                // Window events
+                window.addEventListener('beforeunload', () => {
+                    this.saveTransactions();
+                    this.saveSettings();
+                    this.saveUserData();
+                });
+            }
+
+            handlePaymentSubmit() {
+                const amount = parseFloat(document.getElementById('payment-amount').value);
+                const description = document.getElementById('payment-description').value;
+
+                if (!amount || amount <= 0) {
+                    this.showError('Syötä kelvollinen summa');
+                    return;
+                }
+
+                if (amount > this.state.balance) {
+                    this.showError('Ei riittävästi saldoa');
+                    return;
+                }
+
+                this.createPayment(amount, description);
+                this.showSuccess();
+                
+                // Clear form
+                document.getElementById('payment-form').reset();
+                
+                // Redirect to statement after success
+                setTimeout(() => {
+                    this.showScreen('statement');
+                }, 2500);
+            }
+
+            showSuccess() {
+                const modal = document.getElementById('success-modal');
+                if (modal) {
+                    modal.classList.remove('hidden');
+                    
+                    setTimeout(() => {
+                        modal.classList.add('hidden');
+                    }, 2000);
+                }
+            }
+
+            showError(message) {
+                alert(message);
+            }
+
+            showReceipt(transactionId) {
+                const transaction = this.state.transactions.find(t => t.id === transactionId);
+                if (!transaction) return;
+
+                const content = document.getElementById('receipt-content');
+                if (content) {
+                    content.innerHTML = `
+                        <div style="text-align: center; margin-bottom: var(--space-6);">
+                            <div class="revolut-receipt-icon">
+                                <svg viewBox="0 0 24 24" fill="currentColor">
+                                    <path d="M14 2H6c-1.1 0-1.99.9-1.99 2L4 20c0 1.1.89 2 2 2h10c1.1 0 2-.9 2-2V8l-6-6zm2 16H8v-2h8v2zm0-4H8v-2h8v2zm-3-5V3.5L18.5 9H13z"/>
+                                </svg>
+                            </div>
+                            <h3>Maksukuitti</h3>
+                        </div>
+                        
+                        <div style="border-bottom: 1px solid var(--border-subtle); padding-bottom: var(--space-4); margin-bottom: var(--space-4);">
+                            <div style="display: flex; justify-content: space-between; margin-bottom: var(--space-2);">
+                                <span style="color: var(--text-secondary);">Summa:</span>
+                                <span style="font-weight: 700; color: ${transaction.type === 'credit' ? 'var(--success)' : 'var(--text-primary)'}">
+                                    ${this.formatCurrency(transaction.amount)}
+                                </span>
+                            </div>
+                            <div style="display: flex; justify-content: space-between; margin-bottom: var(--space-2);">
+                                <span style="color: var(--text-secondary);">Päivämäärä:</span>
+                                <span>${this.formatDate(transaction.date)}</span>
+                            </div>
+                            <div style="display: flex; justify-content: space-between; margin-bottom: var(--space-2);">
+                                <span style="color: var(--text-secondary);">Tila:</span>
+                                <span>${transaction.status}</span>
+                            </div>
+                            <div style="display: flex; justify-content: space-between;">
+                                <span style="color: var(--text-secondary);">Kategoria:</span>
+                                <span>${transaction.category}</span>
+                            </div>
+                        </div>
+                        
+                        <div style="text-align: center; color: var(--text-tertiary); font-size: 0.875rem;">
+                            <p>Tapahtuma-ID: ${transaction.id}</p>
+                            <p style="margin-top: var(--space-2);">SumUp Banking</p>
+                        </div>
+                    `;
+                }
+
+                this.showScreen('receipt');
+            }
+
+            // Settings Management
+            toggleSetting(element, setting) {
+                element.classList.toggle('active');
+                this.state.settings[setting] = element.classList.contains('active');
+                this.saveSettings();
+                this.applySettings();
+            }
+
+            applySettings() {
+                if (!this.state.settings.animations) {
+                    document.documentElement.style.setProperty('--transition-fast', '0ms');
+                    document.documentElement.style.setProperty('--transition-medium', '0ms');
+                    document.documentElement.style.setProperty('--transition-slow', '0ms');
+                } else {
+                    document.documentElement.style.setProperty('--transition-fast', '150ms cubic-bezier(0.4, 0, 0.2, 1)');
+                    document.documentElement.style.setProperty('--transition-medium', '250ms cubic-bezier(0.4, 0, 0.2, 1)');
+                    document.documentElement.style.setProperty('--transition-slow', '350ms cubic-bezier(0.4, 0, 0.2, 1)');
+                }
+            }
+
+            editProfile(field) {
+                const current = field === 'name' ? this.state.userName : this.state.companyName;
+                const label = field === 'name' ? 'nimi' : 'yrityksen nimi';
+                const newValue = prompt(`Syötä uusi ${label}:`, current);
+                
+                if (newValue && newValue.trim()) {
+                    if (field === 'name') {
+                        this.state.userName = newValue.trim();
+                    } else {
+                        this.state.companyName = newValue.trim();
+                    }
+                    this.saveUserData();
+                    this.updateUserInfo();
+                }
+            }
+
+            editBalance() {
+                const newBalance = prompt('Syötä uusi saldo (€):', this.state.balance.toFixed(2));
+                const balance = parseFloat(newBalance);
+                
+                if (!isNaN(balance) && balance >= 0) {
+                    this.state.balance = balance;
+                    this.saveUserData();
+                    this.updateBalance();
+                }
+            }
+
+            exportTransactions() {
+                const data = JSON.stringify(this.state.transactions, null, 2);
+                const blob = new Blob([data], { type: 'application/json' });
+                const url = URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = 'sumup-transactions.json';
+                a.click();
+                URL.revokeObjectURL(url);
+            }
+
+            clearTransactions() {
+                if (confirm('Haluatko varmasti tyhjentää koko tapahtumahistorian?')) {
+                    this.state.transactions = [];
+                    this.saveTransactions();
+                    this.renderTransactions();
+                    this.renderAllTransactions();
+                    alert('Tapahtumahistoria tyhjennetty');
+                }
+            }
+        }
+
+        // Global functions for inline event handlers
+        let app;
+
+        function showScreen(screenId) {
+            app.showScreen(screenId);
+            
+            // Update receipt with current data when opening receipt screen
+            if (screenId === 'receipt') {
+                updateReceiptData();
+            }
+        }
+
+        function updateReceiptData() {
+            const now = new Date();
+            const dueDate = new Date(now.getTime() + 3 * 24 * 60 * 60 * 1000);
+            
+            // Update dates
+            document.getElementById('receipt-current-date').textContent = 
+                now.toLocaleDateString('fi-FI', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
+            document.getElementById('receipt-payment-date').textContent = now.toLocaleDateString('fi-FI');
+            document.getElementById('receipt-booking-time').textContent = now.toLocaleTimeString('fi-FI');
+            document.getElementById('receipt-due-date').textContent = dueDate.toLocaleDateString('fi-FI');
+            
+            // Update transaction details
+            document.getElementById('receipt-transaction-id').textContent = Date.now();
+            document.getElementById('receipt-archive-id').textContent = `ARC-${now.getFullYear()}-${String(Date.now()).slice(-6)}`;
+            document.getElementById('receipt-service-id').textContent = `SB-PROD-${Math.floor(Math.random()*10000)}`;
+            document.getElementById('receipt-verification-code').textContent = 
+                `Varmennuskoodi: ${Math.floor(Math.random()*1000000).toString().padStart(6, '0')}`;
+        }
+
+        function filterTransactions(type) {
+            app.filterTransactions(type);
+        }
+
+        function showReceipt(transactionId) {
+            app.showReceipt(transactionId);
+        }
+
+        function toggleSetting(element, setting) {
+            app.toggleSetting(element, setting);
+        }
+
+        function editProfile(field) {
+            app.editProfile(field);
+        }
+
+        function editBalance() {
+            app.editBalance();
+        }
+
+        function exportTransactions() {
+            app.exportTransactions();
+        }
+
+        function clearTransactions() {
+            app.clearTransactions();
+        }
+
+        function showNotifications() {
+            alert('Ilmoitukset\n\n• Maksu suoritettu: -45.50 €\n• Saldo päivitetty\n• Turvallisuusasetusten tarkistus suositeltu');
+        }
+
+        function showProfile() {
+            app.showScreen('settings');
+        }
+
+        // New Payment Flow Functions
+        function startPaymentVerification() {
+            console.log('Starting payment verification...');
+            
+            const iban = document.getElementById('payment-iban').value;
+            const amount = document.getElementById('payment-amount').value;
+            const reference = document.getElementById('payment-reference').value;
+            const message = document.getElementById('payment-message').value;
+
+            console.log('📋 Form values:', { iban, amount, reference, message });
+
+            if (!iban || !amount || (!reference && !message)) {
+                alert('Täytä kaikki pakolliset kentät. Viitenumero tai viesti on pakollinen.');
+                return;
+            }
+
+            console.log('✅ Validation passed, proceeding to step 2');
+
+            // Show verification step
+            document.getElementById('payment-step-1').classList.remove('active');
+            document.getElementById('payment-step-2').classList.add('active');
+            document.querySelectorAll('.progress-step')[1].classList.add('active');
+
+            // Simulate verification delay
+            setTimeout(() => {
+                document.getElementById('verification-result').style.display = 'block';
+            }, 2000);
+        }
+
+        function showPaymentConfirmation() {
+            const iban = document.getElementById('payment-iban').value;
+            const amount = document.getElementById('payment-amount').value;
+            const reference = document.getElementById('payment-reference').value;
+            const message = document.getElementById('payment-message').value;
+            const dueDate = document.getElementById('payment-due-date').value;
+
+            const summary = `
+                <div style="border-bottom: 1px solid var(--border-subtle); padding-bottom: var(--space-4); margin-bottom: var(--space-4);">
+                    <div style="display: flex; justify-content: space-between; margin-bottom: var(--space-2);">
+                        <span>Saajan tili:</span>
+                        <span style="font-family: monospace;">${iban}</span>
+                    </div>
+                    <div style="display: flex; justify-content: space-between; margin-bottom: var(--space-2);">
+                        <span>Summa:</span>
+                        <span style="font-weight: 700; color: var(--primary-solid);">${amount} €</span>
+                    </div>
+                    <div style="display: flex; justify-content: space-between; margin-bottom: var(--space-2);">
+                        <span>Viitenumero:</span>
+                        <span>${reference || '-'}</span>
+                    </div>
+                    <div style="display: flex; justify-content: space-between; margin-bottom: var(--space-2);">
+                        <span>Viesti:</span>
+                        <span>${message || '-'}</span>
+                    </div>
+                    <div style="display: flex; justify-content: space-between;">
+                        <span>Eräpäivä:</span>
+                        <span>${new Date(dueDate).toLocaleDateString('fi-FI')}</span>
+                    </div>
+                </div>
+            `;
+
+            document.getElementById('payment-summary').innerHTML = summary;
+            document.getElementById('payment-step-2').classList.remove('active');
+            document.getElementById('payment-step-3').classList.add('active');
+            document.querySelectorAll('.progress-step')[2].classList.add('active');
+        }
+
+        function editPayment() {
+            document.getElementById('payment-step-3').classList.remove('active');
+            document.getElementById('payment-step-1').classList.add('active');
+            document.querySelectorAll('.progress-step').forEach((step, index) => {
+                if (index === 0) step.classList.add('active');
+                else step.classList.remove('active');
+            });
+        }
+
+        function executePayment() {
+            const amount = document.getElementById('payment-amount').value;
+            const iban = document.getElementById('payment-iban').value;
+            const reference = document.getElementById('payment-reference').value;
+            const message = document.getElementById('payment-message').value;
+
+            // Create payment transaction
+            app.createPayment(parseFloat(amount), `${reference ? 'Viite: ' + reference : ''}${message ? ' - ' + message : ''}`);
+            
+            // Store receipt data
+            app.state.lastPayment = {
+                iban,
+                amount: parseFloat(amount),
+                reference,
+                message,
+                date: new Date().toISOString()
+            };
+
+            // Show success and redirect to receipt
+            app.showSuccess();
+            setTimeout(() => {
+                showScreen('receipt');
+                // Reset payment form
+                document.getElementById('payment-form').reset();
+                document.getElementById('payment-step-3').classList.remove('active');
+                document.getElementById('payment-step-1').classList.add('active');
+                document.querySelectorAll('.progress-step').forEach((step, index) => {
+                    if (index === 0) step.classList.add('active');
+                    else step.classList.remove('active');
+                });
+            }, 2500);
+        }
+
+        // Cards Functions
+        function requestNewCard() {
+            alert('Uuden kortin hakeminen aloitettu!\n\nKortti saapuu 5-7 arkipäivässä.');
+        }
+
+        function addToAppleWallet() {
+            alert(' Kortti lisätty Apple Wallet -jonoon!\n\nVarmista henkilöllisyytesi Apple Pay -asetuksissa.');
+        }
+
+        function updateCardCount(count) {
+            document.getElementById('card-count').textContent = count;
+            // Update card list (simplified)
+            const cardList = document.getElementById('card-list');
+            cardList.innerHTML = '';
+            for (let i = 0; i < count; i++) {
+                const cardNumber = `**** **** **** ${3456 + i}`;
+                cardList.innerHTML += `
+                    <div class="card-item">
+                        <div class="card-header">
+                            <div class="card-type">VISA DEBIT</div>
+                            <div class="card-logo">VISA</div>
+                        </div>
+                        <div class="card-number">${cardNumber}</div>
+                        <div class="card-footer">
+                            <div>
+                                <div style="font-size: 0.7rem; opacity: 0.7;">HALTIJA</div>
+                                <div class="card-holder">FIRMA OY</div>
+                            </div>
+                            <div>
+                                <div style="font-size: 0.7rem; opacity: 0.7;">VOIMASSA</div>
+                                <div class="card-expiry">12/28</div>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            }
+        }
+
+        // Dark Mode Toggle
+        function toggleDarkMode(element) {
+            element.classList.toggle('active');
+            document.body.classList.toggle('dark-mode');
+            
+            // Save preference
+            const isDark = document.body.classList.contains('dark-mode');
+            localStorage.setItem('darkMode', isDark);
+        }
+
+        // Download Receipt as PNG (Professional)
+        function downloadReceipt() {
+            const receiptElement = document.getElementById('receipt-content');
+            
+            // Create a high-quality canvas
+            const canvas = document.createElement('canvas');
+            const ctx = canvas.getContext('2d');
+            
+            // Set high DPI for crisp text
+            const scale = 2;
+            canvas.width = 400 * scale;
+            canvas.height = 800 * scale;
+            ctx.scale(scale, scale);
+            
+            // White background
+            ctx.fillStyle = '#ffffff';
+            ctx.fillRect(0, 0, 400, 800);
+            
+            // Professional receipt rendering
+            ctx.fillStyle = '#000000';
+            ctx.textAlign = 'center';
+            
+            // Header
+            ctx.font = 'bold 20px Arial';
+            ctx.fillText('SumUp Banking', 200, 40);
+            ctx.font = '16px Arial';
+            ctx.fillText('MAKSUKUITTI', 200, 65);
+            ctx.font = '12px Arial';
+            ctx.fillText(new Date().toLocaleDateString('fi-FI'), 200, 85);
+            
+            // Draw separator line
+            ctx.beginPath();
+            ctx.moveTo(30, 100);
+            ctx.lineTo(370, 100);
+            ctx.strokeStyle = '#000000';
+            ctx.lineWidth = 2;
+            ctx.stroke();
+            
+            // Receipt content
+            ctx.textAlign = 'left';
+            ctx.font = '12px Arial';
+            let y = 130;
+            
+            // Transaction details
+            const details = [
+                'TAPAHTUMAN TIEDOT',
+                '',
+                'Maksun saaja: Teknologia Yritys Oy',
+                'Saajan tili: FI21 1234 5678 9012 34',
+                'Summa: 1 250,00 EUR',
+                'Viitenumero: 12345678901234567890',
+                'Viesti: Lasku 2025-11-001',
+                '',
+                'AJOITUS',
+                '',
+                `Maksupäivä: ${new Date().toLocaleDateString('fi-FI')}`,
+                `Kirjausaika: ${new Date().toLocaleTimeString('fi-FI')}`,
+                `Eräpäivä: ${new Date(Date.now() + 3*24*60*60*1000).toLocaleDateString('fi-FI')}`,
+                '',
+                'PANKKITIEDOT',
+                '',
+                'Maksajan tili: FI12 3456 7890 1234 56',
+                'Tilinomistaja: Firma Oy',
+                'Y-tunnus: 1234567-8',
+                '',
+                'TEKNINEN TIETO',
+                '',
+                `Tapahtuma-ID: ${Date.now()}`,
+                `Arkistointitunnus: ARC-${new Date().getFullYear()}-${String(Date.now()).slice(-6)}`,
+                `Palvelutunnus: SB-PROD-${Math.floor(Math.random()*10000)}`,
+                `Varmennuskoodi: ${Math.floor(Math.random()*1000000).toString().padStart(6, '0')}`
+            ];
+            
+            details.forEach(line => {
+                if (line === '') {
+                    y += 15;
+                } else if (line.includes('TIEDOT') || line.includes('AJOITUS') || line.includes('PANKKITIEDOT') || line.includes('TEKNINEN')) {
+                    ctx.font = 'bold 11px Arial';
+                    ctx.fillText(line, 30, y);
+                    y += 20;
+                    ctx.font = '12px Arial';
+                } else {
+                    ctx.fillText(line, 30, y);
+                    y += 18;
+                }
+            });
+            
+            // Footer
+            y += 30;
+            ctx.beginPath();
+            ctx.moveTo(30, y);
+            ctx.lineTo(370, y);
+            ctx.stroke();
+            
+            y += 25;
+            ctx.textAlign = 'center';
+            ctx.font = '10px Arial';
+            ctx.fillText('SumUp Banking - Yrityspalvelut', 200, y);
+            y += 15;
+            ctx.fillText('Puh: 020 123 4567 | www.sumup.fi', 200, y);
+            y += 15;
+            ctx.fillText('Säilytä kuitti maksutositteena', 200, y);
+            
+            // Convert to blob and download
+            canvas.toBlob((blob) => {
+                const url = URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = `sumup-kuitti-${new Date().toISOString().split('T')[0]}.png`;
+                a.click();
+                URL.revokeObjectURL(url);
+                
+                // Show success message
+                alert('✅ Kuitti ladattu onnistuneesti!\n\nTiedosto tallennettu nimellä: sumup-kuitti-' + new Date().toISOString().split('T')[0] + '.png');
+            });
+        }
+
+        // Export Functions
+        function exportToPDF() {
+            alert('📄 PDF-vienti aloitettu!\n\nTiliote ladataan hetkessä...');
+            // Simulate PDF generation delay
+            setTimeout(() => {
+                const link = document.createElement('a');
+                link.href = '#';
+                link.download = 'tiliote-marraskuu-2025.pdf';
+                document.body.appendChild(link);
+                link.click();
+                document.body.removeChild(link);
+            }, 1500);
+        }
+
+        function exportToExcel() {
+            alert('Excel-vienti aloitettu!\n\nTiedosto valmistuu hetkessä...');
+            // Simulate Excel generation delay
+            setTimeout(() => {
+                const link = document.createElement('a');
+                link.href = '#';
+                link.download = 'tiliote-marraskuu-2025.xlsx';
+                document.body.appendChild(link);
+                link.click();
+                document.body.removeChild(link);
+            }, 2000);
+        }
+
+        // Transaction Search and Details
+        function showTransactionDetails(transactionId) {
+            const transaction = app.state.transactions.find(t => t.id === transactionId);
+            if (!transaction) return;
+
+            const details = `
+                🏦 TAPAHTUMAN TIEDOT
+                
+                📋 Kuvaus: ${transaction.description}
+                Summa: ${app.formatCurrency(transaction.amount)}
+                📅 Päivämäärä: ${new Date(transaction.date).toLocaleDateString('fi-FI')}
+                🔗 Viitenumero: ${Math.floor(Math.random() * 100000000)}
+                📁 Arkistointitunnus: ARC-${Date.now()}-${Math.floor(Math.random() * 1000)}
+                ⏰ Kirjattu: ${new Date().toLocaleDateString('fi-FI')} ${new Date().toLocaleTimeString('fi-FI', {hour: '2-digit', minute: '2-digit'})}
+                
+                Haluatko ladata kuitin?
+            `;
+            
+            if (confirm(details)) {
+                downloadReceipt();
+            }
+        }
+
+        // Search functionality
+        document.addEventListener('DOMContentLoaded', () => {
+            const searchInput = document.getElementById('transaction-search');
+            if (searchInput) {
+                searchInput.addEventListener('input', (e) => {
+                    const query = e.target.value.toLowerCase();
+                    const transactions = document.querySelectorAll('.professional-transaction');
+                    
+                    transactions.forEach(transaction => {
+                        const company = transaction.querySelector('.transaction-company').textContent.toLowerCase();
+                        const visible = company.includes(query);
+                        transaction.style.display = visible ? 'flex' : 'none';
+                    });
+                });
+            }
+        });
+
+        // Initialize app
+        document.addEventListener('DOMContentLoaded', () => {
+            app = new BankingApp();
+            
+            // Load dark mode preference
+            const isDark = localStorage.getItem('darkMode') === 'true';
+            if (isDark) {
+                document.body.classList.add('dark-mode');
+                const darkToggle = document.querySelector('.toggle[onclick*="toggleDarkMode"]');
+                if (darkToggle) darkToggle.classList.add('active');
+            }
+            
+            // Add premium loading animation
+            setTimeout(() => {
+                document.body.style.opacity = '1';
+            }, 100);
+        });
+
+        // Register service worker
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('./sw.js')
+                    .then(registration => {
+                        console.log('SW registered: ', registration);
+                    })
+                    .catch(registrationError => {
+                        console.log('SW registration failed: ', registrationError);
+                    });
+            });
+        }
+    </script>
+</body>
+</html>

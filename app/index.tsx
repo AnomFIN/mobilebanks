@@ -9,9 +9,8 @@ import {
   Platform,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { LinearGradient } from 'expo-linear-gradient';
 import { useRouter } from 'expo-router';
-import * as Haptics from 'expo-haptics';
+import { impactAsync, notificationAsync } from '../src/utils/safeHaptics';
 import { Ionicons } from '@expo/vector-icons';
 import { Colors, Spacing, BorderRadius, FontSize, Shadow, FontWeight } from '../src/theme/theme';
 import { useAccount } from '../src/context/AccountContext';
@@ -24,19 +23,19 @@ export default function HomeScreen() {
   const scaleAnim = React.useRef(new Animated.Value(1)).current;
 
   const handlePress = () => {
-    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
-    Animated.sequence([
-      Animated.timing(scaleAnim, {
-        toValue: 0.95,
-        duration: 100,
-        useNativeDriver: true,
-      }),
-      Animated.timing(scaleAnim, {
-        toValue: 1,
-        duration: 100,
-        useNativeDriver: true,
-      }),
-    ]).start();
+    impactAsync((global as any).Haptics?.ImpactFeedbackStyle?.Light || 'light');
+  };
+
+  const handleQuickAction = (action: string) => {
+    impactAsync((global as any).Haptics?.ImpactFeedbackStyle?.Medium || 'medium');
+    if (action === 'payment') {
+      router.push('/payment');
+    }
+  };
+
+  const handleTransactionPress = (transactionId: string) => {
+    impactAsync((global as any).Haptics?.ImpactFeedbackStyle?.Light || 'light');
+    router.push('/receipt');
   };
 
   const formatCurrency = (amount: number) => {
@@ -62,8 +61,6 @@ export default function HomeScreen() {
         style={styles.scrollView}
         showsVerticalScrollIndicator={false}
       >
-        {/* Header */}
-        <HeaderBar onProfilePress={handlePress} />
 
         {/* Balance Card */}
         <Animated.View style={[styles.balanceCard, { transform: [{ scale: scaleAnim }] }]}>
@@ -88,7 +85,7 @@ export default function HomeScreen() {
           <TouchableOpacity
             style={styles.actionButton}
             onPress={() => {
-              Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
+              impactAsync((global as any).Haptics?.ImpactFeedbackStyle?.Medium || 'medium');
               router.push('/payment');
             }}
             accessibilityLabel="Luo uusi maksu"
@@ -102,7 +99,7 @@ export default function HomeScreen() {
           <TouchableOpacity
             style={styles.actionButton}
             onPress={() => {
-              Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
+              impactAsync((global as any).Haptics?.ImpactFeedbackStyle?.Medium || 'medium');
               router.push('/statement');
             }}
             accessibilityLabel="Näytä raportit"
@@ -116,7 +113,7 @@ export default function HomeScreen() {
           <TouchableOpacity
             style={styles.actionButton}
             onPress={() => {
-              Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
+              impactAsync((global as any).Haptics?.ImpactFeedbackStyle?.Medium || 'medium');
               router.push('/receipt');
             }}
             accessibilityLabel="Näytä kuitti"
@@ -130,7 +127,7 @@ export default function HomeScreen() {
           <TouchableOpacity
             style={styles.actionButton}
             onPress={() => {
-              Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
+              impactAsync((global as any).Haptics?.ImpactFeedbackStyle?.Medium || 'medium');
             }}
             accessibilityLabel="Lisää toimintoja"
           >
@@ -159,7 +156,7 @@ export default function HomeScreen() {
                   index < recentTransactions.length - 1 && styles.transactionItemBorder,
                 ]}
                 onPress={() => {
-                  Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+                  impactAsync((global as any).Haptics?.ImpactFeedbackStyle?.Light || 'light');
                   router.push('/receipt');
                 }}
               >
@@ -263,7 +260,7 @@ const styles = StyleSheet.create({
   },
   actionText: {
     fontSize: FontSize.xs,
-    color: Colors.text,
+    color: Colors.textPrimary,
     fontWeight: FontWeight.semibold,
   },
   section: {
@@ -279,7 +276,7 @@ const styles = StyleSheet.create({
   sectionTitle: {
     fontSize: FontSize.lg,
     fontWeight: FontWeight.bold,
-    color: Colors.text,
+    color: Colors.textPrimary,
   },
   seeAll: {
     fontSize: FontSize.sm,
@@ -319,7 +316,7 @@ const styles = StyleSheet.create({
   transactionTitle: {
     fontSize: FontSize.md,
     fontWeight: FontWeight.semibold,
-    color: Colors.text,
+    color: Colors.textPrimary,
     marginBottom: Spacing.xs - 2,
   },
   transactionDate: {
@@ -329,7 +326,7 @@ const styles = StyleSheet.create({
   transactionAmount: {
     fontSize: FontSize.md,
     fontWeight: FontWeight.bold,
-    color: Colors.text,
+    color: Colors.textPrimary,
   },
   transactionAmountCredit: {
     color: Colors.success,
