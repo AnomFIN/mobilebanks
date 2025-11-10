@@ -95,6 +95,7 @@ Choose between:
 
 ## 📚 Documentation
 
+- **[README_INSTALL.md](README_INSTALL.md)**: Install.py script guide (recommended)
 - **[SETUP.md](SETUP.md)**: Complete setup guide and quick start
 - **[WEB_LAUNCHER_README.md](WEB_LAUNCHER_README.md)**: Web server launcher guide (local & public access)
 - **[README_INSTALL.md](README_INSTALL.md)**: install.py käyttöohjeet (tekstipohjainen valikko, Windows-parannukset, porttikäsittely)
