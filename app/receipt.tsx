@@ -1,4 +1,5 @@
 import React from 'react';
+import { Platform } from 'react-native';
 import {
   StyleSheet,
   Text,
@@ -8,7 +9,7 @@ import {
   Share,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import * as Haptics from 'expo-haptics';
+import { impactAsync, notificationAsync } from '../src/utils/safeHaptics';
 import { Ionicons } from '@expo/vector-icons';
 import { Colors, Spacing, BorderRadius, FontSize, Shadow, FontWeight } from '../src/theme/theme';
 import { useAccount } from '../src/context/AccountContext';
@@ -17,11 +18,49 @@ import HeaderBar from '../src/components/HeaderBar';
 
 export default function ReceiptScreen() {
   const { transactions } = useAccount();
+  const { language } = useAccount();
   // Get the most recent transaction as the receipt example
   const recentTransaction = transactions[0];
 
   const formatCurrency = (amount: number) => {
     return `${amount >= 0 ? '+' : ''}${amount.toFixed(2)} €`;
+  };
+
+  const t = (key: string) => {
+    if (language === 'en') {
+      const en: Record<string, string> = {
+        receipt: 'Receipt',
+        transactionDetails: 'Transaction details',
+        amount: 'Amount',
+        transactionId: 'Transaction ID',
+        dateTime: 'Date & time',
+        description: 'Description',
+        recipient: 'Recipient',
+        iban: 'IBAN',
+        category: 'Category',
+        type: 'Type',
+        scan: 'Scan to verify',
+        footer1: 'This is an official SumUp receipt.',
+        footer2: 'Keep this for your records.',
+      };
+      return en[key] || key;
+    }
+    const fi: Record<string, string> = {
+      receipt: 'Kuitti',
+      transactionDetails: 'Tapahtuman tiedot',
+      amount: 'Summa',
+      transactionId: 'Tapahtumatunnus',
+      dateTime: 'Päivämäärä ja aika',
+      description: 'Kuvaus',
+      recipient: 'Vastaanottaja',
+      iban: 'IBAN',
+      category: 'Kategoria',
+      type: 'Tyyppi',
+      scan: 'Skannaa vahvistaaksesi',
+      footer1: 'Tämä on virallinen kuitti SumUp:sta.',
+      footer2: 'Säilytä tämä omia tietojasi varten.',
+    };
+    return fi[key] || key;
   };
 
   const formatDate = (dateString: string) => {
@@ -43,7 +82,7 @@ export default function ReceiptScreen() {
   };
 
   const handleShare = async () => {
-    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
+    impactAsync((global as any).Haptics?.ImpactFeedbackStyle?.Medium || 'medium');
     try {
       await Share.share({
         message: `Kuitti SumUp:sta\n\nTapahtuma: ${recentTransaction.title}\nSumma: ${formatCurrency(recentTransaction.amount)}\nPäivämäärä: ${formatDate(recentTransaction.date)}\nTila: ${recentTransaction.status}`,
@@ -54,13 +93,71 @@ export default function ReceiptScreen() {
   };
 
   const handleDownload = () => {
-    Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
-    alert('Kuitti ladattu! 📄');
+    notificationAsync((global as any).Haptics?.NotificationFeedbackType?.Success || 'success');
+    alert('Kuitti ladattu.');
   };
 
-  const handlePrint = () => {
-    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
-    alert('Tulostustoiminto tulossa pian! 🖨️');
+  const receiptRef = React.useRef<any>(null);
+
+  const handlePrint = async () => {
+    impactAsync((global as any).Haptics?.ImpactFeedbackStyle?.Medium || 'medium');
+    // Web: try to export receipt as PNG using html2canvas
+    if (Platform.OS === 'web') {
+      // Dynamically import html2canvas to avoid adding it for native builds
+      // @ts-ignore
+      import('html2canvas').then((module) => {
+        const html2canvas = module.default || module;
+        const el = document.getElementById('receipt-root');
+        if (!el) {
+          alert('Kuittia ei löytynyt tulostettavaksi.');
+          return;
+        }
+        html2canvas(el, { backgroundColor: '#ffffff' }).then((canvas: any) => {
+          const dataUrl = canvas.toDataURL('image/png');
+          const link = document.createElement('a');
+          link.href = dataUrl;
+          link.download = `kuitti_${recentTransaction.id}.png`;
+          document.body.appendChild(link);
+          link.click();
+          document.body.removeChild(link);
+        }).catch((err: any) => {
+          console.error('html2canvas error', err);
+          alert('Kuvan luonti epäonnistui.');
+        });
+      }).catch((err) => {
+        console.error('Could not load html2canvas', err);
+        alert('Tulostus ei ole käytettävissä.');
+      });
+      return;
+    }
+
+    // Native: capture view and share/save (dynamic import to avoid type errors in web)
+    try {
+      if (!receiptRef.current) {
+        alert('Kuittia ei löytynyt tallennettavaksi.');
+        return;
+      }
+      // Dynamically load view-shot and expo-sharing to keep web bundle light
+      const viewShotMod = await import('react-native-view-shot');
+      const sharingMod = await import('expo-sharing');
+      const captureRef = viewShotMod.captureRef || viewShotMod.default?.captureRef;
+      const Sharing = sharingMod;
+      if (!captureRef) {
+        alert('Kuvan luonti ei ole saatavilla tässä laitteessa.');
+        return;
+      }
+      const uri = await captureRef(receiptRef.current, { format: 'png', quality: 1, result: 'tmpfile' });
+      if (uri) {
+        if (Sharing && Sharing.isAvailableAsync && (await Sharing.isAvailableAsync())) {
+          await Sharing.shareAsync(uri, { mimeType: 'image/png' });
+        } else {
+          alert('Tiedosto tallennettu: ' + uri);
+        }
+      }
+    } catch (err) {
+      console.error('view-shot error', err);
+      alert('Kuvan luonti epäonnistui.');
+    }
   };
 
   if (!recentTransaction) {
@@ -80,106 +177,83 @@ export default function ReceiptScreen() {
       <ScrollView style={styles.scrollView} showsVerticalScrollIndicator={false}>
         {/* Header */}
         <View style={styles.header}>
-          <Text style={styles.title}>Kuitti</Text>
-          <Text style={styles.subtitle}>Tapahtuman tiedot</Text>
+          <Text style={styles.title}>{t('receipt')}</Text>
+          <Text style={styles.subtitle}>{t('transactionDetails')}</Text>
         </View>
 
         {/* Receipt Card */}
         <View style={styles.receiptCardContainer}>
-          <Card gradient shadow="large" padding={Spacing.xl}>
+          <Card shadow="large" padding={Spacing.xl} ref={receiptRef} {...(Platform.OS === 'web' ? { nativeID: 'receipt-root' } : {})}>
             {/* Company Header */}
-            <View style={styles.companyHeader}>
-              <View style={styles.logoCircle}>
-                <Ionicons name="wallet" size={32} color={Colors.white} />
+            <View style={styles.companyHeaderRow}>
+              <View style={styles.companyLeft}>
+                <Text style={styles.companyName}>SumUp Bank</Text>
+                <Text style={styles.companySubtitle}>Y-tunnus 1234567-8</Text>
               </View>
-              <Text style={styles.companyName}>SumUp</Text>
-              <Text style={styles.companySubtitle}>Mobiilipankki</Text>
+              <View style={styles.companyRight}>
+                <Text style={styles.receiptType}>Kuitti</Text>
+                <Text style={styles.receiptDate}>{formatDate(recentTransaction.date)}</Text>
+              </View>
             </View>
 
             {/* Status Badge */}
-            <View style={styles.statusBadge}>
-              <Ionicons
-                name="checkmark-circle"
-                size={20}
-                color={Colors.white}
-              />
-              <Text style={styles.statusText}>
-                {recentTransaction.status.toUpperCase()}
-              </Text>
-            </View>
+            <View style={styles.paperDivider} />
 
-            {/* Divider */}
-            <View style={styles.divider} />
-
-            {/* Amount */}
-            <View style={styles.amountSection}>
-              <Text style={styles.amountLabel}>Summa</Text>
-              <Text
-                style={[
-                  styles.amount,
-                  recentTransaction.type === 'credit' && styles.amountCredit,
-                ]}
-              >
+            <View style={styles.amountSectionPaper}>
+              <Text style={styles.amountLabelPaper}>{t('amount')}</Text>
+              <Text style={[styles.amountPaper, recentTransaction.type === 'credit' && styles.amountCreditPaper]}>
                 {formatCurrency(recentTransaction.amount)}
               </Text>
             </View>
 
-            {/* Divider */}
-            <View style={styles.divider} />
+            <View style={styles.paperDivider} />
 
             {/* Transaction Details */}
             <View style={styles.detailsSection}>
               <View style={styles.detailRow}>
-                <Text style={styles.detailLabel}>Tapahtumatunnus</Text>
-                <Text style={styles.detailValue}>
-                  #{recentTransaction.id.padStart(8, '0')}
-                </Text>
+                <Text style={styles.detailLabel}>{t('transactionId')}</Text>
+                <Text style={styles.detailValue}>#{recentTransaction.id.padStart(8, '0')}</Text>
               </View>
 
               <View style={styles.detailRow}>
-                <Text style={styles.detailLabel}>Päivämäärä ja aika</Text>
-                <Text style={styles.detailValue}>
-                  {formatDate(recentTransaction.date)}
-                </Text>
+                <Text style={styles.detailLabel}>{t('dateTime')}</Text>
+                <Text style={styles.detailValue}>{formatDate(recentTransaction.date)}</Text>
               </View>
 
               <View style={styles.detailRow}>
-                <Text style={styles.detailLabel}>Kuvaus</Text>
-                <Text style={styles.detailValue}>
-                  {recentTransaction.title}
-                </Text>
+                <Text style={styles.detailLabel}>{t('description')}</Text>
+                <Text style={styles.detailValue}>{recentTransaction.title}</Text>
               </View>
 
               {recentTransaction.recipient && (
                 <View style={styles.detailRow}>
-                  <Text style={styles.detailLabel}>Vastaanottaja</Text>
-                  <Text style={styles.detailValue}>
-                    {recentTransaction.recipient}
-                  </Text>
+                  <Text style={styles.detailLabel}>{t('recipient')}</Text>
+                  <Text style={styles.detailValue}>{recentTransaction.recipient}</Text>
+                </View>
+              )}
+
+              {recentTransaction.iban && (
+                <View style={styles.detailRow}>
+                  <Text style={styles.detailLabel}>{t('iban')}</Text>
+                  <Text style={styles.detailValue}>{recentTransaction.iban}</Text>
                 </View>
               )}
 
               <View style={styles.detailRow}>
-                <Text style={styles.detailLabel}>Kategoria</Text>
-                <Text style={styles.detailValue}>
-                  {recentTransaction.category}
-                </Text>
+                <Text style={styles.detailLabel}>{t('category')}</Text>
+                <Text style={styles.detailValue}>{recentTransaction.category}</Text>
               </View>
 
               <View style={styles.detailRow}>
-                <Text style={styles.detailLabel}>Tyyppi</Text>
-                <Text style={styles.detailValue}>
-                  {recentTransaction.type === 'credit' ? 'Tulo' : 'Meno'}
-                </Text>
+                <Text style={styles.detailLabel}>{t('type')}</Text>
+                <Text style={styles.detailValue}>{recentTransaction.type === 'credit' ? (language === 'en' ? 'Credit' : 'Tulo') : (language === 'en' ? 'Debit' : 'Meno')}</Text>
               </View>
             </View>
 
             {/* QR Code Placeholder */}
-            <View style={styles.qrSection}>
-              <View style={styles.qrPlaceholder}>
-                <Ionicons name="qr-code" size={80} color={Colors.white} />
-              </View>
-              <Text style={styles.qrText}>Skannaa vahvistaaksesi</Text>
+            <View style={styles.qrSectionPaper}>
+              <View style={styles.qrPlaceholderPaper} />
+              <Text style={styles.qrTextPaper}>{language === 'en' ? 'Check the transaction in your online bank' : 'Tarkista tapahtuma verkkopankistasi'}</Text>
             </View>
           </Card>
         </View>
@@ -216,12 +290,8 @@ export default function ReceiptScreen() {
 
         {/* Footer Note */}
         <View style={styles.footer}>
-          <Text style={styles.footerText}>
-            Tämä on virallinen kuitti SumUp:sta.
-          </Text>
-          <Text style={styles.footerText}>
-            Säilytä tämä omia tietojasi varten.
-          </Text>
+          <Text style={styles.footerText}>{t('footer1')}</Text>
+          <Text style={styles.footerText}>{t('footer2')}</Text>
         </View>
       </ScrollView>
     </SafeAreaView>
@@ -271,6 +341,18 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     marginBottom: Spacing.lg,
   },
+  companyHeaderRow: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'flex-start',
+    marginBottom: Spacing.md,
+  },
+  companyLeft: {
+    flex: 1,
+  },
+  companyRight: {
+    alignItems: 'flex-end',
+  },
   logoCircle: {
     width: 80,
     height: 80,
@@ -290,14 +372,23 @@ const styles = StyleSheet.create({
   },
   companySubtitle: {
     fontSize: FontSize.sm,
-    color: Colors.white,
+    color: Colors.textSecondary,
     opacity: 0.9,
+  },
+  receiptType: {
+    fontSize: FontSize.sm,
+    color: Colors.textSecondary,
+    fontWeight: FontWeight.semibold,
+  },
+  receiptDate: {
+    fontSize: FontSize.xs,
+    color: Colors.textSecondary,
   },
   statusBadge: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
-    backgroundColor: 'rgba(255, 255, 255, 0.2)',
+    backgroundColor: Colors.backgroundSecondary,
     paddingVertical: Spacing.sm,
     paddingHorizontal: Spacing.lg,
     borderRadius: BorderRadius.full,
@@ -309,28 +400,31 @@ const styles = StyleSheet.create({
     fontWeight: FontWeight.bold,
     color: Colors.success,
   },
-  divider: {
+  paperDivider: {
     height: 1,
-    backgroundColor: 'rgba(255, 255, 255, 0.3)',
+    backgroundColor: Colors.border,
     marginVertical: Spacing.lg,
   },
   amountSection: {
     alignItems: 'center',
   },
-  amountLabel: {
+  amountSectionPaper: {
+    alignItems: 'flex-start',
+    paddingVertical: Spacing.sm,
+  },
+  amountLabelPaper: {
     fontSize: FontSize.sm,
-    color: Colors.white,
-    opacity: 0.9,
-    marginBottom: Spacing.sm,
+    color: Colors.textSecondary,
+    marginBottom: Spacing.xs,
     fontWeight: FontWeight.medium,
   },
-  amount: {
-    fontSize: FontSize.huge,
+  amountPaper: {
+    fontSize: FontSize.xxl,
     fontWeight: FontWeight.bold,
-    color: Colors.white,
+    color: Colors.textPrimary,
   },
-  amountCredit: {
-    color: Colors.white,
+  amountCreditPaper: {
+    color: Colors.success,
   },
   detailsSection: {
     gap: Spacing.md,
@@ -342,37 +436,35 @@ const styles = StyleSheet.create({
   },
   detailLabel: {
     fontSize: FontSize.sm,
-    color: Colors.white,
-    opacity: 0.8,
+    color: Colors.textSecondary,
+    opacity: 0.9,
     flex: 1,
     fontWeight: FontWeight.medium,
   },
   detailValue: {
     fontSize: FontSize.sm,
-    color: Colors.white,
+    color: Colors.textPrimary,
     fontWeight: FontWeight.semibold,
     flex: 1,
     textAlign: 'right',
   },
-  qrSection: {
+  qrSectionPaper: {
     alignItems: 'center',
-    marginTop: Spacing.xl,
+    marginTop: Spacing.lg,
   },
-  qrPlaceholder: {
-    width: 120,
-    height: 120,
-    backgroundColor: 'rgba(255, 255, 255, 0.2)',
-    borderRadius: BorderRadius.md,
-    justifyContent: 'center',
-    alignItems: 'center',
-    marginBottom: Spacing.md,
+  qrPlaceholderPaper: {
+    width: 96,
+    height: 96,
+    backgroundColor: Colors.backgroundSecondary,
+    borderRadius: 8,
+    marginBottom: Spacing.sm,
     borderWidth: 1,
-    borderColor: Colors.lightGray,
+    borderColor: Colors.border,
   },
-  qrText: {
+  qrTextPaper: {
     fontSize: FontSize.xs,
-    color: Colors.white,
-    opacity: 0.8,
+    color: Colors.textSecondary,
+    opacity: 0.9,
   },
   actionsContainer: {
     flexDirection: 'row',

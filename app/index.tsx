@@ -10,7 +10,7 @@ import {
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useRouter } from 'expo-router';
-import * as Haptics from 'expo-haptics';
+import { impactAsync, notificationAsync } from '../src/utils/safeHaptics';
 import { Ionicons } from '@expo/vector-icons';
 import { Colors, Spacing, BorderRadius, FontSize, Shadow, FontWeight } from '../src/theme/theme';
 import { useAccount } from '../src/context/AccountContext';
@@ -23,18 +23,18 @@ export default function HomeScreen() {
   const scaleAnim = React.useRef(new Animated.Value(1)).current;
 
   const handlePress = () => {
-    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+    impactAsync((global as any).Haptics?.ImpactFeedbackStyle?.Light || 'light');
   };
 
   const handleQuickAction = (action: string) => {
-    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
+    impactAsync((global as any).Haptics?.ImpactFeedbackStyle?.Medium || 'medium');
     if (action === 'payment') {
       router.push('/payment');
     }
   };
 
   const handleTransactionPress = (transactionId: string) => {
-    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+    impactAsync((global as any).Haptics?.ImpactFeedbackStyle?.Light || 'light');
     router.push('/receipt');
   };
 
@@ -85,7 +85,7 @@ export default function HomeScreen() {
           <TouchableOpacity
             style={styles.actionButton}
             onPress={() => {
-              Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
+              impactAsync((global as any).Haptics?.ImpactFeedbackStyle?.Medium || 'medium');
               router.push('/payment');
             }}
             accessibilityLabel="Luo uusi maksu"
@@ -99,7 +99,7 @@ export default function HomeScreen() {
           <TouchableOpacity
             style={styles.actionButton}
             onPress={() => {
-              Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
+              impactAsync((global as any).Haptics?.ImpactFeedbackStyle?.Medium || 'medium');
               router.push('/statement');
             }}
             accessibilityLabel="Näytä raportit"
@@ -113,7 +113,7 @@ export default function HomeScreen() {
           <TouchableOpacity
             style={styles.actionButton}
             onPress={() => {
-              Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
+              impactAsync((global as any).Haptics?.ImpactFeedbackStyle?.Medium || 'medium');
               router.push('/receipt');
             }}
             accessibilityLabel="Näytä kuitti"
@@ -127,7 +127,7 @@ export default function HomeScreen() {
           <TouchableOpacity
             style={styles.actionButton}
             onPress={() => {
-              Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
+              impactAsync((global as any).Haptics?.ImpactFeedbackStyle?.Medium || 'medium');
             }}
             accessibilityLabel="Lisää toimintoja"
           >
@@ -156,7 +156,7 @@ export default function HomeScreen() {
                   index < recentTransactions.length - 1 && styles.transactionItemBorder,
                 ]}
                 onPress={() => {
-                  Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+                  impactAsync((global as any).Haptics?.ImpactFeedbackStyle?.Light || 'light');
                   router.push('/receipt');
                 }}
               >

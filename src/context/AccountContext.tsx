@@ -7,7 +7,11 @@ interface AccountContextType {
   accountNumber: string;
   accountHolderName: string;
   companyName: string;
-  createPayment: (amount: number, description?: string) => void;
+  createPayment: (amount: number, description?: string, recipient?: string, iban?: string) => void;
+  language: 'fi' | 'en';
+  setLanguage: (lang: 'fi' | 'en') => void;
+  showAccountWarning: boolean;
+  setShowAccountWarning: (v: boolean) => void;
   updateBalance: (newBalance: number) => void;
   updateAccountHolderName: (name: string) => void;
   updateCompanyName: (company: string) => void;
@@ -34,44 +38,65 @@ interface AccountProviderProps {
 let transactionCounter = 1000;
 
 export const AccountProvider: React.FC<AccountProviderProps> = ({ children }) => {
-  const [balance, setBalance] = useState<number>(14574.32);
   const [accountNumber, setAccountNumber] = useState<string>('FI21 1234 5678 9012 34');
+  // Opening balance before the listed transactions
+  const openingBalance = 38880.31;
+
   const [accountHolderName, setAccountHolderName] = useState<string>('Aku Ankka');
   const [companyName, setCompanyName] = useState<string>('Firma Oy');
-  const [transactions, setTransactions] = useState<Transaction[]>([
+  const [language, setLanguage] = useState<'fi' | 'en'>('fi');
+  // Default OFF per user request
+  const [showAccountWarning, setShowAccountWarning] = useState<boolean>(false);
+  const initialTransactions: Transaction[] = [
     {
       id: '1',
-      title: 'eBike Rental - Day Pass',
-      amount: -15.90,
-      date: '2025-11-05T14:30:00Z',
-      category: 'Transport',
+      title: 'BANK TRANSFER',
+      amount: 69.90,
+      date: '2025-11-06T08:30:00Z',
+      category: 'Bank transfer',
       status: 'completed',
-      recipient: 'Helsinki eBike Service',
-      type: 'debit',
-    },
-    {
-      id: '2',
-      title: 'Salary',
-      amount: 3500.00,
-      date: '2025-11-01T09:00:00Z',
-      category: 'Income',
-      status: 'completed',
-      recipient: 'Employer Ltd',
+      recipient: 'Milenna Sinkko',
       type: 'credit',
     },
     {
-      id: '3',
-      title: 'eBike Monthly Subscription',
-      amount: -49.90,
-      date: '2025-10-28T12:15:00Z',
-      category: 'Transport',
-      status: 'completed',
-      recipient: 'Helsinki eBike Service',
+      id: '2',
+      title: 'BANK TRANSFER',
+      amount: -38712.61,
+      date: '2025-11-06T09:15:00Z',
+      category: 'Bank transfer',
+      status: 'pending',
+      recipient: 'Lakiasiaintoimisto Premilex Oy',
       type: 'debit',
     },
-  ]);
+    {
+      id: '3',
+      title: 'BANK TRANSFER',
+      amount: -90.00,
+      date: '2025-11-07T10:05:00Z',
+      category: 'Bank transfer',
+      status: 'completed',
+      recipient: 'Lakiasiaintoimisto Premilex Oy',
+      type: 'debit',
+    },
+    {
+      id: '4',
+      title: 'BANK TRANSFER',
+      amount: -7.80,
+      date: '2025-11-07T11:30:00Z',
+      category: 'Bank transfer',
+      status: 'completed',
+      recipient: 'Sumup LTC',
+      type: 'debit',
+    },
+  ];
 
-  const createPayment = (amount: number, description?: string) => {
+  const [transactions, setTransactions] = useState<Transaction[]>(initialTransactions);
+
+  // Compute closing balance from opening balance + transactions amounts
+  const computedClosing = Math.round((openingBalance + transactions.reduce((s, t) => s + t.amount, 0)) * 100) / 100;
+  const [balance, setBalance] = useState<number>(computedClosing);
+
+  const createPayment = (amount: number, description?: string, recipient?: string, iban?: string) => {
     // Coerce amount to number
     const numAmount = Number(amount) || 0;
     
@@ -86,6 +111,8 @@ export const AccountProvider: React.FC<AccountProviderProps> = ({ children }) =>
       category: 'Payment',
       status: 'completed',
       type: 'debit',
+      recipient: recipient,
+      iban: iban,
     };
 
     // Prepend transaction to list
@@ -162,6 +189,10 @@ export const AccountProvider: React.FC<AccountProviderProps> = ({ children }) =>
       accountNumber, 
       accountHolderName,
       companyName,
+      showAccountWarning,
+      setShowAccountWarning,
+      language,
+      setLanguage,
       createPayment,
       updateBalance,
       updateAccountHolderName,
