@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="fi">
 <head>
@@ -164,23 +165,31 @@
             gap: var(--space-3);
         }
 
-        .header-btn {
-            width: 36px;
-            height: 36px;
+        .revolut-header-btn {
+            width: 42px;
+            height: 42px;
             border: none;
-            border-radius: var(--radius-md);
-            background: var(--frosted-glass);
+            border-radius: 12px;
+            background: rgba(255, 255, 255, 0.1);
             backdrop-filter: blur(10px);
             display: flex;
             align-items: center;
             justify-content: center;
             cursor: pointer;
-            transition: all var(--transition-fast);
+            transition: all 0.3s ease;
+            color: white;
         }
 
-        .header-btn:hover {
-            background: var(--surface-tertiary);
-            transform: scale(1.05);
+        .revolut-header-btn:hover {
+            background: rgba(255, 255, 255, 0.2);
+            transform: translateY(-1px);
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+        }
+
+        .revolut-header-btn svg {
+            width: 20px;
+            height: 20px;
+            opacity: 0.9;
         }
 
         /* Main Content */
@@ -978,9 +987,22 @@
             box-shadow: var(--shadow-soft);
         }
 
-        .tab-icon {
-            font-size: 1.5rem;
-            margin-bottom: var(--space-1);
+        .revolut-tab-icon {
+            margin-bottom: var(--space-2);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .revolut-tab-icon svg {
+            width: 22px;
+            height: 22px;
+            opacity: 0.7;
+            transition: all var(--transition-fast);
+        }
+
+        .tab-item.active .revolut-tab-icon svg {
+            opacity: 1;
         }
 
         .tab-label {
@@ -1184,16 +1206,97 @@
             gap: var(--space-3);
         }
 
-        .settings-icon {
-            width: 36px;
-            height: 36px;
-            border-radius: var(--radius-md);
-            background: var(--surface-tertiary);
+        .revolut-settings-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 12px;
+            background: linear-gradient(135deg, rgba(139, 69, 255, 0.1), rgba(59, 130, 246, 0.1));
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 1.2rem;
-            color: var(--primary-solid);
+            margin-right: var(--space-3);
+            flex-shrink: 0;
+        }
+
+        .revolut-settings-icon svg {
+            width: 20px;
+            height: 20px;
+            color: var(--primary-color);
+        }
+
+        .revolut-analytics-icon {
+            width: 32px;
+            height: 32px;
+            border-radius: 8px;
+            background: linear-gradient(135deg, #8b45ff, #3b82f6);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: var(--space-3);
+        }
+
+        .revolut-analytics-icon svg {
+            width: 16px;
+            height: 16px;
+            color: white;
+        }
+
+        .revolut-trend-icon, .revolut-chip-icon, .revolut-export-icon {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .revolut-trend-icon svg, .revolut-chip-icon svg, .revolut-export-icon svg {
+            width: 16px;
+            height: 16px;
+            color: #10b981;
+        }
+
+        .revolut-feature-icon {
+            width: 48px;
+            height: 48px;
+            border-radius: 12px;
+            background: linear-gradient(135deg, #8b45ff, #3b82f6);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: var(--space-3);
+        }
+
+        .revolut-feature-icon svg {
+            width: 24px;
+            height: 24px;
+            color: white;
+        }
+
+        .revolut-empty-icon {
+            width: 64px;
+            height: 64px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            opacity: 0.3;
+            margin: 0 auto var(--space-4);
+        }
+
+        .revolut-empty-icon svg {
+            width: 48px;
+            height: 48px;
+            color: var(--text-secondary);
+        }
+
+        .revolut-receipt-icon {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: var(--space-2);
+        }
+
+        .revolut-receipt-icon svg {
+            width: 32px;
+            height: 32px;
+            color: var(--primary-color);
         }
 
         .settings-text h4 {
@@ -1277,6 +1380,10 @@
             color: var(--text-inverse);
         }
 
+        .feature-content {
+            margin-left: var(--space-4);
+        }
+
         .feature-content h3 {
             font-size: 1.1rem;
             font-weight: 700;
@@ -1290,7 +1397,282 @@
             line-height: 1.4;
         }
 
-        /* Card Styles */
+        /* Revolut-Style Premium Cards */
+        .premium-card-grid {
+            display: flex;
+            flex-direction: column;
+            gap: var(--space-4);
+            margin-bottom: var(--space-6);
+        }
+
+        .revolut-card {
+            background: #1a1a1a;
+            border-radius: 16px;
+            padding: 24px;
+            height: 200px;
+            position: relative;
+            overflow: hidden;
+            color: white;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .revolut-card.purple-gradient {
+            background: linear-gradient(135deg, #8b5cf6 0%, #6d28d9 100%);
+        }
+
+        .revolut-card.blue-gradient {
+            background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%);
+        }
+
+        .card-chip {
+            width: 32px;
+            height: 24px;
+            background: linear-gradient(135deg, #ffd700 0%, #ffed4e 100%);
+            border-radius: 4px;
+            position: absolute;
+            top: 24px;
+            left: 24px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+        }
+
+        .card-chip.virtual {
+            background: linear-gradient(135deg, #e5e7eb 0%, #9ca3af 100%);
+        }
+
+        .card-network {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-top: 0;
+        }
+
+        .network-logo {
+            font-size: 18px;
+            font-weight: 800;
+            letter-spacing: 2px;
+        }
+
+        .card-tier {
+            font-size: 12px;
+            font-weight: 600;
+            opacity: 0.8;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .card-number-section {
+            margin: 20px 0;
+        }
+
+        .card-number {
+            font-size: 20px;
+            font-weight: 500;
+            letter-spacing: 4px;
+            font-family: 'SF Mono', 'Monaco', monospace;
+        }
+
+        .card-details {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 12px;
+        }
+
+        .card-details .label {
+            font-size: 10px;
+            opacity: 0.7;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 4px;
+        }
+
+        .holder-name {
+            font-size: 14px;
+            font-weight: 600;
+        }
+
+        .expiry {
+            font-size: 14px;
+            font-weight: 600;
+        }
+
+        .card-status {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 12px;
+            opacity: 0.9;
+        }
+
+        .status-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: #10b981;
+        }
+
+        .status-dot.active {
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0% { opacity: 1; }
+            50% { opacity: 0.6; }
+            100% { opacity: 1; }
+        }
+
+        /* Revolut-Style Action Buttons */
+        .card-action-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: var(--space-3);
+            margin-bottom: var(--space-6);
+        }
+
+        .revolut-action-btn {
+            background: white;
+            border: 1px solid #e5e7eb;
+            border-radius: 12px;
+            padding: 16px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            text-align: left;
+        }
+
+        .revolut-action-btn:hover {
+            background: #f9fafb;
+            border-color: #d1d5db;
+            transform: translateY(-1px);
+        }
+
+        .revolut-action-btn.primary {
+            background: #3b82f6;
+            border-color: #3b82f6;
+            color: white;
+        }
+
+        .revolut-action-btn.primary:hover {
+            background: #2563eb;
+            border-color: #2563eb;
+        }
+
+        .action-content {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .action-icon-bg {
+            width: 40px;
+            height: 40px;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: rgba(255, 255, 255, 0.2);
+            flex-shrink: 0;
+        }
+
+        .revolut-action-btn.secondary .action-icon-bg {
+            background: #f3f4f6;
+        }
+
+        .revolut-action-btn.secondary .action-icon-bg.wallet {
+            background: #000;
+        }
+
+        .action-icon {
+            font-size: 18px;
+            font-weight: 600;
+        }
+
+        .action-text {
+            flex: 1;
+        }
+
+        .action-title {
+            font-size: 14px;
+            font-weight: 600;
+            margin-bottom: 2px;
+        }
+
+        .action-subtitle {
+            font-size: 12px;
+            opacity: 0.7;
+        }
+
+        .revolut-action-btn.primary .action-subtitle {
+            opacity: 0.9;
+        }
+
+        /* Revolut-Style Quick Actions */
+        .revolut-quick-actions {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: var(--space-4);
+            margin: var(--space-6) 0;
+            padding: 0 var(--space-2);
+        }
+
+        .revolut-action-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: var(--space-4);
+            cursor: pointer;
+            transition: all 0.2s ease;
+            border-radius: var(--radius-lg);
+        }
+
+        .revolut-action-item:hover {
+            background: var(--bg-hover);
+            transform: translateY(-2px);
+        }
+
+        .revolut-action-icon {
+            width: 48px;
+            height: 48px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: var(--space-3);
+            position: relative;
+        }
+
+        .revolut-action-icon svg {
+            width: 24px;
+            height: 24px;
+            color: white;
+        }
+
+        .revolut-action-icon.send {
+            background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%);
+        }
+
+        .revolut-action-icon.card {
+            background: linear-gradient(135deg, #8b5cf6 0%, #6d28d9 100%);
+        }
+
+        .revolut-action-icon.receipt {
+            background: linear-gradient(135deg, #10b981 0%, #047857 100%);
+        }
+
+        .revolut-action-icon.settings {
+            background: linear-gradient(135deg, #6b7280 0%, #374151 100%);
+        }
+
+        .revolut-action-label {
+            font-size: 0.875rem;
+            font-weight: 600;
+            color: var(--text-primary);
+            text-align: center;
+        }
+
+        /* Legacy Card Styles */
         .card-item {
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             border-radius: var(--radius-xl);
@@ -1495,11 +1877,15 @@
         <div class="header-bar">
             <div class="logo">SumUp</div>
             <div class="header-actions">
-                <button class="header-btn" onclick="showNotifications()">
-                    <span style="font-size: 1.2rem;">🔔</span>
+                <button class="revolut-header-btn" onclick="showNotifications()">
+                    <svg viewBox="0 0 24 24" fill="currentColor">
+                        <path d="M12 22c1.1 0 2-.9 2-2h-4c0 1.1.89 2 2 2zm6-6v-5c0-3.07-1.64-5.64-4.5-6.32V4c0-.83-.67-1.5-1.5-1.5s-1.5.67-1.5 1.5v.68C7.63 5.36 6 7.92 6 11v5l-2 2v1h16v-1l-2-2z"/>
+                    </svg>
                 </button>
-                <button class="header-btn" onclick="showProfile()">
-                    <span style="font-size: 1.2rem;">👤</span>
+                <button class="revolut-header-btn" onclick="showProfile()">
+                    <svg viewBox="0 0 24 24" fill="currentColor">
+                        <path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/>
+                    </svg>
                 </button>
             </div>
         </div>
@@ -1518,23 +1904,42 @@
                     </div>
                 </div>
 
-                <!-- Quick Actions -->
-                <div class="quick-actions">
-                    <div class="action-btn" onclick="showScreen('payment')">
-                        <div class="action-icon">💸</div>
-                        <div class="action-label">Maksa</div>
+                <!-- Revolut-Style Quick Actions -->
+                <div class="revolut-quick-actions">
+                    <div class="revolut-action-item" onclick="showScreen('payment')">
+                        <div class="revolut-action-icon send">
+                            <svg viewBox="0 0 24 24" fill="currentColor">
+                                <path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z"/>
+                            </svg>
+                        </div>
+                        <div class="revolut-action-label">Maksa</div>
                     </div>
-                    <div class="action-btn" onclick="showScreen('cards')">
-                        <div class="action-icon">💳</div>
-                        <div class="action-label">Kortit</div>
+                    
+                    <div class="revolut-action-item" onclick="showScreen('cards')">
+                        <div class="revolut-action-icon card">
+                            <svg viewBox="0 0 24 24" fill="currentColor">
+                                <path d="M20 4H4c-1.11 0-1.99.89-1.99 2L2 18c0 1.11.89 2 2 2h16c1.11 0 2-.89 2-2V6c0-1.11-.89-2-2-2zm0 14H4v-6h16v6zm0-10H4V6h16v2z"/>
+                            </svg>
+                        </div>
+                        <div class="revolut-action-label">Kortit</div>
                     </div>
-                    <div class="action-btn" onclick="showScreen('receipt')">
-                        <div class="action-icon">🧾</div>
-                        <div class="action-label">Kuitti</div>
+                    
+                    <div class="revolut-action-item" onclick="showScreen('receipt')">
+                        <div class="revolut-action-icon receipt">
+                            <svg viewBox="0 0 24 24" fill="currentColor">
+                                <path d="M18 17H6v-2h12v2zm0-4H6v-2h12v2zm0-4H6V7h12v2zM3 22l1.5-1.5L6 22l1.5-1.5L9 22l1.5-1.5L12 22l1.5-1.5L15 22l1.5-1.5L18 22l1.5-1.5L21 22V2l-1.5 1.5L18 2l-1.5 1.5L15 2l-1.5 1.5L12 2l-1.5 1.5L9 2 7.5 3.5 6 2 4.5 3.5 3 2v20z"/>
+                            </svg>
+                        </div>
+                        <div class="revolut-action-label">Kuitti</div>
                     </div>
-                    <div class="action-btn" onclick="showScreen('settings')">
-                        <div class="action-icon">⚙️</div>
-                        <div class="action-label">Asetukset</div>
+                    
+                    <div class="revolut-action-item" onclick="showScreen('settings')">
+                        <div class="revolut-action-icon settings">
+                            <svg viewBox="0 0 24 24" fill="currentColor">
+                                <path d="M19.14,12.94c0.04-0.3,0.06-0.61,0.06-0.94c0-0.32-0.02-0.64-0.07-0.94l2.03-1.58c0.18-0.14,0.23-0.41,0.12-0.61 l-1.92-3.32c-0.12-0.22-0.37-0.29-0.59-0.22l-2.39,0.96c-0.5-0.38-1.03-0.7-1.62-0.94L14.4,2.81c-0.04-0.24-0.24-0.41-0.48-0.41 h-3.84c-0.24,0-0.43,0.17-0.47,0.41L9.25,5.35C8.66,5.59,8.12,5.92,7.63,6.29L5.24,5.33c-0.22-0.08-0.47,0-0.59,0.22L2.74,8.87 C2.62,9.08,2.66,9.34,2.86,9.48l2.03,1.58C4.84,11.36,4.82,11.69,4.82,12s0.02,0.64,0.07,0.94l-2.03,1.58 c-0.18,0.14-0.23,0.41-0.12,0.61l1.92,3.32c0.12,0.22,0.37,0.29,0.59,0.22l2.39-0.96c0.5,0.38,1.03,0.7,1.62,0.94l0.36,2.54 c0.05,0.24,0.24,0.41,0.48,0.41h3.84c0.24,0,0.44-0.17,0.47-0.41l0.36-2.54c0.59-0.24,1.13-0.56,1.62-0.94l2.39,0.96 c0.22,0.08,0.47,0,0.59-0.22l1.92-3.32c0.12-0.22,0.07-0.47-0.12-0.61L19.14,12.94z M12,15.6c-1.98,0-3.6-1.62-3.6-3.6 s1.62-3.6,3.6-3.6s3.6,1.62,3.6,3.6S13.98,15.6,12,15.6z"/>
+                            </svg>
+                        </div>
+                        <div class="revolut-action-label">Asetukset</div>
                     </div>
                 </div>
                 
@@ -1545,21 +1950,33 @@
                 
                 <div class="premium-features">
                     <div class="feature-card">
-                        <div class="feature-icon">🌍</div>
+                        <div class="revolut-feature-icon">
+                            <svg viewBox="0 0 24 24" fill="currentColor">
+                                <path d="M12,2A10,10 0 0,0 2,12A10,10 0 0,0 12,22A10,10 0 0,0 22,12C22,6.47 17.5,2 12,2Z"/>
+                            </svg>
+                        </div>
                         <div class="feature-content">
                             <h3>Maailmanlaajuinen pankkitoiminta</h3>
                             <p>Käytä korttejasi 200+ maassa ilman lisämaksuja</p>
                         </div>
                     </div>
                     <div class="feature-card">
-                        <div class="feature-icon">🔒</div>
+                        <div class="revolut-feature-icon">
+                            <svg viewBox="0 0 24 24" fill="currentColor">
+                                <path d="M12,1L3,5V11C3,16.55 6.84,21.74 12,23C17.16,21.74 21,16.55 21,11V5L12,1M12,7C13.4,7 14.8,8.6 14.8,10V11H16V18H8V11H9.2V10C9.2,8.6 10.6,7 12,7M12,8.2C11.2,8.2 10.4,8.7 10.4,10V11H13.6V10C13.6,8.7 12.8,8.2 12,8.2Z"/>
+                            </svg>
+                        </div>
                         <div class="feature-content">
                             <h3>Pankkiluokan turvallisuus</h3>
                             <p>256-bittinen salaus ja biometrinen tunnistus</p>
                         </div>
                     </div>
                     <div class="feature-card">
-                        <div class="feature-icon">⚡</div>
+                        <div class="revolut-feature-icon">
+                            <svg viewBox="0 0 24 24" fill="currentColor">
+                                <path d="M7,2V13H10V22L17,10H13L17,2H7Z"/>
+                            </svg>
+                        </div>
                         <div class="feature-content">
                             <h3>Välittömät maksut</h3>
                             <p>Reaaliaikaiset tilisiirrot 24/7</p>
@@ -1589,34 +2006,91 @@
                     </div>
                 </div>
 
-                <!-- Card List -->
-                <div id="card-list">
-                    <div class="card-item">
-                        <div class="card-header">
-                            <div class="card-type">VISA DEBIT</div>
-                            <div class="card-logo">VISA</div>
+                <!-- Premium Card Collection -->
+                <div class="premium-card-grid" id="card-list">
+                    <!-- Business Debit Card - Dark Purple -->
+                    <div class="revolut-card purple-gradient">
+                        <div class="card-chip"></div>
+                        <div class="card-network">
+                            <div class="network-logo">VISA</div>
+                            <div class="card-tier">Business</div>
                         </div>
-                        <div class="card-number">**** **** **** 3456</div>
-                        <div class="card-footer">
-                            <div>
-                                <div style="font-size: 0.7rem; opacity: 0.7;">HALTIJA</div>
-                                <div class="card-holder" id="card-holder-name">FIRMA OY</div>
+                        
+                        <div class="card-number-section">
+                            <div class="card-number">•••• •••• •••• 3456</div>
+                        </div>
+                        
+                        <div class="card-details">
+                            <div class="card-holder-section">
+                                <div class="label">Kortinhaltija</div>
+                                <div class="holder-name">FIRMA OY</div>
                             </div>
-                            <div>
-                                <div style="font-size: 0.7rem; opacity: 0.7;">VOIMASSA</div>
-                                <div class="card-expiry">12/28</div>
+                            <div class="card-validity">
+                                <div class="label">Voimassa</div>
+                                <div class="expiry">12/28</div>
                             </div>
+                        </div>
+                        
+                        <div class="card-status">
+                            <div class="status-dot active"></div>
+                            <span>Aktiivinen</span>
+                        </div>
+                    </div>
+
+                    <!-- Virtual Card - Blue Gradient -->
+                    <div class="revolut-card blue-gradient">
+                        <div class="card-chip virtual"></div>
+                        <div class="card-network">
+                            <div class="network-logo">MASTERCARD</div>
+                            <div class="card-tier">Virtual</div>
+                        </div>
+                        
+                        <div class="card-number-section">
+                            <div class="card-number">•••• •••• •••• 7892</div>
+                        </div>
+                        
+                        <div class="card-details">
+                            <div class="card-holder-section">
+                                <div class="label">Virtuaalikortti</div>
+                                <div class="holder-name">ONLINE PAYMENTS</div>
+                            </div>
+                            <div class="card-validity">
+                                <div class="label">Voimassa</div>
+                                <div class="expiry">03/27</div>
+                            </div>
+                        </div>
+                        
+                        <div class="card-status">
+                            <div class="status-dot active"></div>
+                            <span>Käytössä</span>
                         </div>
                     </div>
                 </div>
 
-                <!-- Card Actions -->
-                <div class="card-actions">
-                    <button class="btn btn-primary" style="flex: 1;" onclick="requestNewCard()">
-                        📱 Hae uutta korttia
+                <!-- Professional Card Actions -->
+                <div class="card-action-grid">
+                    <button class="revolut-action-btn primary" onclick="requestNewCard()">
+                        <div class="action-content">
+                            <div class="action-icon-bg">
+                                <div class="action-icon">+</div>
+                            </div>
+                            <div class="action-text">
+                                <div class="action-title">Tilaa uusi kortti</div>
+                                <div class="action-subtitle">Fyysinen tai virtuaalinen</div>
+                            </div>
+                        </div>
                     </button>
-                    <button class="btn btn-secondary" style="flex: 1;" onclick="addToAppleWallet()">
-                         Lisää Apple Wallet
+                    
+                    <button class="revolut-action-btn secondary" onclick="addToAppleWallet()">
+                        <div class="action-content">
+                            <div class="action-icon-bg wallet">
+                                <div class="action-icon"></div>
+                            </div>
+                            <div class="action-text">
+                                <div class="action-title">Apple Pay</div>
+                                <div class="action-subtitle">Lisää lompakkoon</div>
+                            </div>
+                        </div>
                     </button>
                 </div>
 
@@ -1740,7 +2214,7 @@
                                 Muokkaa
                             </button>
                             <button class="btn btn-primary" onclick="executePayment()" style="flex: 1;">
-                                💸 Maksa nyt
+                                Maksa nyt
                             </button>
                         </div>
                     </div>
@@ -1768,7 +2242,11 @@
                         </div>
                         <div class="balance-trend">
                             <div class="trend-indicator positive">
-                                <span class="trend-icon">📈</span>
+                                <span class="revolut-trend-icon">
+                                    <svg viewBox="0 0 24 24" fill="currentColor">
+                                        <path d="M16,6L18.29,8.29L13.41,13.17L9.41,9.17L2,16.59L3.41,18L9.41,12L13.41,16L19.71,9.71L22,12V6"/>
+                                    </svg>
+                                </span>
                                 <span class="trend-text">+12.4% tässä kuussa</span>
                             </div>
                         </div>
@@ -1778,7 +2256,11 @@
                 <!-- Advanced Analytics Cards -->
                 <div class="analytics-grid">
                     <div class="analytics-card income">
-                        <div class="analytics-icon">💰</div>
+                        <div class="revolut-analytics-icon">
+                            <svg viewBox="0 0 24 24" fill="currentColor">
+                                <path d="M11.8 10.9c-2.27-.59-3-1.2-3-2.15 0-1.09 1.01-1.85 2.7-1.85 1.78 0 2.44.85 2.5 2.1h2.21c-.07-1.72-1.12-3.3-3.21-3.81V3h-3v2.16c-1.94.42-3.5 1.68-3.5 3.61 0 2.31 1.91 3.46 4.7 4.13 2.5.6 3 1.48 3 2.41 0 .69-.49 1.79-2.7 1.79-2.06 0-2.87-.92-2.98-2.1h-2.2c.12 2.19 1.76 3.42 3.68 3.83V21h3v-2.15c1.95-.37 3.5-1.5 3.5-3.55 0-2.84-2.43-3.81-4.7-4.4z"/>
+                            </svg>
+                        </div>
                         <div class="analytics-content">
                             <div class="analytics-label">Tulot yhteensä</div>
                             <div class="analytics-value">+8,450.00 €</div>
@@ -1787,7 +2269,11 @@
                     </div>
                     
                     <div class="analytics-card expenses">
-                        <div class="analytics-icon">💸</div>
+                        <div class="revolut-analytics-icon">
+                            <svg viewBox="0 0 24 24" fill="currentColor">
+                                <path d="M12,2A10,10 0 0,1 22,12A10,10 0 0,1 12,22A10,10 0 0,1 2,12A10,10 0 0,1 12,2M12,4A8,8 0 0,0 4,12A8,8 0 0,0 12,20A8,8 0 0,0 20,12A8,8 0 0,0 12,4M12,6A6,6 0 0,1 18,12C18,14.97 15.84,17.44 13,17.92V18H11V17.92C8.16,17.44 6,14.97 6,12A6,6 0 0,1 12,6M12,8A4,4 0 0,0 8,12A4,4 0 0,0 12,16A4,4 0 0,0 16,12A4,4 0 0,0 12,8Z"/>
+                            </svg>
+                        </div>
                         <div class="analytics-content">
                             <div class="analytics-label">Menot yhteensä</div>
                             <div class="analytics-value">-3,215.40 €</div>
@@ -1811,7 +2297,11 @@
                         
                         <div class="filter-chips">
                             <button class="filter-chip active" onclick="filterTransactions('all')">
-                                <span class="chip-icon">📊</span>
+                                <span class="revolut-chip-icon">
+                                    <svg viewBox="0 0 24 24" fill="currentColor">
+                                        <path d="M9 17H7v-7h2v7zm4 0h-2V7h2v10zm4 0h-2v-4h2v4zm2 2H5V5h14v14z"/>
+                                    </svg>
+                                </span>
                                 Kaikki
                             </button>
                             <button class="filter-chip" onclick="filterTransactions('credit')">
@@ -1840,7 +2330,11 @@
                                 PDF
                             </button>
                             <button class="export-btn" onclick="exportToExcel()">
-                                <span class="export-icon">📊</span>
+                                <span class="revolut-export-icon">
+                                    <svg viewBox="0 0 24 24" fill="currentColor">
+                                        <path d="M14,2H6A2,2 0 0,0 4,4V20A2,2 0 0,0 6,22H18A2,2 0 0,0 20,20V8L14,2M18,20H6V4H13V9H18V20Z"/>
+                                    </svg>
+                                </span>
                                 Excel
                             </button>
                         </div>
@@ -1869,12 +2363,7 @@
                         <div class="receipt-header">
                             <div class="bank-logo">SumUp Banking</div>
                             <div class="receipt-type">MAKSUKUITTI</div>
-                            <div class="receipt-date">${new Date().toLocaleDateString('fi-FI', { 
-                                weekday: 'long', 
-                                year: 'numeric', 
-                                month: 'long', 
-                                day: 'numeric' 
-                            })}</div>
+                            <div class="receipt-date" id="receipt-current-date">8. marraskuuta 2025</div>
                         </div>
 
                         <!-- Transaction Details -->
@@ -1907,15 +2396,15 @@
                             <h4 class="section-title">AJOITUS</h4>
                             <div class="receipt-line">
                                 <span class="label">Maksupäivä:</span>
-                                <span class="value">${new Date().toLocaleDateString('fi-FI')}</span>
+                                <span class="value" id="receipt-payment-date">8.11.2025</span>
                             </div>
                             <div class="receipt-line">
                                 <span class="label">Kirjausaika:</span>
-                                <span class="value">${new Date().toLocaleTimeString('fi-FI')}</span>
+                                <span class="value" id="receipt-booking-time">22:15:30</span>
                             </div>
                             <div class="receipt-line">
                                 <span class="label">Eräpäivä:</span>
-                                <span class="value">${new Date(Date.now() + 3*24*60*60*1000).toLocaleDateString('fi-FI')}</span>
+                                <span class="value" id="receipt-due-date">11.11.2025</span>
                             </div>
                         </div>
 
@@ -1941,15 +2430,15 @@
                             <h4 class="section-title">TEKNINEN TIETO</h4>
                             <div class="receipt-line">
                                 <span class="label">Tapahtuma-ID:</span>
-                                <span class="value">${Date.now()}</span>
+                                <span class="value" id="receipt-transaction-id">1731097200000</span>
                             </div>
                             <div class="receipt-line">
                                 <span class="label">Arkistointitunnus:</span>
-                                <span class="value">ARC-${new Date().getFullYear()}-${String(Date.now()).slice(-6)}</span>
+                                <span class="value" id="receipt-archive-id">ARC-2025-097200</span>
                             </div>
                             <div class="receipt-line">
                                 <span class="label">Palvelutunnus:</span>
-                                <span class="value">SB-PROD-${Math.floor(Math.random()*10000)}</span>
+                                <span class="value" id="receipt-service-id">SB-PROD-7834</span>
                             </div>
                         </div>
 
@@ -1960,8 +2449,8 @@
                                 Puh: 020 123 4567 | www.sumup.fi<br>
                                 Säilytä kuitti maksutositteena
                             </div>
-                            <div class="verification-code">
-                                Varmennuskoodi: ${Math.floor(Math.random()*1000000).toString().padStart(6, '0')}
+                            <div class="verification-code" id="receipt-verification-code">
+                                Varmennuskoodi: 673829
                             </div>
                         </div>
                     </div>
@@ -1982,7 +2471,11 @@
                     <div class="card">
                         <div class="settings-item">
                             <div class="settings-info">
-                                <div class="settings-icon">👤</div>
+                                <div class="revolut-settings-icon">
+                                    <svg viewBox="0 0 24 24" fill="currentColor">
+                                        <path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/>
+                                    </svg>
+                                </div>
                                 <div class="settings-text">
                                     <h4>Käyttäjä</h4>
                                     <p id="user-name">Aku Ankka</p>
@@ -1993,7 +2486,11 @@
                         
                         <div class="settings-item">
                             <div class="settings-info">
-                                <div class="settings-icon">🏢</div>
+                                <div class="revolut-settings-icon">
+                                    <svg viewBox="0 0 24 24" fill="currentColor">
+                                        <path d="M12 7V3H2v18h20V7H12zM6 19H4v-2h2v2zm0-4H4v-2h2v2zm0-4H4V9h2v2zm0-4H4V5h2v2zm4 12H8v-2h2v2zm0-4H8v-2h2v2zm0-4H8V9h2v2zm0-4H8V5h2v2zm10 12h-8v-2h2v-2h-2v-2h2v-2h-2V9h8v10z"/>
+                                    </svg>
+                                </div>
                                 <div class="settings-text">
                                     <h4>Yritys</h4>
                                     <p id="company-name">Firma Oy</p>
@@ -2004,7 +2501,11 @@
                         
                         <div class="settings-item">
                             <div class="settings-info">
-                                <div class="settings-icon">💳</div>
+                                <div class="revolut-settings-icon">
+                                    <svg viewBox="0 0 24 24" fill="currentColor">
+                                        <path d="M20 4H4c-1.11 0-1.99.89-1.99 2L2 18c0 1.11.89 2 2 2h16c1.11 0 2-.89 2-2V6c0-1.11-.89-2-2-2zm0 14H4v-6h16v6zm0-10H4V6h16v2z"/>
+                                    </svg>
+                                </div>
                                 <div class="settings-text">
                                     <h4>Tilinumero</h4>
                                     <p>FI12 3456 7890 1234 56</p>
@@ -2014,7 +2515,11 @@
                         
                         <div class="settings-item">
                             <div class="settings-info">
-                                <div class="settings-icon">💰</div>
+                                <div class="revolut-settings-icon">
+                                    <svg viewBox="0 0 24 24" fill="currentColor">
+                                        <path d="M11.8 10.9c-2.27-.59-3-1.2-3-2.15 0-1.09 1.01-1.85 2.7-1.85 1.78 0 2.44.85 2.5 2.1h2.21c-.07-1.72-1.12-3.3-3.21-3.81V3h-3v2.16c-1.94.42-3.5 1.68-3.5 3.61 0 2.31 1.91 3.46 4.7 4.13 2.5.6 3 1.48 3 2.41 0 .69-.49 1.79-2.7 1.79-2.06 0-2.87-.92-2.98-2.1h-2.2c.12 2.19 1.76 3.42 3.68 3.83V21h3v-2.15c1.95-.37 3.5-1.5 3.5-3.55 0-2.84-2.43-3.81-4.7-4.4z"/>
+                                    </svg>
+                                </div>
                                 <div class="settings-text">
                                     <h4>Saldo</h4>
                                     <p id="settings-balance">5,234.60 €</p>
@@ -2031,7 +2536,11 @@
                     <div class="card">
                         <div class="settings-item">
                             <div class="settings-info">
-                                <div class="settings-icon">📳</div>
+                                <div class="revolut-settings-icon">
+                                    <svg viewBox="0 0 24 24" fill="currentColor">
+                                        <path d="M5,2C3.9,2 3,2.9 3,4V8H5V4H19V8H21V4C21,2.9 20.1,2 19,2H5M7,10V12H9V10H7M11,10V12H13V10H11M15,10V12H17V10H15M7,14V16H9V14H7M11,14V16H13V14H11M15,14V16H17V14H15M7,18V20H9V18H7M11,18V20H13V18H11M15,18V20H17V18H15Z"/>
+                                    </svg>
+                                </div>
                                 <div class="settings-text">
                                     <h4>Värinä</h4>
                                     <p>Haptinen palaute toiminnoille</p>
@@ -2042,7 +2551,11 @@
                         
                         <div class="settings-item">
                             <div class="settings-info">
-                                <div class="settings-icon">🎭</div>
+                                <div class="revolut-settings-icon">
+                                    <svg viewBox="0 0 24 24" fill="currentColor">
+                                        <path d="M12,18.5L10,16.5L7.5,19L5,16.5L3,18.5L5,20.5L7.5,23L10,20.5L12,22.5L14,20.5L16.5,23L19,20.5L21,22.5L23,20.5L21,18.5L19,16.5L16.5,19L14,16.5L12,18.5Z"/>
+                                    </svg>
+                                </div>
                                 <div class="settings-text">
                                     <h4>Animaatiot</h4>
                                     <p>Siirtymäanimaatiot ja tehosteet</p>
@@ -2053,7 +2566,11 @@
                         
                         <div class="settings-item">
                             <div class="settings-info">
-                                <div class="settings-icon">🌙</div>
+                                <div class="revolut-settings-icon">
+                                    <svg viewBox="0 0 24 24" fill="currentColor">
+                                        <path d="M17.75,4.09L15.22,6.03L16.13,9.09L13.5,7.28L10.87,9.09L11.78,6.03L9.25,4.09L12.44,4L13.5,1L14.56,4L17.75,4.09M21.25,11L19.61,12.25L20.2,14.23L18.5,13.06L16.8,14.23L17.39,12.25L15.75,11L17.81,10.95L18.5,9L19.19,10.95L21.25,11M18.97,15.95C19.8,15.87 20.69,17.05 20.16,17.8C19.84,18.25 19.5,18.67 19.08,19.07C15.17,23 8.84,23 4.94,19.07C1.03,15.17 1.03,8.83 4.94,4.93C5.34,4.53 5.76,4.17 6.21,3.85C6.96,3.32 8.14,4.21 8.06,5.04C7.79,7.9 8.75,10.87 10.95,13.06C13.14,15.26 16.1,16.22 18.97,15.95M17.33,17.97C14.5,17.81 11.7,16.64 9.53,14.5C7.36,12.31 6.2,9.5 6.04,6.68C3.23,9.82 3.34,14.4 6.35,17.41C9.37,20.43 14,20.54 17.33,17.97Z"/>
+                                    </svg>
+                                </div>
                                 <div class="settings-text">
                                     <h4>Tumma teema</h4>
                                     <p>Käytä tummaa väripalettia</p>
@@ -2064,7 +2581,11 @@
 
                         <div class="settings-item">
                             <div class="settings-info">
-                                <div class="settings-icon">💳</div>
+                                <div class="revolut-settings-icon">
+                                    <svg viewBox="0 0 24 24" fill="currentColor">
+                                        <path d="M20 4H4c-1.11 0-1.99.89-1.99 2L2 18c0 1.11.89 2 2 2h16c1.11 0 2-.89 2-2V6c0-1.11-.89-2-2-2zm0 14H4v-6h16v6zm0-10H4V6h16v2z"/>
+                                    </svg>
+                                </div>
                                 <div class="settings-text">
                                     <h4>Korttien määrä</h4>
                                     <p>Hallitse yrityksen kortteja</p>
@@ -2080,7 +2601,11 @@
 
                         <div class="settings-item">
                             <div class="settings-info">
-                                <div class="settings-icon">📊</div>
+                                <div class="revolut-settings-icon">
+                                    <svg viewBox="0 0 24 24" fill="currentColor">
+                                        <path d="M9 17H7v-7h2v7zm4 0h-2V7h2v10zm4 0h-2v-4h2v4zm2 2H5V5h14v14z"/>
+                                    </svg>
+                                </div>
                                 <div class="settings-text">
                                     <h4>Kehittyneet analytiikka</h4>
                                     <p>Yksityiskohtaiset raportit ja trendit</p>
@@ -2091,7 +2616,11 @@
 
                         <div class="settings-item">
                             <div class="settings-info">
-                                <div class="settings-icon">🤖</div>
+                                <div class="revolut-settings-icon">
+                                    <svg viewBox="0 0 24 24" fill="currentColor">
+                                        <path d="M20.5 2H3.5C2.67 2 2 2.67 2 3.5V20.5C2 21.33 2.67 22 3.5 22H20.5C21.33 22 22 21.33 22 20.5V3.5C22 2.67 21.33 2 20.5 2M20 20H4V4H20V20M17.5 14C17.5 12.07 15.93 10.5 14 10.5H11V9H17V7H9V12H14C14.83 12 15.5 12.67 15.5 13.5S14.83 15 14 15H9V17H14C15.93 17 17.5 15.43 17.5 14Z"/>
+                                    </svg>
+                                </div>
                                 <div class="settings-text">
                                     <h4>AI-avustaja</h4>
                                     <p>Älykkäät säästösuositukset</p>
@@ -2108,7 +2637,11 @@
                     <div class="card">
                         <div class="settings-item">
                             <div class="settings-info">
-                                <div class="settings-icon">🔐</div>
+                                <div class="revolut-settings-icon">
+                                    <svg viewBox="0 0 24 24" fill="currentColor">
+                                        <path d="M12,1L3,5V11C3,16.55 6.84,21.74 12,23C17.16,21.74 21,16.55 21,11V5L12,1M12,7C13.4,7 14.8,8.6 14.8,10V11H16V18H8V11H9.2V10C9.2,8.6 10.6,7 12,7M12,8.2C11.2,8.2 10.4,8.7 10.4,10V11H13.6V10C13.6,8.7 12.8,8.2 12,8.2Z"/>
+                                    </svg>
+                                </div>
                                 <div class="settings-text">
                                     <h4>Biometrinen tunnistus</h4>
                                     <p>Face ID tai Touch ID</p>
@@ -2119,7 +2652,11 @@
                         
                         <div class="settings-item">
                             <div class="settings-info">
-                                <div class="settings-icon">🔔</div>
+                                <div class="revolut-settings-icon">
+                                    <svg viewBox="0 0 24 24" fill="currentColor">
+                                        <path d="M12 22c1.1 0 2-.9 2-2h-4c0 1.1.89 2 2 2zm6-6v-5c0-3.07-1.64-5.64-4.5-6.32V4c0-.83-.67-1.5-1.5-1.5s-1.5.67-1.5 1.5v.68C7.63 5.36 6 7.92 6 11v5l-2 2v1h16v-1l-2-2z"/>
+                                    </svg>
+                                </div>
                                 <div class="settings-text">
                                     <h4>Ilmoitukset</h4>
                                     <p>Tapahtumat ja tietoturva</p>
@@ -2138,7 +2675,7 @@
                             📄 Vie tapahtumat
                         </button>
                         <button class="btn btn-secondary" style="width: 100%;" onclick="clearTransactions()">
-                            🗑️ Tyhjennä historia
+                            Tyhjennä historia
                         </button>
                     </div>
                 </div>
@@ -2148,23 +2685,43 @@
         <!-- Tab Navigation -->
         <div class="tab-nav">
             <div class="tab-item active" onclick="showScreen('home')">
-                <div class="tab-icon">🏠</div>
+                <div class="revolut-tab-icon">
+                    <svg viewBox="0 0 24 24" fill="currentColor">
+                        <path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/>
+                    </svg>
+                </div>
                 <div class="tab-label">Koti</div>
             </div>
             <div class="tab-item" onclick="showScreen('payment')">
-                <div class="tab-icon">💸</div>
+                <div class="revolut-tab-icon">
+                    <svg viewBox="0 0 24 24" fill="currentColor">
+                        <path d="M19 14V6c0-1.1-.9-2-2-2H3c-1.1 0-2 .9-2 2v8c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2zm-9-1c-1.66 0-3-1.34-3-3s1.34-3 3-3 3 1.34 3 3-1.34 3-3 3zm13-6v11c0 1.1-.9 2-2 2H4v-2h17V7h2z"/>
+                    </svg>
+                </div>
                 <div class="tab-label">Maksa</div>
             </div>
             <div class="tab-item" onclick="showScreen('cards')">
-                <div class="tab-icon">💳</div>
+                <div class="revolut-tab-icon">
+                    <svg viewBox="0 0 24 24" fill="currentColor">
+                        <path d="M20 4H4c-1.11 0-1.99.89-1.99 2L2 18c0 1.11.89 2 2 2h16c1.11 0 2-.89 2-2V6c0-1.11-.89-2-2-2zm0 14H4v-6h16v6zm0-10H4V6h16v2z"/>
+                    </svg>
+                </div>
                 <div class="tab-label">Kortit</div>
             </div>
             <div class="tab-item" onclick="showScreen('receipt')">
-                <div class="tab-icon">🧾</div>
+                <div class="revolut-tab-icon">
+                    <svg viewBox="0 0 24 24" fill="currentColor">
+                        <path d="M14 2H6c-1.1 0-1.99.9-1.99 2L4 20c0 1.1.89 2 2 2h10c1.1 0 2-.9 2-2V8l-6-6zm2 16H8v-2h8v2zm0-4H8v-2h8v2zm-3-5V3.5L18.5 9H13z"/>
+                    </svg>
+                </div>
                 <div class="tab-label">Kuitti</div>
             </div>
             <div class="tab-item" onclick="showScreen('settings')">
-                <div class="tab-icon">⚙️</div>
+                <div class="revolut-tab-icon">
+                    <svg viewBox="0 0 24 24" fill="currentColor">
+                        <path d="M19.14,12.94c0.04-0.3,0.06-0.61,0.06-0.94c0-0.32-0.02-0.64-0.07-0.94l2.03-1.58c0.18-0.14,0.23-0.41,0.12-0.61 l-1.92-3.32c-0.12-0.22-0.37-0.29-0.59-0.22l-2.39,0.96c-0.5-0.38-1.03-0.7-1.62-0.94L14.4,2.81c-0.04-0.24-0.24-0.41-0.48-0.41 h-3.84c-0.24,0-0.43,0.17-0.47,0.41L9.25,5.35C8.66,5.59,8.12,5.92,7.63,6.29L5.24,5.33c-0.22-0.08-0.47,0-0.59,0.22L2.74,8.87 C2.62,9.08,2.66,9.34,2.86,9.48l2.03,1.58C4.84,11.36,4.8,11.69,4.8,12s0.02,0.64,0.07,0.94l-2.03,1.58 c-0.18,0.14-0.23,0.41-0.12,0.61l1.92,3.32c0.12,0.22,0.37,0.29,0.59,0.22l2.39-0.96c0.5,0.38,1.03,0.7,1.62,0.94l0.36,2.54 c0.05,0.24,0.24,0.41,0.48,0.41h3.84c0.24,0,0.44-0.17,0.47-0.41l0.36-2.54c0.59-0.24,1.13-0.56,1.62-0.94l2.39,0.96 c0.22,0.08,0.47,0,0.59-0.22l1.92-3.32c0.12-0.22,0.07-0.47-0.12-0.61L19.14,12.94z M12,15.6c-1.98,0-3.6-1.62-3.6-3.6 s1.62-3.6,3.6-3.6s3.6,1.62,3.6,3.6S13.98,15.6,12,15.6z"/>
+                    </svg>
+                </div>
                 <div class="tab-label">Asetukset</div>
             </div>
         </div>
@@ -2174,7 +2731,7 @@
             <div class="success-content">
                 <div class="success-icon">✅</div>
                 <h3 style="margin-bottom: var(--space-2);">Maksu onnistui!</h3>
-                <p style="color: var(--text-secondary);">Tapahtuma on tallennettu</p>
+                <p style="color: var(--text-secondary);">Maksu on hyväksytty</p>
             </div>
         </div>
     </div>
@@ -2381,7 +2938,11 @@
                 if (filtered.length === 0) {
                     container.innerHTML = `
                         <div style="text-align: center; padding: var(--space-8);">
-                            <div style="font-size: 3rem; margin-bottom: var(--space-4); opacity: 0.3;">📊</div>
+                            <div class="revolut-empty-icon">
+                                <svg viewBox="0 0 24 24" fill="currentColor">
+                                    <path d="M9 17H7v-7h2v7zm4 0h-2V7h2v10zm4 0h-2v-4h2v4zm2 2H5V5h14v14z"/>
+                                </svg>
+                            </div>
                             <p style="color: var(--text-secondary); font-size: 0.9rem;">Ei tapahtumia valitulle suodattimelle</p>
                         </div>
                     `;
@@ -2568,7 +3129,11 @@
                 if (content) {
                     content.innerHTML = `
                         <div style="text-align: center; margin-bottom: var(--space-6);">
-                            <div style="font-size: 2rem; margin-bottom: var(--space-2);">🧾</div>
+                            <div class="revolut-receipt-icon">
+                                <svg viewBox="0 0 24 24" fill="currentColor">
+                                    <path d="M14 2H6c-1.1 0-1.99.9-1.99 2L4 20c0 1.1.89 2 2 2h10c1.1 0 2-.9 2-2V8l-6-6zm2 16H8v-2h8v2zm0-4H8v-2h8v2zm-3-5V3.5L18.5 9H13z"/>
+                                </svg>
+                            </div>
                             <h3>Maksukuitti</h3>
                         </div>
                         
@@ -2677,6 +3242,30 @@
 
         function showScreen(screenId) {
             app.showScreen(screenId);
+            
+            // Update receipt with current data when opening receipt screen
+            if (screenId === 'receipt') {
+                updateReceiptData();
+            }
+        }
+
+        function updateReceiptData() {
+            const now = new Date();
+            const dueDate = new Date(now.getTime() + 3 * 24 * 60 * 60 * 1000);
+            
+            // Update dates
+            document.getElementById('receipt-current-date').textContent = 
+                now.toLocaleDateString('fi-FI', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
+            document.getElementById('receipt-payment-date').textContent = now.toLocaleDateString('fi-FI');
+            document.getElementById('receipt-booking-time').textContent = now.toLocaleTimeString('fi-FI');
+            document.getElementById('receipt-due-date').textContent = dueDate.toLocaleDateString('fi-FI');
+            
+            // Update transaction details
+            document.getElementById('receipt-transaction-id').textContent = Date.now();
+            document.getElementById('receipt-archive-id').textContent = `ARC-${now.getFullYear()}-${String(Date.now()).slice(-6)}`;
+            document.getElementById('receipt-service-id').textContent = `SB-PROD-${Math.floor(Math.random()*10000)}`;
+            document.getElementById('receipt-verification-code').textContent = 
+                `Varmennuskoodi: ${Math.floor(Math.random()*1000000).toString().padStart(6, '0')}`;
         }
 
         function filterTransactions(type) {
@@ -2708,7 +3297,7 @@
         }
 
         function showNotifications() {
-            alert('🔔 Ilmoitukset\n\n• Maksu suoritettu: -45.50 €\n• Saldo päivitetty\n• Turvallisuusasetusten tarkistus suositeltu');
+            alert('Ilmoitukset\n\n• Maksu suoritettu: -45.50 €\n• Saldo päivitetty\n• Turvallisuusasetusten tarkistus suositeltu');
         }
 
         function showProfile() {
@@ -2717,7 +3306,7 @@
 
         // New Payment Flow Functions
         function startPaymentVerification() {
-            console.log('🚀 Starting payment verification...');
+            console.log('Starting payment verification...');
             
             const iban = document.getElementById('payment-iban').value;
             const amount = document.getElementById('payment-amount').value;
@@ -2826,7 +3415,7 @@
 
         // Cards Functions
         function requestNewCard() {
-            alert('🏧 Uuden kortin hakeminen aloitettu!\n\nKortti saapuu 5-7 arkipäivässä.');
+            alert('Uuden kortin hakeminen aloitettu!\n\nKortti saapuu 5-7 arkipäivässä.');
         }
 
         function addToAppleWallet() {
@@ -3004,7 +3593,7 @@
         }
 
         function exportToExcel() {
-            alert('📊 Excel-vienti aloitettu!\n\nTiedosto valmistuu hetkessä...');
+            alert('Excel-vienti aloitettu!\n\nTiedosto valmistuu hetkessä...');
             // Simulate Excel generation delay
             setTimeout(() => {
                 const link = document.createElement('a');
@@ -3025,7 +3614,7 @@
                 🏦 TAPAHTUMAN TIEDOT
                 
                 📋 Kuvaus: ${transaction.description}
-                💰 Summa: ${app.formatCurrency(transaction.amount)}
+                Summa: ${app.formatCurrency(transaction.amount)}
                 📅 Päivämäärä: ${new Date(transaction.date).toLocaleDateString('fi-FI')}
                 🔗 Viitenumero: ${Math.floor(Math.random() * 100000000)}
                 📁 Arkistointitunnus: ARC-${Date.now()}-${Math.floor(Math.random() * 1000)}

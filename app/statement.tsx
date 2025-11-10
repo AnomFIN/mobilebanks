@@ -9,19 +9,19 @@ import {
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useRouter } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
-import * as Haptics from 'expo-haptics';
+import { impactAsync } from '../src/utils/safeHaptics';
 import { Colors, Spacing, BorderRadius, FontSize, FontWeight } from '../src/theme/theme';
 import { useAccount } from '../src/context/AccountContext';
 import Card from '../src/components/Card';
 import HeaderBar from '../src/components/HeaderBar';
 
 export default function StatementScreen() {
-  const { transactions, balance } = useAccount();
+  const { transactions, balance, language } = useAccount();
   const router = useRouter();
   const [selectedFilter, setSelectedFilter] = useState<'all' | 'credit' | 'debit'>('all');
 
   const handleFilterChange = (filter: 'all' | 'credit' | 'debit') => {
-    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+    impactAsync((global as any).Haptics?.ImpactFeedbackStyle?.Light || 'light');
     setSelectedFilter(filter);
   };
 
@@ -42,13 +42,51 @@ export default function StatementScreen() {
     return t.type === selectedFilter;
   });
 
+  const t = (key: string) => {
+    if (language === 'en') {
+      const en: Record<string, string> = {
+        title: 'Statement',
+        subtitle: 'Balance',
+        all: 'All',
+        income: 'Income',
+        expenses: 'Expenses',
+        transactions: 'Transactions',
+        noTransactions: 'No transactions',
+      };
+      return en[key] || key;
+    }
+    const fi: Record<string, string> = {
+      title: 'Tiliote',
+      subtitle: 'Saldo',
+      all: 'Kaikki',
+      income: 'Tulot',
+      expenses: 'Menot',
+      transactions: 'Tapahtumat',
+      noTransactions: 'Ei tapahtumia',
+    };
+    return fi[key] || key;
+  };
+
+  const openingBalance = 38880.31;
+  const formatMoneyWithSpace = (n: number) => {
+    return n.toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ' ');
+  };
+
   return (
     <SafeAreaView style={styles.container} edges={['top']}>
       <HeaderBar />
       <ScrollView style={styles.scrollView} showsVerticalScrollIndicator={false}>
         <View style={styles.header}>
-          <Text style={styles.title}>Tiliote</Text>
-          <Text style={styles.subtitle}>Saldo: {balance.toFixed(2)} €</Text>
+          <Text style={styles.title}>{t('title')}</Text>
+          <Text style={styles.period}>1.11.2025 - 9.11.2025</Text>
+          <View style={styles.balanceRow}>
+            <Text style={styles.balanceLabel}>Opening balance</Text>
+            <Text style={styles.balanceValue}>{formatMoneyWithSpace(openingBalance)} €</Text>
+          </View>
+          <View style={styles.balanceRow}>
+            <Text style={styles.balanceLabel}>Closing balance</Text>
+            <Text style={styles.balanceValue}>{formatMoneyWithSpace(balance)} €</Text>
+          </View>
         </View>
 
         <View style={styles.filterContainer}>
@@ -57,7 +95,7 @@ export default function StatementScreen() {
             onPress={() => handleFilterChange('all')}
           >
             <Text style={[styles.filterText, selectedFilter === 'all' && styles.filterTextActive]}>
-              Kaikki
+              {t('all')}
             </Text>
           </TouchableOpacity>
 
@@ -66,7 +104,7 @@ export default function StatementScreen() {
             onPress={() => handleFilterChange('credit')}
           >
             <Text style={[styles.filterText, selectedFilter === 'credit' && styles.filterTextActive]}>
-              Tulot
+              {t('income')}
             </Text>
           </TouchableOpacity>
 
@@ -75,13 +113,13 @@ export default function StatementScreen() {
             onPress={() => handleFilterChange('debit')}
           >
             <Text style={[styles.filterText, selectedFilter === 'debit' && styles.filterTextActive]}>
-              Menot
+              {t('expenses')}
             </Text>
           </TouchableOpacity>
         </View>
 
         <View style={styles.transactionsSection}>
-          <Text style={styles.sectionTitle}>Tapahtumat ({filteredTransactions.length})</Text>
+          <Text style={styles.sectionTitle}>{t('transactions')} ({filteredTransactions.length})</Text>
           
           {filteredTransactions.map((transaction) => (
             <Card key={transaction.id} style={styles.transactionCard}>
@@ -96,7 +134,11 @@ export default function StatementScreen() {
                   </View>
                   <View style={styles.transactionInfo}>
                     <Text style={styles.transactionTitle}>{transaction.title}</Text>
-                    <Text style={styles.transactionCategory}>{transaction.category}</Text>
+                    {transaction.recipient ? (
+                      <Text style={styles.transactionRecipient}>{transaction.recipient}</Text>
+                    ) : (
+                      <Text style={styles.transactionCategory}>{transaction.category}</Text>
+                    )}
                     <Text style={styles.transactionDate}>{formatDate(transaction.date)}</Text>
                   </View>
                 </View>
@@ -113,7 +155,7 @@ export default function StatementScreen() {
           {filteredTransactions.length === 0 && (
             <Card style={styles.emptyState}>
               <Ionicons name="document-outline" size={48} color={Colors.textSecondary} />
-              <Text style={styles.emptyStateText}>Ei tapahtumia</Text>
+              <Text style={styles.emptyStateText}>{t('noTransactions')}</Text>
             </Card>
           )}
         </View>
@@ -183,6 +225,26 @@ const styles = StyleSheet.create({
     color: Colors.text,
     marginBottom: Spacing.md,
   },
+  period: {
+    fontSize: FontSize.sm,
+    color: Colors.textSecondary,
+    marginBottom: Spacing.sm,
+  },
+  balanceRow: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginBottom: Spacing.xs,
+  },
+  balanceLabel: {
+    fontSize: FontSize.sm,
+    color: Colors.textSecondary,
+  },
+  balanceValue: {
+    fontSize: FontSize.sm,
+    color: Colors.text,
+    fontWeight: FontWeight.semibold,
+  },
   transactionCard: {
     marginBottom: Spacing.sm,
     padding: Spacing.md,
@@ -218,6 +280,12 @@ const styles = StyleSheet.create({
     fontSize: FontSize.sm,
     color: Colors.textSecondary,
     marginBottom: 2,
+  },
+  transactionRecipient: {
+    fontSize: FontSize.sm,
+    color: Colors.textSecondary,
+    marginBottom: 2,
+    fontWeight: FontWeight.medium,
   },
   transactionDate: {
     fontSize: FontSize.xs,

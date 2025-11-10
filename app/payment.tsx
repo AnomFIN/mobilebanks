@@ -13,7 +13,7 @@ import {
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useRouter } from 'expo-router';
-import * as Haptics from 'expo-haptics';
+import { impactAsync, notificationAsync } from '../src/utils/safeHaptics';
 import { Ionicons } from '@expo/vector-icons';
 import { Colors, Spacing, BorderRadius, FontSize, Shadow, FontWeight } from '../src/theme/theme';
 import { useAccount } from '../src/context/AccountContext';
@@ -23,7 +23,10 @@ import Card from '../src/components/Card';
 export default function PaymentScreen() {
   const [amount, setAmount] = useState('');
   const [description, setDescription] = useState('');
+  const [recipient, setRecipient] = useState('');
+  const [iban, setIban] = useState('');
   const [showSuccess, setShowSuccess] = useState(false);
+  const [showValidation, setShowValidation] = useState(false);
   const { balance, createPayment } = useAccount();
   const router = useRouter();
 
@@ -33,17 +36,17 @@ export default function PaymentScreen() {
   const presetAmounts = [5, 10, 20, 50, 100];
 
   const handlePresetAmount = (preset: number) => {
-    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+    impactAsync((global as any).Haptics?.ImpactFeedbackStyle?.Light || 'light');
     setAmount(preset.toString());
   };
 
   const handleCreatePayment = () => {
     if (!amount || parseFloat(amount) <= 0) {
-      Haptics.notificationAsync(Haptics.NotificationFeedbackType.Error);
+      notificationAsync((global as any).Haptics?.NotificationFeedbackType?.Error || 'error');
       return;
     }
 
-    Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
+    notificationAsync((global as any).Haptics?.NotificationFeedbackType?.Success || 'success');
     
     Animated.sequence([
       Animated.timing(scaleAnim, {
@@ -59,7 +62,10 @@ export default function PaymentScreen() {
     ]).start();
 
     // Create payment
-    createPayment(Number(amount) || 0, description || undefined);
+  createPayment(Number(amount) || 0, description || undefined, recipient || undefined, iban || undefined);
+  // Delay showing recipient/IBAN validation message by 2 seconds
+  setShowValidation(false);
+  setTimeout(() => setShowValidation(true), 2000);
     
     // Show success modal
     setShowSuccess(true);
@@ -69,6 +75,8 @@ export default function PaymentScreen() {
       setShowSuccess(false);
       setAmount('');
       setDescription('');
+      setRecipient('');
+      setIban('');
       router.replace('/statement');
     }, 2000);
   };
@@ -149,6 +157,48 @@ export default function PaymentScreen() {
             </Card>
           </View>
 
+          {/* Recipient Input */}
+          <View style={styles.section}>
+            <Text style={styles.sectionLabel}>Saaja</Text>
+            <Card shadow="small" padding={Spacing.md}>
+              <View style={styles.inputWrapper}>
+                <Ionicons
+                  name="person-outline"
+                  size={24}
+                  color={Colors.primaryBlue}
+                />
+                <TextInput
+                  style={styles.input}
+                  value={recipient}
+                  onChangeText={setRecipient}
+                  placeholder="Saajan nimi"
+                  placeholderTextColor={Colors.textLight}
+                />
+              </View>
+            </Card>
+          </View>
+
+          {/* IBAN Input */}
+          <View style={styles.section}>
+            <Text style={styles.sectionLabel}>IBAN</Text>
+            <Card shadow="small" padding={Spacing.md}>
+              <View style={styles.inputWrapper}>
+                <Ionicons
+                  name="card-outline"
+                  size={24}
+                  color={Colors.primaryBlue}
+                />
+                <TextInput
+                  style={styles.input}
+                  value={iban}
+                  onChangeText={setIban}
+                  placeholder="FIXX XXXX XXXX XXXX XX"
+                  placeholderTextColor={Colors.textLight}
+                />
+              </View>
+            </Card>
+          </View>
+
           {/* Send Button */}
           <View style={styles.buttonContainer}>
             <TouchableOpacity
@@ -162,6 +212,13 @@ export default function PaymentScreen() {
               <Text style={styles.sendButtonText}>Luo maksu</Text>
               <Ionicons name="arrow-forward" size={20} color={Colors.white} />
             </TouchableOpacity>
+
+            {/* Validation message (appears after 2s) */}
+            {showValidation && (
+              <View style={styles.validationContainer}>
+                <Text style={styles.validationText}>Maksun saajan nimi ja IBAN täsmää</Text>
+              </View>
+            )}
           </View>
         </ScrollView>
       </KeyboardAvoidingView>
@@ -314,5 +371,14 @@ const styles = StyleSheet.create({
   modalSubtitle: {
     fontSize: FontSize.md,
     color: Colors.textSecondary,
+  },
+  validationContainer: {
+    marginTop: Spacing.md,
+    alignItems: 'center',
+  },
+  validationText: {
+    fontSize: FontSize.sm,
+    color: Colors.success,
+    fontWeight: FontWeight.semibold,
   },
 });

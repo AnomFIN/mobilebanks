@@ -10,15 +10,17 @@ interface CardProps {
   gradient?: boolean;
   shadow?: 'small' | 'medium' | 'large';
   padding?: number;
+  nativeID?: string;
 }
 
-const Card: React.FC<CardProps> = ({ 
+const Card = React.forwardRef<any, CardProps>(({ 
   children, 
   style, 
   gradient = false, 
   shadow = 'medium',
-  padding = 16 
-}) => {
+  padding = 16,
+  nativeID,
+}, ref) => {
   const theme = useTheme();
   
   const shadowStyle = shadow ? Shadow[shadow] : {};
@@ -31,7 +33,10 @@ const Card: React.FC<CardProps> = ({
 
   if (gradient) {
     return (
+      // @ts-ignore
       <LinearGradient 
+        ref={ref}
+        nativeID={nativeID}
         colors={[theme.colors.cardGradientStart, theme.colors.cardGradientEnd]} 
         start={[0, 0]} 
         end={[1, 1]} 
@@ -43,11 +48,11 @@ const Card: React.FC<CardProps> = ({
   }
 
   return (
-    <View style={[containerStyle, { backgroundColor: '#FFFFFF' }]}>
+    <View ref={ref} nativeID={nativeID} style={[containerStyle, { backgroundColor: '#FFFFFF' }]}> 
       {children}
     </View>
   );
-};
+});
 
 const styles = StyleSheet.create({ 
   container: { 
