@@ -61,6 +61,41 @@ def test_python_http_server():
         print("✗ Python http.server module not available")
         return False
 
+def test_ngrok_functions():
+    """Test that ngrok-related functions exist and work"""
+    try:
+        from launch_web_server import (
+            check_ngrok_installed, 
+            check_ngrok_authenticated,
+            get_ngrok_public_url
+        )
+        print("✓ Ngrok helper functions are available")
+        
+        # Test check_ngrok_installed
+        ngrok_installed = check_ngrok_installed()
+        print(f"  - ngrok installed: {ngrok_installed}")
+        
+        # Test that get_ngrok_public_url is callable
+        if callable(get_ngrok_public_url):
+            print("  - get_ngrok_public_url is callable")
+        
+        return True
+    except Exception as e:
+        print(f"✗ Failed to test ngrok functions: {e}")
+        return False
+
+def test_json_urllib_imports():
+    """Test that required imports for ngrok API are available"""
+    try:
+        import json
+        import urllib.request
+        import urllib.error
+        print("✓ JSON and urllib modules are available")
+        return True
+    except ImportError as e:
+        print(f"✗ Required modules not available: {e}")
+        return False
+
 def main():
     """Run all tests"""
     print("="*60)
@@ -74,6 +109,8 @@ def main():
         test_index_html_exists,
         test_bat_file_exists,
         test_python_http_server,
+        test_ngrok_functions,
+        test_json_urllib_imports,
     ]
     
     results = []
