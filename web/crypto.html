@@ -741,6 +741,12 @@
             MEMPOOL_UPDATE_MS: 5000, // Update mempool every 5 seconds
             CAT_BOT_MONTHLY_GROWTH: 0.013, // 1.3% monthly growth
             CAT_BOT_VOLATILITY: 0.05, // 5% volatility
+            MIN_GAS_PRICE: 10, // Minimum gas price in gwei
+            MAX_GAS_PRICE: 100, // Maximum gas price in gwei
+            GAS_VOLATILITY: 10, // Gas price change volatility
+            MIN_FEE_SAT: 10, // Minimum transaction fee in sat/B
+            MAX_FEE_SAT: 40, // Maximum transaction fee range
+            MAX_TX_FEE_BTC: 0.0001, // Maximum transaction fee in BTC
         };
 
         // ========== APPLICATION STATE ==========
@@ -798,6 +804,8 @@
         // ========== CURRENCY CONVERTER ==========
         /**
          * Converts EUR to BTC using configured or random rate
+         * NOTE: This function is included for future extensibility (e.g., payment forms, 
+         * currency toggle features). Currently not used but provides conversion capability.
          * @param {number} eur - Amount in EUR to convert
          * @param {boolean} useRandomRate - Whether to add randomness to rate
          * @returns {number} Equivalent amount in BTC
@@ -942,9 +950,12 @@
          * Simulates network congestion
          */
         function updateGasPrice() {
-            // Random walk between 10 and 100 gwei
-            const change = (Math.random() - 0.5) * 10;
-            STATE.gasPrice = Math.max(10, Math.min(100, STATE.gasPrice + change));
+            // Random walk between configured min and max gwei
+            const change = (Math.random() - 0.5) * CONFIG.GAS_VOLATILITY;
+            STATE.gasPrice = Math.max(
+                CONFIG.MIN_GAS_PRICE, 
+                Math.min(CONFIG.MAX_GAS_PRICE, STATE.gasPrice + change)
+            );
             
             document.getElementById('gas-price').textContent = 
                 STATE.gasPrice.toFixed(1);
@@ -1122,7 +1133,7 @@
                 </div>
                 <div class="modal-detail">
                     <div class="modal-label">Fee</div>
-                    <div class="modal-value">${(Math.random() * 0.0001).toFixed(8)} BTC</div>
+                    <div class="modal-value">${(Math.random() * CONFIG.MAX_TX_FEE_BTC).toFixed(8)} BTC</div>
                 </div>
                 <div class="modal-detail">
                     <div class="modal-label">Status</div>
@@ -1172,7 +1183,7 @@
          * Updates average fee display
          */
         function updateAvgFee() {
-            const avgFee = (Math.random() * 30 + 10).toFixed(1);
+            const avgFee = (Math.random() * CONFIG.MAX_FEE_SAT + CONFIG.MIN_FEE_SAT).toFixed(1);
             document.getElementById('avg-fee').textContent = avgFee;
         }
 
