@@ -12,7 +12,7 @@
     <link rel="apple-touch-icon" href="crypto-icon.svg">
     <!-- Chart.js CDN with SRI for security -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js" 
-            integrity="sha384-tjf7D7xzHHqS8+BKFN4oHBrxCVcPNnGmC5HZb7UD7Pc1bNrRr0k9IKrWTvnKJgqO" 
+            integrity="sha384-OLBgp1GsljhM2TJ+sbHjaiH9txEUvgdDTAzHv2P24donTt6/529l+9Ua0vFImLlb" 
             crossorigin="anonymous"></script>
     <style>
         /* ===== CSS VARIABLES - Professional Fintech Design System ===== */
@@ -1168,12 +1168,14 @@
 
     <script>
         // ===== CONFIGURATION =====
-        // Note: Exchange rates are mock/demo data for demonstration purposes
+        // WARNING: Exchange rates below are mock/demo data for demonstration purposes only.
+        // In production, replace with real-time API data from a cryptocurrency exchange.
         const CONFIG = {
             BTC_EUR_RATE: 95000, // Mock rate: 1 BTC = 95,000 EUR (demo purposes only)
             ETH_BTC_RATE: 0.052, // Mock rate: 1 ETH = 0.052 BTC (demo purposes only)
             INITIAL_BALANCE_BTC: 2.45892341,
             MONTHLY_GROWTH: 0.034, // 3.4% monthly
+            EUR_LOCALE: 'en-IE', // Locale for EUR formatting (euro symbol with period separators)
         };
 
         // ===== APPLICATION STATE =====
@@ -1191,6 +1193,12 @@
         function seededRandom(seed) {
             const x = Math.sin(seed) * 10000;
             return x - Math.floor(x);
+        }
+
+        // Centralized EUR formatting utility
+        function formatEurValue(amount, options = {}) {
+            const defaults = { minimumFractionDigits: 2, maximumFractionDigits: 2 };
+            return amount.toLocaleString(CONFIG.EUR_LOCALE, { ...defaults, ...options });
         }
 
         // ===== MOCK DATA =====
@@ -1217,7 +1225,7 @@
         }
 
         function formatEUR(amount) {
-            return `€ ${(amount * CONFIG.BTC_EUR_RATE).toLocaleString('de-DE', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
+            return `€ ${formatEurValue(amount * CONFIG.BTC_EUR_RATE)}`;
         }
 
         function formatCurrency(btcAmount) {
@@ -1445,7 +1453,7 @@
                             callbacks: {
                                 label: (context) => {
                                     const val = context.raw;
-                                    return STATE.currency === 'BTC' ? `₿ ${val.toFixed(4)}` : `€ ${val.toLocaleString('de-DE', {minimumFractionDigits: 2})}`;
+                                    return STATE.currency === 'BTC' ? `₿ ${val.toFixed(4)}` : `€ ${formatEurValue(val)}`;
                                 }
                             }
                         }
@@ -1543,7 +1551,7 @@
                             callbacks: {
                                 label: (context) => {
                                     const val = context.raw;
-                                    return STATE.currency === 'BTC' ? `₿ ${val.toFixed(4)}` : `€ ${val.toLocaleString('de-DE', {minimumFractionDigits: 2})}`;
+                                    return STATE.currency === 'BTC' ? `₿ ${val.toFixed(4)}` : `€ ${formatEurValue(val)}`;
                                 }
                             }
                         }
