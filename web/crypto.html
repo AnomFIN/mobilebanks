@@ -1,0 +1,1279 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <title>CryptoBank - Decentralized Banking</title>
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="theme-color" content="#0a0e27">
+    <style>
+        :root {
+            --neon-blue: #00f0ff;
+            --neon-pink: #ff006e;
+            --neon-purple: #8b00ff;
+            --neon-green: #39ff14;
+            --neon-orange: #ff9500;
+            --neon-yellow: #ffff00;
+            --bg-primary: #0a0e27;
+            --bg-secondary: #12182e;
+            --bg-card: rgba(18, 24, 46, 0.8);
+            --text-primary: #ffffff;
+            --text-secondary: #a0aec0;
+            --text-tertiary: #718096;
+        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Courier New', monospace;
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            line-height: 1.6;
+            overflow-x: hidden;
+            position: relative;
+        }
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            background-image: 
+                linear-gradient(var(--neon-blue) 1px, transparent 1px),
+                linear-gradient(90deg, var(--neon-blue) 1px, transparent 1px);
+            background-size: 50px 50px;
+            opacity: 0.05;
+            z-index: 0;
+            animation: gridScroll 20s linear infinite;
+        }
+        @keyframes gridScroll {
+            0% { transform: translate(0, 0); }
+            100% { transform: translate(50px, 50px); }
+        }
+        .app {
+            max-width: 430px;
+            margin: 0 auto;
+            min-height: 100vh;
+            background: var(--bg-primary);
+            position: relative;
+            z-index: 1;
+        }
+        .cyber-header {
+            background: var(--bg-secondary);
+            border-bottom: 2px solid var(--neon-blue);
+            box-shadow: 0 0 10px var(--neon-blue);
+            padding: 1rem 1.5rem;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            animation: pulseGlow 3s ease-in-out infinite;
+        }
+        @keyframes pulseGlow {
+            0%, 100% { box-shadow: 0 0 10px var(--neon-blue); }
+            50% { box-shadow: 0 0 20px var(--neon-blue), 0 0 30px var(--neon-blue); }
+        }
+        .header-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .logo {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: var(--neon-blue);
+            text-shadow: 0 0 10px var(--neon-blue);
+            letter-spacing: 2px;
+            animation: textGlow 2s ease-in-out infinite;
+        }
+        @keyframes textGlow {
+            0%, 100% { text-shadow: 0 0 5px var(--neon-blue), 0 0 10px var(--neon-blue); }
+            50% { text-shadow: 0 0 10px var(--neon-blue), 0 0 20px var(--neon-blue); }
+        }
+        .block-height {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-end;
+            font-size: 0.75rem;
+            color: var(--text-secondary);
+        }
+        .block-number {
+            font-size: 1rem;
+            color: var(--neon-green);
+            font-weight: bold;
+            text-shadow: 0 0 10px var(--neon-green);
+        }
+        .alert-banner {
+            background: linear-gradient(90deg, var(--neon-purple), var(--neon-pink));
+            padding: 0.75rem;
+            text-align: center;
+            font-size: 0.875rem;
+            font-weight: bold;
+            animation: slideDown 0.5s ease-out;
+            border-bottom: 1px solid var(--neon-pink);
+        }
+        @keyframes slideDown {
+            from { transform: translateY(-100%); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+        .main-content {
+            padding: 1.5rem;
+            padding-bottom: 100px;
+        }
+        .balance-card {
+            background: var(--bg-card);
+            border: 2px solid var(--neon-blue);
+            border-radius: 1.5rem;
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+            box-shadow: 0 0 10px var(--neon-blue);
+            position: relative;
+            overflow: hidden;
+            animation: cardFloat 3s ease-in-out infinite;
+        }
+        @keyframes cardFloat {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-5px); }
+        }
+        .balance-card::before {
+            content: '';
+            position: absolute;
+            top: -50%; right: -50%;
+            width: 200%; height: 200%;
+            background: radial-gradient(circle, rgba(0, 240, 255, 0.1) 0%, transparent 70%);
+            animation: shimmer 4s linear infinite;
+        }
+        @keyframes shimmer {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        .balance-label {
+            font-size: 0.875rem;
+            color: var(--text-secondary);
+            margin-bottom: 0.5rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        .balance-amount {
+            font-size: 2.5rem;
+            font-weight: bold;
+            color: var(--neon-blue);
+            text-shadow: 0 0 10px var(--neon-blue);
+            margin-bottom: 0.75rem;
+        }
+        .btc-address {
+            font-size: 0.75rem;
+            color: var(--text-tertiary);
+            word-break: break-all;
+            padding: 0.5rem;
+            background: rgba(0, 240, 255, 0.1);
+            border-radius: 0.5rem;
+            border: 1px solid rgba(0, 240, 255, 0.3);
+        }
+        .gas-ticker {
+            background: var(--bg-card);
+            border: 1px solid var(--neon-orange);
+            border-radius: 0.75rem;
+            padding: 0.75rem;
+            margin-bottom: 1rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 0 10px rgba(255, 149, 0, 0.3);
+        }
+        .gas-label {
+            color: var(--neon-orange);
+            font-weight: bold;
+            font-size: 0.875rem;
+        }
+        .gas-price {
+            color: var(--neon-green);
+            font-weight: bold;
+            font-size: 1rem;
+            animation: priceFlicker 1s ease-in-out infinite;
+        }
+        @keyframes priceFlicker {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.7; }
+        }
+        .stats-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+        }
+        .stat-card {
+            background: var(--bg-card);
+            border: 1px solid var(--neon-purple);
+            border-radius: 1rem;
+            padding: 1rem;
+            box-shadow: 0 0 10px rgba(139, 0, 255, 0.3);
+            transition: all 0.3s ease;
+        }
+        .stat-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 0 20px var(--neon-purple);
+        }
+        .stat-label {
+            font-size: 0.75rem;
+            color: var(--text-secondary);
+            margin-bottom: 0.5rem;
+            text-transform: uppercase;
+        }
+        .stat-value {
+            font-size: 1.25rem;
+            font-weight: bold;
+            color: var(--neon-purple);
+            text-shadow: 0 0 10px var(--neon-purple);
+        }
+        .section-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1rem;
+            padding-bottom: 0.5rem;
+            border-bottom: 1px solid rgba(0, 240, 255, 0.3);
+        }
+        .section-title {
+            font-size: 1.25rem;
+            font-weight: bold;
+            color: var(--neon-pink);
+            text-shadow: 0 0 10px var(--neon-pink);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        .cat-bot {
+            background: var(--bg-card);
+            border: 2px solid var(--neon-green);
+            border-radius: 1.5rem;
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+            box-shadow: 0 0 10px var(--neon-green);
+            position: relative;
+            overflow: hidden;
+        }
+        .cat-bot::before {
+            content: '🤖';
+            position: absolute;
+            top: 10px; right: 10px;
+            font-size: 2rem;
+            opacity: 0.3;
+            animation: rotate 10s linear infinite;
+        }
+        @keyframes rotate {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+        .bot-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1rem;
+        }
+        .bot-title {
+            font-size: 1.125rem;
+            font-weight: bold;
+            color: var(--neon-green);
+            text-shadow: 0 0 10px var(--neon-green);
+        }
+        .bot-status {
+            padding: 0.25rem 0.75rem;
+            background: rgba(57, 255, 20, 0.2);
+            border: 1px solid var(--neon-green);
+            border-radius: 0.5rem;
+            font-size: 0.75rem;
+            animation: statusBlink 2s ease-in-out infinite;
+        }
+        @keyframes statusBlink {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.6; }
+        }
+        .bot-stats {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 0.75rem;
+        }
+        .bot-stat {
+            text-align: center;
+        }
+        .bot-stat-label {
+            font-size: 0.75rem;
+            color: var(--text-secondary);
+            margin-bottom: 0.25rem;
+        }
+        .bot-stat-value {
+            font-size: 1.125rem;
+            font-weight: bold;
+            color: var(--neon-green);
+        }
+        .projections {
+            background: var(--bg-card);
+            border: 1px solid var(--neon-purple);
+            border-radius: 1rem;
+            padding: 1rem;
+            margin-bottom: 1.5rem;
+        }
+        .projection-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 0.5rem 0;
+            border-bottom: 1px solid rgba(139, 0, 255, 0.2);
+        }
+        .projection-item:last-child {
+            border-bottom: none;
+        }
+        .projection-period {
+            color: var(--text-secondary);
+            font-size: 0.875rem;
+        }
+        .projection-value {
+            color: var(--neon-purple);
+            font-weight: bold;
+            font-size: 0.875rem;
+        }
+        .mempool-feed {
+            background: var(--bg-card);
+            border: 2px solid var(--neon-yellow);
+            border-radius: 1rem;
+            padding: 1rem;
+            margin-bottom: 1.5rem;
+            max-height: 300px;
+            overflow-y: auto;
+        }
+        .mempool-item {
+            padding: 0.75rem;
+            margin-bottom: 0.5rem;
+            background: rgba(255, 255, 0, 0.05);
+            border-left: 3px solid var(--neon-yellow);
+            border-radius: 0.5rem;
+            font-size: 0.75rem;
+            animation: fadeInUp 0.5s ease-out;
+        }
+        @keyframes fadeInUp {
+            from { transform: translateY(20px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+        .mempool-hash {
+            color: var(--neon-yellow);
+            word-break: break-all;
+            margin-bottom: 0.25rem;
+        }
+        .mempool-details {
+            color: var(--text-tertiary);
+            font-size: 0.7rem;
+        }
+        .transaction-list {
+            background: var(--bg-card);
+            border: 1px solid var(--neon-blue);
+            border-radius: 1rem;
+            overflow: hidden;
+        }
+        .transaction-item {
+            padding: 1rem;
+            border-bottom: 1px solid rgba(0, 240, 255, 0.1);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+        .transaction-item:hover {
+            background: rgba(0, 240, 255, 0.1);
+            transform: translateX(5px);
+        }
+        .transaction-left {
+            flex: 1;
+        }
+        .transaction-title {
+            color: var(--text-primary);
+            font-weight: bold;
+            font-size: 0.875rem;
+            margin-bottom: 0.25rem;
+        }
+        .transaction-meta {
+            color: var(--text-tertiary);
+            font-size: 0.7rem;
+        }
+        .transaction-amount {
+            font-size: 1rem;
+            font-weight: bold;
+        }
+        .transaction-amount.positive {
+            color: var(--neon-green);
+            text-shadow: 0 0 10px var(--neon-green);
+        }
+        .transaction-amount.negative {
+            color: var(--neon-pink);
+        }
+        .confirmations {
+            font-size: 0.7rem;
+            color: var(--neon-green);
+            margin-top: 0.25rem;
+        }
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            background: rgba(0, 0, 0, 0.8);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+        }
+        .modal.active {
+            display: flex;
+        }
+        .modal-content {
+            background: var(--bg-secondary);
+            border: 2px solid var(--neon-blue);
+            border-radius: 1.5rem;
+            padding: 2rem;
+            max-width: 90%;
+            width: 400px;
+            box-shadow: 0 0 20px var(--neon-blue);
+            animation: modalSlideUp 0.3s ease-out;
+        }
+        @keyframes modalSlideUp {
+            from { transform: translateY(50px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+        .modal-header {
+            font-size: 1.5rem;
+            color: var(--neon-blue);
+            text-shadow: 0 0 10px var(--neon-blue);
+            margin-bottom: 1rem;
+            text-align: center;
+        }
+        .modal-body {
+            color: var(--text-secondary);
+            margin-bottom: 1.5rem;
+        }
+        .modal-detail {
+            display: flex;
+            justify-content: space-between;
+            padding: 0.5rem 0;
+            border-bottom: 1px solid rgba(0, 240, 255, 0.2);
+        }
+        .modal-detail:last-child {
+            border-bottom: none;
+        }
+        .modal-label {
+            color: var(--text-tertiary);
+            font-size: 0.875rem;
+        }
+        .modal-value {
+            color: var(--neon-blue);
+            font-weight: bold;
+            font-size: 0.875rem;
+        }
+        .modal-close {
+            background: var(--neon-pink);
+            color: var(--text-primary);
+            border: none;
+            padding: 0.75rem 1.5rem;
+            border-radius: 0.75rem;
+            cursor: pointer;
+            font-weight: bold;
+            width: 100%;
+            box-shadow: 0 0 10px var(--neon-pink);
+            transition: all 0.3s ease;
+        }
+        .modal-close:hover {
+            box-shadow: 0 0 20px var(--neon-pink);
+            transform: translateY(-2px);
+        }
+        .btn {
+            padding: 0.75rem 1.5rem;
+            border: 2px solid var(--neon-blue);
+            border-radius: 0.75rem;
+            background: transparent;
+            color: var(--neon-blue);
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            font-size: 0.875rem;
+        }
+        .btn:hover {
+            background: var(--neon-blue);
+            color: var(--bg-primary);
+            box-shadow: 0 0 10px var(--neon-blue);
+            transform: translateY(-2px);
+        }
+        .wallet-connect {
+            background: linear-gradient(135deg, var(--neon-purple), var(--neon-pink));
+            border: none;
+            padding: 1rem;
+            border-radius: 1rem;
+            color: var(--text-primary);
+            font-weight: bold;
+            cursor: pointer;
+            width: 100%;
+            margin-bottom: 1rem;
+            box-shadow: 0 0 20px rgba(139, 0, 255, 0.5);
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        .wallet-connect:hover {
+            box-shadow: 0 0 30px rgba(139, 0, 255, 0.8);
+            transform: scale(1.05);
+        }
+        .toast {
+            position: fixed;
+            top: 20px; right: 20px;
+            background: var(--bg-secondary);
+            border: 2px solid var(--neon-green);
+            border-radius: 0.75rem;
+            padding: 1rem;
+            box-shadow: 0 0 10px var(--neon-green);
+            animation: slideInRight 0.5s ease-out;
+            z-index: 2000;
+            display: none;
+        }
+        .toast.active {
+            display: block;
+        }
+        @keyframes slideInRight {
+            from { transform: translateX(400px); }
+            to { transform: translateX(0); }
+        }
+        .toast-content {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+        .toast-icon {
+            font-size: 1.5rem;
+        }
+        .toast-message {
+            color: var(--text-primary);
+            font-size: 0.875rem;
+        }
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: var(--bg-secondary);
+        }
+        ::-webkit-scrollbar-thumb {
+            background: var(--neon-blue);
+            border-radius: 4px;
+            box-shadow: 0 0 10px var(--neon-blue);
+        }
+        .hidden {
+            display: none !important;
+        }
+        @media (max-width: 480px) {
+            .main-content {
+                padding: 1rem;
+            }
+            .balance-amount {
+                font-size: 2rem;
+            }
+            .stats-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="app">
+        <div id="alert-banner" class="alert-banner hidden">
+            ⛏️ NEW BLOCK MINED #<span id="new-block-number">0</span> - SHA-256: <span id="block-hash">0x...</span>
+        </div>
+
+        <header class="cyber-header">
+            <div class="header-content">
+                <div class="logo">⚡ CRYPTOBANK</div>
+                <div class="block-height">
+                    <span>BLOCK HEIGHT</span>
+                    <span class="block-number" id="block-height">823,451</span>
+                </div>
+            </div>
+        </header>
+
+        <main class="main-content">
+            <div class="gas-ticker">
+                <div>
+                    <div class="gas-label">⛽ GAS PRICE (GWEI)</div>
+                    <div style="font-size: 0.7rem; color: var(--text-tertiary);">Layer2 Optimized</div>
+                </div>
+                <div class="gas-price" id="gas-price">42.5</div>
+            </div>
+
+            <div class="balance-card">
+                <div class="balance-label">TOTAL BALANCE (BTC)</div>
+                <div class="balance-amount" id="balance-amount">0.00000000</div>
+                <div class="btc-address" id="btc-address">Loading address...</div>
+            </div>
+
+            <button class="wallet-connect" onclick="showWalletModal()">
+                🔗 CONNECT WALLET
+            </button>
+
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-label">CONFIRMATIONS</div>
+                    <div class="stat-value" id="confirmations">6/6</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-label">MEMPOOL SIZE</div>
+                    <div class="stat-value" id="mempool-size">0</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-label">AVG FEE (SAT/B)</div>
+                    <div class="stat-value" id="avg-fee">21.3</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-label">NETWORK HASH</div>
+                    <div class="stat-value">453 EH/s</div>
+                </div>
+            </div>
+
+            <div class="cat-bot">
+                <div class="bot-header">
+                    <div class="bot-title">🤖 CAT BOT - CRYPTO TRADING</div>
+                    <div class="bot-status">ACTIVE</div>
+                </div>
+                <div class="bot-stats">
+                    <div class="bot-stat">
+                        <div class="bot-stat-label">Monthly Growth</div>
+                        <div class="bot-stat-value">+<span id="cat-monthly">1.30</span>%</div>
+                    </div>
+                    <div class="bot-stat">
+                        <div class="bot-stat-label">Total Profit</div>
+                        <div class="bot-stat-value" id="cat-profit">₿0.00000</div>
+                    </div>
+                    <div class="bot-stat">
+                        <div class="bot-stat-label">Win Rate</div>
+                        <div class="bot-stat-value">87.3%</div>
+                    </div>
+                    <div class="bot-stat">
+                        <div class="bot-stat-label">Volatility</div>
+                        <div class="bot-stat-value" id="cat-volatility">0.42</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="section-header">
+                <div class="section-title">📈 PROJECTIONS</div>
+            </div>
+            <div class="projections">
+                <div class="projection-item">
+                    <div class="projection-period">30 Days</div>
+                    <div class="projection-value" id="proj-30">₿0.00000000</div>
+                </div>
+                <div class="projection-item">
+                    <div class="projection-period">90 Days</div>
+                    <div class="projection-value" id="proj-90">₿0.00000000</div>
+                </div>
+                <div class="projection-item">
+                    <div class="projection-period">1 Year</div>
+                    <div class="projection-value" id="proj-365">₿0.00000000</div>
+                </div>
+            </div>
+
+            <div class="section-header">
+                <div class="section-title">⚡ MEMPOOL FEED</div>
+                <button class="btn" onclick="refreshMempool()">REFRESH</button>
+            </div>
+            <div class="mempool-feed" id="mempool-feed"></div>
+
+            <div class="section-header">
+                <div class="section-title">📜 TRANSACTIONS</div>
+            </div>
+            <div class="transaction-list" id="transaction-list"></div>
+        </main>
+
+        <div id="wallet-modal" class="modal">
+            <div class="modal-content">
+                <div class="modal-header">🔗 CONNECT WALLET</div>
+                <div class="modal-body">
+                    <div class="modal-detail">
+                        <div class="modal-label">Protocol</div>
+                        <div class="modal-value">Bitcoin (BTC)</div>
+                    </div>
+                    <div class="modal-detail">
+                        <div class="modal-label">Network</div>
+                        <div class="modal-value">Mainnet</div>
+                    </div>
+                    <div class="modal-detail">
+                        <div class="modal-label">Encryption</div>
+                        <div class="modal-value">SHA-256</div>
+                    </div>
+                    <div class="modal-detail">
+                        <div class="modal-label">Status</div>
+                        <div class="modal-value">✅ SECURE</div>
+                    </div>
+                </div>
+                <button class="modal-close" onclick="closeModal('wallet-modal')">CLOSE</button>
+            </div>
+        </div>
+
+        <div id="transaction-modal" class="modal">
+            <div class="modal-content">
+                <div class="modal-header">📋 TRANSACTION DETAILS</div>
+                <div class="modal-body" id="transaction-details"></div>
+                <button class="modal-close" onclick="closeModal('transaction-modal')">CLOSE</button>
+            </div>
+        </div>
+
+        <div id="toast" class="toast">
+            <div class="toast-content">
+                <div class="toast-icon">⛏️</div>
+                <div class="toast-message" id="toast-message">New block mined!</div>
+            </div>
+        </div>
+    </div>
+    <script>
+        /* ========== CRYPTOBANK JAVASCRIPT ========== */
+        /* Comprehensive client-side Bitcoin banking application */
+
+        // ========== CORE CONFIGURATION ==========
+        /**
+         * Configuration object for the application
+         * Contains initial balance, BTC to EUR conversion rate, and various thresholds
+         */
+        const CONFIG = {
+            INITIAL_BALANCE_BTC: 0.00021354, // Initial BTC balance
+            BTC_TO_EUR_RATE: 45000, // 1 BTC = 45,000 EUR (adjustable)
+            BLOCK_TIME_MS: 10000, // New block every 10 seconds
+            GAS_UPDATE_MS: 3000, // Update gas price every 3 seconds
+            MEMPOOL_UPDATE_MS: 5000, // Update mempool every 5 seconds
+            CAT_BOT_MONTHLY_GROWTH: 0.013, // 1.3% monthly growth
+            CAT_BOT_VOLATILITY: 0.05, // 5% volatility
+            MIN_GAS_PRICE: 10, // Minimum gas price in gwei
+            MAX_GAS_PRICE: 100, // Maximum gas price in gwei
+            GAS_VOLATILITY: 10, // Gas price change volatility
+            MIN_FEE_SAT: 10, // Minimum transaction fee in sat/B
+            MAX_FEE_SAT: 40, // Maximum transaction fee range
+            MAX_TX_FEE_BTC: 0.0001, // Maximum transaction fee in BTC
+        };
+
+        // ========== APPLICATION STATE ==========
+        /**
+         * Global state object to track application data
+         * Includes balance, addresses, transactions, blockchain info
+         */
+        const STATE = {
+            balance: CONFIG.INITIAL_BALANCE_BTC,
+            btcAddress: '',
+            blockHeight: 823451,
+            gasPrice: 42.5,
+            transactions: [],
+            mempoolTxs: [],
+            catBotProfit: 0,
+            intervalIds: [], // Track intervals for cleanup
+        };
+
+        // ========== BASE58 BITCOIN ADDRESS GENERATOR ==========
+        /**
+         * Generates a random Bitcoin address using Base58Check encoding
+         * Bitcoin addresses use characters excluding 0, O, I, l for clarity
+         * @returns {string} A valid-looking Bitcoin address starting with '1', '3', or 'bc1'
+         */
+        function generateBTCAddress() {
+            const base58Chars = '123456789ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz';
+            const prefixes = ['1', '3', 'bc1']; // Legacy, P2SH, SegWit formats
+            const prefix = prefixes[Math.floor(Math.random() * prefixes.length)];
+            
+            let address = prefix;
+            const length = prefix === 'bc1' ? 42 : 34; // SegWit is longer
+            
+            for (let i = address.length; i < length; i++) {
+                address += base58Chars[Math.floor(Math.random() * base58Chars.length)];
+            }
+            
+            return address;
+        }
+
+        // ========== SHA-256 HASH GENERATOR ==========
+        /**
+         * Generates a pseudo-random SHA-256 hash for block visualization
+         * Real SHA-256 would require a crypto library, this simulates the format
+         * @returns {string} A hex string resembling a SHA-256 hash
+         */
+        function generateSHA256Hash() {
+            const hexChars = '0123456789abcdef';
+            let hash = '0x';
+            for (let i = 0; i < 64; i++) {
+                hash += hexChars[Math.floor(Math.random() * hexChars.length)];
+            }
+            return hash;
+        }
+
+        // ========== CURRENCY CONVERTER ==========
+        /**
+         * Converts EUR to BTC using configured or random rate
+         * NOTE: This function is included for future extensibility (e.g., payment forms, 
+         * currency toggle features). Currently not used but provides conversion capability.
+         * @param {number} eur - Amount in EUR to convert
+         * @param {boolean} useRandomRate - Whether to add randomness to rate
+         * @returns {number} Equivalent amount in BTC
+         */
+        function convertEURToBTC(eur, useRandomRate = false) {
+            let rate = CONFIG.BTC_TO_EUR_RATE;
+            
+            if (useRandomRate) {
+                // Add ±5% randomness to simulate market volatility
+                const variance = rate * 0.05;
+                rate += (Math.random() - 0.5) * 2 * variance;
+            }
+            
+            return eur / rate;
+        }
+
+        /**
+         * Formats BTC amount with appropriate decimal places
+         * @param {number} btc - Amount in BTC
+         * @param {number} decimals - Number of decimal places (default 8)
+         * @returns {string} Formatted BTC string
+         */
+        function formatBTC(btc, decimals = 8) {
+            return btc.toFixed(decimals);
+        }
+
+        // ========== CAT BOT SIMULATOR ==========
+        /**
+         * CAT (Crypto Automated Trading) Bot
+         * Simulates automated trading with monthly growth and volatility
+         * Calculates profits and applies random market movements
+         */
+        class CATBot {
+            constructor() {
+                this.monthlyGrowth = CONFIG.CAT_BOT_MONTHLY_GROWTH;
+                this.volatility = CONFIG.CAT_BOT_VOLATILITY;
+                this.totalProfit = 0;
+                this.startBalance = STATE.balance;
+            }
+
+            /**
+             * Calculates daily profit with volatility
+             * @returns {number} Daily profit amount in BTC
+             */
+            calculateDailyProfit() {
+                // Convert monthly growth to daily
+                const dailyGrowth = Math.pow(1 + this.monthlyGrowth, 1/30) - 1;
+                
+                // Apply volatility (random variance)
+                const variance = (Math.random() - 0.5) * 2 * this.volatility;
+                const adjustedGrowth = dailyGrowth * (1 + variance);
+                
+                return STATE.balance * adjustedGrowth;
+            }
+
+            /**
+             * Updates CAT bot statistics in UI
+             */
+            updateStats() {
+                const dailyProfit = this.calculateDailyProfit();
+                this.totalProfit += dailyProfit;
+                STATE.catBotProfit = this.totalProfit;
+
+                // Update CAT bot profit display
+                document.getElementById('cat-profit').textContent = 
+                    '₿' + formatBTC(this.totalProfit, 8);
+
+                // Update volatility display (random walk)
+                const newVolatility = Math.max(0.1, Math.min(0.9, 
+                    this.volatility + (Math.random() - 0.5) * 0.1));
+                document.getElementById('cat-volatility').textContent = 
+                    newVolatility.toFixed(2);
+                this.volatility = newVolatility;
+
+                // Occasionally update monthly growth
+                if (Math.random() < 0.1) {
+                    const newGrowth = Math.max(0.005, Math.min(0.025,
+                        this.monthlyGrowth + (Math.random() - 0.5) * 0.005));
+                    document.getElementById('cat-monthly').textContent = 
+                        (newGrowth * 100).toFixed(2);
+                    this.monthlyGrowth = newGrowth;
+                }
+            }
+        }
+
+        // ========== BALANCE PROJECTIONS ==========
+        /**
+         * Calculates future balance projections based on CAT bot growth
+         * @param {number} currentBalance - Current BTC balance
+         * @param {number} days - Number of days to project
+         * @returns {number} Projected balance in BTC
+         */
+        function calculateProjection(currentBalance, days) {
+            const dailyGrowth = Math.pow(1 + CONFIG.CAT_BOT_MONTHLY_GROWTH, 1/30) - 1;
+            return currentBalance * Math.pow(1 + dailyGrowth, days);
+        }
+
+        /**
+         * Updates all projection displays in UI
+         */
+        function updateProjections() {
+            const proj30 = calculateProjection(STATE.balance, 30);
+            const proj90 = calculateProjection(STATE.balance, 90);
+            const proj365 = calculateProjection(STATE.balance, 365);
+
+            document.getElementById('proj-30').textContent = '₿' + formatBTC(proj30);
+            document.getElementById('proj-90').textContent = '₿' + formatBTC(proj90);
+            document.getElementById('proj-365').textContent = '₿' + formatBTC(proj365);
+        }
+
+        // ========== BLOCKCHAIN SIMULATOR ==========
+        /**
+         * Simulates new block mining
+         * Updates block height and shows notification
+         */
+        function mineNewBlock() {
+            STATE.blockHeight++;
+            document.getElementById('block-height').textContent = 
+                STATE.blockHeight.toLocaleString();
+
+            // Show new block notification banner
+            const banner = document.getElementById('alert-banner');
+            const blockHash = generateSHA256Hash();
+            document.getElementById('new-block-number').textContent = 
+                STATE.blockHeight.toLocaleString();
+            document.getElementById('block-hash').textContent = 
+                blockHash.substring(0, 20) + '...';
+            
+            banner.classList.remove('hidden');
+            
+            // Hide banner after 5 seconds
+            setTimeout(() => {
+                banner.classList.add('hidden');
+            }, 5000);
+
+            // Show toast notification
+            showToast('⛏️ New block mined! #' + STATE.blockHeight.toLocaleString());
+        }
+
+        /**
+         * Updates gas price with random fluctuation
+         * Simulates network congestion
+         */
+        function updateGasPrice() {
+            // Random walk between configured min and max gwei
+            const change = (Math.random() - 0.5) * CONFIG.GAS_VOLATILITY;
+            STATE.gasPrice = Math.max(
+                CONFIG.MIN_GAS_PRICE, 
+                Math.min(CONFIG.MAX_GAS_PRICE, STATE.gasPrice + change)
+            );
+            
+            document.getElementById('gas-price').textContent = 
+                STATE.gasPrice.toFixed(1);
+        }
+
+        // ========== MEMPOOL SIMULATOR ==========
+        /**
+         * Generates a random pending transaction for mempool
+         * @returns {object} Transaction object with hash, amount, fee, etc.
+         */
+        function generateMempoolTransaction() {
+            const txHash = generateSHA256Hash();
+            const amount = (Math.random() * 0.5).toFixed(8);
+            const fee = (Math.random() * 50 + 10).toFixed(1);
+            const size = Math.floor(Math.random() * 500 + 200);
+            
+            return {
+                hash: txHash,
+                amount: amount,
+                fee: fee,
+                size: size,
+                timestamp: Date.now()
+            };
+        }
+
+        /**
+         * Updates mempool feed with new pending transactions
+         */
+        function updateMempool() {
+            // Add new transaction occasionally
+            if (Math.random() < 0.7) {
+                const tx = generateMempoolTransaction();
+                STATE.mempoolTxs.unshift(tx);
+                
+                // Keep only last 10 transactions
+                if (STATE.mempoolTxs.length > 10) {
+                    STATE.mempoolTxs.pop();
+                }
+            }
+
+            // Update mempool size counter
+            document.getElementById('mempool-size').textContent = 
+                STATE.mempoolTxs.length;
+
+            // Render mempool feed
+            renderMempoolFeed();
+        }
+
+        /**
+         * Renders mempool transactions in the UI
+         */
+        function renderMempoolFeed() {
+            const feed = document.getElementById('mempool-feed');
+            
+            if (STATE.mempoolTxs.length === 0) {
+                feed.innerHTML = '<div style="text-align: center; color: var(--text-tertiary); padding: 1rem;">No pending transactions</div>';
+                return;
+            }
+
+            feed.innerHTML = STATE.mempoolTxs.map(tx => `
+                <div class="mempool-item">
+                    <div class="mempool-hash">${tx.hash.substring(0, 30)}...</div>
+                    <div class="mempool-details">
+                        Amount: ${tx.amount} BTC | Fee: ${tx.fee} sat/B | Size: ${tx.size} bytes
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        /**
+         * Manually refreshes mempool (button handler)
+         */
+        function refreshMempool() {
+            STATE.mempoolTxs = [];
+            for (let i = 0; i < 5; i++) {
+                STATE.mempoolTxs.push(generateMempoolTransaction());
+            }
+            renderMempoolFeed();
+            showToast('⚡ Mempool refreshed');
+        }
+
+        // ========== TRANSACTION HISTORY ==========
+        /**
+         * Generates sample transaction history with BTC amounts
+         */
+        function generateTransactions() {
+            const types = ['Received', 'Sent', 'CAT Bot Trade', 'Mining Reward', 'Staking Reward'];
+            const transactions = [];
+
+            for (let i = 0; i < 8; i++) {
+                const type = types[Math.floor(Math.random() * types.length)];
+                const isPositive = type.includes('Received') || type.includes('Reward');
+                const amount = (Math.random() * 0.001).toFixed(8);
+                const confirmations = Math.floor(Math.random() * 20) + 1;
+                const date = new Date(Date.now() - Math.random() * 30 * 24 * 60 * 60 * 1000);
+
+                transactions.push({
+                    id: i + 1,
+                    type: type,
+                    amount: isPositive ? parseFloat(amount) : -parseFloat(amount),
+                    confirmations: confirmations,
+                    date: date,
+                    hash: generateSHA256Hash(),
+                    blockHeight: STATE.blockHeight - Math.floor(Math.random() * 100)
+                });
+            }
+
+            return transactions;
+        }
+
+        /**
+         * Renders transaction list in UI
+         */
+        function renderTransactions() {
+            const list = document.getElementById('transaction-list');
+            
+            if (STATE.transactions.length === 0) {
+                list.innerHTML = '<div style="text-align: center; color: var(--text-tertiary); padding: 1rem;">No transactions yet</div>';
+                return;
+            }
+
+            list.innerHTML = STATE.transactions.map(tx => `
+                <div class="transaction-item" onclick="showTransactionModal(${tx.id})">
+                    <div class="transaction-left">
+                        <div class="transaction-title">${tx.type}</div>
+                        <div class="transaction-meta">
+                            ${tx.date.toLocaleDateString()} ${tx.date.toLocaleTimeString()}
+                        </div>
+                        <div class="confirmations">${tx.confirmations}/6 confirmations</div>
+                    </div>
+                    <div class="transaction-amount ${tx.amount > 0 ? 'positive' : 'negative'}">
+                        ${tx.amount > 0 ? '+' : ''}${formatBTC(tx.amount)} BTC
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        // ========== MODAL HANDLERS ==========
+        /**
+         * Shows wallet connection modal
+         */
+        function showWalletModal() {
+            document.getElementById('wallet-modal').classList.add('active');
+        }
+
+        /**
+         * Shows transaction details modal
+         * @param {number} txId - Transaction ID to display
+         */
+        function showTransactionModal(txId) {
+            const tx = STATE.transactions.find(t => t.id === txId);
+            if (!tx) return;
+
+            const details = document.getElementById('transaction-details');
+            details.innerHTML = `
+                <div class="modal-detail">
+                    <div class="modal-label">Transaction Hash</div>
+                    <div class="modal-value" style="word-break: break-all;">${tx.hash.substring(0, 40)}...</div>
+                </div>
+                <div class="modal-detail">
+                    <div class="modal-label">Block Height</div>
+                    <div class="modal-value">#${tx.blockHeight.toLocaleString()}</div>
+                </div>
+                <div class="modal-detail">
+                    <div class="modal-label">Amount</div>
+                    <div class="modal-value">${formatBTC(tx.amount)} BTC</div>
+                </div>
+                <div class="modal-detail">
+                    <div class="modal-label">Confirmations</div>
+                    <div class="modal-value">${tx.confirmations}/6</div>
+                </div>
+                <div class="modal-detail">
+                    <div class="modal-label">Timestamp</div>
+                    <div class="modal-value">${tx.date.toLocaleString()}</div>
+                </div>
+                <div class="modal-detail">
+                    <div class="modal-label">Fee</div>
+                    <div class="modal-value">${(Math.random() * CONFIG.MAX_TX_FEE_BTC).toFixed(8)} BTC</div>
+                </div>
+                <div class="modal-detail">
+                    <div class="modal-label">Status</div>
+                    <div class="modal-value">${tx.confirmations >= 6 ? '✅ CONFIRMED' : '⏳ PENDING'}</div>
+                </div>
+            `;
+
+            document.getElementById('transaction-modal').classList.add('active');
+        }
+
+        /**
+         * Closes modal by ID
+         * @param {string} modalId - ID of modal to close
+         */
+        function closeModal(modalId) {
+            document.getElementById(modalId).classList.remove('active');
+        }
+
+        // ========== TOAST NOTIFICATIONS ==========
+        /**
+         * Shows a toast notification
+         * @param {string} message - Message to display
+         * @param {number} duration - How long to show (ms)
+         */
+        function showToast(message, duration = 3000) {
+            const toast = document.getElementById('toast');
+            const messageEl = document.getElementById('toast-message');
+            
+            messageEl.textContent = message;
+            toast.classList.add('active');
+
+            setTimeout(() => {
+                toast.classList.remove('active');
+            }, duration);
+        }
+
+        // ========== UI UPDATE FUNCTIONS ==========
+        /**
+         * Updates the main balance display
+         */
+        function updateBalance() {
+            document.getElementById('balance-amount').textContent = 
+                '₿' + formatBTC(STATE.balance);
+        }
+
+        /**
+         * Updates average fee display
+         */
+        function updateAvgFee() {
+            const avgFee = (Math.random() * CONFIG.MAX_FEE_SAT + CONFIG.MIN_FEE_SAT).toFixed(1);
+            document.getElementById('avg-fee').textContent = avgFee;
+        }
+
+        /**
+         * Updates confirmation counter
+         */
+        function updateConfirmations() {
+            const pending = Math.floor(Math.random() * 7);
+            document.getElementById('confirmations').textContent = 
+                `${Math.min(pending, 6)}/6`;
+        }
+
+        // ========== INITIALIZATION ==========
+        /**
+         * Initialize the application
+         * Sets up all intervals and initial data
+         */
+        function init() {
+            // Generate initial BTC address
+            STATE.btcAddress = generateBTCAddress();
+            document.getElementById('btc-address').textContent = STATE.btcAddress;
+
+            // Initialize balance
+            updateBalance();
+
+            // Generate initial transactions
+            STATE.transactions = generateTransactions();
+            renderTransactions();
+
+            // Initialize CAT Bot
+            const catBot = new CATBot();
+
+            // Initialize projections
+            updateProjections();
+
+            // Initialize mempool
+            updateMempool();
+
+            // Set up intervals for live updates
+            // Block mining every 10 seconds
+            STATE.intervalIds.push(setInterval(mineNewBlock, CONFIG.BLOCK_TIME_MS));
+
+            // Gas price updates every 3 seconds
+            STATE.intervalIds.push(setInterval(updateGasPrice, CONFIG.GAS_UPDATE_MS));
+
+            // Mempool updates every 5 seconds
+            STATE.intervalIds.push(setInterval(updateMempool, CONFIG.MEMPOOL_UPDATE_MS));
+
+            // CAT Bot updates every 10 seconds
+            STATE.intervalIds.push(setInterval(() => {
+                catBot.updateStats();
+                updateProjections();
+                updateBalance();
+            }, 10000));
+
+            // Misc updates every 2 seconds
+            STATE.intervalIds.push(setInterval(() => {
+                updateAvgFee();
+                updateConfirmations();
+            }, 2000));
+
+            // Show welcome toast
+            setTimeout(() => {
+                showToast('🚀 CryptoBank initialized - SHA-256 secured', 4000);
+            }, 1000);
+
+            console.log('🔐 CryptoBank initialized');
+            console.log('📊 Balance:', formatBTC(STATE.balance), 'BTC');
+            console.log('🏦 Address:', STATE.btcAddress);
+            console.log('⛓️ Block Height:', STATE.blockHeight.toLocaleString());
+        }
+
+        // Close modals when clicking outside
+        document.addEventListener('click', function(event) {
+            if (event.target.classList.contains('modal')) {
+                event.target.classList.remove('active');
+            }
+        });
+
+        // Initialize app when DOM is ready
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', init);
+        } else {
+            init();
+        }
+
+        // Cleanup on page unload
+        window.addEventListener('beforeunload', () => {
+            STATE.intervalIds.forEach(id => clearInterval(id));
+        });
+    </script>
+</body>
+</html>
