@@ -1,0 +1,1564 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <title>CryptoVault - Enterprise Crypto Dashboard v1.01</title>
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="default">
+    <meta name="theme-color" content="#ffffff">
+    <link rel="manifest" href="crypto-manifest.json">
+    <link rel="icon" href="crypto-icon.svg" type="image/svg+xml">
+    <link rel="apple-touch-icon" href="crypto-icon.svg">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+    <style>
+        /* ===== CSS VARIABLES - Professional Fintech Design System ===== */
+        :root {
+            /* Primary Colors - Institutional */
+            --primary: #1652f0;
+            --primary-light: #4b7bff;
+            --primary-dark: #0a3fc2;
+            --primary-bg: rgba(22, 82, 240, 0.08);
+            
+            /* Success/Profit */
+            --success: #00d395;
+            --success-light: #e6fbf5;
+            --success-dark: #00a878;
+            
+            /* Error/Loss */
+            --error: #cf202f;
+            --error-light: #fdeaea;
+            
+            /* Neutral Colors */
+            --bg-primary: #ffffff;
+            --bg-secondary: #f8f9fa;
+            --bg-tertiary: #f0f2f5;
+            --bg-card: #ffffff;
+            
+            /* Text Colors */
+            --text-primary: #0d1421;
+            --text-secondary: #5b616e;
+            --text-tertiary: #8a919e;
+            --text-muted: #b2b8c2;
+            
+            /* Borders */
+            --border-light: #e8eaed;
+            --border-medium: #d1d5db;
+            
+            /* Shadows */
+            --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.04);
+            --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.06), 0 2px 4px -1px rgba(0, 0, 0, 0.04);
+            --shadow-lg: 0 10px 25px -5px rgba(0, 0, 0, 0.08), 0 8px 10px -6px rgba(0, 0, 0, 0.04);
+            
+            /* Spacing */
+            --space-xs: 4px;
+            --space-sm: 8px;
+            --space-md: 16px;
+            --space-lg: 24px;
+            --space-xl: 32px;
+            --space-2xl: 48px;
+            
+            /* Border Radius */
+            --radius-sm: 6px;
+            --radius-md: 10px;
+            --radius-lg: 16px;
+            --radius-xl: 24px;
+            --radius-full: 9999px;
+            
+            /* Transitions */
+            --transition: 200ms ease;
+        }
+
+        /* ===== RESET & BASE ===== */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'Segoe UI', Roboto, 'Helvetica Neue', sans-serif;
+            background: var(--bg-secondary);
+            color: var(--text-primary);
+            line-height: 1.5;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+            overflow-x: hidden;
+        }
+
+        /* ===== APP CONTAINER ===== */
+        .app {
+            max-width: 430px;
+            margin: 0 auto;
+            min-height: 100vh;
+            background: var(--bg-primary);
+            position: relative;
+            box-shadow: var(--shadow-lg);
+        }
+
+        /* ===== HEADER ===== */
+        .header {
+            position: fixed;
+            top: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 100%;
+            max-width: 430px;
+            height: 60px;
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border-bottom: 1px solid var(--border-light);
+            z-index: 100;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 var(--space-md);
+        }
+
+        .header-logo {
+            display: flex;
+            align-items: center;
+            gap: var(--space-sm);
+        }
+
+        .header-logo svg {
+            width: 28px;
+            height: 28px;
+            color: var(--primary);
+        }
+
+        .header-logo span {
+            font-size: 18px;
+            font-weight: 700;
+            color: var(--text-primary);
+            letter-spacing: -0.3px;
+        }
+
+        /* Currency Toggle */
+        .currency-toggle {
+            display: flex;
+            align-items: center;
+            background: var(--bg-tertiary);
+            border-radius: var(--radius-full);
+            padding: 4px;
+            gap: 2px;
+        }
+
+        .currency-btn {
+            padding: 6px 14px;
+            border: none;
+            background: transparent;
+            border-radius: var(--radius-full);
+            font-size: 13px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: var(--transition);
+            color: var(--text-tertiary);
+        }
+
+        .currency-btn.active {
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            box-shadow: var(--shadow-sm);
+        }
+
+        .currency-btn:not(.active):hover {
+            color: var(--text-secondary);
+        }
+
+        /* ===== MAIN CONTENT ===== */
+        .main-content {
+            padding-top: 60px;
+            padding-bottom: 90px;
+            min-height: 100vh;
+        }
+
+        /* ===== SCREENS ===== */
+        .screen {
+            display: none;
+            padding: var(--space-md);
+            animation: fadeIn 0.2s ease;
+        }
+
+        .screen.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(8px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* ===== CARDS ===== */
+        .card {
+            background: var(--bg-card);
+            border-radius: var(--radius-lg);
+            border: 1px solid var(--border-light);
+            padding: var(--space-lg);
+            margin-bottom: var(--space-md);
+            transition: var(--transition);
+        }
+
+        .card:hover {
+            box-shadow: var(--shadow-md);
+        }
+
+        /* ===== BALANCE CARD ===== */
+        .balance-card {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+            color: white;
+            border: none;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .balance-card::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -30%;
+            width: 200px;
+            height: 200px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 50%;
+        }
+
+        .balance-label {
+            font-size: 13px;
+            opacity: 0.85;
+            margin-bottom: var(--space-xs);
+            font-weight: 500;
+        }
+
+        .balance-amount {
+            font-size: 36px;
+            font-weight: 700;
+            letter-spacing: -1px;
+            margin-bottom: var(--space-sm);
+        }
+
+        .balance-change {
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            font-size: 13px;
+            padding: 4px 10px;
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: var(--radius-full);
+            font-weight: 500;
+        }
+
+        .balance-change.positive {
+            background: rgba(0, 211, 149, 0.25);
+        }
+
+        .balance-change.negative {
+            background: rgba(207, 32, 47, 0.25);
+        }
+
+        .balance-address {
+            margin-top: var(--space-md);
+            font-size: 12px;
+            opacity: 0.7;
+            font-family: 'SF Mono', Monaco, monospace;
+            word-break: break-all;
+        }
+
+        /* ===== CHART SECTION ===== */
+        .chart-card {
+            padding: var(--space-md);
+        }
+
+        .chart-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: var(--space-md);
+        }
+
+        .chart-title {
+            font-size: 15px;
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+
+        .chart-period-tabs {
+            display: flex;
+            gap: var(--space-xs);
+        }
+
+        .period-tab {
+            padding: 6px 12px;
+            border: none;
+            background: transparent;
+            border-radius: var(--radius-sm);
+            font-size: 12px;
+            font-weight: 600;
+            color: var(--text-tertiary);
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .period-tab.active {
+            background: var(--primary-bg);
+            color: var(--primary);
+        }
+
+        .period-tab:hover:not(.active) {
+            background: var(--bg-tertiary);
+        }
+
+        .chart-container {
+            height: 200px;
+            position: relative;
+        }
+
+        /* ===== STATS GRID ===== */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: var(--space-md);
+            margin-bottom: var(--space-md);
+        }
+
+        .stat-card {
+            padding: var(--space-md);
+        }
+
+        .stat-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: var(--radius-md);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: var(--space-sm);
+            font-size: 18px;
+        }
+
+        .stat-icon.blue { background: var(--primary-bg); }
+        .stat-icon.green { background: var(--success-light); }
+        .stat-icon.orange { background: #fff3e6; }
+        .stat-icon.purple { background: #f3e8ff; }
+
+        .stat-label {
+            font-size: 12px;
+            color: var(--text-tertiary);
+            margin-bottom: 4px;
+            font-weight: 500;
+        }
+
+        .stat-value {
+            font-size: 18px;
+            font-weight: 700;
+            color: var(--text-primary);
+        }
+
+        /* ===== SECTION HEADERS ===== */
+        .section-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: var(--space-md);
+            padding: 0 var(--space-xs);
+        }
+
+        .section-title {
+            font-size: 17px;
+            font-weight: 700;
+            color: var(--text-primary);
+        }
+
+        .section-link {
+            font-size: 13px;
+            color: var(--primary);
+            font-weight: 600;
+            text-decoration: none;
+            cursor: pointer;
+        }
+
+        .section-link:hover {
+            text-decoration: underline;
+        }
+
+        /* ===== TRANSACTION LIST ===== */
+        .transaction-list {
+            background: var(--bg-card);
+            border-radius: var(--radius-lg);
+            border: 1px solid var(--border-light);
+            overflow: hidden;
+        }
+
+        .transaction-item {
+            display: flex;
+            align-items: center;
+            padding: var(--space-md);
+            border-bottom: 1px solid var(--border-light);
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .transaction-item:last-child {
+            border-bottom: none;
+        }
+
+        .transaction-item:hover {
+            background: var(--bg-secondary);
+        }
+
+        .transaction-icon {
+            width: 42px;
+            height: 42px;
+            border-radius: var(--radius-md);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: var(--space-md);
+            font-size: 18px;
+        }
+
+        .transaction-icon.receive {
+            background: var(--success-light);
+            color: var(--success);
+        }
+
+        .transaction-icon.send {
+            background: var(--error-light);
+            color: var(--error);
+        }
+
+        .transaction-icon.trade {
+            background: var(--primary-bg);
+            color: var(--primary);
+        }
+
+        .transaction-details {
+            flex: 1;
+        }
+
+        .transaction-title {
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--text-primary);
+            margin-bottom: 2px;
+        }
+
+        .transaction-meta {
+            font-size: 12px;
+            color: var(--text-tertiary);
+        }
+
+        .transaction-amount {
+            text-align: right;
+        }
+
+        .transaction-value {
+            font-size: 14px;
+            font-weight: 600;
+        }
+
+        .transaction-value.positive {
+            color: var(--success);
+        }
+
+        .transaction-value.negative {
+            color: var(--text-primary);
+        }
+
+        .transaction-fiat {
+            font-size: 12px;
+            color: var(--text-tertiary);
+        }
+
+        /* ===== ASSET LIST ===== */
+        .asset-item {
+            display: flex;
+            align-items: center;
+            padding: var(--space-md);
+            border-bottom: 1px solid var(--border-light);
+        }
+
+        .asset-item:last-child {
+            border-bottom: none;
+        }
+
+        .asset-logo {
+            width: 42px;
+            height: 42px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: var(--space-md);
+            font-size: 20px;
+            font-weight: 700;
+        }
+
+        .asset-logo.btc {
+            background: #f7931a;
+            color: white;
+        }
+
+        .asset-logo.eth {
+            background: #627eea;
+            color: white;
+        }
+
+        .asset-logo.usdc {
+            background: #2775ca;
+            color: white;
+        }
+
+        .asset-info {
+            flex: 1;
+        }
+
+        .asset-name {
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+
+        .asset-symbol {
+            font-size: 12px;
+            color: var(--text-tertiary);
+        }
+
+        .asset-values {
+            text-align: right;
+        }
+
+        .asset-balance {
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+
+        .asset-fiat {
+            font-size: 12px;
+            color: var(--text-tertiary);
+        }
+
+        /* ===== QUICK ACTIONS ===== */
+        .quick-actions {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: var(--space-sm);
+            margin-bottom: var(--space-lg);
+        }
+
+        .action-btn {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: var(--space-md);
+            background: var(--bg-card);
+            border: 1px solid var(--border-light);
+            border-radius: var(--radius-lg);
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .action-btn:hover {
+            border-color: var(--primary);
+            box-shadow: var(--shadow-md);
+        }
+
+        .action-icon {
+            width: 44px;
+            height: 44px;
+            border-radius: var(--radius-md);
+            background: var(--primary-bg);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: var(--space-sm);
+            font-size: 20px;
+            color: var(--primary);
+        }
+
+        .action-label {
+            font-size: 12px;
+            font-weight: 600;
+            color: var(--text-secondary);
+        }
+
+        /* ===== ANALYTICS CARDS ===== */
+        .analytics-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: var(--space-md);
+        }
+
+        .analytics-card {
+            padding: var(--space-md);
+        }
+
+        .analytics-card .value {
+            font-size: 24px;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin-bottom: var(--space-xs);
+        }
+
+        .analytics-card .label {
+            font-size: 13px;
+            color: var(--text-tertiary);
+            margin-bottom: var(--space-sm);
+        }
+
+        .analytics-card .change {
+            font-size: 12px;
+            font-weight: 600;
+        }
+
+        .analytics-card .change.positive {
+            color: var(--success);
+        }
+
+        .analytics-card .change.negative {
+            color: var(--error);
+        }
+
+        /* ===== SETTINGS ===== */
+        .settings-section {
+            margin-bottom: var(--space-lg);
+        }
+
+        .settings-title {
+            font-size: 13px;
+            font-weight: 600;
+            color: var(--text-tertiary);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: var(--space-sm);
+            padding: 0 var(--space-xs);
+        }
+
+        .settings-list {
+            background: var(--bg-card);
+            border-radius: var(--radius-lg);
+            border: 1px solid var(--border-light);
+            overflow: hidden;
+        }
+
+        .settings-item {
+            display: flex;
+            align-items: center;
+            padding: var(--space-md);
+            border-bottom: 1px solid var(--border-light);
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .settings-item:last-child {
+            border-bottom: none;
+        }
+
+        .settings-item:hover {
+            background: var(--bg-secondary);
+        }
+
+        .settings-icon {
+            width: 36px;
+            height: 36px;
+            border-radius: var(--radius-sm);
+            background: var(--bg-tertiary);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: var(--space-md);
+            font-size: 16px;
+        }
+
+        .settings-info {
+            flex: 1;
+        }
+
+        .settings-label {
+            font-size: 14px;
+            font-weight: 500;
+            color: var(--text-primary);
+        }
+
+        .settings-value {
+            font-size: 12px;
+            color: var(--text-tertiary);
+        }
+
+        .settings-arrow {
+            color: var(--text-muted);
+            font-size: 18px;
+        }
+
+        /* Toggle Switch */
+        .toggle-switch {
+            width: 48px;
+            height: 28px;
+            background: var(--border-medium);
+            border-radius: var(--radius-full);
+            position: relative;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .toggle-switch.active {
+            background: var(--primary);
+        }
+
+        .toggle-switch::after {
+            content: '';
+            position: absolute;
+            top: 2px;
+            left: 2px;
+            width: 24px;
+            height: 24px;
+            background: white;
+            border-radius: 50%;
+            transition: var(--transition);
+            box-shadow: var(--shadow-sm);
+        }
+
+        .toggle-switch.active::after {
+            transform: translateX(20px);
+        }
+
+        /* ===== BOTTOM NAVIGATION ===== */
+        .bottom-nav {
+            position: fixed;
+            bottom: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 100%;
+            max-width: 430px;
+            height: 80px;
+            background: rgba(255, 255, 255, 0.98);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border-top: 1px solid var(--border-light);
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+            padding: 0 var(--space-sm);
+            z-index: 100;
+        }
+
+        .nav-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: var(--space-sm) var(--space-md);
+            cursor: pointer;
+            transition: var(--transition);
+            border-radius: var(--radius-md);
+            min-width: 64px;
+        }
+
+        .nav-item:hover {
+            background: var(--bg-tertiary);
+        }
+
+        .nav-item.active {
+            background: var(--primary-bg);
+        }
+
+        .nav-icon {
+            font-size: 22px;
+            margin-bottom: 4px;
+            transition: var(--transition);
+        }
+
+        .nav-item.active .nav-icon {
+            color: var(--primary);
+        }
+
+        .nav-label {
+            font-size: 11px;
+            font-weight: 600;
+            color: var(--text-tertiary);
+            transition: var(--transition);
+        }
+
+        .nav-item.active .nav-label {
+            color: var(--primary);
+        }
+
+        /* ===== EMPTY STATE ===== */
+        .empty-state {
+            text-align: center;
+            padding: var(--space-2xl);
+        }
+
+        .empty-icon {
+            font-size: 48px;
+            margin-bottom: var(--space-md);
+            opacity: 0.5;
+        }
+
+        .empty-title {
+            font-size: 16px;
+            font-weight: 600;
+            color: var(--text-primary);
+            margin-bottom: var(--space-xs);
+        }
+
+        .empty-text {
+            font-size: 14px;
+            color: var(--text-tertiary);
+        }
+
+        /* ===== RESPONSIVE ===== */
+        @media (max-width: 430px) {
+            .balance-amount {
+                font-size: 32px;
+            }
+
+            .quick-actions {
+                grid-template-columns: repeat(4, 1fr);
+                gap: var(--space-xs);
+            }
+
+            .action-btn {
+                padding: var(--space-sm);
+            }
+
+            .action-icon {
+                width: 40px;
+                height: 40px;
+            }
+        }
+
+        /* ===== UTILITY CLASSES ===== */
+        .hidden { display: none !important; }
+        .text-center { text-align: center; }
+        .mb-0 { margin-bottom: 0; }
+        .mt-md { margin-top: var(--space-md); }
+    </style>
+</head>
+<body>
+    <div class="app">
+        <!-- Header with Currency Toggle -->
+        <header class="header">
+            <div class="header-logo">
+                <svg viewBox="0 0 24 24" fill="currentColor">
+                    <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8zm.31-8.86c-1.77-.45-2.34-.94-2.34-1.67 0-.84.79-1.43 2.1-1.43 1.38 0 1.9.66 1.94 1.64h1.71c-.05-1.34-.87-2.57-2.49-2.97V5H10.9v1.69c-1.51.32-2.72 1.3-2.72 2.81 0 1.79 1.49 2.69 3.66 3.21 1.95.46 2.34 1.15 2.34 1.87 0 .53-.39 1.39-2.1 1.39-1.6 0-2.23-.72-2.32-1.64H8.04c.1 1.7 1.36 2.66 2.86 2.97V19h2.34v-1.67c1.52-.29 2.72-1.16 2.73-2.77-.01-2.2-1.9-2.96-3.66-3.42z"/>
+                </svg>
+                <span>CryptoVault</span>
+            </div>
+            <div class="currency-toggle">
+                <button class="currency-btn active" id="btn-btc" onclick="setCurrency('BTC')">BTC</button>
+                <button class="currency-btn" id="btn-eur" onclick="setCurrency('EUR')">EUR</button>
+            </div>
+        </header>
+
+        <!-- Main Content Area -->
+        <main class="main-content">
+            <!-- HOME SCREEN -->
+            <div id="screen-home" class="screen active">
+                <!-- Balance Card -->
+                <div class="card balance-card">
+                    <div class="balance-label">Total Portfolio Value</div>
+                    <div class="balance-amount" id="total-balance">₿ 2.45892341</div>
+                    <div class="balance-change positive" id="balance-change">
+                        <span>↑</span>
+                        <span id="change-value">+3.24%</span>
+                        <span>24h</span>
+                    </div>
+                    <div class="balance-address" id="wallet-address">bc1qxy2kgdygjrsqtzq2n0yrf2493p83kkfjhx0wlh</div>
+                </div>
+
+                <!-- Quick Actions -->
+                <div class="quick-actions">
+                    <div class="action-btn" onclick="showScreen('wallet')">
+                        <div class="action-icon">↓</div>
+                        <div class="action-label">Receive</div>
+                    </div>
+                    <div class="action-btn" onclick="showScreen('wallet')">
+                        <div class="action-icon">↑</div>
+                        <div class="action-label">Send</div>
+                    </div>
+                    <div class="action-btn" onclick="showScreen('wallet')">
+                        <div class="action-icon">⇄</div>
+                        <div class="action-label">Swap</div>
+                    </div>
+                    <div class="action-btn" onclick="showScreen('analytics')">
+                        <div class="action-icon">📊</div>
+                        <div class="action-label">Stats</div>
+                    </div>
+                </div>
+
+                <!-- Portfolio Chart -->
+                <div class="card chart-card">
+                    <div class="chart-header">
+                        <span class="chart-title">Portfolio Performance</span>
+                        <div class="chart-period-tabs">
+                            <button class="period-tab" onclick="setChartPeriod('7d')">7D</button>
+                            <button class="period-tab active" onclick="setChartPeriod('30d')">30D</button>
+                            <button class="period-tab" onclick="setChartPeriod('90d')">90D</button>
+                        </div>
+                    </div>
+                    <div class="chart-container">
+                        <canvas id="portfolio-chart"></canvas>
+                    </div>
+                </div>
+
+                <!-- Stats Grid -->
+                <div class="stats-grid">
+                    <div class="card stat-card">
+                        <div class="stat-icon blue">📈</div>
+                        <div class="stat-label">All-Time High</div>
+                        <div class="stat-value" id="stat-ath">₿ 2.89</div>
+                    </div>
+                    <div class="card stat-card">
+                        <div class="stat-icon green">💰</div>
+                        <div class="stat-label">Total Profit</div>
+                        <div class="stat-value" id="stat-profit">+₿ 0.45</div>
+                    </div>
+                    <div class="card stat-card">
+                        <div class="stat-icon orange">🔥</div>
+                        <div class="stat-label">Staking Rewards</div>
+                        <div class="stat-value" id="stat-staking">₿ 0.012</div>
+                    </div>
+                    <div class="card stat-card">
+                        <div class="stat-icon purple">📊</div>
+                        <div class="stat-label">Transactions</div>
+                        <div class="stat-value" id="stat-txcount">147</div>
+                    </div>
+                </div>
+
+                <!-- Recent Transactions -->
+                <div class="section-header">
+                    <span class="section-title">Recent Activity</span>
+                    <span class="section-link" onclick="showScreen('transactions')">See All</span>
+                </div>
+                <div class="transaction-list" id="recent-transactions">
+                    <!-- Populated by JS -->
+                </div>
+            </div>
+
+            <!-- WALLET SCREEN -->
+            <div id="screen-wallet" class="screen">
+                <div class="section-header">
+                    <span class="section-title">Your Assets</span>
+                </div>
+                <div class="transaction-list" id="asset-list">
+                    <!-- Populated by JS -->
+                </div>
+
+                <div class="section-header mt-md">
+                    <span class="section-title">Quick Actions</span>
+                </div>
+                <div class="quick-actions">
+                    <div class="action-btn">
+                        <div class="action-icon">↓</div>
+                        <div class="action-label">Receive</div>
+                    </div>
+                    <div class="action-btn">
+                        <div class="action-icon">↑</div>
+                        <div class="action-label">Send</div>
+                    </div>
+                    <div class="action-btn">
+                        <div class="action-icon">⇄</div>
+                        <div class="action-label">Swap</div>
+                    </div>
+                    <div class="action-btn">
+                        <div class="action-icon">💳</div>
+                        <div class="action-label">Buy</div>
+                    </div>
+                </div>
+
+                <!-- Wallet Address -->
+                <div class="card">
+                    <div class="stat-label">Your BTC Address</div>
+                    <div style="font-family: monospace; font-size: 12px; word-break: break-all; margin-top: 8px; color: var(--text-secondary);">
+                        bc1qxy2kgdygjrsqtzq2n0yrf2493p83kkfjhx0wlh
+                    </div>
+                </div>
+            </div>
+
+            <!-- TRANSACTIONS SCREEN -->
+            <div id="screen-transactions" class="screen">
+                <div class="section-header">
+                    <span class="section-title">Transaction History</span>
+                </div>
+                <div class="transaction-list" id="full-transaction-list">
+                    <!-- Populated by JS -->
+                </div>
+            </div>
+
+            <!-- ANALYTICS SCREEN -->
+            <div id="screen-analytics" class="screen">
+                <div class="section-header">
+                    <span class="section-title">Portfolio Analytics</span>
+                </div>
+
+                <!-- Analytics Cards -->
+                <div class="analytics-grid">
+                    <div class="card analytics-card">
+                        <div class="value" id="analytics-total">₿ 2.459</div>
+                        <div class="label">Total Balance</div>
+                        <div class="change positive">↑ 12.4% this month</div>
+                    </div>
+                    <div class="card analytics-card">
+                        <div class="value" id="analytics-profit">₿ 0.458</div>
+                        <div class="label">Total Profit</div>
+                        <div class="change positive">↑ 23.1% all time</div>
+                    </div>
+                    <div class="card analytics-card">
+                        <div class="value" id="analytics-received">₿ 3.21</div>
+                        <div class="label">Total Received</div>
+                        <div class="change">147 transactions</div>
+                    </div>
+                    <div class="card analytics-card">
+                        <div class="value" id="analytics-sent">₿ 0.75</div>
+                        <div class="label">Total Sent</div>
+                        <div class="change">89 transactions</div>
+                    </div>
+                </div>
+
+                <!-- Analytics Chart -->
+                <div class="card chart-card mt-md">
+                    <div class="chart-header">
+                        <span class="chart-title">Monthly Overview</span>
+                    </div>
+                    <div class="chart-container">
+                        <canvas id="analytics-chart"></canvas>
+                    </div>
+                </div>
+
+                <!-- Performance Metrics -->
+                <div class="card mt-md">
+                    <div class="stat-label">Performance Metrics</div>
+                    <div style="display: flex; justify-content: space-between; margin-top: 12px;">
+                        <div>
+                            <div style="font-size: 18px; font-weight: 700; color: var(--success);">+23.4%</div>
+                            <div style="font-size: 12px; color: var(--text-tertiary);">30D Return</div>
+                        </div>
+                        <div>
+                            <div style="font-size: 18px; font-weight: 700; color: var(--success);">+89.2%</div>
+                            <div style="font-size: 12px; color: var(--text-tertiary);">YTD Return</div>
+                        </div>
+                        <div>
+                            <div style="font-size: 18px; font-weight: 700;">0.42</div>
+                            <div style="font-size: 12px; color: var(--text-tertiary);">Sharpe Ratio</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- SETTINGS SCREEN -->
+            <div id="screen-settings" class="screen">
+                <div class="settings-section">
+                    <div class="settings-title">Account</div>
+                    <div class="settings-list">
+                        <div class="settings-item">
+                            <div class="settings-icon">👤</div>
+                            <div class="settings-info">
+                                <div class="settings-label">Profile</div>
+                                <div class="settings-value">Manage your account</div>
+                            </div>
+                            <div class="settings-arrow">›</div>
+                        </div>
+                        <div class="settings-item">
+                            <div class="settings-icon">🔐</div>
+                            <div class="settings-info">
+                                <div class="settings-label">Security</div>
+                                <div class="settings-value">2FA, Biometrics</div>
+                            </div>
+                            <div class="settings-arrow">›</div>
+                        </div>
+                        <div class="settings-item">
+                            <div class="settings-icon">🔔</div>
+                            <div class="settings-info">
+                                <div class="settings-label">Notifications</div>
+                                <div class="settings-value">Push, Email, SMS</div>
+                            </div>
+                            <div class="toggle-switch active" onclick="this.classList.toggle('active')"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="settings-section">
+                    <div class="settings-title">Preferences</div>
+                    <div class="settings-list">
+                        <div class="settings-item">
+                            <div class="settings-icon">💱</div>
+                            <div class="settings-info">
+                                <div class="settings-label">Default Currency</div>
+                                <div class="settings-value" id="settings-currency">BTC</div>
+                            </div>
+                            <div class="settings-arrow">›</div>
+                        </div>
+                        <div class="settings-item">
+                            <div class="settings-icon">🌍</div>
+                            <div class="settings-info">
+                                <div class="settings-label">Language</div>
+                                <div class="settings-value">English</div>
+                            </div>
+                            <div class="settings-arrow">›</div>
+                        </div>
+                        <div class="settings-item">
+                            <div class="settings-icon">🌙</div>
+                            <div class="settings-info">
+                                <div class="settings-label">Dark Mode</div>
+                                <div class="settings-value">System default</div>
+                            </div>
+                            <div class="toggle-switch" onclick="this.classList.toggle('active')"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="settings-section">
+                    <div class="settings-title">About</div>
+                    <div class="settings-list">
+                        <div class="settings-item">
+                            <div class="settings-icon">ℹ️</div>
+                            <div class="settings-info">
+                                <div class="settings-label">Version</div>
+                                <div class="settings-value">v1.01</div>
+                            </div>
+                        </div>
+                        <div class="settings-item">
+                            <div class="settings-icon">📄</div>
+                            <div class="settings-info">
+                                <div class="settings-label">Terms of Service</div>
+                            </div>
+                            <div class="settings-arrow">›</div>
+                        </div>
+                        <div class="settings-item">
+                            <div class="settings-icon">🛡️</div>
+                            <div class="settings-info">
+                                <div class="settings-label">Privacy Policy</div>
+                            </div>
+                            <div class="settings-arrow">›</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+
+        <!-- Bottom Navigation -->
+        <nav class="bottom-nav">
+            <div class="nav-item active" onclick="showScreen('home')">
+                <div class="nav-icon">🏠</div>
+                <div class="nav-label">Home</div>
+            </div>
+            <div class="nav-item" onclick="showScreen('wallet')">
+                <div class="nav-icon">💼</div>
+                <div class="nav-label">Wallet</div>
+            </div>
+            <div class="nav-item" onclick="showScreen('transactions')">
+                <div class="nav-icon">📋</div>
+                <div class="nav-label">History</div>
+            </div>
+            <div class="nav-item" onclick="showScreen('analytics')">
+                <div class="nav-icon">📈</div>
+                <div class="nav-label">Analytics</div>
+            </div>
+            <div class="nav-item" onclick="showScreen('settings')">
+                <div class="nav-icon">⚙️</div>
+                <div class="nav-label">Settings</div>
+            </div>
+        </nav>
+    </div>
+
+    <script>
+        // ===== CONFIGURATION =====
+        const CONFIG = {
+            BTC_EUR_RATE: 95000, // 1 BTC = 95,000 EUR
+            INITIAL_BALANCE_BTC: 2.45892341,
+            MONTHLY_GROWTH: 0.034, // 3.4% monthly
+        };
+
+        // ===== APPLICATION STATE =====
+        const STATE = {
+            currency: 'BTC',
+            balance: CONFIG.INITIAL_BALANCE_BTC,
+            currentScreen: 'home',
+            chartPeriod: '30d',
+            portfolioChart: null,
+            analyticsChart: null,
+        };
+
+        // ===== MOCK DATA =====
+        const ASSETS = [
+            { symbol: 'BTC', name: 'Bitcoin', balance: 2.34521, logo: 'btc' },
+            { symbol: 'ETH', name: 'Ethereum', balance: 4.8923, logo: 'eth' },
+            { symbol: 'USDC', name: 'USD Coin', balance: 1250.00, logo: 'usdc' },
+        ];
+
+        const TRANSACTIONS = [
+            { type: 'receive', title: 'Received Bitcoin', amount: 0.15, date: '2024-11-24', from: 'External Wallet' },
+            { type: 'send', title: 'Sent Bitcoin', amount: -0.05, date: '2024-11-23', to: 'bc1q...x8f2' },
+            { type: 'trade', title: 'Swapped ETH → BTC', amount: 0.08, date: '2024-11-22', pair: 'ETH/BTC' },
+            { type: 'receive', title: 'Staking Reward', amount: 0.002, date: '2024-11-21', source: 'Staking Pool' },
+            { type: 'receive', title: 'Received Bitcoin', amount: 0.25, date: '2024-11-20', from: 'Exchange' },
+            { type: 'send', title: 'Sent Bitcoin', amount: -0.12, date: '2024-11-19', to: 'bc1q...k2m9' },
+            { type: 'trade', title: 'Swapped USDC → BTC', amount: 0.03, date: '2024-11-18', pair: 'USDC/BTC' },
+            { type: 'receive', title: 'Mining Reward', amount: 0.001, date: '2024-11-17', source: 'Mining Pool' },
+        ];
+
+        // ===== UTILITY FUNCTIONS =====
+        function formatBTC(amount) {
+            return `₿ ${amount.toFixed(8)}`;
+        }
+
+        function formatEUR(amount) {
+            return `€ ${(amount * CONFIG.BTC_EUR_RATE).toLocaleString('de-DE', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
+        }
+
+        function formatCurrency(btcAmount) {
+            if (STATE.currency === 'BTC') {
+                return formatBTC(btcAmount);
+            }
+            return formatEUR(btcAmount);
+        }
+
+        function formatShortCurrency(btcAmount) {
+            if (STATE.currency === 'BTC') {
+                return `₿ ${btcAmount.toFixed(btcAmount < 1 ? 4 : 2)}`;
+            }
+            const eurAmount = btcAmount * CONFIG.BTC_EUR_RATE;
+            if (eurAmount >= 1000000) {
+                return `€ ${(eurAmount / 1000000).toFixed(2)}M`;
+            }
+            if (eurAmount >= 1000) {
+                return `€ ${(eurAmount / 1000).toFixed(2)}K`;
+            }
+            return `€ ${eurAmount.toFixed(2)}`;
+        }
+
+        // ===== CURRENCY TOGGLE =====
+        function setCurrency(currency) {
+            STATE.currency = currency;
+            
+            // Update toggle buttons
+            document.getElementById('btn-btc').classList.toggle('active', currency === 'BTC');
+            document.getElementById('btn-eur').classList.toggle('active', currency === 'EUR');
+            
+            // Update settings display
+            document.getElementById('settings-currency').textContent = currency;
+            
+            // Update all displayed values
+            updateAllValues();
+            
+            // Update charts
+            if (STATE.portfolioChart) {
+                updatePortfolioChart();
+            }
+            if (STATE.analyticsChart) {
+                updateAnalyticsChart();
+            }
+        }
+
+        function updateAllValues() {
+            // Update balance
+            document.getElementById('total-balance').textContent = formatCurrency(STATE.balance);
+            
+            // Update stats
+            document.getElementById('stat-ath').textContent = formatShortCurrency(2.89);
+            document.getElementById('stat-profit').textContent = '+' + formatShortCurrency(0.45);
+            document.getElementById('stat-staking').textContent = formatShortCurrency(0.012);
+            
+            // Update analytics
+            document.getElementById('analytics-total').textContent = formatShortCurrency(STATE.balance);
+            document.getElementById('analytics-profit').textContent = formatShortCurrency(0.458);
+            document.getElementById('analytics-received').textContent = formatShortCurrency(3.21);
+            document.getElementById('analytics-sent').textContent = formatShortCurrency(0.75);
+            
+            // Update transactions
+            renderTransactions();
+            renderAssets();
+        }
+
+        // ===== SCREEN NAVIGATION =====
+        function showScreen(screenId) {
+            // Hide all screens
+            document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+            
+            // Show target screen
+            document.getElementById(`screen-${screenId}`).classList.add('active');
+            
+            // Update nav
+            document.querySelectorAll('.nav-item').forEach(item => item.classList.remove('active'));
+            const navItems = document.querySelectorAll('.nav-item');
+            const screenIndex = ['home', 'wallet', 'transactions', 'analytics', 'settings'].indexOf(screenId);
+            if (screenIndex >= 0 && navItems[screenIndex]) {
+                navItems[screenIndex].classList.add('active');
+            }
+            
+            STATE.currentScreen = screenId;
+            
+            // Initialize charts if needed
+            if (screenId === 'home' && !STATE.portfolioChart) {
+                setTimeout(initPortfolioChart, 100);
+            }
+            if (screenId === 'analytics' && !STATE.analyticsChart) {
+                setTimeout(initAnalyticsChart, 100);
+            }
+        }
+
+        // ===== RENDER FUNCTIONS =====
+        function renderTransactions() {
+            const recentContainer = document.getElementById('recent-transactions');
+            const fullContainer = document.getElementById('full-transaction-list');
+            
+            const recentHTML = TRANSACTIONS.slice(0, 4).map(renderTransactionItem).join('');
+            const fullHTML = TRANSACTIONS.map(renderTransactionItem).join('');
+            
+            if (recentContainer) recentContainer.innerHTML = recentHTML;
+            if (fullContainer) fullContainer.innerHTML = fullHTML;
+        }
+
+        function renderTransactionItem(tx) {
+            const isPositive = tx.amount > 0;
+            const iconClass = tx.type === 'receive' ? 'receive' : tx.type === 'send' ? 'send' : 'trade';
+            const icon = tx.type === 'receive' ? '↓' : tx.type === 'send' ? '↑' : '⇄';
+            
+            return `
+                <div class="transaction-item">
+                    <div class="transaction-icon ${iconClass}">${icon}</div>
+                    <div class="transaction-details">
+                        <div class="transaction-title">${tx.title}</div>
+                        <div class="transaction-meta">${tx.date}</div>
+                    </div>
+                    <div class="transaction-amount">
+                        <div class="transaction-value ${isPositive ? 'positive' : 'negative'}">
+                            ${isPositive ? '+' : ''}${formatShortCurrency(Math.abs(tx.amount))}
+                        </div>
+                        <div class="transaction-fiat">
+                            ${STATE.currency === 'BTC' ? formatEUR(Math.abs(tx.amount)).replace('€', '≈ €') : formatBTC(Math.abs(tx.amount)).replace('₿', '≈ ₿')}
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        function renderAssets() {
+            const container = document.getElementById('asset-list');
+            if (!container) return;
+            
+            container.innerHTML = ASSETS.map(asset => {
+                const btcValue = asset.symbol === 'BTC' ? asset.balance : 
+                                 asset.symbol === 'ETH' ? asset.balance * 0.052 : 
+                                 asset.balance / CONFIG.BTC_EUR_RATE;
+                
+                return `
+                    <div class="asset-item">
+                        <div class="asset-logo ${asset.logo}">${asset.symbol.charAt(0)}</div>
+                        <div class="asset-info">
+                            <div class="asset-name">${asset.name}</div>
+                            <div class="asset-symbol">${asset.symbol}</div>
+                        </div>
+                        <div class="asset-values">
+                            <div class="asset-balance">${asset.balance.toFixed(asset.symbol === 'USDC' ? 2 : 4)} ${asset.symbol}</div>
+                            <div class="asset-fiat">${formatShortCurrency(btcValue)}</div>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        // ===== CHART FUNCTIONS =====
+        function generateChartData(days) {
+            const data = [];
+            const labels = [];
+            let value = STATE.balance * 0.85; // Start at 85% of current value
+            
+            for (let i = days; i >= 0; i--) {
+                const date = new Date();
+                date.setDate(date.getDate() - i);
+                labels.push(date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' }));
+                
+                // Add some randomness but trend upward
+                const change = (Math.random() - 0.4) * 0.02;
+                value = value * (1 + change);
+                value = Math.max(value, STATE.balance * 0.7); // Don't go below 70%
+                
+                if (i === 0) value = STATE.balance; // End at current balance
+                
+                data.push(STATE.currency === 'BTC' ? value : value * CONFIG.BTC_EUR_RATE);
+            }
+            
+            return { labels, data };
+        }
+
+        function initPortfolioChart() {
+            const ctx = document.getElementById('portfolio-chart');
+            if (!ctx) return;
+            
+            const { labels, data } = generateChartData(30);
+            
+            STATE.portfolioChart = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels,
+                    datasets: [{
+                        data,
+                        borderColor: '#1652f0',
+                        backgroundColor: 'rgba(22, 82, 240, 0.1)',
+                        fill: true,
+                        tension: 0.4,
+                        pointRadius: 0,
+                        pointHoverRadius: 6,
+                        pointHoverBackgroundColor: '#1652f0',
+                        pointHoverBorderColor: '#fff',
+                        pointHoverBorderWidth: 2,
+                        borderWidth: 2,
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: { display: false },
+                        tooltip: {
+                            backgroundColor: '#0d1421',
+                            titleColor: '#fff',
+                            bodyColor: '#fff',
+                            padding: 12,
+                            displayColors: false,
+                            callbacks: {
+                                label: (context) => {
+                                    const val = context.raw;
+                                    return STATE.currency === 'BTC' ? `₿ ${val.toFixed(4)}` : `€ ${val.toLocaleString('de-DE', {minimumFractionDigits: 2})}`;
+                                }
+                            }
+                        }
+                    },
+                    scales: {
+                        x: {
+                            display: true,
+                            grid: { display: false },
+                            ticks: { 
+                                color: '#8a919e',
+                                font: { size: 10 },
+                                maxTicksLimit: 6
+                            }
+                        },
+                        y: {
+                            display: true,
+                            grid: { color: 'rgba(0,0,0,0.05)' },
+                            ticks: {
+                                color: '#8a919e',
+                                font: { size: 10 },
+                                callback: (value) => {
+                                    return STATE.currency === 'BTC' ? `₿${value.toFixed(1)}` : `€${(value/1000).toFixed(0)}K`;
+                                }
+                            }
+                        }
+                    },
+                    interaction: {
+                        intersect: false,
+                        mode: 'index'
+                    }
+                }
+            });
+        }
+
+        function updatePortfolioChart() {
+            if (!STATE.portfolioChart) return;
+            
+            const days = STATE.chartPeriod === '7d' ? 7 : STATE.chartPeriod === '30d' ? 30 : 90;
+            const { labels, data } = generateChartData(days);
+            
+            STATE.portfolioChart.data.labels = labels;
+            STATE.portfolioChart.data.datasets[0].data = data;
+            STATE.portfolioChart.update();
+        }
+
+        function setChartPeriod(period) {
+            STATE.chartPeriod = period;
+            
+            // Update tabs
+            document.querySelectorAll('.period-tab').forEach(tab => {
+                tab.classList.toggle('active', tab.textContent === period.toUpperCase());
+            });
+            
+            updatePortfolioChart();
+        }
+
+        function initAnalyticsChart() {
+            const ctx = document.getElementById('analytics-chart');
+            if (!ctx) return;
+            
+            const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov'];
+            const baseValue = STATE.currency === 'BTC' ? 1.2 : 1.2 * CONFIG.BTC_EUR_RATE;
+            const data = months.map((_, i) => baseValue * (1 + i * 0.08 + Math.random() * 0.1));
+            
+            STATE.analyticsChart = new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: months,
+                    datasets: [{
+                        data,
+                        backgroundColor: 'rgba(22, 82, 240, 0.8)',
+                        borderRadius: 6,
+                        borderSkipped: false,
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: { display: false },
+                        tooltip: {
+                            backgroundColor: '#0d1421',
+                            padding: 12,
+                            callbacks: {
+                                label: (context) => {
+                                    const val = context.raw;
+                                    return STATE.currency === 'BTC' ? `₿ ${val.toFixed(4)}` : `€ ${val.toLocaleString('de-DE', {minimumFractionDigits: 2})}`;
+                                }
+                            }
+                        }
+                    },
+                    scales: {
+                        x: {
+                            grid: { display: false },
+                            ticks: { color: '#8a919e', font: { size: 10 } }
+                        },
+                        y: {
+                            grid: { color: 'rgba(0,0,0,0.05)' },
+                            ticks: {
+                                color: '#8a919e',
+                                font: { size: 10 },
+                                callback: (value) => {
+                                    return STATE.currency === 'BTC' ? `₿${value.toFixed(1)}` : `€${(value/1000).toFixed(0)}K`;
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+        }
+
+        function updateAnalyticsChart() {
+            if (!STATE.analyticsChart) return;
+            
+            const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov'];
+            const baseValue = STATE.currency === 'BTC' ? 1.2 : 1.2 * CONFIG.BTC_EUR_RATE;
+            const data = months.map((_, i) => baseValue * (1 + i * 0.08 + Math.random() * 0.1));
+            
+            STATE.analyticsChart.data.datasets[0].data = data;
+            STATE.analyticsChart.update();
+        }
+
+        // ===== INITIALIZATION =====
+        function init() {
+            renderTransactions();
+            renderAssets();
+            updateAllValues();
+            
+            // Initialize home chart after a short delay
+            setTimeout(initPortfolioChart, 200);
+            
+            console.log('🔐 CryptoVault v1.01 initialized');
+        }
+
+        // Start the app
+        document.addEventListener('DOMContentLoaded', init);
+    </script>
+</body>
+</html>
