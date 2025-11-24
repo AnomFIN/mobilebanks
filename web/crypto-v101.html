@@ -10,7 +10,10 @@
     <link rel="manifest" href="crypto-manifest.json">
     <link rel="icon" href="crypto-icon.svg" type="image/svg+xml">
     <link rel="apple-touch-icon" href="crypto-icon.svg">
-    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+    <!-- Chart.js CDN with SRI for security -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js" 
+            integrity="sha384-tjf7D7xzHHqS8+BKFN4oHBrxCVcPNnGmC5HZb7UD7Pc1bNrRr0k9IKrWTvnKJgqO" 
+            crossorigin="anonymous"></script>
     <style>
         /* ===== CSS VARIABLES - Professional Fintech Design System ===== */
         :root {
@@ -1165,8 +1168,10 @@
 
     <script>
         // ===== CONFIGURATION =====
+        // Note: Exchange rates are mock/demo data for demonstration purposes
         const CONFIG = {
-            BTC_EUR_RATE: 95000, // 1 BTC = 95,000 EUR
+            BTC_EUR_RATE: 95000, // Mock rate: 1 BTC = 95,000 EUR (demo purposes only)
+            ETH_BTC_RATE: 0.052, // Mock rate: 1 ETH = 0.052 BTC (demo purposes only)
             INITIAL_BALANCE_BTC: 2.45892341,
             MONTHLY_GROWTH: 0.034, // 3.4% monthly
         };
@@ -1179,7 +1184,14 @@
             chartPeriod: '30d',
             portfolioChart: null,
             analyticsChart: null,
+            chartDataCache: {}, // Cache for consistent chart data
         };
+
+        // Seeded random for consistent chart data across updates
+        function seededRandom(seed) {
+            const x = Math.sin(seed) * 10000;
+            return x - Math.floor(x);
+        }
 
         // ===== MOCK DATA =====
         const ASSETS = [
@@ -1341,7 +1353,7 @@
             
             container.innerHTML = ASSETS.map(asset => {
                 const btcValue = asset.symbol === 'BTC' ? asset.balance : 
-                                 asset.symbol === 'ETH' ? asset.balance * 0.052 : 
+                                 asset.symbol === 'ETH' ? asset.balance * CONFIG.ETH_BTC_RATE : 
                                  asset.balance / CONFIG.BTC_EUR_RATE;
                 
                 return `
@@ -1362,26 +1374,37 @@
 
         // ===== CHART FUNCTIONS =====
         function generateChartData(days) {
-            const data = [];
-            const labels = [];
-            let value = STATE.balance * 0.85; // Start at 85% of current value
+            // Use cached BTC data for consistency, only convert currency on display
+            const cacheKey = `portfolio_${days}`;
             
-            for (let i = days; i >= 0; i--) {
-                const date = new Date();
-                date.setDate(date.getDate() - i);
-                labels.push(date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' }));
+            if (!STATE.chartDataCache[cacheKey]) {
+                const btcData = [];
+                const labels = [];
+                let value = STATE.balance * 0.85; // Start at 85% of current value
                 
-                // Add some randomness but trend upward
-                const change = (Math.random() - 0.4) * 0.02;
-                value = value * (1 + change);
-                value = Math.max(value, STATE.balance * 0.7); // Don't go below 70%
+                for (let i = days; i >= 0; i--) {
+                    const date = new Date();
+                    date.setDate(date.getDate() - i);
+                    labels.push(date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' }));
+                    
+                    // Use seeded random for consistent data across updates
+                    const seed = days * 1000 + i;
+                    const change = (seededRandom(seed) - 0.4) * 0.02;
+                    value = value * (1 + change);
+                    value = Math.max(value, STATE.balance * 0.7); // Don't go below 70%
+                    
+                    if (i === 0) value = STATE.balance; // End at current balance
+                    
+                    btcData.push(value);
+                }
                 
-                if (i === 0) value = STATE.balance; // End at current balance
-                
-                data.push(STATE.currency === 'BTC' ? value : value * CONFIG.BTC_EUR_RATE);
+                STATE.chartDataCache[cacheKey] = { labels, btcData };
             }
             
-            return { labels, data };
+            const cached = STATE.chartDataCache[cacheKey];
+            const data = cached.btcData.map(v => STATE.currency === 'BTC' ? v : v * CONFIG.BTC_EUR_RATE);
+            
+            return { labels: cached.labels, data };
         }
 
         function initPortfolioChart() {
@@ -1483,9 +1506,20 @@
             const ctx = document.getElementById('analytics-chart');
             if (!ctx) return;
             
+            // Generate consistent analytics data using seeded random
             const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov'];
-            const baseValue = STATE.currency === 'BTC' ? 1.2 : 1.2 * CONFIG.BTC_EUR_RATE;
-            const data = months.map((_, i) => baseValue * (1 + i * 0.08 + Math.random() * 0.1));
+            
+            if (!STATE.chartDataCache.analytics) {
+                const btcData = months.map((_, i) => {
+                    const seed = 2000 + i; // Consistent seed for each month
+                    return 1.2 * (1 + i * 0.08 + seededRandom(seed) * 0.1);
+                });
+                STATE.chartDataCache.analytics = btcData;
+            }
+            
+            const data = STATE.chartDataCache.analytics.map(v => 
+                STATE.currency === 'BTC' ? v : v * CONFIG.BTC_EUR_RATE
+            );
             
             STATE.analyticsChart = new Chart(ctx, {
                 type: 'bar',
@@ -1537,9 +1571,10 @@
         function updateAnalyticsChart() {
             if (!STATE.analyticsChart) return;
             
-            const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov'];
-            const baseValue = STATE.currency === 'BTC' ? 1.2 : 1.2 * CONFIG.BTC_EUR_RATE;
-            const data = months.map((_, i) => baseValue * (1 + i * 0.08 + Math.random() * 0.1));
+            // Use cached data for consistency
+            const data = STATE.chartDataCache.analytics.map(v => 
+                STATE.currency === 'BTC' ? v : v * CONFIG.BTC_EUR_RATE
+            );
             
             STATE.analyticsChart.data.datasets[0].data = data;
             STATE.analyticsChart.update();
