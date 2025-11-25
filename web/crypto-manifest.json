@@ -1,0 +1,50 @@
+{
+  "name": "CryptoVault - Enterprise Crypto Dashboard",
+  "short_name": "CryptoVault",
+  "description": "Professional enterprise-grade cryptocurrency dashboard with portfolio tracking and analytics",
+  "start_url": "./crypto-v101.html",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#1652f0",
+  "orientation": "portrait-primary",
+  "scope": "./",
+  "lang": "en",
+  "dir": "ltr",
+  "categories": ["finance", "cryptocurrency", "productivity"],
+  "edge_side_panel": {
+    "preferred_width": 430
+  },
+  "icons": [
+    {
+      "src": "crypto-icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ],
+  "shortcuts": [
+    {
+      "name": "Portfolio",
+      "short_name": "Home",
+      "description": "View your portfolio overview",
+      "url": "./crypto-v101.html#home",
+      "icons": [{ "src": "crypto-icon.svg", "sizes": "any" }]
+    },
+    {
+      "name": "Wallet",
+      "short_name": "Wallet", 
+      "description": "Manage your crypto assets",
+      "url": "./crypto-v101.html#wallet",
+      "icons": [{ "src": "crypto-icon.svg", "sizes": "any" }]
+    },
+    {
+      "name": "Analytics",
+      "short_name": "Analytics",
+      "description": "View portfolio analytics",
+      "url": "./crypto-v101.html#analytics", 
+      "icons": [{ "src": "crypto-icon.svg", "sizes": "any" }]
+    }
+  ],
+  "related_applications": [],
+  "prefer_related_applications": false
+}
