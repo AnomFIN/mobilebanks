@@ -11,8 +11,8 @@
     <link rel="icon" href="crypto-icon.svg" type="image/svg+xml">
     <link rel="apple-touch-icon" href="crypto-icon.svg">
     <!-- Chart.js CDN with SRI for security -->
-    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js" 
-            integrity="sha384-OLBgp1GsljhM2TJ+sbHjaiH9txEUvgdDTAzHv2P24donTt6/529l+9Ua0vFImLlb" 
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"
+            integrity="sha384-OLBgp1GsljhM2TJ+sbHjaiH9txEUvgdDTAzHv2P24donTt6/529l+9Ua0vFImLlb"
             crossorigin="anonymous"></script>
     <style>
         /* ===== CSS VARIABLES - Professional Fintech Design System ===== */
@@ -87,6 +87,16 @@
             -webkit-font-smoothing: antialiased;
             -moz-osx-font-smoothing: grayscale;
             overflow-x: hidden;
+        }
+
+        /* Button reset for semantic buttons styled as custom elements */
+        button.action-btn,
+        button.nav-item {
+            border: none;
+            background: none;
+            font: inherit;
+            color: inherit;
+            text-align: inherit;
         }
 
         /* ===== APP CONTAINER ===== */
@@ -844,14 +854,14 @@
         <!-- Header with Currency Toggle -->
         <header class="header">
             <div class="header-logo">
-                <svg viewBox="0 0 24 24" fill="currentColor">
+                <svg viewBox="0 0 24 24" fill="currentColor" aria-label="CryptoVault logo" role="img">
                     <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8zm.31-8.86c-1.77-.45-2.34-.94-2.34-1.67 0-.84.79-1.43 2.1-1.43 1.38 0 1.9.66 1.94 1.64h1.71c-.05-1.34-.87-2.57-2.49-2.97V5H10.9v1.69c-1.51.32-2.72 1.3-2.72 2.81 0 1.79 1.49 2.69 3.66 3.21 1.95.46 2.34 1.15 2.34 1.87 0 .53-.39 1.39-2.1 1.39-1.6 0-2.23-.72-2.32-1.64H8.04c.1 1.7 1.36 2.66 2.86 2.97V19h2.34v-1.67c1.52-.29 2.72-1.16 2.73-2.77-.01-2.2-1.9-2.96-3.66-3.42z"/>
                 </svg>
                 <span>CryptoVault</span>
             </div>
-            <div class="currency-toggle">
-                <button class="currency-btn active" id="btn-btc" onclick="setCurrency('BTC')">BTC</button>
-                <button class="currency-btn" id="btn-eur" onclick="setCurrency('EUR')">EUR</button>
+            <div class="currency-toggle" role="group" aria-label="Currency selection">
+                <button class="currency-btn active" id="btn-btc" onclick="setCurrency('BTC')" aria-pressed="true">BTC</button>
+                <button class="currency-btn" id="btn-eur" onclick="setCurrency('EUR')" aria-pressed="false">EUR</button>
             </div>
         </header>
 
@@ -873,36 +883,36 @@
 
                 <!-- Quick Actions -->
                 <div class="quick-actions">
-                    <div class="action-btn" onclick="showScreen('wallet')">
+                    <button class="action-btn" onclick="showScreen('wallet')" aria-label="Receive cryptocurrency">
                         <div class="action-icon">↓</div>
                         <div class="action-label">Receive</div>
-                    </div>
-                    <div class="action-btn" onclick="showScreen('wallet')">
+                    </button>
+                    <button class="action-btn" onclick="showScreen('wallet')" aria-label="Send cryptocurrency">
                         <div class="action-icon">↑</div>
                         <div class="action-label">Send</div>
-                    </div>
-                    <div class="action-btn" onclick="showScreen('wallet')">
+                    </button>
+                    <button class="action-btn" onclick="showScreen('wallet')" aria-label="Swap cryptocurrency">
                         <div class="action-icon">⇄</div>
                         <div class="action-label">Swap</div>
-                    </div>
-                    <div class="action-btn" onclick="showScreen('analytics')">
+                    </button>
+                    <button class="action-btn" onclick="showScreen('analytics')" aria-label="View statistics">
                         <div class="action-icon">📊</div>
                         <div class="action-label">Stats</div>
-                    </div>
+                    </button>
                 </div>
 
                 <!-- Portfolio Chart -->
                 <div class="card chart-card">
                     <div class="chart-header">
                         <span class="chart-title">Portfolio Performance</span>
-                        <div class="chart-period-tabs">
-                            <button class="period-tab" onclick="setChartPeriod('7d')">7D</button>
-                            <button class="period-tab active" onclick="setChartPeriod('30d')">30D</button>
-                            <button class="period-tab" onclick="setChartPeriod('90d')">90D</button>
+                        <div class="chart-period-tabs" role="group" aria-label="Chart period selection">
+                            <button class="period-tab" onclick="setChartPeriod('7d')" aria-pressed="false">7D</button>
+                            <button class="period-tab active" onclick="setChartPeriod('30d')" aria-pressed="true">30D</button>
+                            <button class="period-tab" onclick="setChartPeriod('90d')" aria-pressed="false">90D</button>
                         </div>
                     </div>
                     <div class="chart-container">
-                        <canvas id="portfolio-chart"></canvas>
+                        <canvas id="portfolio-chart" aria-label="Portfolio performance chart showing 30-day balance trend" role="img"></canvas>
                     </div>
                 </div>
 
@@ -1142,27 +1152,27 @@
         </main>
 
         <!-- Bottom Navigation -->
-        <nav class="bottom-nav">
-            <div class="nav-item active" onclick="showScreen('home')">
+        <nav class="bottom-nav" role="navigation" aria-label="Main navigation">
+            <button type="button" class="nav-item active" onclick="showScreen('home')" aria-current="page">
                 <div class="nav-icon">🏠</div>
                 <div class="nav-label">Home</div>
-            </div>
-            <div class="nav-item" onclick="showScreen('wallet')">
+            </button>
+            <button type="button" class="nav-item" onclick="showScreen('wallet')">
                 <div class="nav-icon">💼</div>
                 <div class="nav-label">Wallet</div>
-            </div>
-            <div class="nav-item" onclick="showScreen('transactions')">
+            </button>
+            <button type="button" class="nav-item" onclick="showScreen('transactions')">
                 <div class="nav-icon">📋</div>
                 <div class="nav-label">History</div>
-            </div>
-            <div class="nav-item" onclick="showScreen('analytics')">
+            </button>
+            <button type="button" class="nav-item" onclick="showScreen('analytics')">
                 <div class="nav-icon">📈</div>
                 <div class="nav-label">Analytics</div>
-            </div>
-            <div class="nav-item" onclick="showScreen('settings')">
+            </button>
+            <button type="button" class="nav-item" onclick="showScreen('settings')">
                 <div class="nav-icon">⚙️</div>
                 <div class="nav-label">Settings</div>
-            </div>
+            </button>
         </nav>
     </div>
 
@@ -1174,7 +1184,6 @@
             BTC_EUR_RATE: 95000, // Mock rate: 1 BTC = 95,000 EUR (demo purposes only)
             ETH_BTC_RATE: 0.052, // Mock rate: 1 ETH = 0.052 BTC (demo purposes only)
             INITIAL_BALANCE_BTC: 2.45892341,
-            MONTHLY_GROWTH: 0.034, // 3.4% monthly
             EUR_LOCALE: 'en-IE', // Locale for EUR formatting (euro symbol with period separators)
         };
 
@@ -1189,10 +1198,13 @@
             chartDataCache: {}, // Cache for consistent chart data
         };
 
-        // Seeded random for consistent chart data across updates
+        // Improved seeded PRNG using mulberry32 for better randomness and consistency
         function seededRandom(seed) {
-            const x = Math.sin(seed) * 10000;
-            return x - Math.floor(x);
+            let t = Math.imul(seed, 0x6D2B79F5) + 0x6D2B79F5;
+            t = (t ^ (t >>> 15)) >>> 0;
+            t = Math.imul(t | 1, t ^ (t >>> 7)) >>> 0;
+            t = t ^ (t >>> 14);
+            return ((t >>> 0) / 4294967296);
         }
 
         // Centralized EUR formatting utility
@@ -1253,9 +1265,13 @@
         function setCurrency(currency) {
             STATE.currency = currency;
             
-            // Update toggle buttons
-            document.getElementById('btn-btc').classList.toggle('active', currency === 'BTC');
-            document.getElementById('btn-eur').classList.toggle('active', currency === 'EUR');
+            // Update toggle buttons with ARIA attributes
+            const btnBtc = document.getElementById('btn-btc');
+            const btnEur = document.getElementById('btn-eur');
+            btnBtc.classList.toggle('active', currency === 'BTC');
+            btnEur.classList.toggle('active', currency === 'EUR');
+            btnBtc.setAttribute('aria-pressed', currency === 'BTC');
+            btnEur.setAttribute('aria-pressed', currency === 'EUR');
             
             // Update settings display
             document.getElementById('settings-currency').textContent = currency;
@@ -1300,12 +1316,16 @@
             // Show target screen
             document.getElementById(`screen-${screenId}`).classList.add('active');
             
-            // Update nav
-            document.querySelectorAll('.nav-item').forEach(item => item.classList.remove('active'));
+            // Update nav - cache the query and reuse
             const navItems = document.querySelectorAll('.nav-item');
+            navItems.forEach(item => {
+                item.classList.remove('active');
+                item.removeAttribute('aria-current');
+            });
             const screenIndex = ['home', 'wallet', 'transactions', 'analytics', 'settings'].indexOf(screenId);
             if (screenIndex >= 0 && navItems[screenIndex]) {
                 navItems[screenIndex].classList.add('active');
+                navItems[screenIndex].setAttribute('aria-current', 'page');
             }
             
             STATE.currentScreen = screenId;
@@ -1324,60 +1344,119 @@
             const recentContainer = document.getElementById('recent-transactions');
             const fullContainer = document.getElementById('full-transaction-list');
             
-            const recentHTML = TRANSACTIONS.slice(0, 4).map(renderTransactionItem).join('');
-            const fullHTML = TRANSACTIONS.map(renderTransactionItem).join('');
-            
-            if (recentContainer) recentContainer.innerHTML = recentHTML;
-            if (fullContainer) fullContainer.innerHTML = fullHTML;
+            if (recentContainer) {
+                recentContainer.innerHTML = '';
+                TRANSACTIONS.slice(0, 4).forEach(tx => {
+                    recentContainer.appendChild(createTransactionElement(tx));
+                });
+            }
+            if (fullContainer) {
+                fullContainer.innerHTML = '';
+                TRANSACTIONS.forEach(tx => {
+                    fullContainer.appendChild(createTransactionElement(tx));
+                });
+            }
         }
 
-        function renderTransactionItem(tx) {
+        function createTransactionElement(tx) {
             const isPositive = tx.amount > 0;
             const iconClass = tx.type === 'receive' ? 'receive' : tx.type === 'send' ? 'send' : 'trade';
             const icon = tx.type === 'receive' ? '↓' : tx.type === 'send' ? '↑' : '⇄';
             
-            return `
-                <div class="transaction-item">
-                    <div class="transaction-icon ${iconClass}">${icon}</div>
-                    <div class="transaction-details">
-                        <div class="transaction-title">${tx.title}</div>
-                        <div class="transaction-meta">${tx.date}</div>
-                    </div>
-                    <div class="transaction-amount">
-                        <div class="transaction-value ${isPositive ? 'positive' : 'negative'}">
-                            ${isPositive ? '+' : ''}${formatShortCurrency(Math.abs(tx.amount))}
-                        </div>
-                        <div class="transaction-fiat">
-                            ${STATE.currency === 'BTC' ? formatEUR(Math.abs(tx.amount)).replace('€', '≈ €') : formatBTC(Math.abs(tx.amount)).replace('₿', '≈ ₿')}
-                        </div>
-                    </div>
-                </div>
-            `;
+            const item = document.createElement('div');
+            item.className = 'transaction-item';
+            
+            const iconDiv = document.createElement('div');
+            iconDiv.className = `transaction-icon ${iconClass}`;
+            iconDiv.textContent = icon;
+            item.appendChild(iconDiv);
+            
+            const details = document.createElement('div');
+            details.className = 'transaction-details';
+            
+            const title = document.createElement('div');
+            title.className = 'transaction-title';
+            title.textContent = tx.title;
+            details.appendChild(title);
+            
+            const meta = document.createElement('div');
+            meta.className = 'transaction-meta';
+            meta.textContent = tx.date;
+            details.appendChild(meta);
+            
+            item.appendChild(details);
+            
+            const amountDiv = document.createElement('div');
+            amountDiv.className = 'transaction-amount';
+            
+            const value = document.createElement('div');
+            value.className = `transaction-value ${isPositive ? 'positive' : 'negative'}`;
+            value.textContent = `${isPositive ? '+' : ''}${formatShortCurrency(Math.abs(tx.amount))}`;
+            amountDiv.appendChild(value);
+            
+            const fiat = document.createElement('div');
+            fiat.className = 'transaction-fiat';
+            fiat.textContent = STATE.currency === 'BTC' 
+                ? formatEUR(Math.abs(tx.amount)).replace('€', '≈ €') 
+                : formatBTC(Math.abs(tx.amount)).replace('₿', '≈ ₿');
+            amountDiv.appendChild(fiat);
+            
+            item.appendChild(amountDiv);
+            
+            return item;
         }
 
         function renderAssets() {
             const container = document.getElementById('asset-list');
             if (!container) return;
             
-            container.innerHTML = ASSETS.map(asset => {
+            // Clear the container and use DOM methods to avoid XSS
+            container.innerHTML = '';
+            
+            ASSETS.forEach(asset => {
                 const btcValue = asset.symbol === 'BTC' ? asset.balance : 
                                  asset.symbol === 'ETH' ? asset.balance * CONFIG.ETH_BTC_RATE : 
                                  asset.balance / CONFIG.BTC_EUR_RATE;
                 
-                return `
-                    <div class="asset-item">
-                        <div class="asset-logo ${asset.logo}">${asset.symbol.charAt(0)}</div>
-                        <div class="asset-info">
-                            <div class="asset-name">${asset.name}</div>
-                            <div class="asset-symbol">${asset.symbol}</div>
-                        </div>
-                        <div class="asset-values">
-                            <div class="asset-balance">${asset.balance.toFixed(asset.symbol === 'USDC' ? 2 : 4)} ${asset.symbol}</div>
-                            <div class="asset-fiat">${formatShortCurrency(btcValue)}</div>
-                        </div>
-                    </div>
-                `;
-            }).join('');
+                const assetItem = document.createElement('div');
+                assetItem.className = 'asset-item';
+                
+                const assetLogo = document.createElement('div');
+                assetLogo.className = `asset-logo ${asset.logo}`;
+                assetLogo.textContent = asset.symbol.charAt(0);
+                assetItem.appendChild(assetLogo);
+                
+                const assetInfo = document.createElement('div');
+                assetInfo.className = 'asset-info';
+                
+                const assetName = document.createElement('div');
+                assetName.className = 'asset-name';
+                assetName.textContent = asset.name;
+                assetInfo.appendChild(assetName);
+                
+                const assetSymbol = document.createElement('div');
+                assetSymbol.className = 'asset-symbol';
+                assetSymbol.textContent = asset.symbol;
+                assetInfo.appendChild(assetSymbol);
+                
+                assetItem.appendChild(assetInfo);
+                
+                const assetValues = document.createElement('div');
+                assetValues.className = 'asset-values';
+                
+                const assetBalance = document.createElement('div');
+                assetBalance.className = 'asset-balance';
+                assetBalance.textContent = `${asset.balance.toFixed(asset.symbol === 'USDC' ? 2 : 4)} ${asset.symbol}`;
+                assetValues.appendChild(assetBalance);
+                
+                const assetFiat = document.createElement('div');
+                assetFiat.className = 'asset-fiat';
+                assetFiat.textContent = formatShortCurrency(btcValue);
+                assetValues.appendChild(assetFiat);
+                
+                assetItem.appendChild(assetValues);
+                container.appendChild(assetItem);
+            });
         }
 
         // ===== CHART FUNCTIONS =====
@@ -1499,12 +1578,23 @@
             STATE.portfolioChart.update();
         }
 
+        // Cache period tabs for performance
+        let periodTabsCache = null;
+        function getPeriodTabs() {
+            if (!periodTabsCache) {
+                periodTabsCache = document.querySelectorAll('.period-tab');
+            }
+            return periodTabsCache;
+        }
+
         function setChartPeriod(period) {
             STATE.chartPeriod = period;
             
-            // Update tabs
-            document.querySelectorAll('.period-tab').forEach(tab => {
-                tab.classList.toggle('active', tab.textContent === period.toUpperCase());
+            // Update tabs with ARIA attributes (using cached query)
+            getPeriodTabs().forEach(tab => {
+                const isActive = tab.textContent === period.toUpperCase();
+                tab.classList.toggle('active', isActive);
+                tab.setAttribute('aria-pressed', isActive);
             });
             
             updatePortfolioChart();
