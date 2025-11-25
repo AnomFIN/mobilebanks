@@ -1,0 +1,168 @@
+{
+  "users": [
+    {
+      "id": "user_1",
+      "username": "demo",
+      "displayName": "Demo User",
+      "email": "demo@cryptovault.fi",
+      "wallets": ["main", "cat"],
+      "settings": {
+        "theme": "dark",
+        "language": "fi",
+        "autoTrade": true,
+        "notifications": true
+      },
+      "createdAt": "2024-01-15T10:00:00Z"
+    }
+  ],
+  "wallets": {
+    "main": {
+      "btc": 0.52341234,
+      "label": "Pääsalkku"
+    },
+    "cat": {
+      "btc": 0.12345678,
+      "label": "C-A-T Automaattitili"
+    }
+  },
+  "transactions": [
+    {
+      "id": "tx_1",
+      "from": "cat",
+      "to": "main",
+      "amount_btc": 0.00234567,
+      "type": "cat_profit",
+      "description": "CAT arbitraasituotto - Binance/Kraken",
+      "ts": "2025-11-25T00:45:00Z",
+      "status": "completed"
+    },
+    {
+      "id": "tx_2",
+      "from": "main",
+      "to": "external",
+      "amount_btc": 0.01,
+      "type": "send",
+      "description": "Lähetys ulkoiseen lompakkoon",
+      "address": "bc1qxy2kgdygjrsqtzq2n0yrf2493p83kkfjhx0wlh",
+      "ts": "2025-11-24T18:30:00Z",
+      "status": "completed"
+    },
+    {
+      "id": "tx_3",
+      "from": "external",
+      "to": "main",
+      "amount_btc": 0.05,
+      "type": "receive",
+      "description": "Vastaanotettu Bitcoin",
+      "ts": "2025-11-24T12:00:00Z",
+      "status": "completed"
+    },
+    {
+      "id": "tx_4",
+      "from": "cat",
+      "to": "main",
+      "amount_btc": 0.00156789,
+      "type": "cat_profit",
+      "description": "CAT arbitraasituotto - Coinbase/Bitstamp",
+      "ts": "2025-11-24T08:15:00Z",
+      "status": "completed"
+    },
+    {
+      "id": "tx_5",
+      "from": "main",
+      "to": "cat",
+      "amount_btc": 0.05,
+      "type": "cat_deposit",
+      "description": "Siirto CAT-tilille",
+      "ts": "2025-11-23T14:00:00Z",
+      "status": "completed"
+    },
+    {
+      "id": "tx_6",
+      "from": "external",
+      "to": "main",
+      "amount_btc": 0.15,
+      "type": "receive",
+      "description": "Vastaanotettu Bitcoin",
+      "ts": "2025-11-22T10:30:00Z",
+      "status": "completed"
+    },
+    {
+      "id": "tx_7",
+      "from": "cat",
+      "to": "main",
+      "amount_btc": 0.00089012,
+      "type": "cat_profit",
+      "description": "CAT arbitraasituotto - Gemini/Kraken",
+      "ts": "2025-11-21T22:45:00Z",
+      "status": "completed"
+    },
+    {
+      "id": "tx_8",
+      "from": "main",
+      "to": "external",
+      "amount_btc": 0.025,
+      "type": "send",
+      "description": "Maksu - Verkkokauppa",
+      "ts": "2025-11-20T16:00:00Z",
+      "status": "completed"
+    }
+  ],
+  "cat_activity": [
+    {
+      "id": "cat_1",
+      "type": "arbitrage",
+      "buy_exchange": "Binance",
+      "sell_exchange": "Kraken",
+      "buy_price_usd": 94850.00,
+      "sell_price_usd": 95120.00,
+      "amount_btc": 0.15,
+      "profit_btc": 0.00042631,
+      "user_share_percent": 3.19,
+      "user_profit_btc": 0.00001360,
+      "ts": "2025-11-25T00:58:00Z",
+      "status": "completed"
+    },
+    {
+      "id": "cat_2",
+      "type": "arbitrage",
+      "buy_exchange": "Coinbase",
+      "sell_exchange": "Bitstamp",
+      "buy_price_usd": 94920.00,
+      "sell_price_usd": 95080.00,
+      "amount_btc": 0.08,
+      "profit_btc": 0.00013474,
+      "user_share_percent": 2.85,
+      "user_profit_btc": 0.00000384,
+      "ts": "2025-11-25T00:45:00Z",
+      "status": "completed"
+    },
+    {
+      "id": "cat_3",
+      "type": "arbitrage",
+      "buy_exchange": "Gemini",
+      "sell_exchange": "Kraken",
+      "buy_price_usd": 94780.00,
+      "sell_price_usd": 95050.00,
+      "amount_btc": 0.12,
+      "profit_btc": 0.00034175,
+      "user_share_percent": 1.95,
+      "user_profit_btc": 0.00000666,
+      "ts": "2025-11-25T00:32:00Z",
+      "status": "completed"
+    }
+  ],
+  "prices": {
+    "BTC": {
+      "last": 95000.00,
+      "mock_usd": 95000,
+      "mock_eur": 89000,
+      "change_24h_percent": 2.45
+    }
+  },
+  "portfolio_performance": {
+    "24h": [],
+    "7d": [],
+    "generated_at": null
+  }
+}
