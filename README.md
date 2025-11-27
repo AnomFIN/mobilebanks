@@ -73,9 +73,8 @@ This script automatically handles port conflicts on Windows and other platforms.
 
 ## 📚 Documentation
 
-- **[README_INSTALL.md](README_INSTALL.md)**: Install.py script guide (recommended)
+- **[README_INSTALL.md](README_INSTALL.md)**: install.py käyttöohjeet / Install.py script guide (tekstipohjainen valikko, Windows-parannukset, porttikäsittely)
 - **[SETUP.md](SETUP.md)**: Complete setup guide and quick start
-- **[README_INSTALL.md](README_INSTALL.md)**: install.py käyttöohjeet (tekstipohjainen valikko, Windows-parannukset, porttikäsittely)
 - **[INSTALL_SCRIPT.md](INSTALL_SCRIPT.md)**: Python installation script documentation (vanha versio)
 - **[UI_DESIGN.md](UI_DESIGN.md)**: Comprehensive UI design documentation
 - **[FEATURES.md](FEATURES.md)**: Detailed feature documentation
