@@ -2513,6 +2513,18 @@
             BTC_TO_ETH_RATE: 18.5,
             SERVICE_FEE: 0.015,
             NETWORK_FEE_BTC: 0.000015,
+            // Demo wallet address (not a real address)
+            DEMO_BTC_ADDRESS: 'bc1qxy2kgdygjrsqtzq2n0yrf2493p83kkfjhx0wlh',
+        };
+
+        // ===== CONSTANTS =====
+        const EXCHANGES = ['Binance', 'Kraken', 'Coinbase', 'Bitstamp', 'Gemini', 'Bitfinex'];
+        
+        const MOCK_TX_DESCRIPTIONS = {
+            receive: ['Vastaanotettu Bitcoin', 'Palkka saapunut', 'Siirto ystävältä'],
+            send: ['Lähetys ulkoiseen lompakkoon', 'Maksu verkkokauppaan', 'Lahjoitus'],
+            cat_profit: ['CAT arbitraasituotto - Binance/Kraken', 'CAT tuotto - Coinbase/Gemini'],
+            swap: ['Vaihto BTC → ETH', 'Vaihto BTC → USDC']
         };
 
         // ===== APPLICATION STATE =====
@@ -2725,11 +2737,20 @@
             const username = document.getElementById('username').value.trim();
             const password = document.getElementById('password').value;
             
-            // Mock authentication - demo/demo123
-            if ((username === 'demo' && password === 'demo123') || 
-                STATE.db.users.some(u => u.username === username)) {
-                const user = STATE.db.users.find(u => u.username === username) || STATE.db.users[0];
+            // Mock authentication - only demo account works with demo/demo123
+            // Note: This is a demo app - no real password validation is implemented
+            // In production, implement proper password hashing and server-side validation
+            if (username === 'demo' && password === 'demo123') {
+                const user = STATE.db.users.find(u => u.username === 'demo') || STATE.db.users[0];
                 loginUser(user);
+            } else if (password.length >= 6) {
+                // For demo purposes, allow any username with password >= 6 chars
+                const user = STATE.db.users.find(u => u.username === username);
+                if (user) {
+                    loginUser(user);
+                } else {
+                    showLoginError('login', 'Käyttäjää ei löydy. Rekisteröidy ensin.');
+                }
             } else {
                 showLoginError('login', 'Virheellinen käyttäjänimi tai salasana');
             }
@@ -3103,11 +3124,10 @@
         function generateCatActivity() {
             if (!STATE.settings.autoTrade) return;
             
-            const exchanges = ['Binance', 'Kraken', 'Coinbase', 'Bitstamp', 'Gemini', 'Bitfinex'];
-            const buyExchange = exchanges[Math.floor(Math.random() * exchanges.length)];
-            let sellExchange = exchanges[Math.floor(Math.random() * exchanges.length)];
+            const buyExchange = EXCHANGES[Math.floor(Math.random() * EXCHANGES.length)];
+            let sellExchange = EXCHANGES[Math.floor(Math.random() * EXCHANGES.length)];
             while (sellExchange === buyExchange) {
-                sellExchange = exchanges[Math.floor(Math.random() * exchanges.length)];
+                sellExchange = EXCHANGES[Math.floor(Math.random() * EXCHANGES.length)];
             }
             
             const basePrice = STATE.db.prices.BTC.mock_usd;
@@ -3450,8 +3470,7 @@
 
         // ===== UTILITY FUNCTIONS =====
         function copyAddress() {
-            const address = 'bc1qxy2kgdygjrsqtzq2n0yrf2493p83kkfjhx0wlh';
-            navigator.clipboard.writeText(address).then(() => {
+            navigator.clipboard.writeText(CONFIG.DEMO_BTC_ADDRESS).then(() => {
                 showToast('success', 'Kopioitu', 'Osoite kopioitu leikepöydälle');
             }).catch(() => {
                 showToast('error', 'Virhe', 'Kopiointi epäonnistui');
@@ -3483,19 +3502,14 @@
             // Generate mock transactions for past week
             const now = Date.now();
             const mockTypes = ['receive', 'send', 'cat_profit', 'swap'];
-            const mockDescriptions = {
-                receive: ['Vastaanotettu Bitcoin', 'Palkka saapunut', 'Siirto ystävältä'],
-                send: ['Lähetys ulkoiseen lompakkoon', 'Maksu verkkokauppaan', 'Lahjoitus'],
-                cat_profit: ['CAT arbitraasituotto - Binance/Kraken', 'CAT tuotto - Coinbase/Gemini'],
-                swap: ['Vaihto BTC → ETH', 'Vaihto BTC → USDC']
-            };
             
             for (let i = 0; i < 15; i++) {
                 const type = mockTypes[Math.floor(Math.random() * mockTypes.length)];
                 const amount = 0.001 + Math.random() * 0.05;
                 const daysAgo = Math.random() * 7;
                 const ts = new Date(now - daysAgo * 24 * 60 * 60 * 1000).toISOString();
-                const desc = mockDescriptions[type][Math.floor(Math.random() * mockDescriptions[type].length)];
+                const descriptions = MOCK_TX_DESCRIPTIONS[type];
+                const desc = descriptions[Math.floor(Math.random() * descriptions.length)];
                 
                 const tx = {
                     id: generateId(),
