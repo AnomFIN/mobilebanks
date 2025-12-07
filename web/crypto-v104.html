@@ -1,0 +1,1446 @@
+<!DOCTYPE html>
+<html lang="fi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <title>CryptoVault Neo-Bank v1.04</title>
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="CryptoVault">
+    <meta name="theme-color" content="#0a0a0f">
+    <meta name="description" content="CryptoVault v1.04 - Premium Neo-Bank with AI Analytics">
+    <link rel="manifest" href="crypto-manifest.json">
+    <link rel="icon" href="crypto-icon.svg" type="image/svg+xml">
+    <link rel="apple-touch-icon" href="crypto-icon.svg">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+    <style>
+        /* ===== v1.04 PREMIUM FINTECH DESIGN SYSTEM ===== */
+        :root {
+            /* Dark Ultra-Premium Theme */
+            --primary: #6366f1;
+            --primary-light: #818cf8;
+            --primary-dark: #4f46e5;
+            --primary-glow: rgba(99, 102, 241, 0.3);
+            
+            --accent: #8b5cf6;
+            --accent-light: #a78bfa;
+            
+            --success: #10b981;
+            --error: #ef4444;
+            --warning: #f59e0b;
+            
+            /* Ultra-dark Backgrounds */
+            --bg-primary: #0a0a0f;
+            --bg-secondary: #111118;
+            --bg-tertiary: #1a1a24;
+            --bg-card: #16161f;
+            --bg-elevated: #1e1e2a;
+            
+            /* Glassmorphism */
+            --glass: rgba(22, 22, 31, 0.7);
+            --glass-border: rgba(255, 255, 255, 0.08);
+            
+            /* Text */
+            --text-primary: #f8fafc;
+            --text-secondary: #94a3b8;
+            --text-tertiary: #64748b;
+            
+            /* Spacing */
+            --space-xs: 4px;
+            --space-sm: 8px;
+            --space-md: 16px;
+            --space-lg: 24px;
+            --space-xl: 32px;
+            
+            /* Radius */
+            --radius-sm: 8px;
+            --radius-md: 12px;
+            --radius-lg: 16px;
+            --radius-xl: 24px;
+            
+            /* Shadows */
+            --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.3);
+            --shadow-md: 0 8px 24px rgba(0, 0, 0, 0.4);
+            --shadow-lg: 0 16px 48px rgba(0, 0, 0, 0.5);
+            --shadow-glow: 0 0 32px var(--primary-glow);
+            
+            /* Transitions */
+            --transition: 200ms ease;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'Segoe UI', Roboto, sans-serif;
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            line-height: 1.5;
+            -webkit-font-smoothing: antialiased;
+            overflow-x: hidden;
+            min-height: 100vh;
+        }
+
+        /* ===== TOAST NOTIFICATION SYSTEM ===== */
+        .toast-container {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 10000;
+            display: flex;
+            flex-direction: column;
+            gap: var(--space-sm);
+        }
+
+        .toast {
+            background: var(--glass);
+            backdrop-filter: blur(20px);
+            border: 1px solid var(--glass-border);
+            border-radius: var(--radius-lg);
+            padding: var(--space-md);
+            min-width: 300px;
+            max-width: 400px;
+            display: flex;
+            align-items: center;
+            gap: var(--space-md);
+            box-shadow: var(--shadow-lg);
+            animation: slideIn 0.3s ease;
+        }
+
+        @keyframes slideIn {
+            from {
+                transform: translateX(400px);
+                opacity: 0;
+            }
+            to {
+                transform: translateX(0);
+                opacity: 1;
+            }
+        }
+
+        .toast-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+            flex-shrink: 0;
+        }
+
+        .toast.success .toast-icon {
+            background: rgba(16, 185, 129, 0.2);
+            color: var(--success);
+        }
+
+        .toast.error .toast-icon {
+            background: rgba(239, 68, 68, 0.2);
+            color: var(--error);
+        }
+
+        .toast.info .toast-icon {
+            background: rgba(99, 102, 241, 0.2);
+            color: var(--primary);
+        }
+
+        .toast.warning .toast-icon {
+            background: rgba(245, 158, 11, 0.2);
+            color: var(--warning);
+        }
+
+        .toast-content {
+            flex: 1;
+        }
+
+        .toast-title {
+            font-weight: 600;
+            font-size: 14px;
+            margin-bottom: 2px;
+        }
+
+        .toast-message {
+            font-size: 13px;
+            color: var(--text-secondary);
+        }
+
+        /* ===== LANDING PAGE ===== */
+        .landing-page {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .landing-page.hidden {
+            display: none;
+        }
+
+        .landing-hero {
+            padding: var(--space-xl) var(--space-lg);
+            text-align: center;
+            background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .landing-hero::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 70%);
+            animation: rotate 20s linear infinite;
+        }
+
+        @keyframes rotate {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+
+        .landing-logo {
+            font-size: 48px;
+            font-weight: 800;
+            margin-bottom: var(--space-md);
+            color: white;
+            text-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+        }
+
+        .landing-tagline {
+            font-size: 18px;
+            color: rgba(255, 255, 255, 0.9);
+            margin-bottom: var(--space-sm);
+        }
+
+        .landing-subtitle {
+            font-size: 14px;
+            color: rgba(255, 255, 255, 0.7);
+        }
+
+        .version-badge {
+            display: inline-block;
+            background: rgba(255, 255, 255, 0.2);
+            padding: 6px 16px;
+            border-radius: var(--radius-full);
+            font-size: 12px;
+            font-weight: 600;
+            margin-top: var(--space-md);
+        }
+
+        .landing-content {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: var(--space-xl) var(--space-lg);
+        }
+
+        .whats-new {
+            background: var(--bg-card);
+            border-radius: var(--radius-xl);
+            padding: var(--space-lg);
+            margin-bottom: var(--space-xl);
+            border: 1px solid var(--glass-border);
+        }
+
+        .whats-new h2 {
+            font-size: 24px;
+            margin-bottom: var(--space-md);
+            background: linear-gradient(135deg, var(--primary) 0%, var(--accent) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .whats-new ul {
+            list-style: none;
+            padding: 0;
+        }
+
+        .whats-new li {
+            padding: var(--space-sm) 0;
+            padding-left: var(--space-lg);
+            position: relative;
+            color: var(--text-secondary);
+        }
+
+        .whats-new li::before {
+            content: '✓';
+            position: absolute;
+            left: 0;
+            color: var(--success);
+            font-weight: 600;
+        }
+
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: var(--space-md);
+            margin-bottom: var(--space-xl);
+        }
+
+        .feature-card {
+            background: var(--bg-card);
+            border-radius: var(--radius-lg);
+            padding: var(--space-lg);
+            border: 1px solid var(--glass-border);
+            transition: var(--transition);
+        }
+
+        .feature-card:hover {
+            transform: translateY(-4px);
+            box-shadow: var(--shadow-md);
+            border-color: var(--primary);
+        }
+
+        .feature-icon {
+            font-size: 32px;
+            margin-bottom: var(--space-md);
+        }
+
+        .feature-card h3 {
+            font-size: 16px;
+            margin-bottom: var(--space-sm);
+        }
+
+        .feature-card p {
+            font-size: 14px;
+            color: var(--text-secondary);
+        }
+
+        .login-section {
+            background: var(--bg-card);
+            border-radius: var(--radius-xl);
+            padding: var(--space-xl);
+            max-width: 400px;
+            margin: 0 auto;
+            border: 1px solid var(--glass-border);
+        }
+
+        .login-section h2 {
+            text-align: center;
+            margin-bottom: var(--space-lg);
+        }
+
+        .form-group {
+            margin-bottom: var(--space-md);
+        }
+
+        .form-label {
+            display: block;
+            font-size: 13px;
+            font-weight: 600;
+            margin-bottom: var(--space-xs);
+            color: var(--text-secondary);
+        }
+
+        .form-input {
+            width: 100%;
+            padding: var(--space-md);
+            background: var(--bg-tertiary);
+            border: 1px solid var(--glass-border);
+            border-radius: var(--radius-md);
+            color: var(--text-primary);
+            font-size: 15px;
+        }
+
+        .form-input:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px var(--primary-glow);
+        }
+
+        .btn-primary {
+            width: 100%;
+            padding: var(--space-md);
+            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+            border: none;
+            border-radius: var(--radius-md);
+            color: white;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-glow);
+        }
+
+        .btn-secondary {
+            margin-top: var(--space-sm);
+        }
+
+        .btn-secondary {
+            background: var(--bg-tertiary);
+            color: var(--text-primary);
+        }
+
+        /* ===== APP CONTAINER ===== */
+        .app {
+            max-width: 430px;
+            margin: 0 auto;
+            min-height: 100vh;
+            background: var(--bg-primary);
+            position: relative;
+        }
+
+        .app.hidden {
+            display: none;
+        }
+
+        /* ===== HEADER ===== */
+        .header {
+            position: fixed;
+            top: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 100%;
+            max-width: 430px;
+            height: 60px;
+            background: rgba(10, 10, 15, 0.95);
+            backdrop-filter: blur(20px);
+            border-bottom: 1px solid var(--glass-border);
+            z-index: 100;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 var(--space-md);
+        }
+
+        .header-logo span {
+            font-size: 18px;
+            font-weight: 700;
+            background: linear-gradient(135deg, var(--primary) 0%, var(--accent) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .header-actions {
+            display: flex;
+            gap: var(--space-sm);
+        }
+
+        .header-btn {
+            width: 36px;
+            height: 36px;
+            border-radius: var(--radius-md);
+            background: var(--bg-tertiary);
+            border: 1px solid var(--glass-border);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            font-size: 16px;
+            transition: var(--transition);
+        }
+
+        .header-btn:hover {
+            background: var(--bg-elevated);
+        }
+
+        /* ===== MAIN CONTENT ===== */
+        .main-content {
+            padding-top: 60px;
+            padding-bottom: 80px;
+            min-height: 100vh;
+        }
+
+        .screen {
+            display: none;
+            padding: var(--space-md);
+            animation: fadeIn 0.2s ease;
+        }
+
+        .screen.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(8px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* ===== CARD STYLES ===== */
+        .card {
+            background: var(--glass);
+            backdrop-filter: blur(20px);
+            border-radius: var(--radius-lg);
+            border: 1px solid var(--glass-border);
+            padding: var(--space-lg);
+            margin-bottom: var(--space-md);
+        }
+
+        /* ===== BOTTOM NAV ===== */
+        .bottom-nav {
+            position: fixed;
+            bottom: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 100%;
+            max-width: 430px;
+            height: 80px;
+            background: rgba(10, 10, 15, 0.98);
+            backdrop-filter: blur(20px);
+            border-top: 1px solid var(--glass-border);
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+            z-index: 100;
+        }
+
+        .nav-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: var(--space-sm);
+            cursor: pointer;
+            border-radius: var(--radius-md);
+            min-width: 60px;
+            background: none;
+            border: none;
+            color: var(--text-tertiary);
+            transition: var(--transition);
+        }
+
+        .nav-item:hover {
+            background: var(--bg-tertiary);
+        }
+
+        .nav-item.active {
+            color: var(--primary);
+        }
+
+        .nav-icon {
+            font-size: 22px;
+            margin-bottom: 4px;
+        }
+
+        .nav-label {
+            font-size: 10px;
+            font-weight: 600;
+        }
+
+        /* ===== SETTINGS PAGE ===== */
+        .settings-section {
+            margin-bottom: var(--space-xl);
+        }
+
+        .settings-title {
+            font-size: 13px;
+            font-weight: 600;
+            color: var(--text-tertiary);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: var(--space-sm);
+            padding: 0 var(--space-xs);
+        }
+
+        .settings-list {
+            background: var(--bg-card);
+            border-radius: var(--radius-lg);
+            border: 1px solid var(--glass-border);
+            overflow: hidden;
+        }
+
+        .settings-item {
+            display: flex;
+            align-items: center;
+            padding: var(--space-md);
+            border-bottom: 1px solid var(--glass-border);
+            cursor: pointer;
+        }
+
+        .settings-item:last-child {
+            border-bottom: none;
+        }
+
+        .settings-item:hover {
+            background: var(--bg-tertiary);
+        }
+
+        .settings-info {
+            flex: 1;
+        }
+
+        .settings-label {
+            font-size: 14px;
+            font-weight: 500;
+        }
+
+        .settings-value {
+            font-size: 12px;
+            color: var(--text-tertiary);
+        }
+
+        .toggle-switch {
+            width: 48px;
+            height: 28px;
+            background: var(--bg-tertiary);
+            border-radius: 14px;
+            position: relative;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .toggle-switch.active {
+            background: var(--primary);
+        }
+
+        .toggle-switch::after {
+            content: '';
+            position: absolute;
+            top: 2px;
+            left: 2px;
+            width: 24px;
+            height: 24px;
+            background: white;
+            border-radius: 50%;
+            transition: var(--transition);
+        }
+
+        .toggle-switch.active::after {
+            transform: translateX(20px);
+        }
+
+        /* ===== REFERRAL PAGE ===== */
+        .referral-header {
+            text-align: center;
+            margin-bottom: var(--space-xl);
+        }
+
+        .referral-code-display {
+            background: var(--bg-card);
+            border: 2px dashed var(--primary);
+            border-radius: var(--radius-lg);
+            padding: var(--space-xl);
+            text-align: center;
+            margin-bottom: var(--space-lg);
+        }
+
+        .referral-code {
+            font-size: 32px;
+            font-weight: 700;
+            font-family: 'Courier New', monospace;
+            color: var(--primary);
+            letter-spacing: 4px;
+        }
+
+        .referral-link {
+            background: var(--bg-tertiary);
+            padding: var(--space-md);
+            border-radius: var(--radius-md);
+            font-size: 12px;
+            font-family: monospace;
+            color: var(--text-secondary);
+            word-break: break-all;
+            margin-top: var(--space-md);
+        }
+
+        .referral-stats {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: var(--space-md);
+            margin-bottom: var(--space-lg);
+        }
+
+        .referral-stat {
+            background: var(--bg-card);
+            border-radius: var(--radius-lg);
+            padding: var(--space-lg);
+            text-align: center;
+            border: 1px solid var(--glass-border);
+        }
+
+        .referral-stat-value {
+            font-size: 24px;
+            font-weight: 700;
+            color: var(--primary);
+            margin-bottom: var(--space-xs);
+        }
+
+        .referral-stat-label {
+            font-size: 12px;
+            color: var(--text-tertiary);
+        }
+
+        /* ===== HISTORY PAGE ===== */
+        .history-tabs {
+            display: flex;
+            gap: var(--space-sm);
+            margin-bottom: var(--space-lg);
+            background: var(--bg-card);
+            padding: var(--space-xs);
+            border-radius: var(--radius-lg);
+        }
+
+        .history-tab {
+            flex: 1;
+            padding: var(--space-sm);
+            background: transparent;
+            border: none;
+            border-radius: var(--radius-md);
+            font-weight: 600;
+            cursor: pointer;
+            transition: var(--transition);
+            color: var(--text-tertiary);
+        }
+
+        .history-tab.active {
+            background: var(--primary);
+            color: white;
+        }
+
+        .search-box {
+            margin-bottom: var(--space-md);
+        }
+
+        .search-input {
+            width: 100%;
+            padding: var(--space-md);
+            background: var(--bg-card);
+            border: 1px solid var(--glass-border);
+            border-radius: var(--radius-md);
+            color: var(--text-primary);
+            font-size: 14px;
+        }
+
+        /* ===== MODAL ===== */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.8);
+            backdrop-filter: blur(10px);
+            z-index: 200;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            opacity: 0;
+            pointer-events: none;
+            transition: var(--transition);
+        }
+
+        .modal-overlay.show {
+            opacity: 1;
+            pointer-events: auto;
+        }
+
+        .modal {
+            background: var(--bg-card);
+            border-radius: var(--radius-xl);
+            width: 90%;
+            max-width: 500px;
+            max-height: 80vh;
+            overflow-y: auto;
+            border: 1px solid var(--glass-border);
+        }
+
+        .modal-header {
+            padding: var(--space-lg);
+            border-bottom: 1px solid var(--glass-border);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .modal-title {
+            font-size: 18px;
+            font-weight: 700;
+        }
+
+        .modal-close {
+            width: 32px;
+            height: 32px;
+            border-radius: var(--radius-sm);
+            background: var(--bg-tertiary);
+            border: none;
+            cursor: pointer;
+            font-size: 18px;
+        }
+
+        .modal-body {
+            padding: var(--space-lg);
+        }
+
+        .modal-footer {
+            padding: var(--space-lg);
+            border-top: 1px solid var(--glass-border);
+            display: flex;
+            gap: var(--space-sm);
+        }
+
+        /* ===== RESPONSIVE ===== */
+        @media (max-width: 480px) {
+            .landing-content {
+                padding: var(--space-lg) var(--space-md);
+            }
+            
+            .features-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* ===== ADDITIONAL UTILITIES ===== */
+        .hidden {
+            display: none !important;
+        }
+
+        .text-center {
+            text-align: center;
+        }
+
+        .mb-0 { margin-bottom: 0 !important; }
+        .mb-sm { margin-bottom: var(--space-sm) !important; }
+        .mb-md { margin-bottom: var(--space-md) !important; }
+        .mb-lg { margin-bottom: var(--space-lg) !important; }
+    </style>
+</head>
+<body>
+    <!-- Toast Container -->
+    <div class="toast-container" id="toast-container"></div>
+
+    <!-- Landing/Marketing Page -->
+    <div class="landing-page" id="landing-page">
+        <div class="landing-hero">
+            <div class="landing-logo">CryptoVault</div>
+            <div class="landing-tagline">AI-Powered Neo-Bank</div>
+            <div class="landing-subtitle">Crypto + EUR Balance Simulation</div>
+            <div class="version-badge">v1.04</div>
+        </div>
+
+        <div class="landing-content">
+            <div class="whats-new">
+                <h2>What's New in v1.04</h2>
+                <ul>
+                    <li>EUR withdrawal simulation (IBAN + MobilePay)</li>
+                    <li>Referral program with unique links</li>
+                    <li>Global notification system</li>
+                    <li>Advanced settings panel</li>
+                    <li>AI Market Brain analytics</li>
+                    <li>User risk profiles</li>
+                    <li>Premium glassmorphism UI</li>
+                </ul>
+            </div>
+
+            <div class="features-grid">
+                <div class="feature-card">
+                    <div class="feature-icon">📈</div>
+                    <h3>Real-Time Charts</h3>
+                    <p>Live simulated price movements and portfolio tracking</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">🤖</div>
+                    <h3>AI Market Brain</h3>
+                    <p>Intelligent market analysis and risk assessment</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">🔒</div>
+                    <h3>Security & Trust</h3>
+                    <p>Enterprise-grade demo security features</p>
+                </div>
+            </div>
+
+            <div class="login-section">
+                <h2>Login to Continue</h2>
+                <form id="login-form" onsubmit="handleLogin(event)">
+                    <div class="form-group">
+                        <label class="form-label">Username</label>
+                        <input type="text" class="form-input" id="username" placeholder="demo" required>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Password</label>
+                        <input type="password" class="form-input" id="password" placeholder="demo123" required>
+                    </div>
+                    <button type="submit" class="btn-primary">Login</button>
+                    <button type="button" class="btn-primary btn-secondary" onclick="demoLogin()">Demo Login</button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main App -->
+    <div class="app hidden" id="app">
+        <!-- Header -->
+        <div class="header">
+            <div class="header-logo">
+                <span>CryptoVault</span>
+            </div>
+            <div class="header-actions">
+                <button class="header-btn" onclick="toggleNotifications()">🔔</button>
+                <button class="header-btn" onclick="showScreen('settings')">⚙️</button>
+            </div>
+        </div>
+
+        <!-- Main Content -->
+        <div class="main-content">
+            <!-- Dashboard Screen -->
+            <div id="screen-dashboard" class="screen active">
+                <div class="card">
+                    <h2>Total Balance</h2>
+                    <div style="font-size: 32px; font-weight: 700; margin: var(--space-md) 0;" id="total-balance">0.00 BTC</div>
+                    <div style="color: var(--text-secondary);" id="balance-eur">≈ 0,00 €</div>
+                </div>
+
+                <div class="card">
+                    <h3 class="mb-md">Quick Actions</h3>
+                    <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: var(--space-sm);">
+                        <button class="btn-primary" onclick="openModal('withdraw')">Withdraw EUR</button>
+                        <button class="btn-primary btn-secondary" onclick="showScreen('referral')">Referral</button>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <h3 class="mb-md">AI Market Brain</h3>
+                    <div id="market-brain-content">
+                        <p style="color: var(--text-secondary); margin-bottom: var(--space-sm);">
+                            <strong style="color: var(--success);">Risk Level: Low</strong>
+                        </p>
+                        <p style="font-size: 14px; color: var(--text-secondary);">
+                            Current market conditions show stable trends with low volatility. 
+                            Portfolio diversification is optimal for your balanced risk profile.
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- History Screen -->
+            <div id="screen-history" class="screen">
+                <h2 class="mb-lg">Transaction History</h2>
+                
+                <div class="history-tabs">
+                    <button class="history-tab active" onclick="filterHistory('all')">All</button>
+                    <button class="history-tab" onclick="filterHistory('deposits')">Deposits</button>
+                    <button class="history-tab" onclick="filterHistory('trades')">Trades</button>
+                    <button class="history-tab" onclick="filterHistory('withdrawals')">Withdrawals</button>
+                </div>
+
+                <div class="search-box">
+                    <input type="text" class="search-input" placeholder="Search transactions..." id="history-search">
+                </div>
+
+                <div id="history-list">
+                    <!-- Populated by JS -->
+                </div>
+            </div>
+
+            <!-- Referral Screen -->
+            <div id="screen-referral" class="screen">
+                <div class="referral-header">
+                    <h2 class="mb-sm">Referral Program</h2>
+                    <p style="color: var(--text-secondary);">Share your unique link and earn rewards</p>
+                </div>
+
+                <div class="referral-code-display">
+                    <div style="color: var(--text-secondary); font-size: 12px; margin-bottom: var(--space-sm);">Your Referral Code</div>
+                    <div class="referral-code" id="referral-code">CRYPTO04</div>
+                    <div class="referral-link" id="referral-link"></div>
+                    <button class="btn-primary" style="margin-top: var(--space-md);" onclick="copyReferralLink()">Copy Link</button>
+                </div>
+
+                <div class="referral-stats">
+                    <div class="referral-stat">
+                        <div class="referral-stat-value" id="referral-clicks">0</div>
+                        <div class="referral-stat-label">Clicks</div>
+                    </div>
+                    <div class="referral-stat">
+                        <div class="referral-stat-value" id="referral-signups">0</div>
+                        <div class="referral-stat-label">Signups</div>
+                    </div>
+                    <div class="referral-stat">
+                        <div class="referral-stat-value" id="referral-bonus">0.00</div>
+                        <div class="referral-stat-label">Bonus (EUR)</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Settings Screen -->
+            <div id="screen-settings" class="screen">
+                <h2 class="mb-lg">Settings</h2>
+
+                <div class="settings-section">
+                    <div class="settings-title">Appearance</div>
+                    <div class="settings-list">
+                        <div class="settings-item">
+                            <div class="settings-info">
+                                <div class="settings-label">Dark Theme</div>
+                                <div class="settings-value">Ultra-dark mode enabled</div>
+                            </div>
+                            <div class="toggle-switch active" onclick="toggleTheme(this)"></div>
+                        </div>
+                        <div class="settings-item">
+                            <div class="settings-info">
+                                <div class="settings-label">Animations</div>
+                                <div class="settings-value">Smooth transitions</div>
+                            </div>
+                            <div class="toggle-switch active" onclick="toggleSetting(this, 'animations')"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="settings-section">
+                    <div class="settings-title">Risk Profile</div>
+                    <div class="settings-list">
+                        <div class="settings-item" onclick="setRiskProfile('conservative')">
+                            <div class="settings-info">
+                                <div class="settings-label">Conservative</div>
+                                <div class="settings-value">Low risk, stable growth</div>
+                            </div>
+                        </div>
+                        <div class="settings-item" onclick="setRiskProfile('balanced')">
+                            <div class="settings-info">
+                                <div class="settings-label">Balanced</div>
+                                <div class="settings-value">Moderate risk and returns</div>
+                            </div>
+                        </div>
+                        <div class="settings-item" onclick="setRiskProfile('aggressive')">
+                            <div class="settings-info">
+                                <div class="settings-label">Aggressive</div>
+                                <div class="settings-value">High risk, high potential</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="settings-section">
+                    <div class="settings-title">Data</div>
+                    <div class="settings-list">
+                        <div class="settings-item" onclick="resetDemo()">
+                            <div class="settings-info">
+                                <div class="settings-label">Reset Demo Data</div>
+                                <div class="settings-value">Clear all data and start fresh</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Bottom Navigation -->
+        <div class="bottom-nav">
+            <button class="nav-item active" onclick="showScreen('dashboard')">
+                <div class="nav-icon">🏠</div>
+                <div class="nav-label">Home</div>
+            </button>
+            <button class="nav-item" onclick="showScreen('history')">
+                <div class="nav-icon">📊</div>
+                <div class="nav-label">History</div>
+            </button>
+            <button class="nav-item" onclick="showScreen('referral')">
+                <div class="nav-icon">🎁</div>
+                <div class="nav-label">Referral</div>
+            </button>
+            <button class="nav-item" onclick="showScreen('settings')">
+                <div class="nav-icon">⚙️</div>
+                <div class="nav-label">Settings</div>
+            </button>
+        </div>
+    </div>
+
+    <!-- EUR Withdrawal Modal -->
+    <div class="modal-overlay" id="modal-withdraw">
+        <div class="modal">
+            <div class="modal-header">
+                <div class="modal-title">Withdraw to EUR</div>
+                <button class="modal-close" onclick="closeModal('withdraw')">✕</button>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <label class="form-label">Method</label>
+                    <select class="form-input" id="withdraw-method">
+                        <option value="iban">IBAN (SEPA)</option>
+                        <option value="mobilepay">MobilePay</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Amount (EUR)</label>
+                    <input type="number" class="form-input" id="withdraw-amount" placeholder="100.00" step="0.01">
+                </div>
+                <div class="form-group">
+                    <label class="form-label">IBAN / Mobile Number</label>
+                    <input type="text" class="form-input" id="withdraw-target" placeholder="FI12 3456 7890 1234 56">
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn-primary btn-secondary" onclick="closeModal('withdraw')">Cancel</button>
+                <button class="btn-primary" onclick="confirmWithdrawal()">Confirm</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // ===== DATABASE LAYER =====
+        const DB = {
+            KEYS: {
+                SETTINGS: 'crypto_v104_settings',
+                TRANSACTIONS: 'crypto_v104_transactions',
+                REFERRAL: 'crypto_v104_referral',
+                FLAGS: 'crypto_v104_flags',
+                WALLETS: 'crypto_v104_wallets'
+            },
+
+            getSettings() {
+                const stored = localStorage.getItem(this.KEYS.SETTINGS);
+                return stored ? JSON.parse(stored) : {
+                    theme: 'dark',
+                    animationsEnabled: true,
+                    riskProfile: 'balanced'
+                };
+            },
+
+            saveSettings(settings) {
+                localStorage.setItem(this.KEYS.SETTINGS, JSON.stringify(settings));
+            },
+
+            getTransactions() {
+                const stored = localStorage.getItem(this.KEYS.TRANSACTIONS);
+                return stored ? JSON.parse(stored) : [];
+            },
+
+            saveTransactions(transactions) {
+                localStorage.setItem(this.KEYS.TRANSACTIONS, JSON.stringify(transactions));
+            },
+
+            addTransaction(tx) {
+                const transactions = this.getTransactions();
+                transactions.unshift(tx);
+                this.saveTransactions(transactions);
+            },
+
+            getReferralProfile() {
+                const stored = localStorage.getItem(this.KEYS.REFERRAL);
+                if (stored) {
+                    return JSON.parse(stored);
+                }
+                // Generate new code
+                const code = this.generateReferralCode();
+                const profile = {
+                    code: code,
+                    createdAt: Date.now(),
+                    clicks: 0,
+                    signups: 0,
+                    estimatedBonus: 0
+                };
+                this.saveReferralProfile(profile);
+                return profile;
+            },
+
+            saveReferralProfile(profile) {
+                localStorage.setItem(this.KEYS.REFERRAL, JSON.stringify(profile));
+            },
+
+            generateReferralCode() {
+                const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
+                let code = '';
+                for (let i = 0; i < 8; i++) {
+                    code += chars.charAt(Math.floor(Math.random() * chars.length));
+                }
+                return code;
+            },
+
+            getFlag(key) {
+                const stored = localStorage.getItem(this.KEYS.FLAGS);
+                const flags = stored ? JSON.parse(stored) : {};
+                return flags[key] || false;
+            },
+
+            setFlag(key, value) {
+                const stored = localStorage.getItem(this.KEYS.FLAGS);
+                const flags = stored ? JSON.parse(stored) : {};
+                flags[key] = value;
+                localStorage.setItem(this.KEYS.FLAGS, JSON.stringify(flags));
+            },
+
+            getWallets() {
+                const stored = localStorage.getItem(this.KEYS.WALLETS);
+                return stored ? JSON.parse(stored) : {
+                    main: { btc: 0.52341234 },
+                    cat: { btc: 0.12345678 }
+                };
+            },
+
+            saveWallets(wallets) {
+                localStorage.setItem(this.KEYS.WALLETS, JSON.stringify(wallets));
+            }
+        };
+
+        // ===== NOTIFICATION SYSTEM =====
+        const Notifications = {
+            show(type, title, message, duration = 3000) {
+                const container = document.getElementById('toast-container');
+                const toast = document.createElement('div');
+                toast.className = `toast ${type}`;
+                
+                let icon = '��';
+                if (type === 'success') icon = '✓';
+                if (type === 'error') icon = '✗';
+                if (type === 'warning') icon = '⚠';
+                if (type === 'info') icon = 'ℹ';
+                
+                toast.innerHTML = `
+                    <div class="toast-icon">${icon}</div>
+                    <div class="toast-content">
+                        <div class="toast-title">${title}</div>
+                        <div class="toast-message">${message}</div>
+                    </div>
+                `;
+                
+                container.appendChild(toast);
+                
+                setTimeout(() => {
+                    toast.style.opacity = '0';
+                    toast.style.transform = 'translateX(400px)';
+                    setTimeout(() => toast.remove(), 300);
+                }, duration);
+            }
+        };
+
+        // ===== APPLICATION STATE =====
+        const STATE = {
+            currentScreen: 'dashboard',
+            wallets: DB.getWallets(),
+            settings: DB.getSettings(),
+            referral: DB.getReferralProfile(),
+            btcPrice: 89000
+        };
+
+        // ===== INITIALIZATION =====
+        function init() {
+            // Check first run
+            if (!DB.getFlag('seen_v104_intro')) {
+                showFirstRunModal();
+                DB.setFlag('seen_v104_intro', true);
+            }
+
+            // Check referral URL
+            const urlParams = new URLSearchParams(window.location.search);
+            const refCode = urlParams.get('ref');
+            if (refCode) {
+                handleReferralClick(refCode);
+            }
+
+            // Update UI
+            updateBalanceDisplay();
+            updateReferralUI();
+            renderHistory();
+        }
+
+        // ===== LOGIN =====
+        function handleLogin(event) {
+            event.preventDefault();
+            const username = document.getElementById('username').value;
+            const password = document.getElementById('password').value;
+            
+            if (username === 'demo' && password === 'demo123') {
+                login();
+            } else {
+                Notifications.show('error', 'Login Failed', 'Invalid credentials');
+            }
+        }
+
+        function demoLogin() {
+            login();
+        }
+
+        function login() {
+            document.getElementById('landing-page').classList.add('hidden');
+            document.getElementById('app').classList.remove('hidden');
+            Notifications.show('success', 'Welcome!', 'You are now logged in');
+            init();
+        }
+
+        // ===== NAVIGATION =====
+        function showScreen(screenId) {
+            STATE.currentScreen = screenId;
+            
+            // Hide all screens
+            document.querySelectorAll('.screen').forEach(screen => {
+                screen.classList.remove('active');
+            });
+            
+            // Show target screen
+            document.getElementById(`screen-${screenId}`).classList.add('active');
+            
+            // Update nav
+            document.querySelectorAll('.nav-item').forEach((item, i) => {
+                const screens = ['dashboard', 'history', 'referral', 'settings'];
+                item.classList.toggle('active', screens[i] === screenId);
+            });
+        }
+
+        // ===== BALANCE =====
+        function updateBalanceDisplay() {
+            const totalBtc = STATE.wallets.main.btc + STATE.wallets.cat.btc;
+            const totalEur = totalBtc * STATE.btcPrice;
+            
+            document.getElementById('total-balance').textContent = totalBtc.toFixed(8) + ' BTC';
+            document.getElementById('balance-eur').textContent = '≈ ' + totalEur.toLocaleString('fi-FI', {
+                minimumFractionDigits: 2,
+                maximumFractionDigits: 2
+            }) + ' €';
+        }
+
+        // ===== REFERRAL SYSTEM =====
+        function updateReferralUI() {
+            const profile = STATE.referral;
+            document.getElementById('referral-code').textContent = profile.code;
+            document.getElementById('referral-link').textContent = 
+                window.location.origin + window.location.pathname + '?ref=' + profile.code;
+            document.getElementById('referral-clicks').textContent = profile.clicks;
+            document.getElementById('referral-signups').textContent = profile.signups;
+            document.getElementById('referral-bonus').textContent = profile.estimatedBonus.toFixed(2);
+        }
+
+        function copyReferralLink() {
+            const link = window.location.origin + window.location.pathname + '?ref=' + STATE.referral.code;
+            navigator.clipboard.writeText(link).then(() => {
+                Notifications.show('success', 'Link Copied', 'Referral link copied to clipboard');
+            });
+        }
+
+        function handleReferralClick(code) {
+            if (code !== STATE.referral.code) {
+                // Track click
+                Notifications.show('info', 'Referral Detected', `Referred by code: ${code}`);
+                localStorage.setItem('referrer', code);
+            }
+        }
+
+        // ===== HISTORY =====
+        function renderHistory() {
+            const transactions = DB.getTransactions();
+            const container = document.getElementById('history-list');
+            
+            if (transactions.length === 0) {
+                container.innerHTML = '<div class="card text-center" style="color: var(--text-secondary);">No transactions yet</div>';
+                return;
+            }
+            
+            container.innerHTML = transactions.map(tx => `
+                <div class="card">
+                    <div style="display: flex; justify-content: space-between; align-items: center;">
+                        <div>
+                            <div style="font-weight: 600;">${tx.description}</div>
+                            <div style="font-size: 12px; color: var(--text-tertiary);">${new Date(tx.timestamp).toLocaleString('fi-FI')}</div>
+                        </div>
+                        <div style="text-align: right;">
+                            <div style="font-weight: 600; color: ${tx.type === 'deposit' ? 'var(--success)' : 'var(--text-primary)'};">
+                                ${tx.amount > 0 ? '+' : ''}${tx.amount.toFixed(2)} EUR
+                            </div>
+                            <div style="font-size: 12px; color: var(--text-tertiary);">${tx.status}</div>
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function filterHistory(filter) {
+            // Update active tab
+            document.querySelectorAll('.history-tab').forEach(tab => {
+                tab.classList.remove('active');
+            });
+            event.target.classList.add('active');
+            
+            // Filter logic would go here
+            renderHistory();
+        }
+
+        // ===== WITHDRAWAL =====
+        function openModal(modalId) {
+            document.getElementById(`modal-${modalId}`).classList.add('show');
+        }
+
+        function closeModal(modalId) {
+            document.getElementById(`modal-${modalId}`).classList.remove('show');
+        }
+
+        function confirmWithdrawal() {
+            const method = document.getElementById('withdraw-method').value;
+            const amount = parseFloat(document.getElementById('withdraw-amount').value);
+            const target = document.getElementById('withdraw-target').value;
+            
+            if (!amount || !target) {
+                Notifications.show('error', 'Error', 'Please fill all fields');
+                return;
+            }
+            
+            // Create withdrawal transaction
+            const tx = {
+                id: Date.now().toString(),
+                type: 'withdrawal',
+                description: `EUR Withdrawal (${method.toUpperCase()})`,
+                amount: -amount,
+                timestamp: Date.now(),
+                status: 'Pending',
+                meta: { method, target }
+            };
+            
+            DB.addTransaction(tx);
+            closeModal('withdraw');
+            
+            Notifications.show('info', 'Withdrawal Requested', 'Processing your withdrawal...');
+            
+            // Simulate processing
+            setTimeout(() => {
+                tx.status = 'Processing';
+                DB.saveTransactions(DB.getTransactions());
+                Notifications.show('info', 'Processing', 'Your withdrawal is being processed');
+                
+                setTimeout(() => {
+                    tx.status = 'Completed';
+                    DB.saveTransactions(DB.getTransactions());
+                    Notifications.show('success', 'Withdrawal Complete', `${amount.toFixed(2)} EUR has been sent`);
+                    renderHistory();
+                }, 3000);
+            }, 2000);
+        }
+
+        // ===== SETTINGS =====
+        function toggleTheme(element) {
+            element.classList.toggle('active');
+            STATE.settings.theme = element.classList.contains('active') ? 'dark' : 'light';
+            DB.saveSettings(STATE.settings);
+            Notifications.show('info', 'Theme Changed', 'Theme preference updated');
+        }
+
+        function toggleSetting(element, setting) {
+            element.classList.toggle('active');
+            STATE.settings[setting] = element.classList.contains('active');
+            DB.saveSettings(STATE.settings);
+        }
+
+        function setRiskProfile(profile) {
+            STATE.settings.riskProfile = profile;
+            DB.saveSettings(STATE.settings);
+            Notifications.show('success', 'Risk Profile Updated', `Set to ${profile}`);
+        }
+
+        function resetDemo() {
+            if (confirm('Reset all demo data?')) {
+                localStorage.clear();
+                location.reload();
+            }
+        }
+
+        function toggleNotifications() {
+            Notifications.show('info', 'Notifications', 'No new notifications');
+        }
+
+        // ===== FIRST RUN =====
+        function showFirstRunModal() {
+            setTimeout(() => {
+                Notifications.show('info', 'Welcome to v1.04!', 'Explore the new features', 5000);
+            }, 1000);
+        }
+
+        // ===== STARTUP =====
+        // App will initialize after login
+    </script>
+</body>
+</html>
