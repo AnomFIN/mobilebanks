@@ -1,6 +1,6 @@
-# Yritystili – Helsinki eBike Service Oy
+BTC Bot
 
-A stunning Expo Go mobile banking app with a minimalist fintech UI design, featuring offline mock data, haptics, and smooth animations.
+A stunning Node mobile banking app with a minimalist fintech UI design, featuring offline mock data, haptics, and smooth animations.
 
 <img src="https://img.shields.io/badge/Expo-000020?style=for-the-badge&logo=expo&logoColor=white" alt="Expo" />
 <img src="https://img.shields.io/badge/React_Native-20232A?style=for-the-badge&logo=react&logoColor=61DAFB" alt="React Native" />
