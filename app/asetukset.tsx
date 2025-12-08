@@ -12,11 +12,13 @@ import { Ionicons } from '@expo/vector-icons';
 import * as Haptics from 'expo-haptics';
 import { Colors, Spacing, BorderRadius, FontSize, Shadow, FontWeight } from '../src/theme/theme';
 import Card from '../src/components/Card';
+import { useAccount } from '../src/context/AccountContext';
 
 export default function AsetuksetScreen() {
   const [hapticsEnabled, setHapticsEnabled] = useState(true);
   const [animationsEnabled, setAnimationsEnabled] = useState(true);
   const [darkMode, setDarkMode] = useState(false);
+  const { language, setLanguage, showAccountWarning, setShowAccountWarning } = useAccount();
 
   const handleHapticsToggle = () => {
     if (hapticsEnabled) {
@@ -52,6 +54,31 @@ export default function AsetuksetScreen() {
         <View style={styles.section}>
           <Text style={styles.sectionTitle}>Tilin tiedot</Text>
           <Card>
+            <View style={styles.settingRow}>
+              <View style={styles.settingInfo}>
+                <View style={styles.settingIconContainer}>
+                  <Ionicons name="language-outline" size={20} color={Colors.primary} />
+                </View>
+                <View>
+                  <Text style={styles.settingLabel}>Kieli</Text>
+                  <Text style={styles.settingDescription}>Valitse käyttöliittymän kieli (vain kuitti & tiliote käännetään)</Text>
+                </View>
+              </View>
+              <View style={styles.langButtons}>
+                <TouchableOpacity
+                  style={[styles.langButton, language === 'fi' && styles.langButtonActive]}
+                  onPress={() => setLanguage('fi')}
+                >
+                  <Text style={[styles.langButtonText, language === 'fi' && styles.langButtonTextActive]}>Suomi</Text>
+                </TouchableOpacity>
+                <TouchableOpacity
+                  style={[styles.langButton, language === 'en' && styles.langButtonActive]}
+                  onPress={() => setLanguage('en')}
+                >
+                  <Text style={[styles.langButtonText, language === 'en' && styles.langButtonTextActive]}>English</Text>
+                </TouchableOpacity>
+              </View>
+            </View>
             <View style={styles.infoRow}>
               <View style={styles.infoIconContainer}>
                 <Ionicons name="person-outline" size={20} color={Colors.primary} />
@@ -150,6 +177,26 @@ export default function AsetuksetScreen() {
                 trackColor={{ false: Colors.border, true: Colors.primaryLight }}
                 thumbColor={darkMode ? Colors.primary : Colors.textMuted}
                 accessibilityLabel="Toggle dark mode"
+              />
+            </View>
+            <View style={styles.divider} />
+
+            <View style={styles.settingRow}>
+              <View style={styles.settingInfo}>
+                <View style={styles.settingIconContainer}>
+                  <Ionicons name="alert-circle-outline" size={20} color={Colors.warning} />
+                </View>
+                <View>
+                  <Text style={styles.settingLabel}>{language === 'en' ? 'Warning banner' : 'Varoitusteksti'}</Text>
+                  <Text style={styles.settingDescription}>{language === 'en' ? 'Show account warning on all screens' : 'Näytä tilivaroitus kaikilla sivuilla'}</Text>
+                </View>
+              </View>
+              <Switch
+                value={showAccountWarning}
+                onValueChange={(v) => setShowAccountWarning(v)}
+                trackColor={{ false: Colors.border, true: Colors.primaryLight }}
+                thumbColor={showAccountWarning ? Colors.primary : Colors.textMuted}
+                accessibilityLabel="Toggle account warning banner"
               />
             </View>
           </Card>
@@ -359,5 +406,29 @@ const styles = StyleSheet.create({
   },
   logoutText: {
     color: Colors.error,
+  },
+  langButtons: {
+    flexDirection: 'row',
+    gap: Spacing.sm,
+  },
+  langButton: {
+    paddingVertical: Spacing.sm,
+    paddingHorizontal: Spacing.md,
+    borderRadius: BorderRadius.md,
+    borderWidth: 1,
+    borderColor: Colors.border,
+    backgroundColor: Colors.card,
+  },
+  langButtonActive: {
+    backgroundColor: Colors.primary,
+    borderColor: Colors.primary,
+  },
+  langButtonText: {
+    fontSize: FontSize.sm,
+    color: Colors.text,
+  },
+  langButtonTextActive: {
+    color: Colors.white,
+    fontWeight: FontWeight.semibold,
   },
 });

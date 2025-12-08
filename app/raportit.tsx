@@ -8,17 +8,17 @@ import {
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
-import * as Haptics from 'expo-haptics';
+import { impactAsync } from '../src/utils/safeHaptics';
 import { Colors, Spacing, BorderRadius, FontSize, Shadow, FontWeight } from '../src/theme/theme';
 import { useAccount } from '../src/context/AccountContext';
-import { Card } from '../src/components/Card';
+import Card from '../src/components/Card';
 
 export default function RaportitScreen() {
   const { transactions } = useAccount();
   const [selectedRange, setSelectedRange] = useState<'week' | 'month' | 'year'>('month');
 
   const handleRangeChange = (range: 'week' | 'month' | 'year') => {
-    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+    impactAsync((global as any).Haptics?.ImpactFeedbackStyle?.Light || 'light');
     setSelectedRange(range);
   };
 
@@ -113,7 +113,7 @@ export default function RaportitScreen() {
 
           <Card style={styles.summaryCard}>
             <View style={styles.summaryIconContainer}>
-              <Ionicons name="swap-horizontal" size={24} color={Colors.accent} />
+              <Ionicons name="swap-horizontal" size={24} color={Colors.accentCyan} />
             </View>
             <Text style={styles.summaryLabel}>Tapahtumat</Text>
             <Text style={styles.summaryValue}>
@@ -158,7 +158,7 @@ export default function RaportitScreen() {
             </View>
             <View style={styles.categoryItem}>
               <View style={styles.categoryInfo}>
-                <View style={[styles.categoryDot, { backgroundColor: Colors.accent }]} />
+                <View style={[styles.categoryDot, { backgroundColor: Colors.accentCyan }]} />
                 <Text style={styles.categoryName}>Ruoka</Text>
               </View>
               <Text style={styles.categoryAmount}>-49.00 €</Text>

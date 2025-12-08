@@ -1,10 +1,88 @@
-# Yritystili – Helsinki eBike Service Oy
+BTC Bot
 
-A stunning Expo Go mobile banking app with a minimalist fintech UI design, featuring offline mock data, haptics, and smooth animations.
+A stunning Node mobile banking app with a minimalist fintech UI design, featuring offline mock data, haptics, and smooth animations.
 
 <img src="https://img.shields.io/badge/Expo-000020?style=for-the-badge&logo=expo&logoColor=white" alt="Expo" />
 <img src="https://img.shields.io/badge/React_Native-20232A?style=for-the-badge&logo=react&logoColor=61DAFB" alt="React Native" />
 <img src="https://img.shields.io/badge/TypeScript-007ACC?style=for-the-badge&logo=typescript&logoColor=white" alt="TypeScript" />
+
+---
+
+## 🚀 CryptoVault v1.03 - Web Demo
+
+**CryptoVault** on ammattimainen krypto lompakko demo C-A-T (Cryptocurrency Automated Trading) automaattikaupankäynnillä. Tämä on staattinen UI-demo joka toimii GitHub Pagesilla ilman backend-integraatiota.
+
+### 🔗 Käynnistä Demo
+
+Avaa selaimessa: `web/crypto-v103.html`
+
+```bash
+# Yksinkertainen käynnistys (avaa tiedosto selaimessa)
+open web/crypto-v103.html
+
+# Tai käytä paikallista palvelinta
+python3 -m http.server 8080
+# Sitten avaa: http://localhost:8080/web/crypto-v103.html
+```
+
+### 🔐 Demo-kirjautuminen
+
+- **Käyttäjänimi:** `demo`
+- **Salasana:** `demo123`
+
+### ✨ CryptoVault v1.03 Ominaisuudet
+
+| Ominaisuus | Kuvaus |
+|------------|--------|
+| 🔐 **Login/Register** | Mock-autentikaatio localStoragella |
+| 💰 **Portfolio** | BTC-saldo 6-8 desimaalin tarkkuudella |
+| 📈 **Portfolio Chart** | Satunnainen demo-käyrä (24h/7pv toggle) |
+| 🤖 **C-A-T System** | Automaattinen arbitraasikaupankäynti |
+| 💳 **Buy/Sell/Swap** | Kaupankäynti modalit validaatiolla |
+| ↑↓ **Send/Receive** | Siirrot mock JSON-backendillä |
+| 🎨 **Dark Theme** | Tumma teema oletuksena |
+| 🇫🇮 **Suomi** | Koko UI suomeksi |
+| 📥 **CSV Export** | Vie tapahtumat CSV-tiedostona |
+| 🧪 **Simulate** | Simuloi 1 viikon kehitys |
+| ⌨️ **Pikanäppäimet** | P=Portfolio, T=Trade, W=Wallet |
+
+### 📁 Mock Database
+
+Demo käyttää `data/mock_db.json` + localStorage synkronointia:
+
+```json
+{
+  "users": [{ "id": "user_1", "username": "demo", ... }],
+  "wallets": {
+    "main": { "btc": 0.52341234 },
+    "cat": { "btc": 0.12345678 }
+  },
+  "transactions": [...],
+  "cat_activity": [...],
+  "prices": { "BTC": { "mock_eur": 89000 } }
+}
+```
+
+**Kuinka mock-data toimii:**
+1. Ensin ladataan `data/mock_db.json`
+2. Jos localStorage sisältää muutoksia, ne ylikirjoittavat JSON-datan
+3. Kaikki muutokset (transaktiot, asetukset) tallennetaan localStorageen
+4. "Palauta demo-tila" nollaa localStoragen
+
+### 🧪 QA Testaus
+
+1. **Verkkoviive simulaatio**: Asetukset → "Simuloi verkkoviive" toggle
+2. **Manuaalinen hinnan muokkaus**: Kauppa-sivulla "Muokkaa hintaa" työkalu
+3. **Tapahtumasimulttori**: Historia → "Simuloi 1 viikon kehitys"
+
+### ⚠️ Huomioitavaa
+
+- Tämä on **DEMO** - ei oikeaa kryptovaluuttaa
+- GitHub Pages ei salli server-side kirjoituksia → localStorage käytössä
+- Mock API-kutsut simuloivat 400-1200ms viivettä (valinnainen)
+- Kaikki sensitive-kentät ovat demoa varten
+
+---
 
 ## ✨ Features
 
@@ -71,10 +149,34 @@ This script automatically handles port conflicts on Windows and other platforms.
 
 **Detailed instructions**: See [SETUP.md](SETUP.md)
 
+### Web Version Quick Start
+
+Launch the web version with a simple launcher:
+
+**Windows Users:** See [WINDOWS_QUICK_START.md](WINDOWS_QUICK_START.md) for step-by-step guide
+
+```bash
+# Windows: Double-click
+Launch_Web_Server.bat
+
+# Or run Python script directly
+python3 launch_web_server.py
+```
+
+Choose between:
+- **Local network** - Access via localhost or local IP
+- **Public internet** - Share via ngrok tunnel
+
+**Documentation:**
+- [WINDOWS_QUICK_START.md](WINDOWS_QUICK_START.md) - Complete Windows guide with troubleshooting
+- [WEB_LAUNCHER_README.md](WEB_LAUNCHER_README.md) - Technical documentation for all platforms
+
 ## 📚 Documentation
 
 - **[README_INSTALL.md](README_INSTALL.md)**: install.py käyttöohjeet / Install.py script guide (tekstipohjainen valikko, Windows-parannukset, porttikäsittely)
 - **[SETUP.md](SETUP.md)**: Complete setup guide and quick start
+- **[WEB_LAUNCHER_README.md](WEB_LAUNCHER_README.md)**: Web server launcher guide (local & public access)
+- **[README_INSTALL.md](README_INSTALL.md)**: install.py käyttöohjeet (tekstipohjainen valikko, Windows-parannukset, porttikäsittely)
 - **[INSTALL_SCRIPT.md](INSTALL_SCRIPT.md)**: Python installation script documentation (vanha versio)
 - **[UI_DESIGN.md](UI_DESIGN.md)**: Comprehensive UI design documentation
 - **[FEATURES.md](FEATURES.md)**: Detailed feature documentation

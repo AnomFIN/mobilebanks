@@ -6,6 +6,7 @@ export interface Transaction {
   category: string;
   status: 'completed' | 'pending' | 'failed';
   recipient?: string;
+  iban?: string;
   type: 'debit' | 'credit';
 }
 

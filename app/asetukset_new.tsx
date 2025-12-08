@@ -12,7 +12,7 @@ import {
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
-import * as Haptics from 'expo-haptics';
+import { impactAsync, notificationAsync } from '../src/utils/safeHaptics';
 import { Colors, Spacing, BorderRadius, FontSize, FontWeight } from '../src/theme/theme';
 import { useAccount } from '../src/context/AccountContext';
 import Card from '../src/components/Card';
@@ -54,7 +54,7 @@ export default function AsetuksetScreen() {
 
   const handleHaptics = () => {
     if (hapticsEnabled) {
-      Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+      impactAsync((global as any).Haptics?.ImpactFeedbackStyle?.Light || 'light');
     }
   };
 
