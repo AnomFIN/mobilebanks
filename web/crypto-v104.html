@@ -3,12 +3,12 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>CryptoVault Neo-Bank v1.04</title>
+    <title>CryptoVault Neo-Bank v1.04 - Demo Application</title>
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <meta name="apple-mobile-web-app-title" content="CryptoVault">
     <meta name="theme-color" content="#0a0a0f">
-    <meta name="description" content="CryptoVault v1.04 - Premium Neo-Bank with AI Analytics">
+    <meta name="description" content="CryptoVault v1.04 - Premium Neo-Bank Demo with AI Analytics. Demonstration application with simulated cryptocurrency portfolio management.">
     <link rel="manifest" href="crypto-manifest.json">
     <link rel="icon" href="crypto-icon.svg" type="image/svg+xml">
     <link rel="apple-touch-icon" href="crypto-icon.svg">
@@ -247,6 +247,7 @@
             padding: var(--space-lg);
             margin-bottom: var(--space-xl);
             border: 1px solid var(--glass-border);
+            animation: fadeInUp 0.5s cubic-bezier(0.2, 0.8, 0.2, 1);
         }
 
         .whats-new h2 {
@@ -289,13 +290,15 @@
             border-radius: var(--radius-lg);
             padding: var(--space-lg);
             border: 1px solid var(--glass-border);
-            transition: var(--transition);
+            transition: all var(--transition);
+            cursor: default;
         }
 
         .feature-card:hover {
             transform: translateY(-4px);
             box-shadow: var(--shadow-md);
             border-color: var(--primary);
+            background: linear-gradient(135deg, rgba(99, 102, 241, 0.05) 0%, rgba(139, 92, 246, 0.05) 100%);
         }
 
         .feature-icon {
@@ -320,6 +323,7 @@
             max-width: 400px;
             margin: 0 auto;
             border: 1px solid var(--glass-border);
+            animation: fadeInUp 0.6s cubic-bezier(0.2, 0.8, 0.2, 1);
         }
 
         .login-section h2 {
@@ -722,6 +726,7 @@
             font-family: 'Courier New', monospace;
             color: var(--primary);
             letter-spacing: 4px;
+            user-select: all;
         }
 
         .referral-link {
@@ -733,6 +738,8 @@
             color: var(--text-secondary);
             word-break: break-all;
             margin-top: var(--space-md);
+            user-select: all;
+            cursor: text;
         }
 
         .referral-stats {
