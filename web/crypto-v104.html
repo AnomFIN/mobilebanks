@@ -64,8 +64,10 @@
             --shadow-lg: 0 16px 48px rgba(0, 0, 0, 0.5);
             --shadow-glow: 0 0 32px var(--primary-glow);
             
-            /* Transitions */
-            --transition: 200ms ease;
+            /* Transitions - Smooth & Subtle */
+            --transition-fast: 150ms cubic-bezier(0.2, 0.8, 0.2, 1);
+            --transition: 200ms cubic-bezier(0.2, 0.8, 0.2, 1);
+            --transition-slow: 250ms cubic-bezier(0.2, 0.8, 0.2, 1);
         }
 
         * {
@@ -351,6 +353,28 @@
             outline: none;
             border-color: var(--primary);
             box-shadow: 0 0 0 3px var(--primary-glow);
+            transition: var(--transition);
+        }
+        
+        .form-input:hover:not(:focus) {
+            border-color: rgba(99, 102, 241, 0.5);
+        }
+        
+        .form-input::placeholder {
+            color: var(--text-tertiary);
+        }
+        
+        select.form-input {
+            cursor: pointer;
+            appearance: none;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%2394a3b8' d='M6 9L1 4h10z'/%3E%3C/svg%3E");
+            background-repeat: no-repeat;
+            background-position: right var(--space-md) center;
+            padding-right: calc(var(--space-md) * 2.5);
+        }
+        
+        select.form-input:hover:not(:focus) {
+            border-color: rgba(99, 102, 241, 0.5);
         }
 
         .btn-primary {
@@ -366,18 +390,34 @@
             transition: var(--transition);
         }
 
-        .btn-primary:hover {
+        .btn-primary:hover:not(:disabled) {
             transform: translateY(-2px);
             box-shadow: var(--shadow-glow);
+        }
+        
+        .btn-primary:active:not(:disabled) {
+            transform: translateY(0);
+        }
+        
+        .btn-primary:focus-visible {
+            outline: 2px solid var(--primary);
+            outline-offset: 2px;
+        }
+        
+        .btn-primary:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
         }
 
         .btn-secondary {
             margin-top: var(--space-sm);
-        }
-
-        .btn-secondary {
             background: var(--bg-tertiary);
             color: var(--text-primary);
+        }
+        
+        .btn-secondary:hover:not(:disabled) {
+            background: var(--bg-elevated);
+            box-shadow: var(--shadow-sm);
         }
 
         /* ===== APP CONTAINER ===== */
@@ -437,10 +477,21 @@
             cursor: pointer;
             font-size: 16px;
             transition: var(--transition);
+            color: var(--text-primary);
         }
 
         .header-btn:hover {
             background: var(--bg-elevated);
+            transform: scale(1.05);
+        }
+        
+        .header-btn:active {
+            transform: scale(0.95);
+        }
+        
+        .header-btn:focus-visible {
+            outline: 2px solid var(--primary);
+            outline-offset: 2px;
         }
 
         /* ===== MAIN CONTENT ===== */
@@ -453,16 +504,22 @@
         .screen {
             display: none;
             padding: var(--space-md);
-            animation: fadeIn 0.2s ease;
+            animation: fadeInUp 0.3s cubic-bezier(0.2, 0.8, 0.2, 1);
         }
 
         .screen.active {
             display: block;
         }
 
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(8px); }
-            to { opacity: 1; transform: translateY(0); }
+        @keyframes fadeInUp {
+            from { 
+                opacity: 0; 
+                transform: translateY(12px); 
+            }
+            to { 
+                opacity: 1; 
+                transform: translateY(0); 
+            }
         }
 
         /* ===== CARD STYLES ===== */
@@ -473,7 +530,14 @@
             border: 1px solid var(--glass-border);
             padding: var(--space-lg);
             margin-bottom: var(--space-md);
+            animation: fadeInUp 0.3s cubic-bezier(0.2, 0.8, 0.2, 1);
+            animation-fill-mode: both;
         }
+        
+        .card:nth-child(1) { animation-delay: 0ms; }
+        .card:nth-child(2) { animation-delay: 50ms; }
+        .card:nth-child(3) { animation-delay: 100ms; }
+        .card:nth-child(4) { animation-delay: 150ms; }
 
         /* ===== BOTTOM NAV ===== */
         .bottom-nav {
@@ -509,10 +573,20 @@
 
         .nav-item:hover {
             background: var(--bg-tertiary);
+            transform: translateY(-2px);
+        }
+        
+        .nav-item:active {
+            transform: translateY(0);
         }
 
         .nav-item.active {
             color: var(--primary);
+        }
+        
+        .nav-item:focus-visible {
+            outline: 2px solid var(--primary);
+            outline-offset: 2px;
         }
 
         .nav-icon {
@@ -553,6 +627,7 @@
             padding: var(--space-md);
             border-bottom: 1px solid var(--glass-border);
             cursor: pointer;
+            transition: var(--transition);
         }
 
         .settings-item:last-child {
@@ -561,6 +636,15 @@
 
         .settings-item:hover {
             background: var(--bg-tertiary);
+        }
+        
+        .settings-item:active {
+            background: var(--bg-elevated);
+        }
+        
+        .settings-item:focus-visible {
+            outline: 2px solid var(--primary);
+            outline-offset: -2px;
         }
 
         .settings-info {
@@ -590,6 +674,15 @@
         .toggle-switch.active {
             background: var(--primary);
         }
+        
+        .toggle-switch:hover:not(.active) {
+            background: var(--bg-elevated);
+        }
+        
+        .toggle-switch:focus-visible {
+            outline: 2px solid var(--primary);
+            outline-offset: 2px;
+        }
 
         .toggle-switch::after {
             content: '';
@@ -601,6 +694,7 @@
             background: white;
             border-radius: 50%;
             transition: var(--transition);
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
         }
 
         .toggle-switch.active::after {
@@ -688,11 +782,22 @@
             cursor: pointer;
             transition: var(--transition);
             color: var(--text-tertiary);
+            font-size: 14px;
         }
 
         .history-tab.active {
             background: var(--primary);
             color: white;
+        }
+        
+        .history-tab:not(.active):hover {
+            background: var(--bg-tertiary);
+            color: var(--text-secondary);
+        }
+        
+        .history-tab:focus-visible {
+            outline: 2px solid var(--primary);
+            outline-offset: 2px;
         }
 
         .search-box {
@@ -707,6 +812,21 @@
             border-radius: var(--radius-md);
             color: var(--text-primary);
             font-size: 14px;
+            transition: var(--transition);
+        }
+        
+        .search-input:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px var(--primary-glow);
+        }
+        
+        .search-input:hover:not(:focus) {
+            border-color: rgba(99, 102, 241, 0.5);
+        }
+        
+        .search-input::placeholder {
+            color: var(--text-tertiary);
         }
 
         /* ===== MODAL ===== */
@@ -724,7 +844,7 @@
             justify-content: center;
             opacity: 0;
             pointer-events: none;
-            transition: var(--transition);
+            transition: opacity var(--transition-slow);
         }
 
         .modal-overlay.show {
@@ -740,6 +860,12 @@
             max-height: 80vh;
             overflow-y: auto;
             border: 1px solid var(--glass-border);
+            transform: scale(0.9);
+            transition: transform var(--transition-slow);
+        }
+        
+        .modal-overlay.show .modal {
+            transform: scale(1);
         }
 
         .modal-header {
@@ -763,6 +889,25 @@
             border: none;
             cursor: pointer;
             font-size: 18px;
+            color: var(--text-primary);
+            transition: var(--transition);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .modal-close:hover {
+            background: var(--bg-elevated);
+            transform: scale(1.1);
+        }
+        
+        .modal-close:active {
+            transform: scale(0.95);
+        }
+        
+        .modal-close:focus-visible {
+            outline: 2px solid var(--primary);
+            outline-offset: 2px;
         }
 
         .modal-body {
@@ -784,6 +929,160 @@
             
             .features-grid {
                 grid-template-columns: 1fr;
+            }
+        }
+        
+        /* ===== FAQ ACCORDION ===== */
+        .faq-section {
+            margin-top: var(--space-xl);
+        }
+        
+        .faq-title {
+            font-size: 20px;
+            font-weight: 700;
+            margin-bottom: var(--space-lg);
+            text-align: center;
+        }
+        
+        .faq-list {
+            background: var(--bg-card);
+            border-radius: var(--radius-lg);
+            border: 1px solid var(--glass-border);
+            overflow: hidden;
+        }
+        
+        .faq-item {
+            border-bottom: 1px solid var(--glass-border);
+        }
+        
+        .faq-item:last-child {
+            border-bottom: none;
+        }
+        
+        .faq-question {
+            width: 100%;
+            padding: var(--space-md);
+            background: transparent;
+            border: none;
+            text-align: left;
+            font-size: 15px;
+            font-weight: 600;
+            color: var(--text-primary);
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            transition: var(--transition);
+        }
+        
+        .faq-question:hover {
+            background: var(--bg-tertiary);
+        }
+        
+        .faq-question:focus-visible {
+            outline: 2px solid var(--primary);
+            outline-offset: -2px;
+        }
+        
+        .faq-icon {
+            font-size: 12px;
+            transition: transform var(--transition);
+            color: var(--text-tertiary);
+        }
+        
+        .faq-item.active .faq-icon {
+            transform: rotate(180deg);
+        }
+        
+        .faq-answer {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height var(--transition-slow), padding var(--transition);
+            padding: 0 var(--space-md);
+        }
+        
+        .faq-item.active .faq-answer {
+            max-height: 500px;
+            padding: 0 var(--space-md) var(--space-md);
+        }
+        
+        .faq-answer p {
+            font-size: 14px;
+            line-height: 1.6;
+            color: var(--text-secondary);
+        }
+        
+        /* Demo Badge */
+        .demo-badge {
+            display: inline-block;
+            background: rgba(239, 68, 68, 0.1);
+            color: var(--error);
+            font-size: 11px;
+            font-weight: 700;
+            padding: 4px 10px;
+            border-radius: var(--radius-sm);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-left: var(--space-sm);
+        }
+        
+        /* Loading Skeleton */
+        .skeleton {
+            background: linear-gradient(
+                90deg,
+                var(--bg-tertiary) 0%,
+                var(--bg-elevated) 50%,
+                var(--bg-tertiary) 100%
+            );
+            background-size: 200% 100%;
+            animation: shimmer 1.5s infinite;
+            border-radius: var(--radius-sm);
+        }
+        
+        @keyframes shimmer {
+            0% {
+                background-position: -200% 0;
+            }
+            100% {
+                background-position: 200% 0;
+            }
+        }
+        
+        .skeleton-text {
+            height: 16px;
+            margin-bottom: var(--space-sm);
+        }
+        
+        .skeleton-title {
+            height: 24px;
+            width: 60%;
+            margin-bottom: var(--space-md);
+        }
+        
+        .skeleton-card {
+            height: 120px;
+            margin-bottom: var(--space-md);
+        }
+        
+        /* Smooth scrolling */
+        html {
+            scroll-behavior: smooth;
+        }
+        
+        /* Focus visible styles for accessibility */
+        *:focus-visible {
+            outline: 2px solid var(--primary);
+            outline-offset: 2px;
+        }
+        
+        /* Reduced motion support */
+        @media (prefers-reduced-motion: reduce) {
+            *,
+            *::before,
+            *::after {
+                animation-duration: 0.01ms !important;
+                animation-iteration-count: 1 !important;
+                transition-duration: 0.01ms !important;
             }
         }
 
@@ -831,17 +1130,17 @@
 
             <div class="features-grid">
                 <div class="feature-card">
-                    <div class="feature-icon">📈</div>
+                    <div class="feature-icon" style="color: var(--primary);">📊</div>
                     <h3>Real-Time Charts</h3>
                     <p>Live simulated price movements and portfolio tracking</p>
                 </div>
                 <div class="feature-card">
-                    <div class="feature-icon">🤖</div>
+                    <div class="feature-icon" style="color: var(--accent);">⚡</div>
                     <h3>AI Market Brain</h3>
                     <p>Intelligent market analysis and risk assessment</p>
                 </div>
                 <div class="feature-card">
-                    <div class="feature-icon">🔒</div>
+                    <div class="feature-icon" style="color: var(--success);">🛡</div>
                     <h3>Security & Trust</h3>
                     <p>Enterprise-grade demo security features</p>
                 </div>
@@ -871,10 +1170,15 @@
         <div class="header">
             <div class="header-logo">
                 <span>CryptoVault</span>
+                <span class="demo-badge">Demo</span>
             </div>
             <div class="header-actions">
-                <button class="header-btn" onclick="toggleNotifications()">🔔</button>
-                <button class="header-btn" onclick="showScreen('settings')">⚙️</button>
+                <button class="header-btn" onclick="toggleNotifications()" aria-label="Notifications">
+                    <span>🔔</span>
+                </button>
+                <button class="header-btn" onclick="showScreen('settings')" aria-label="Settings">
+                    <span>⚙</span>
+                </button>
             </div>
         </div>
 
@@ -882,6 +1186,16 @@
         <div class="main-content">
             <!-- Dashboard Screen -->
             <div id="screen-dashboard" class="screen active">
+                <div class="card" style="background: linear-gradient(135deg, rgba(99, 102, 241, 0.1) 0%, rgba(139, 92, 246, 0.1) 100%); border-color: rgba(99, 102, 241, 0.3);">
+                    <div style="display: flex; align-items: center; gap: var(--space-sm); margin-bottom: var(--space-sm);">
+                        <span style="font-size: 20px;">ℹ️</span>
+                        <strong style="font-size: 14px;">Demo Mode</strong>
+                    </div>
+                    <p style="font-size: 13px; color: var(--text-secondary); line-height: 1.5;">
+                        This is a demonstration application. All transactions, balances, and market data are simulated. No real cryptocurrency or funds are involved.
+                    </p>
+                </div>
+                
                 <div class="card">
                     <h2>Total Balance</h2>
                     <div style="font-size: 32px; font-weight: 700; margin: var(--space-md) 0;" id="total-balance">0.00 BTC</div>
@@ -1015,6 +1329,103 @@
                             <div class="settings-info">
                                 <div class="settings-label">Reset Demo Data</div>
                                 <div class="settings-value">Clear all data and start fresh</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- FAQ Section -->
+                <div class="faq-section">
+                    <h3 class="faq-title">Frequently Asked Questions</h3>
+                    <div class="faq-list">
+                        <div class="faq-item">
+                            <button class="faq-question" onclick="toggleFAQ(this)">
+                                <span>What is CryptoVault?</span>
+                                <span class="faq-icon">▼</span>
+                            </button>
+                            <div class="faq-answer">
+                                <p>CryptoVault is a demonstration application showcasing a modern neo-banking interface with cryptocurrency portfolio management features. All data and transactions are simulated for demonstration purposes only.</p>
+                            </div>
+                        </div>
+                        <div class="faq-item">
+                            <button class="faq-question" onclick="toggleFAQ(this)">
+                                <span>Is this a real banking application?</span>
+                                <span class="faq-icon">▼</span>
+                            </button>
+                            <div class="faq-answer">
+                                <p>No. This is a demonstration application only. No real cryptocurrency, funds, or financial transactions are involved. All balances, transactions, and market data are simulated locally in your browser.</p>
+                            </div>
+                        </div>
+                        <div class="faq-item">
+                            <button class="faq-question" onclick="toggleFAQ(this)">
+                                <span>How do I log in?</span>
+                                <span class="faq-icon">▼</span>
+                            </button>
+                            <div class="faq-answer">
+                                <p>Use the demo credentials: username "demo" and password "demo123", or click the "Demo Login" button to access the application instantly.</p>
+                            </div>
+                        </div>
+                        <div class="faq-item">
+                            <button class="faq-question" onclick="toggleFAQ(this)">
+                                <span>Where is my data stored?</span>
+                                <span class="faq-icon">▼</span>
+                            </button>
+                            <div class="faq-answer">
+                                <p>All data is stored locally in your browser's localStorage. No information is transmitted to external servers. Data persists between sessions until you clear your browser data or use the "Reset Demo Data" function.</p>
+                            </div>
+                        </div>
+                        <div class="faq-item">
+                            <button class="faq-question" onclick="toggleFAQ(this)">
+                                <span>How does the referral system work?</span>
+                                <span class="faq-icon">▼</span>
+                            </button>
+                            <div class="faq-answer">
+                                <p>The referral system generates a unique code and shareable link for demonstration purposes. Clicks and signups are tracked locally. In a production environment, this would integrate with a backend system for actual reward distribution.</p>
+                            </div>
+                        </div>
+                        <div class="faq-item">
+                            <button class="faq-question" onclick="toggleFAQ(this)">
+                                <span>What are risk profiles?</span>
+                                <span class="faq-icon">▼</span>
+                            </button>
+                            <div class="faq-answer">
+                                <p>Risk profiles (Conservative, Balanced, Aggressive) are settings that would affect trading strategies and portfolio recommendations in a real application. In this demo, they adjust the AI Market Brain analysis display.</p>
+                            </div>
+                        </div>
+                        <div class="faq-item">
+                            <button class="faq-question" onclick="toggleFAQ(this)">
+                                <span>Can I withdraw real money?</span>
+                                <span class="faq-icon">▼</span>
+                            </button>
+                            <div class="faq-answer">
+                                <p>No. All withdrawal functions are simulated. No real IBAN transactions or MobilePay transfers occur. The withdrawal flow demonstrates the user experience only.</p>
+                            </div>
+                        </div>
+                        <div class="faq-item">
+                            <button class="faq-question" onclick="toggleFAQ(this)">
+                                <span>How is the BTC price calculated?</span>
+                                <span class="faq-icon">▼</span>
+                            </button>
+                            <div class="faq-answer">
+                                <p>The BTC price is a static simulated value stored in the application. In a production system, this would connect to real-time cryptocurrency market data APIs.</p>
+                            </div>
+                        </div>
+                        <div class="faq-item">
+                            <button class="faq-question" onclick="toggleFAQ(this)">
+                                <span>Is my demo data secure?</span>
+                                <span class="faq-icon">▼</span>
+                            </button>
+                            <div class="faq-answer">
+                                <p>Since this is a demonstration app with no real sensitive data, security concerns are minimal. However, the application follows web security best practices including secure localStorage usage and no transmission of data to external servers.</p>
+                            </div>
+                        </div>
+                        <div class="faq-item">
+                            <button class="faq-question" onclick="toggleFAQ(this)">
+                                <span>Can I use this on mobile devices?</span>
+                                <span class="faq-icon">▼</span>
+                            </button>
+                            <div class="faq-answer">
+                                <p>Yes. The application is optimized for mobile devices with a maximum width of 430px, responsive design, and touch-friendly interactions. It can be added to your home screen as a progressive web app (PWA) for a native app-like experience.</p>
                             </div>
                         </div>
                     </div>
@@ -1430,6 +1841,22 @@
 
         function toggleNotifications() {
             Notifications.show('info', 'Notifications', 'No new notifications');
+        }
+        
+        // ===== FAQ ACCORDION =====
+        function toggleFAQ(button) {
+            const faqItem = button.parentElement;
+            const wasActive = faqItem.classList.contains('active');
+            
+            // Close all FAQ items
+            document.querySelectorAll('.faq-item').forEach(item => {
+                item.classList.remove('active');
+            });
+            
+            // Toggle current item
+            if (!wasActive) {
+                faqItem.classList.add('active');
+            }
         }
 
         // ===== FIRST RUN =====
