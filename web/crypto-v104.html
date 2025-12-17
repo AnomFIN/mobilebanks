@@ -3,12 +3,12 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>CryptoVault Neo-Bank v1.04</title>
+    <title>CryptoVault Neo-Bank v1.04 - Demo Application</title>
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <meta name="apple-mobile-web-app-title" content="CryptoVault">
     <meta name="theme-color" content="#0a0a0f">
-    <meta name="description" content="CryptoVault v1.04 - Premium Neo-Bank with AI Analytics">
+    <meta name="description" content="CryptoVault v1.04 - Premium Neo-Bank Demo with AI Analytics. Demonstration application with simulated cryptocurrency portfolio management.">
     <link rel="manifest" href="crypto-manifest.json">
     <link rel="icon" href="crypto-icon.svg" type="image/svg+xml">
     <link rel="apple-touch-icon" href="crypto-icon.svg">
@@ -64,8 +64,10 @@
             --shadow-lg: 0 16px 48px rgba(0, 0, 0, 0.5);
             --shadow-glow: 0 0 32px var(--primary-glow);
             
-            /* Transitions */
-            --transition: 200ms ease;
+            /* Transitions - Smooth & Subtle */
+            --transition-fast: 150ms cubic-bezier(0.2, 0.8, 0.2, 1);
+            --transition: 200ms cubic-bezier(0.2, 0.8, 0.2, 1);
+            --transition-slow: 250ms cubic-bezier(0.2, 0.8, 0.2, 1);
         }
 
         * {
@@ -245,6 +247,7 @@
             padding: var(--space-lg);
             margin-bottom: var(--space-xl);
             border: 1px solid var(--glass-border);
+            animation: fadeInUp 0.5s cubic-bezier(0.2, 0.8, 0.2, 1);
         }
 
         .whats-new h2 {
@@ -287,13 +290,15 @@
             border-radius: var(--radius-lg);
             padding: var(--space-lg);
             border: 1px solid var(--glass-border);
-            transition: var(--transition);
+            transition: all var(--transition);
+            cursor: default;
         }
 
         .feature-card:hover {
             transform: translateY(-4px);
             box-shadow: var(--shadow-md);
             border-color: var(--primary);
+            background: linear-gradient(135deg, rgba(99, 102, 241, 0.05) 0%, rgba(139, 92, 246, 0.05) 100%);
         }
 
         .feature-icon {
@@ -318,6 +323,7 @@
             max-width: 400px;
             margin: 0 auto;
             border: 1px solid var(--glass-border);
+            animation: fadeInUp 0.6s cubic-bezier(0.2, 0.8, 0.2, 1);
         }
 
         .login-section h2 {
@@ -351,6 +357,28 @@
             outline: none;
             border-color: var(--primary);
             box-shadow: 0 0 0 3px var(--primary-glow);
+            transition: var(--transition);
+        }
+        
+        .form-input:hover:not(:focus) {
+            border-color: rgba(99, 102, 241, 0.5);
+        }
+        
+        .form-input::placeholder {
+            color: var(--text-tertiary);
+        }
+        
+        select.form-input {
+            cursor: pointer;
+            appearance: none;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%2394a3b8' d='M6 9L1 4h10z'/%3E%3C/svg%3E");
+            background-repeat: no-repeat;
+            background-position: right var(--space-md) center;
+            padding-right: calc(var(--space-md) * 2.5);
+        }
+        
+        select.form-input:hover:not(:focus) {
+            border-color: rgba(99, 102, 241, 0.5);
         }
 
         .btn-primary {
@@ -366,18 +394,34 @@
             transition: var(--transition);
         }
 
-        .btn-primary:hover {
+        .btn-primary:hover:not(:disabled) {
             transform: translateY(-2px);
             box-shadow: var(--shadow-glow);
+        }
+        
+        .btn-primary:active:not(:disabled) {
+            transform: translateY(0);
+        }
+        
+        .btn-primary:focus-visible {
+            outline: 2px solid var(--primary);
+            outline-offset: 2px;
+        }
+        
+        .btn-primary:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
         }
 
         .btn-secondary {
             margin-top: var(--space-sm);
-        }
-
-        .btn-secondary {
             background: var(--bg-tertiary);
             color: var(--text-primary);
+        }
+        
+        .btn-secondary:hover:not(:disabled) {
+            background: var(--bg-elevated);
+            box-shadow: var(--shadow-sm);
         }
 
         /* ===== APP CONTAINER ===== */
@@ -437,10 +481,21 @@
             cursor: pointer;
             font-size: 16px;
             transition: var(--transition);
+            color: var(--text-primary);
         }
 
         .header-btn:hover {
             background: var(--bg-elevated);
+            transform: scale(1.05);
+        }
+        
+        .header-btn:active {
+            transform: scale(0.95);
+        }
+        
+        .header-btn:focus-visible {
+            outline: 2px solid var(--primary);
+            outline-offset: 2px;
         }
 
         /* ===== MAIN CONTENT ===== */
@@ -453,16 +508,22 @@
         .screen {
             display: none;
             padding: var(--space-md);
-            animation: fadeIn 0.2s ease;
+            animation: fadeInUp 0.3s cubic-bezier(0.2, 0.8, 0.2, 1);
         }
 
         .screen.active {
             display: block;
         }
 
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(8px); }
-            to { opacity: 1; transform: translateY(0); }
+        @keyframes fadeInUp {
+            from { 
+                opacity: 0; 
+                transform: translateY(12px); 
+            }
+            to { 
+                opacity: 1; 
+                transform: translateY(0); 
+            }
         }
 
         /* ===== CARD STYLES ===== */
@@ -473,7 +534,14 @@
             border: 1px solid var(--glass-border);
             padding: var(--space-lg);
             margin-bottom: var(--space-md);
+            animation: fadeInUp 0.3s cubic-bezier(0.2, 0.8, 0.2, 1);
+            animation-fill-mode: both;
         }
+        
+        .card:nth-child(1) { animation-delay: 0ms; }
+        .card:nth-child(2) { animation-delay: 50ms; }
+        .card:nth-child(3) { animation-delay: 100ms; }
+        .card:nth-child(4) { animation-delay: 150ms; }
 
         /* ===== BOTTOM NAV ===== */
         .bottom-nav {
@@ -509,10 +577,20 @@
 
         .nav-item:hover {
             background: var(--bg-tertiary);
+            transform: translateY(-2px);
+        }
+        
+        .nav-item:active {
+            transform: translateY(0);
         }
 
         .nav-item.active {
             color: var(--primary);
+        }
+        
+        .nav-item:focus-visible {
+            outline: 2px solid var(--primary);
+            outline-offset: 2px;
         }
 
         .nav-icon {
@@ -553,6 +631,7 @@
             padding: var(--space-md);
             border-bottom: 1px solid var(--glass-border);
             cursor: pointer;
+            transition: var(--transition);
         }
 
         .settings-item:last-child {
@@ -561,6 +640,15 @@
 
         .settings-item:hover {
             background: var(--bg-tertiary);
+        }
+        
+        .settings-item:active {
+            background: var(--bg-elevated);
+        }
+        
+        .settings-item:focus-visible {
+            outline: 2px solid var(--primary);
+            outline-offset: -2px;
         }
 
         .settings-info {
@@ -590,6 +678,15 @@
         .toggle-switch.active {
             background: var(--primary);
         }
+        
+        .toggle-switch:hover:not(.active) {
+            background: var(--bg-elevated);
+        }
+        
+        .toggle-switch:focus-visible {
+            outline: 2px solid var(--primary);
+            outline-offset: 2px;
+        }
 
         .toggle-switch::after {
             content: '';
@@ -601,6 +698,7 @@
             background: white;
             border-radius: 50%;
             transition: var(--transition);
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
         }
 
         .toggle-switch.active::after {
@@ -628,6 +726,7 @@
             font-family: 'Courier New', monospace;
             color: var(--primary);
             letter-spacing: 4px;
+            user-select: all;
         }
 
         .referral-link {
@@ -639,6 +738,8 @@
             color: var(--text-secondary);
             word-break: break-all;
             margin-top: var(--space-md);
+            user-select: all;
+            cursor: text;
         }
 
         .referral-stats {
@@ -688,11 +789,22 @@
             cursor: pointer;
             transition: var(--transition);
             color: var(--text-tertiary);
+            font-size: 14px;
         }
 
         .history-tab.active {
             background: var(--primary);
             color: white;
+        }
+        
+        .history-tab:not(.active):hover {
+            background: var(--bg-tertiary);
+            color: var(--text-secondary);
+        }
+        
+        .history-tab:focus-visible {
+            outline: 2px solid var(--primary);
+            outline-offset: 2px;
         }
 
         .search-box {
@@ -707,6 +819,21 @@
             border-radius: var(--radius-md);
             color: var(--text-primary);
             font-size: 14px;
+            transition: var(--transition);
+        }
+        
+        .search-input:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px var(--primary-glow);
+        }
+        
+        .search-input:hover:not(:focus) {
+            border-color: rgba(99, 102, 241, 0.5);
+        }
+        
+        .search-input::placeholder {
+            color: var(--text-tertiary);
         }
 
         /* ===== MODAL ===== */
@@ -724,7 +851,7 @@
             justify-content: center;
             opacity: 0;
             pointer-events: none;
-            transition: var(--transition);
+            transition: opacity var(--transition-slow);
         }
 
         .modal-overlay.show {
@@ -740,6 +867,12 @@
             max-height: 80vh;
             overflow-y: auto;
             border: 1px solid var(--glass-border);
+            transform: scale(0.9);
+            transition: transform var(--transition-slow);
+        }
+        
+        .modal-overlay.show .modal {
+            transform: scale(1);
         }
 
         .modal-header {
@@ -763,6 +896,25 @@
             border: none;
             cursor: pointer;
             font-size: 18px;
+            color: var(--text-primary);
+            transition: var(--transition);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .modal-close:hover {
+            background: var(--bg-elevated);
+            transform: scale(1.1);
+        }
+        
+        .modal-close:active {
+            transform: scale(0.95);
+        }
+        
+        .modal-close:focus-visible {
+            outline: 2px solid var(--primary);
+            outline-offset: 2px;
         }
 
         .modal-body {
@@ -784,6 +936,217 @@
             
             .features-grid {
                 grid-template-columns: 1fr;
+            }
+        }
+        
+        /* ===== FAQ ACCORDION ===== */
+        .faq-section {
+            margin-top: var(--space-xl);
+        }
+        
+        .faq-title {
+            font-size: 20px;
+            font-weight: 700;
+            margin-bottom: var(--space-lg);
+            text-align: center;
+        }
+        
+        .faq-list {
+            background: var(--bg-card);
+            border-radius: var(--radius-lg);
+            border: 1px solid var(--glass-border);
+            overflow: hidden;
+        }
+        
+        .faq-item {
+            border-bottom: 1px solid var(--glass-border);
+        }
+        
+        .faq-item:last-child {
+            border-bottom: none;
+        }
+        
+        .faq-question {
+            width: 100%;
+            padding: var(--space-md);
+            background: transparent;
+            border: none;
+            text-align: left;
+            font-size: 15px;
+            font-weight: 600;
+            color: var(--text-primary);
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            transition: var(--transition);
+        }
+        
+        .faq-question:hover {
+            background: var(--bg-tertiary);
+        }
+        
+        .faq-question:focus-visible {
+            outline: 2px solid var(--primary);
+            outline-offset: -2px;
+        }
+        
+        .faq-icon {
+            font-size: 12px;
+            transition: transform var(--transition);
+            color: var(--text-tertiary);
+        }
+        
+        .faq-item.active .faq-icon {
+            transform: rotate(180deg);
+        }
+        
+        .faq-answer {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height var(--transition-slow), padding var(--transition);
+            padding: 0 var(--space-md);
+        }
+        
+        .faq-item.active .faq-answer {
+            max-height: 500px;
+            padding: 0 var(--space-md) var(--space-md);
+        }
+        
+        .faq-answer p {
+            font-size: 14px;
+            line-height: 1.6;
+            color: var(--text-secondary);
+        }
+        
+        /* Demo Badge */
+        .demo-badge {
+            display: inline-block;
+            background: rgba(239, 68, 68, 0.1);
+            color: var(--error);
+            font-size: 11px;
+            font-weight: 700;
+            padding: 4px 10px;
+            border-radius: var(--radius-sm);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-left: var(--space-sm);
+        }
+        
+        /* Demo Notice Card */
+        .demo-notice-card {
+            background: linear-gradient(135deg, rgba(99, 102, 241, 0.1) 0%, rgba(139, 92, 246, 0.1) 100%);
+            border-color: rgba(99, 102, 241, 0.3);
+        }
+
+        .demo-notice-header {
+            display: flex;
+            align-items: center;
+            gap: var(--space-sm);
+            margin-bottom: var(--space-sm);
+        }
+
+        .demo-notice-icon {
+            font-size: 20px;
+            width: 20px;
+            height: 20px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .demo-notice-title {
+            font-size: 14px;
+        }
+
+        .demo-notice-text {
+            font-size: 13px;
+            color: var(--text-secondary);
+            line-height: 1.5;
+        }
+        
+        /* Icon styles for SVG icons */
+        .icon {
+            width: 20px;
+            height: 20px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .icon svg {
+            width: 100%;
+            height: 100%;
+        }
+        
+        /* Loading Skeleton */
+        .skeleton {
+            background: linear-gradient(
+                90deg,
+                var(--bg-tertiary) 0%,
+                var(--bg-elevated) 50%,
+                var(--bg-tertiary) 100%
+            );
+            background-size: 200% 100%;
+            animation: shimmer 1.5s infinite;
+            border-radius: var(--radius-sm);
+        }
+        
+        @keyframes shimmer {
+            0% {
+                background-position: -200% 0;
+            }
+            100% {
+                background-position: 200% 0;
+            }
+        }
+        
+        .skeleton-text {
+            height: 16px;
+            margin-bottom: var(--space-sm);
+        }
+        
+        .skeleton-title {
+            height: 24px;
+            width: 60%;
+            margin-bottom: var(--space-md);
+        }
+        
+        .skeleton-card {
+            height: 120px;
+            margin-bottom: var(--space-md);
+        }
+        
+        /* Smooth scrolling */
+        html {
+            scroll-behavior: smooth;
+        }
+        
+        /* Focus visible styles for accessibility on interactive elements */
+        button:focus-visible,
+        a:focus-visible,
+        input:focus-visible,
+        textarea:focus-visible,
+        select:focus-visible,
+        summary:focus-visible,
+        [role="button"]:focus-visible,
+        [tabindex]:not([tabindex="-1"]):focus-visible {
+            outline: 2px solid var(--primary);
+            outline-offset: 2px;
+        }
+        
+        /* Reduced motion support */
+        @media (prefers-reduced-motion: reduce) {
+            *,
+            *::before,
+            *::after {
+                animation-duration: 0.01ms !important;
+                animation-iteration-count: 1 !important;
+                transition-duration: 0.01ms !important;
+            }
+            
+            html {
+                scroll-behavior: auto;
             }
         }
 
@@ -831,17 +1194,30 @@
 
             <div class="features-grid">
                 <div class="feature-card">
-                    <div class="feature-icon">📈</div>
+                    <div class="feature-icon" style="color: var(--primary);">
+                        <svg width="32" height="32" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M3 3v18h18" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                            <path d="M18 9l-5 5-3-3-4 4" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                        </svg>
+                    </div>
                     <h3>Real-Time Charts</h3>
                     <p>Live simulated price movements and portfolio tracking</p>
                 </div>
                 <div class="feature-card">
-                    <div class="feature-icon">🤖</div>
+                    <div class="feature-icon" style="color: var(--accent);">
+                        <svg width="32" height="32" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M13 2L3 14h8l-1 8 10-12h-8l1-8z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                        </svg>
+                    </div>
                     <h3>AI Market Brain</h3>
                     <p>Intelligent market analysis and risk assessment</p>
                 </div>
                 <div class="feature-card">
-                    <div class="feature-icon">🔒</div>
+                    <div class="feature-icon" style="color: var(--success);">
+                        <svg width="32" height="32" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                        </svg>
+                    </div>
                     <h3>Security & Trust</h3>
                     <p>Enterprise-grade demo security features</p>
                 </div>
@@ -871,10 +1247,21 @@
         <div class="header">
             <div class="header-logo">
                 <span>CryptoVault</span>
+                <span class="demo-badge">Demo</span>
             </div>
             <div class="header-actions">
-                <button class="header-btn" onclick="toggleNotifications()">🔔</button>
-                <button class="header-btn" onclick="showScreen('settings')">⚙️</button>
+                <button class="header-btn" onclick="toggleNotifications()" aria-label="Notifications">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                        <path d="M13.73 21a2 2 0 0 1-3.46 0" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                    </svg>
+                </button>
+                <button class="header-btn" onclick="showScreen('settings')" aria-label="Settings">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <circle cx="12" cy="12" r="3" stroke="currentColor" stroke-width="2"/>
+                        <path d="M12 1v6m0 6v6M23 12h-6m-6 0H1" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                    </svg>
+                </button>
             </div>
         </div>
 
@@ -882,6 +1269,22 @@
         <div class="main-content">
             <!-- Dashboard Screen -->
             <div id="screen-dashboard" class="screen active">
+                <div class="card demo-notice-card">
+                    <div class="demo-notice-header">
+                        <span class="demo-notice-icon">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="2"/>
+                                <line x1="12" y1="16" x2="12" y2="12" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                                <circle cx="12" cy="8" r="1" fill="currentColor"/>
+                            </svg>
+                        </span>
+                        <strong class="demo-notice-title">Demo Mode</strong>
+                    </div>
+                    <p class="demo-notice-text">
+                        This is a demonstration application. All transactions, balances, and market data are simulated. No real cryptocurrency or funds are involved.
+                    </p>
+                </div>
+                
                 <div class="card">
                     <h2>Total Balance</h2>
                     <div style="font-size: 32px; font-weight: 700; margin: var(--space-md) 0;" id="total-balance">0.00 BTC</div>
@@ -972,14 +1375,14 @@
                                 <div class="settings-label">Dark Theme</div>
                                 <div class="settings-value">Ultra-dark mode enabled</div>
                             </div>
-                            <div class="toggle-switch active" onclick="toggleTheme(this)"></div>
+                            <div class="toggle-switch active" role="switch" aria-checked="true" aria-label="Dark Theme" tabindex="0" onclick="toggleTheme(this)" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();toggleTheme(this);}"></div>
                         </div>
                         <div class="settings-item">
                             <div class="settings-info">
                                 <div class="settings-label">Animations</div>
                                 <div class="settings-value">Smooth transitions</div>
                             </div>
-                            <div class="toggle-switch active" onclick="toggleSetting(this, 'animations')"></div>
+                            <div class="toggle-switch active" role="switch" aria-checked="true" aria-label="Animations" tabindex="0" onclick="toggleSetting(this, 'animations')" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();toggleSetting(this, 'animations');}"></div>
                         </div>
                     </div>
                 </div>
@@ -1019,25 +1422,165 @@
                         </div>
                     </div>
                 </div>
+                
+                <!-- FAQ Section -->
+                <div class="faq-section">
+                    <h3 class="faq-title">Frequently Asked Questions</h3>
+                    <div class="faq-list">
+                        <div class="faq-item">
+                            <button class="faq-question" id="faq-q1" onclick="toggleFAQ(this)" aria-expanded="false">
+                                <span>What is CryptoVault?</span>
+                                <span class="faq-icon" aria-hidden="true">▼</span>
+                            </button>
+                            <div class="faq-answer" role="region" aria-labelledby="faq-q1">
+                                <p>CryptoVault is a demonstration application showcasing a modern neo-banking interface with cryptocurrency portfolio management features. All data and transactions are simulated for demonstration purposes only.</p>
+                            </div>
+                        </div>
+                        <div class="faq-item">
+                            <button class="faq-question" id="faq-q2" onclick="toggleFAQ(this)" aria-expanded="false">
+                                <span>Is this a real banking application?</span>
+                                <span class="faq-icon" aria-hidden="true">▼</span>
+                            </button>
+                            <div class="faq-answer" role="region" aria-labelledby="faq-q2">
+                                <p>No. This is a demonstration application only. No real cryptocurrency, funds, or financial transactions are involved. All balances, transactions, and market data are simulated locally in your browser.</p>
+                            </div>
+                        </div>
+                        <div class="faq-item">
+                            <button class="faq-question" id="faq-q3" onclick="toggleFAQ(this)" aria-expanded="false">
+                                <span>How do I log in?</span>
+                                <span class="faq-icon" aria-hidden="true">▼</span>
+                            </button>
+                            <div class="faq-answer" role="region" aria-labelledby="faq-q3">
+                                <p>Use the demo credentials: username "demo" and password "demo123", or click the "Demo Login" button to access the application instantly.</p>
+                            </div>
+                        </div>
+                        <div class="faq-item">
+                            <button class="faq-question" id="faq-q4" onclick="toggleFAQ(this)" aria-expanded="false">
+                                <span>Where is my data stored?</span>
+                                <span class="faq-icon" aria-hidden="true">▼</span>
+                            </button>
+                            <div class="faq-answer" role="region" aria-labelledby="faq-q4">
+                                <p>All data is stored locally in your browser's localStorage. No information is transmitted to external servers. Data persists between sessions until you clear your browser data or use the "Reset Demo Data" function.</p>
+                            </div>
+                        </div>
+                        <div class="faq-item">
+                            <button class="faq-question" id="faq-q5" onclick="toggleFAQ(this)" aria-expanded="false">
+                                <span>How does the referral system work?</span>
+                                <span class="faq-icon" aria-hidden="true">▼</span>
+                            </button>
+                            <div class="faq-answer" role="region" aria-labelledby="faq-q5">
+                                <p>The referral system generates a unique code and shareable link for demonstration purposes. Clicks and signups are tracked locally. In a production environment, this would integrate with a backend system for actual reward distribution.</p>
+                            </div>
+                        </div>
+                        <div class="faq-item">
+                            <button class="faq-question" id="faq-q6" onclick="toggleFAQ(this)" aria-expanded="false">
+                                <span>What are risk profiles?</span>
+                                <span class="faq-icon" aria-hidden="true">▼</span>
+                            </button>
+                            <div class="faq-answer" role="region" aria-labelledby="faq-q6">
+                                <p>Risk profiles (Conservative, Balanced, Aggressive) are settings that would affect trading strategies and portfolio recommendations in a real application. In this demo, they adjust the AI Market Brain analysis display.</p>
+                            </div>
+                        </div>
+                        <div class="faq-item">
+                            <button class="faq-question" id="faq-q7" onclick="toggleFAQ(this)" aria-expanded="false">
+                                <span>Can I withdraw real money?</span>
+                                <span class="faq-icon" aria-hidden="true">▼</span>
+                            </button>
+                            <div class="faq-answer" role="region" aria-labelledby="faq-q7">
+                                <p>No. All withdrawal functions are simulated. No real IBAN transactions or MobilePay transfers occur. The withdrawal flow demonstrates the user experience only.</p>
+                            </div>
+                        </div>
+                        <div class="faq-item">
+                            <button class="faq-question" id="faq-q8" onclick="toggleFAQ(this)" aria-expanded="false">
+                                <span>How is the BTC price calculated?</span>
+                                <span class="faq-icon" aria-hidden="true">▼</span>
+                            </button>
+                            <div class="faq-answer" role="region" aria-labelledby="faq-q8">
+                                <p>The BTC price is a static simulated value stored in the application. In a production system, this would connect to real-time cryptocurrency market data APIs.</p>
+                            </div>
+                        </div>
+                        <div class="faq-item">
+                            <button class="faq-question" id="faq-q9" onclick="toggleFAQ(this)" aria-expanded="false">
+                                <span>Is my demo data secure?</span>
+                                <span class="faq-icon" aria-hidden="true">▼</span>
+                            </button>
+                            <div class="faq-answer" role="region" aria-labelledby="faq-q9">
+                                <p>Since this is a demonstration app with no real sensitive data, security concerns are minimal. However, the application follows web security best practices including secure localStorage usage and no transmission of data to external servers.</p>
+                            </div>
+                        </div>
+                        <div class="faq-item">
+                            <button class="faq-question" id="faq-q10" onclick="toggleFAQ(this)" aria-expanded="false">
+                                <span>Can I use this on mobile devices?</span>
+                                <span class="faq-icon" aria-hidden="true">▼</span>
+                            </button>
+                            <div class="faq-answer" role="region" aria-labelledby="faq-q10">
+                                <p>Yes. The application is optimized for mobile devices with a maximum width of 430px, responsive design, and touch-friendly interactions. It can be added to your home screen as a progressive web app (PWA) for a native app-like experience.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                        </div>
+                        <div class="faq-item">
+                            <button class="faq-question" onclick="toggleFAQ(this)">
+                                <span>Is my demo data secure?</span>
+                                <span class="faq-icon">▼</span>
+                            </button>
+                            <div class="faq-answer">
+                                <p>Since this is a demonstration app with no real sensitive data, security concerns are minimal. However, the application follows web security best practices including secure localStorage usage and no transmission of data to external servers.</p>
+                            </div>
+                        </div>
+                        <div class="faq-item">
+                            <button class="faq-question" onclick="toggleFAQ(this)">
+                                <span>Can I use this on mobile devices?</span>
+                                <span class="faq-icon">▼</span>
+                            </button>
+                            <div class="faq-answer">
+                                <p>Yes. The application is optimized for mobile devices with a maximum width of 430px, responsive design, and touch-friendly interactions. It can be added to your home screen as a progressive web app (PWA) for a native app-like experience.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
 
         <!-- Bottom Navigation -->
         <div class="bottom-nav">
             <button class="nav-item active" onclick="showScreen('dashboard')">
-                <div class="nav-icon">🏠</div>
+                <div class="nav-icon">
+                    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                        <polyline points="9 22 9 12 15 12 15 22" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                    </svg>
+                </div>
                 <div class="nav-label">Home</div>
             </button>
             <button class="nav-item" onclick="showScreen('history')">
-                <div class="nav-icon">📊</div>
+                <div class="nav-icon">
+                    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <line x1="12" y1="20" x2="12" y2="10" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                        <line x1="18" y1="20" x2="18" y2="4" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                        <line x1="6" y1="20" x2="6" y2="16" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                    </svg>
+                </div>
                 <div class="nav-label">History</div>
             </button>
             <button class="nav-item" onclick="showScreen('referral')">
-                <div class="nav-icon">🎁</div>
+                <div class="nav-icon">
+                    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M20 12v6a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2v-6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                        <polyline points="7 2 12 7 17 2" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                        <line x1="12" y1="7" x2="12" y2="15" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                    </svg>
+                </div>
                 <div class="nav-label">Referral</div>
             </button>
             <button class="nav-item" onclick="showScreen('settings')">
-                <div class="nav-icon">⚙️</div>
+                <div class="nav-icon">
+                    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <circle cx="12" cy="12" r="3" stroke="currentColor" stroke-width="2"/>
+                        <path d="M12 1v6m0 6v6M23 12h-6m-6 0H1" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                    </svg>
+                </div>
                 <div class="nav-label">Settings</div>
             </button>
         </div>
@@ -1404,14 +1947,18 @@
         // ===== SETTINGS =====
         function toggleTheme(element) {
             element.classList.toggle('active');
-            STATE.settings.theme = element.classList.contains('active') ? 'dark' : 'light';
+            const isActive = element.classList.contains('active');
+            element.setAttribute('aria-checked', String(isActive));
+            STATE.settings.theme = isActive ? 'dark' : 'light';
             DB.saveSettings(STATE.settings);
             Notifications.show('info', 'Theme Changed', 'Theme preference updated');
         }
 
         function toggleSetting(element, setting) {
             element.classList.toggle('active');
-            STATE.settings[setting] = element.classList.contains('active');
+            const isActive = element.classList.contains('active');
+            element.setAttribute('aria-checked', String(isActive));
+            STATE.settings[setting] = isActive;
             DB.saveSettings(STATE.settings);
         }
 
@@ -1430,6 +1977,27 @@
 
         function toggleNotifications() {
             Notifications.show('info', 'Notifications', 'No new notifications');
+        }
+        
+        // ===== FAQ ACCORDION =====
+        function toggleFAQ(button) {
+            const faqItem = button.parentElement;
+            const wasActive = faqItem.classList.contains('active');
+            
+            // Close all FAQ items and reset aria-expanded
+            document.querySelectorAll('.faq-item').forEach(item => {
+                item.classList.remove('active');
+                const itemButton = item.querySelector('button');
+                if (itemButton) {
+                    itemButton.setAttribute('aria-expanded', 'false');
+                }
+            });
+            
+            // Toggle current item and update aria-expanded on the clicked button
+            if (!wasActive) {
+                faqItem.classList.add('active');
+                button.setAttribute('aria-expanded', 'true');
+            }
         }
 
         // ===== FIRST RUN =====
