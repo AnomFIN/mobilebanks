@@ -1190,15 +1190,42 @@
         </div>
 
         <!-- Main Content -->
+        <style>
+            .demo-notice-card {
+                background: linear-gradient(135deg, rgba(99, 102, 241, 0.1) 0%, rgba(139, 92, 246, 0.1) 100%);
+                border-color: rgba(99, 102, 241, 0.3);
+            }
+
+            .demo-notice-header {
+                display: flex;
+                align-items: center;
+                gap: var(--space-sm);
+                margin-bottom: var(--space-sm);
+            }
+
+            .demo-notice-icon {
+                font-size: 20px;
+            }
+
+            .demo-notice-title {
+                font-size: 14px;
+            }
+
+            .demo-notice-text {
+                font-size: 13px;
+                color: var(--text-secondary);
+                line-height: 1.5;
+            }
+        </style>
         <div class="main-content">
             <!-- Dashboard Screen -->
             <div id="screen-dashboard" class="screen active">
-                <div class="card" style="background: linear-gradient(135deg, rgba(99, 102, 241, 0.1) 0%, rgba(139, 92, 246, 0.1) 100%); border-color: rgba(99, 102, 241, 0.3);">
-                    <div style="display: flex; align-items: center; gap: var(--space-sm); margin-bottom: var(--space-sm);">
-                        <span style="font-size: 20px;">ℹ️</span>
-                        <strong style="font-size: 14px;">Demo Mode</strong>
+                <div class="card demo-notice-card">
+                    <div class="demo-notice-header">
+                        <span class="demo-notice-icon">ℹ️</span>
+                        <strong class="demo-notice-title">Demo Mode</strong>
                     </div>
-                    <p style="font-size: 13px; color: var(--text-secondary); line-height: 1.5;">
+                    <p class="demo-notice-text">
                         This is a demonstration application. All transactions, balances, and market data are simulated. No real cryptocurrency or funds are involved.
                     </p>
                 </div>
