@@ -1655,7 +1655,7 @@
             currentScreen: 'home',
             slippage: CONFIG.DEFAULT_SLIPPAGE,
             notifications: [],
-            portfolioChart: null,
+            portfolioChart: false,
             onboardingStep: 0,
         };
 
@@ -2666,96 +2666,101 @@
         }
 
         // ===== CHART FUNCTIONS =====
+        // Simple canvas-based chart (no external library needed)
         function initPortfolioChart() {
-            const ctx = document.getElementById('portfolio-chart');
-            if (!ctx || STATE.portfolioChart) return;
+            const canvas = document.getElementById('portfolio-chart');
+            if (!canvas || STATE.portfolioChart) return;
             
-            const data = STATE.db.portfolio_performance['24h'];
-            const labels = data.map(d => {
-                const date = new Date(d.ts);
-                return date.getHours() + ':' + String(date.getMinutes()).padStart(2, '0');
-            });
+            STATE.portfolioChart = true; // Mark as initialized
+            drawPortfolioChart(canvas);
+        }
+        
+        function drawPortfolioChart(canvas) {
+            const ctx = canvas.getContext('2d');
+            const period = document.querySelector('.period-tab.active')?.textContent.toLowerCase().replace('pv', 'd') || '24h';
+            const data = STATE.db.portfolio_performance[period] || STATE.db.portfolio_performance['24h'];
+            
+            if (!data || data.length === 0) return;
+            
+            // Set canvas size
+            const dpr = window.devicePixelRatio || 1;
+            const rect = canvas.getBoundingClientRect();
+            canvas.width = rect.width * dpr;
+            canvas.height = rect.height * dpr;
+            ctx.scale(dpr, dpr);
+            
+            const width = rect.width;
+            const height = rect.height;
+            const padding = 40;
+            const chartWidth = width - padding * 2;
+            const chartHeight = height - padding * 2;
+            
+            // Extract values
             const values = data.map(d => d.btc);
+            const minValue = Math.min(...values);
+            const maxValue = Math.max(...values);
+            const valueRange = maxValue - minValue || 0.01;
             
-            STATE.portfolioChart = new Chart(ctx, {
-                type: 'line',
-                data: {
-                    labels: labels,
-                    datasets: [{
-                        data: values,
-                        borderColor: '#3b82f6',
-                        backgroundColor: 'rgba(59, 130, 246, 0.1)',
-                        fill: true,
-                        tension: 0.4,
-                        pointRadius: 0,
-                        pointHoverRadius: 6,
-                        pointHoverBackgroundColor: '#3b82f6',
-                        pointHoverBorderColor: '#fff',
-                        pointHoverBorderWidth: 2,
-                        borderWidth: 2,
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    plugins: {
-                        legend: { display: false },
-                        tooltip: {
-                            backgroundColor: '#1e1e2a',
-                            titleColor: '#fff',
-                            bodyColor: '#fff',
-                            padding: 12,
-                            displayColors: false,
-                            callbacks: {
-                                label: (context) => formatBTC(context.raw)
-                            }
-                        }
-                    },
-                    scales: {
-                        x: {
-                            display: true,
-                            grid: { display: false, color: 'rgba(255,255,255,0.05)' },
-                            ticks: { 
-                                color: '#64748b',
-                                font: { size: 10 },
-                                maxTicksLimit: 6
-                            }
-                        },
-                        y: {
-                            display: true,
-                            grid: { color: 'rgba(255,255,255,0.05)' },
-                            ticks: {
-                                color: '#64748b',
-                                font: { size: 10 },
-                                callback: (value) => value.toFixed(3)
-                            }
-                        }
-                    },
-                    interaction: {
-                        intersect: false,
-                        mode: 'index'
-                    }
+            // Clear canvas
+            ctx.clearRect(0, 0, width, height);
+            
+            // Draw grid lines
+            ctx.strokeStyle = getComputedStyle(document.body).getPropertyValue('--border') || 'rgba(255,255,255,0.08)';
+            ctx.lineWidth = 1;
+            for (let i = 0; i <= 4; i++) {
+                const y = padding + (chartHeight / 4) * i;
+                ctx.beginPath();
+                ctx.moveTo(padding, y);
+                ctx.lineTo(width - padding, y);
+                ctx.stroke();
+            }
+            
+            // Draw line chart
+            ctx.strokeStyle = getComputedStyle(document.body).getPropertyValue('--accent') || '#3b82f6';
+            ctx.lineWidth = 2;
+            ctx.lineJoin = 'round';
+            ctx.lineCap = 'round';
+            
+            ctx.beginPath();
+            for (let i = 0; i < values.length; i++) {
+                const x = padding + (chartWidth / (values.length - 1)) * i;
+                const normalizedValue = (values[i] - minValue) / valueRange;
+                const y = padding + chartHeight - (normalizedValue * chartHeight);
+                
+                if (i === 0) {
+                    ctx.moveTo(x, y);
+                } else {
+                    ctx.lineTo(x, y);
                 }
-            });
+            }
+            ctx.stroke();
+            
+            // Fill area under line
+            ctx.lineTo(width - padding, padding + chartHeight);
+            ctx.lineTo(padding, padding + chartHeight);
+            ctx.closePath();
+            const gradient = ctx.createLinearGradient(0, padding, 0, height - padding);
+            const accentColor = getComputedStyle(document.body).getPropertyValue('--accent') || '#3b82f6';
+            gradient.addColorStop(0, accentColor.replace(')', ', 0.2)').replace('rgb', 'rgba'));
+            gradient.addColorStop(1, accentColor.replace(')', ', 0)').replace('rgb', 'rgba'));
+            ctx.fillStyle = gradient;
+            ctx.fill();
+            
+            // Draw Y-axis labels
+            ctx.fillStyle = getComputedStyle(document.body).getPropertyValue('--text-muted') || '#64748b';
+            ctx.font = '10px system-ui';
+            ctx.textAlign = 'right';
+            for (let i = 0; i <= 4; i++) {
+                const value = maxValue - (valueRange / 4) * i;
+                const y = padding + (chartHeight / 4) * i;
+                ctx.fillText(value.toFixed(3), padding - 5, y + 4);
+            }
         }
 
         function updatePortfolioChart() {
-            if (!STATE.portfolioChart) return;
-            
-            const period = document.querySelector('.period-tab.active').textContent.toLowerCase().replace('pv', 'd');
-            const data = STATE.db.portfolio_performance[period] || STATE.db.portfolio_performance['24h'];
-            
-            const labels = data.map(d => {
-                const date = new Date(d.ts);
-                if (period === '7d') {
-                    return date.toLocaleDateString('fi-FI', { weekday: 'short' });
-                }
-                return date.getHours() + ':' + String(date.getMinutes()).padStart(2, '0');
-            });
-            
-            STATE.portfolioChart.data.labels = labels;
-            STATE.portfolioChart.data.datasets[0].data = data.map(d => d.btc);
-            STATE.portfolioChart.update();
+            const canvas = document.getElementById('portfolio-chart');
+            if (!canvas) return;
+            drawPortfolioChart(canvas);
         }
 
         function setChartPeriod(period) {
