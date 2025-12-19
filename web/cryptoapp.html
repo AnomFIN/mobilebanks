@@ -1,0 +1,3014 @@
+<!DOCTYPE html>
+<html lang="fi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <title>CryptoApp - Professional Crypto Banking Demo</title>
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="CryptoVault">
+    <meta name="theme-color" content="#0a0a0f">
+    <meta name="description" content="CryptoApp - Professional mobile-first crypto banking demo with simulated CAT trading">
+    <link rel="manifest" href="crypto-manifest.json">
+    <link rel="icon" href="crypto-icon.svg" type="image/svg+xml">
+    <link rel="apple-touch-icon" href="crypto-icon.svg">
+    <!-- Design System -->
+    <link rel="stylesheet" href="assets/tokens.css">
+    <link rel="stylesheet" href="assets/ui.css">
+    <style>
+        /* ===== APP-SPECIFIC STYLES (Uses design tokens from tokens.css) ===== */
+        
+        /* CAT Brand Color (extends token system) */
+        :root {
+            --cat-primary: #8b5cf6;
+            --cat-light: #a78bfa;
+            --cat-bg: rgba(139, 92, 246, 0.15);
+        }
+        
+        /* ===== LAYOUT ===== */
+        .app {
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+            padding-bottom: 80px; /* Space for bottom nav */
+        }
+        
+        .header {
+            position: sticky;
+            top: 0;
+            z-index: var(--z-sticky);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: var(--space-4);
+            background: var(--surface);
+            border-bottom: 1px solid var(--border);
+        }
+        
+        .header-logo {
+            display: flex;
+            align-items: center;
+            gap: var(--space-2);
+            font-size: var(--font-size-lg);
+            font-weight: var(--font-weight-semibold);
+            color: var(--text);
+        }
+        
+        .header-logo svg {
+            width: 28px;
+            height: 28px;
+            color: var(--accent);
+        }
+        
+        .header-actions {
+            display: flex;
+            align-items: center;
+            gap: var(--space-2);
+        }
+        
+        .header-btn {
+            width: 40px;
+            height: 40px;
+            padding: 0;
+            background: transparent;
+            border: none;
+            border-radius: var(--r-md);
+            color: var(--text-secondary);
+            cursor: pointer;
+            transition: all var(--transition-base);
+        }
+        
+        .header-btn:hover {
+            background: var(--surface-2);
+            color: var(--text);
+        }
+        
+        .header-btn svg {
+            width: 20px;
+            height: 20px;
+        }
+        
+        .main-content {
+            flex: 1;
+            max-width: 600px;
+            width: 100%;
+            margin: 0 auto;
+            padding: var(--space-4);
+        }
+        
+        .screen {
+            display: none;
+        }
+        
+        .screen.active {
+            display: block;
+        }
+        
+        /* ===== BOTTOM NAV ===== */
+        .bottom-nav {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            z-index: var(--z-fixed);
+            display: flex;
+            background: var(--surface);
+            border-top: 1px solid var(--border);
+            padding: var(--space-2) var(--space-2) calc(var(--space-2) + env(safe-area-inset-bottom));
+        }
+        
+        .nav-item {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: var(--space-1);
+            padding: var(--space-2);
+            background: transparent;
+            border: none;
+            border-radius: var(--r-md);
+            color: var(--text-muted);
+            cursor: pointer;
+            transition: all var(--transition-base);
+        }
+        
+        .nav-item:hover {
+            background: var(--surface-2);
+            color: var(--text-secondary);
+        }
+        
+        .nav-item.active {
+            color: var(--accent);
+            background: var(--accent-light);
+        }
+        
+        .nav-icon {
+            width: 24px;
+            height: 24px;
+        }
+        
+        .nav-icon svg {
+            width: 100%;
+            height: 100%;
+        }
+        
+        .nav-label {
+            font-size: var(--font-size-xs);
+            font-weight: var(--font-weight-medium);
+        }
+        
+        /* ===== LOGIN SCREEN ===== */
+        .login-screen {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            padding: var(--space-6);
+            background: var(--bg);
+        }
+        
+        .login-logo svg {
+            width: 64px;
+            height: 64px;
+            color: var(--accent);
+            margin-bottom: var(--space-4);
+        }
+        
+        .login-title {
+            font-size: var(--font-size-2xl);
+            font-weight: var(--font-weight-bold);
+            margin-bottom: var(--space-2);
+        }
+        
+        .login-subtitle {
+            font-size: var(--font-size-sm);
+            color: var(--text-secondary);
+            margin-bottom: var(--space-8);
+            text-align: center;
+        }
+        
+        .login-tabs {
+            display: flex;
+            gap: var(--space-2);
+            margin-bottom: var(--space-6);
+        }
+        
+        .login-tab {
+            padding: var(--space-3) var(--space-6);
+            background: transparent;
+            border: 1px solid var(--border);
+            border-radius: var(--r-md);
+            color: var(--text-secondary);
+            font-size: var(--font-size-base);
+            font-weight: var(--font-weight-medium);
+            cursor: pointer;
+            transition: all var(--transition-base);
+        }
+        
+        .login-tab:hover {
+            border-color: var(--border-strong);
+            color: var(--text);
+        }
+        
+        .login-tab.active {
+            background: var(--accent);
+            border-color: var(--accent);
+            color: white;
+        }
+        
+        .login-form {
+            width: 100%;
+            max-width: 400px;
+            display: flex;
+            flex-direction: column;
+            gap: var(--space-4);
+        }
+        
+        .login-error {
+            padding: var(--space-3);
+            background: var(--danger-light);
+            border: 1px solid var(--danger);
+            border-radius: var(--r-md);
+            color: var(--danger);
+            font-size: var(--font-size-sm);
+            display: none;
+        }
+        
+        .login-error.show {
+            display: block;
+        }
+        
+        .login-btn {
+            width: 100%;
+            padding: var(--space-4);
+            background: var(--accent);
+            border: none;
+            border-radius: var(--r-md);
+            color: white;
+            font-size: var(--font-size-base);
+            font-weight: var(--font-weight-semibold);
+            cursor: pointer;
+            transition: all var(--transition-base);
+        }
+        
+        .login-btn:hover {
+            background: var(--accent-hover);
+            transform: translateY(-1px);
+        }
+        
+        .login-demo-hint {
+            margin-top: var(--space-6);
+            padding: var(--space-4);
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: var(--r-md);
+            text-align: center;
+            font-size: var(--font-size-sm);
+            color: var(--text-secondary);
+        }
+        
+        /* ===== BALANCE CARD ===== */
+        .balance-card {
+            background: linear-gradient(135deg, var(--accent) 0%, var(--accent-hover) 100%);
+            color: white;
+            padding: var(--space-6);
+        }
+        
+        .balance-label {
+            font-size: var(--font-size-sm);
+            opacity: 0.9;
+            margin-bottom: var(--space-2);
+        }
+        
+        .balance-amount {
+            font-size: var(--font-size-2xl);
+            font-weight: var(--font-weight-bold);
+            margin-bottom: var(--space-1);
+        }
+        
+        .balance-eur {
+            font-size: var(--font-size-base);
+            opacity: 0.8;
+        }
+        
+        .balance-change {
+            display: inline-flex;
+            align-items: center;
+            gap: var(--space-1);
+            margin-top: var(--space-2);
+            padding: var(--space-1) var(--space-2);
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: var(--r-sm);
+            font-size: var(--font-size-sm);
+        }
+        
+        /* ===== CAT COMPONENTS ===== */
+        .cat-card {
+            background: linear-gradient(135deg, var(--cat-primary) 0%, var(--cat-light) 100%);
+            color: white;
+        }
+        
+        .cat-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: var(--space-4);
+        }
+        
+        .cat-title {
+            font-size: var(--font-size-lg);
+            font-weight: var(--font-weight-semibold);
+            margin-bottom: var(--space-1);
+        }
+        
+        .cat-balance {
+            font-size: var(--font-size-base);
+            opacity: 0.9;
+        }
+        
+        .cat-action {
+            background: rgba(255, 255, 255, 0.2) !important;
+            color: white !important;
+            border: 1px solid rgba(255, 255, 255, 0.3) !important;
+        }
+        
+        .cat-action:hover {
+            background: rgba(255, 255, 255, 0.3) !important;
+        }
+        
+        /* ===== QUICK ACTIONS ===== */
+        .quick-actions {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(80px, 1fr));
+            gap: var(--space-3);
+        }
+        
+        .action-btn {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: var(--space-2);
+            padding: var(--space-4);
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: var(--r-lg);
+            color: var(--text);
+            cursor: pointer;
+            transition: all var(--transition-base);
+        }
+        
+        .action-btn:hover {
+            background: var(--surface-2);
+            border-color: var(--border-strong);
+            transform: translateY(-2px);
+        }
+        
+        .action-icon {
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: var(--accent-light);
+            border-radius: var(--r-md);
+            color: var(--accent);
+        }
+        
+        .action-icon svg {
+            width: 20px;
+            height: 20px;
+        }
+        
+        .action-label {
+            font-size: var(--font-size-sm);
+            font-weight: var(--font-weight-medium);
+        }
+        
+        /* ===== TRANSACTION LIST ===== */
+        .transaction-list {
+            display: flex;
+            flex-direction: column;
+            gap: var(--space-2);
+        }
+        
+        .transaction-item {
+            display: flex;
+            align-items: center;
+            gap: var(--space-3);
+            padding: var(--space-4);
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: var(--r-lg);
+            transition: all var(--transition-base);
+            cursor: pointer;
+        }
+        
+        .transaction-item:hover {
+            background: var(--surface-2);
+            border-color: var(--border-strong);
+        }
+        
+        .transaction-icon {
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: var(--surface-2);
+            border-radius: var(--r-md);
+            flex-shrink: 0;
+        }
+        
+        .transaction-icon svg {
+            width: 20px;
+            height: 20px;
+        }
+        
+        .transaction-info {
+            flex: 1;
+            min-width: 0;
+        }
+        
+        .transaction-description {
+            font-size: var(--font-size-base);
+            font-weight: var(--font-weight-medium);
+            color: var(--text);
+            margin-bottom: var(--space-1);
+        }
+        
+        .transaction-time {
+            font-size: var(--font-size-sm);
+            color: var(--text-muted);
+        }
+        
+        .transaction-amount {
+            font-size: var(--font-size-base);
+            font-weight: var(--font-weight-semibold);
+            text-align: right;
+        }
+        
+        .transaction-amount.positive {
+            color: var(--success);
+        }
+        
+        .transaction-amount.negative {
+            color: var(--text);
+        }
+        
+        /* ===== SETTINGS ===== */
+        .settings-section {
+            margin-bottom: var(--space-6);
+        }
+        
+        .settings-title {
+            font-size: var(--font-size-sm);
+            font-weight: var(--font-weight-semibold);
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            margin-bottom: var(--space-3);
+        }
+        
+        .settings-list {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: var(--r-lg);
+            overflow: hidden;
+        }
+        
+        .settings-item {
+            display: flex;
+            align-items: center;
+            gap: var(--space-3);
+            padding: var(--space-4);
+            border-bottom: 1px solid var(--border);
+            cursor: pointer;
+            transition: background var(--transition-base);
+        }
+        
+        .settings-item:last-child {
+            border-bottom: none;
+        }
+        
+        .settings-item:hover {
+            background: var(--surface-2);
+        }
+        
+        .settings-icon {
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: var(--surface-2);
+            border-radius: var(--r-md);
+            flex-shrink: 0;
+        }
+        
+        .settings-icon svg {
+            width: 20px;
+            height: 20px;
+        }
+        
+        .settings-info {
+            flex: 1;
+        }
+        
+        .settings-label {
+            font-size: var(--font-size-base);
+            font-weight: var(--font-weight-medium);
+            color: var(--text);
+            margin-bottom: var(--space-1);
+        }
+        
+        .settings-value {
+            font-size: var(--font-size-sm);
+            color: var(--text-muted);
+        }
+        
+        .settings-arrow {
+            color: var(--text-muted);
+            font-size: 20px;
+        }
+        
+        .toggle-switch {
+            width: 48px;
+            height: 28px;
+            background: var(--surface-2);
+            border: 2px solid var(--border);
+            border-radius: var(--r-full);
+            position: relative;
+            cursor: pointer;
+            transition: all var(--transition-base);
+        }
+        
+        .toggle-switch::after {
+            content: '';
+            position: absolute;
+            top: 2px;
+            left: 2px;
+            width: 20px;
+            height: 20px;
+            background: var(--text-muted);
+            border-radius: 50%;
+            transition: all var(--transition-base);
+        }
+        
+        .toggle-switch.active {
+            background: var(--accent);
+            border-color: var(--accent);
+        }
+        
+        .toggle-switch.active::after {
+            left: 22px;
+            background: white;
+        }
+        
+        /* ===== FOOTER ===== */
+        .app-footer {
+            padding: var(--space-8) var(--space-4) calc(var(--space-8) + 80px);
+            background: var(--surface);
+            border-top: 1px solid var(--border);
+            text-align: center;
+        }
+        
+        .footer-content {
+            max-width: 600px;
+            margin: 0 auto;
+        }
+        
+        .footer-logo {
+            display: inline-flex;
+            align-items: center;
+            gap: var(--space-2);
+            font-size: var(--font-size-lg);
+            font-weight: var(--font-weight-semibold);
+            color: var(--text);
+            margin-bottom: var(--space-4);
+        }
+        
+        .footer-logo svg {
+            width: 24px;
+            height: 24px;
+            color: var(--accent);
+        }
+        
+        .footer-text {
+            font-size: var(--font-size-sm);
+            color: var(--text-muted);
+            line-height: var(--line-height-relaxed);
+            margin-bottom: var(--space-4);
+        }
+        
+        .footer-links {
+            display: flex;
+            justify-content: center;
+            gap: var(--space-4);
+            flex-wrap: wrap;
+            margin-bottom: var(--space-4);
+        }
+        
+        .footer-link {
+            font-size: var(--font-size-sm);
+            color: var(--text-secondary);
+            text-decoration: none;
+            transition: color var(--transition-base);
+        }
+        
+        .footer-link:hover {
+            color: var(--accent);
+        }
+        
+        .footer-version {
+            font-size: var(--font-size-xs);
+            color: var(--text-muted);
+        }
+        
+        /* ===== MODALS & OVERLAYS ===== */
+        .modal-overlay {
+            position: fixed;
+            inset: 0;
+            z-index: var(--z-modal-backdrop);
+            background: rgba(0, 0, 0, 0.7);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: var(--space-4);
+        }
+        
+        .modal {
+            width: 100%;
+            max-width: 500px;
+            max-height: 90vh;
+            overflow-y: auto;
+            background: var(--surface);
+            border: 1px solid var(--border-strong);
+            border-radius: var(--r-xl);
+            padding: var(--space-6);
+        }
+        
+        .modal-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: var(--space-4);
+        }
+        
+        .modal-title {
+            font-size: var(--font-size-xl);
+            font-weight: var(--font-weight-semibold);
+        }
+        
+        .modal-close {
+            width: 32px;
+            height: 32px;
+            padding: 0;
+            background: transparent;
+            border: none;
+            color: var(--text-muted);
+            cursor: pointer;
+            transition: color var(--transition-base);
+        }
+        
+        .modal-close:hover {
+            color: var(--text);
+        }
+        
+        .modal-close svg {
+            width: 100%;
+            height: 100%;
+        }
+        
+        /* ===== LOADER ===== */
+        .loader-overlay {
+            position: fixed;
+            inset: 0;
+            z-index: var(--z-modal);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: rgba(0, 0, 0, 0.8);
+        }
+        
+        .loader {
+            width: 48px;
+            height: 48px;
+            border: 4px solid var(--surface-2);
+            border-top-color: var(--accent);
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+        }
+        
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+        
+        /* ===== UTILITIES ===== */
+        .section-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: var(--space-4);
+        }
+        
+        .section-title {
+            font-size: var(--font-size-lg);
+            font-weight: var(--font-weight-semibold);
+            color: var(--text);
+        }
+        
+        .section-link {
+            font-size: var(--font-size-sm);
+            font-weight: var(--font-weight-medium);
+            color: var(--accent);
+            background: transparent;
+            border: none;
+            cursor: pointer;
+            transition: color var(--transition-base);
+        }
+        
+        .section-link:hover {
+            color: var(--accent-hover);
+        }
+    </style>
+</head>
+<body>
+    <!-- LOGIN SCREEN -->
+    <div id="login-screen" class="login-screen">
+        <div class="login-logo">
+            <svg viewBox="0 0 24 24" fill="currentColor">
+                <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8zm.31-8.86c-1.77-.45-2.34-.94-2.34-1.67 0-.84.79-1.43 2.1-1.43 1.38 0 1.9.66 1.94 1.64h1.71c-.05-1.34-.87-2.57-2.49-2.97V5H10.9v1.69c-1.51.32-2.72 1.3-2.72 2.81 0 1.79 1.49 2.69 3.66 3.21 1.95.46 2.34 1.15 2.34 1.87 0 .53-.39 1.39-2.1 1.39-1.6 0-2.23-.72-2.32-1.64H8.04c.1 1.7 1.36 2.66 2.86 2.97V19h2.34v-1.67c1.52-.29 2.72-1.16 2.73-2.77-.01-2.2-1.9-2.96-3.66-3.42z"/>
+            </svg>
+        </div>
+        <h1 class="login-title">CryptoVault</h1>
+        <p class="login-subtitle">Turvallinen krypto lompakko + C-A-T automaattikauppa</p>
+        
+        <div class="login-tabs">
+            <button class="login-tab active" onclick="switchLoginTab('login')">Kirjaudu</button>
+            <button class="login-tab" onclick="switchLoginTab('register')">Rekisteröidy</button>
+        </div>
+        
+        <form class="login-form" id="login-form" onsubmit="handleLogin(event)">
+            <div class="login-error" id="login-error"></div>
+            <div class="form-group">
+                <label class="form-label" for="username">Käyttäjänimi</label>
+                <input type="text" id="username" class="form-input" placeholder="Syötä käyttäjänimi" required autocomplete="username">
+            </div>
+            <div class="form-group">
+                <label class="form-label" for="password">Salasana</label>
+                <input type="password" id="password" class="form-input" placeholder="Syötä salasana" required autocomplete="current-password">
+            </div>
+            <button type="submit" class="login-btn">Kirjaudu sisään</button>
+        </form>
+        
+        <form class="login-form hidden" id="register-form" onsubmit="handleRegister(event)">
+            <div class="login-error" id="register-error"></div>
+            <div class="form-group">
+                <label class="form-label" for="reg-username">Käyttäjänimi</label>
+                <input type="text" id="reg-username" class="form-input" placeholder="Valitse käyttäjänimi" required autocomplete="username">
+            </div>
+            <div class="form-group">
+                <label class="form-label" for="reg-email">Sähköposti</label>
+                <input type="email" id="reg-email" class="form-input" placeholder="sinun@email.fi" required autocomplete="email">
+            </div>
+            <div class="form-group">
+                <label class="form-label" for="reg-password">Salasana</label>
+                <input type="password" id="reg-password" class="form-input" placeholder="Valitse salasana" required autocomplete="new-password">
+            </div>
+            <button type="submit" class="login-btn">Rekisteröidy</button>
+        </form>
+        
+        <div class="login-demo-hint">
+            <p>Demo-käyttäjä:</p>
+            <p><strong>demo</strong> / <strong>demo123</strong></p>
+        </div>
+    </div>
+
+    <!-- ONBOARDING MODAL -->
+    <div id="onboarding-overlay" class="onboarding-overlay hidden">
+        <div class="onboarding-modal">
+            <div class="onboarding-icon" id="onboarding-icon">🚀</div>
+            <h2 class="onboarding-title" id="onboarding-title">Tervetuloa CryptoVaultiin!</h2>
+            <p class="onboarding-text" id="onboarding-text">Tämä on demo-versio ammattimaisesta krypto lompakosta C-A-T automaattikaupankäynnillä.</p>
+            <div class="onboarding-steps">
+                <div class="onboarding-step active"></div>
+                <div class="onboarding-step"></div>
+                <div class="onboarding-step"></div>
+            </div>
+            <button class="onboarding-btn" onclick="nextOnboardingStep()">Seuraava</button>
+            <button class="onboarding-skip" onclick="skipOnboarding()">Ohita esittely</button>
+        </div>
+    </div>
+
+    <!-- NOTIFICATION PANEL -->
+    <div id="notification-panel" class="notification-panel">
+        <div class="notification-header">
+            <span class="notification-title">Ilmoitukset</span>
+            <button class="notification-clear" onclick="clearNotifications()">Tyhjennä</button>
+        </div>
+        <div id="notification-list"></div>
+    </div>
+
+    <!-- TOAST CONTAINER -->
+    <div id="toast-container" class="toast-container"></div>
+
+    <!-- LOADER -->
+    <div id="loader-overlay" class="loader-overlay">
+        <div class="loader"></div>
+    </div>
+
+    <!-- SEARCH OVERLAY -->
+    <div id="search-overlay" class="search-overlay">
+        <div class="search-input-container">
+            <input type="text" class="search-input" placeholder="Hae..." id="search-input" onkeyup="handleSearch(event)">
+        </div>
+        <div class="search-shortcuts">
+            <div class="search-shortcuts-title">Pikanäppäimet</div>
+            <div class="shortcut-list">
+                <div class="shortcut-item"><span class="shortcut-key">P</span> Portfolio</div>
+                <div class="shortcut-item"><span class="shortcut-key">T</span> Kauppa</div>
+                <div class="shortcut-item"><span class="shortcut-key">W</span> Lompakko</div>
+                <div class="shortcut-item"><span class="shortcut-key">Esc</span> Sulje</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- APP CONTAINER -->
+    <div id="app" class="app hidden">
+
+        <!-- DEMO BANNER -->
+        <div id="demo-banner" class="banner" style="margin: var(--space-4); display: none;">
+            <svg class="banner-icon" viewBox="0 0 20 20" fill="currentColor">
+                <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd"/>
+            </svg>
+            <div class="banner-content">
+                <div class="banner-title">Demo Application</div>
+                <div class="banner-text">This is a functioning crypto banking demo. All data is simulated and no real blockchain integration is present. Explore features freely without any real-world consequences.</div>
+            </div>
+            <button class="banner-close" onclick="dismissBanner('demo-banner', 'cryptoapp_banner_dismissed')" aria-label="Close banner">
+                <svg viewBox="0 0 20 20" fill="currentColor">
+                    <path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd"/>
+                </svg>
+            </button>
+        </div>
+
+        <!-- Header -->
+        <header class="header">
+            <div class="header-logo">
+                <svg viewBox="0 0 24 24" fill="currentColor" aria-label="CryptoVault logo">
+                    <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8zm.31-8.86c-1.77-.45-2.34-.94-2.34-1.67 0-.84.79-1.43 2.1-1.43 1.38 0 1.9.66 1.94 1.64h1.71c-.05-1.34-.87-2.57-2.49-2.97V5H10.9v1.69c-1.51.32-2.72 1.3-2.72 2.81 0 1.79 1.49 2.69 3.66 3.21 1.95.46 2.34 1.15 2.34 1.87 0 .53-.39 1.39-2.1 1.39-1.6 0-2.23-.72-2.32-1.64H8.04c.1 1.7 1.36 2.66 2.86 2.97V19h2.34v-1.67c1.52-.29 2.72-1.16 2.73-2.77-.01-2.2-1.9-2.96-3.66-3.42z"/>
+                </svg>
+                <span>CryptoVault</span>
+            </div>
+            <div class="header-actions">
+                <button class="header-btn" onclick="toggleSearch()" aria-label="Haku" style="position: relative;">
+                    🔍
+                </button>
+                <button class="header-btn" onclick="toggleNotifications()" aria-label="Ilmoitukset" style="position: relative;">
+                    🔔
+                    <span id="notification-badge" class="notification-badge hidden">0</span>
+                </button>
+                <div class="user-avatar" onclick="showScreen('settings')" id="user-avatar">DU</div>
+            </div>
+        </header>
+
+        <!-- Main Content Area -->
+        <main class="main-content">
+            <!-- HOME SCREEN -->
+            <div id="screen-home" class="screen active">
+                <!-- Balance Card -->
+                <div class="card balance-card">
+                    <div class="balance-label">Salkun kokonaisarvo</div>
+                    <div class="balance-amount" id="total-balance">0.64686912 BTC</div>
+                    <div class="balance-btc" id="balance-eur">≈ 57 500,00 €</div>
+                    <div class="balance-change positive" id="balance-change">
+                        <span><svg viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M3 17a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm3.293-7.707a1 1 0 011.414 0L9 10.586V3a1 1 0 112 0v7.586l1.293-1.293a1 1 0 111.414 1.414l-3 3a1 1 0 01-1.414 0l-3-3a1 1 0 010-1.414z" clip-rule="evenodd"/></svg></span>
+                        <span id="change-value">+2.45%</span>
+                        <span>24h</span>
+                    </div>
+                </div>
+
+                <!-- CAT Card -->
+                <div class="card cat-card">
+                    <div class="cat-header">
+                        <div>
+                            <div class="cat-title">C-A-T Automaattitili</div>
+                            <div class="cat-balance" id="cat-balance">0.12345678 BTC</div>
+                        </div>
+                        <div class="cat-badge">
+                            <div class="pulse"></div>
+                            <span>AKTIIVINEN</span>
+                        </div>
+                    </div>
+                    <div class="cat-status" id="cat-status">Viimeisin kauppa: 2 min sitten</div>
+                </div>
+
+                <!-- Quick Actions -->
+                <div class="quick-actions">
+                    <button class="action-btn" onclick="openModal('receive')">
+                        <div class="action-icon"><svg viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M3 17a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zM6.293 6.707a1 1 0 010-1.414l3-3a1 1 0 011.414 0l3 3a1 1 0 01-1.414 1.414L11 5.414V13a1 1 0 11-2 0V5.414L7.707 6.707a1 1 0 01-1.414 0z" clip-rule="evenodd"/></svg></div>
+                        <div class="action-label">Vastaanota</div>
+                    </button>
+                    <button class="action-btn" onclick="openModal('send')">
+                        <div class="action-icon"><svg viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M3 17a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm3.293-7.707a1 1 0 011.414 0L9 10.586V3a1 1 0 112 0v7.586l1.293-1.293a1 1 0 111.414 1.414l-3 3a1 1 0 01-1.414 0l-3-3a1 1 0 010-1.414z" clip-rule="evenodd"/></svg></div>
+                        <div class="action-label">Lähetä</div>
+                    </button>
+                    <button class="action-btn" onclick="openModal('swap')">
+                        <div class="action-icon"><svg viewBox="0 0 20 20" fill="currentColor"><path d="M8 5a1 1 0 100 2h5.586l-1.293 1.293a1 1 0 001.414 1.414l3-3a1 1 0 000-1.414l-3-3a1 1 0 10-1.414 1.414L13.586 5H8zM12 15a1 1 0 100-2H6.414l1.293-1.293a1 1 0 10-1.414-1.414l-3 3a1 1 0 000 1.414l3 3a1 1 0 001.414-1.414L6.414 15H12z"/></svg></div>
+                        <div class="action-label">Vaihda</div>
+                    </button>
+                    <button class="action-btn" onclick="openModal('buy')">
+                        <div class="action-icon"><svg viewBox="0 0 20 20" fill="currentColor"><path d="M4 4a2 2 0 00-2 2v1h16V6a2 2 0 00-2-2H4z"/><path fill-rule="evenodd" d="M18 9H2v5a2 2 0 002 2h12a2 2 0 002-2V9zM4 13a1 1 0 011-1h1a1 1 0 110 2H5a1 1 0 01-1-1zm5-1a1 1 0 100 2h1a1 1 0 100-2H9z" clip-rule="evenodd"/></svg></div>
+                        <div class="action-label">Osta</div>
+                    </button>
+                </div>
+
+                <!-- Portfolio Chart -->
+                <div class="card chart-card">
+                    <div class="chart-header">
+                        <span class="chart-title">Salkun kehitys</span>
+                        <div class="chart-period-tabs">
+                            <button class="period-tab active" onclick="setChartPeriod('24h')">24h</button>
+                            <button class="period-tab" onclick="setChartPeriod('7d')">7pv</button>
+                        </div>
+                    </div>
+                    <div class="chart-container">
+                        <canvas id="portfolio-chart"></canvas>
+                    </div>
+                </div>
+
+                <!-- CAT Activity Feed -->
+                <div class="card cat-activity-card">
+                    <div class="cat-activity-header">
+                        <div class="cat-activity-title">
+                            <span><svg viewBox="0 0 20 20" fill="currentColor"><path d="M13 7H7v6h6V7z"/><path fill-rule="evenodd" d="M7 2a1 1 0 012 0v1h2V2a1 1 0 112 0v1h2a2 2 0 012 2v2h1a1 1 0 110 2h-1v2h1a1 1 0 110 2h-1v2a2 2 0 01-2 2h-2v1a1 1 0 11-2 0v-1H9v1a1 1 0 11-2 0v-1H5a2 2 0 01-2-2v-2H2a1 1 0 110-2h1V9H2a1 1 0 010-2h1V5a2 2 0 012-2h2V2zM5 5h10v10H5V5z" clip-rule="evenodd"/></svg></span> C-A-T Toiminta
+                        </div>
+                        <div class="cat-activity-live">
+                            <div class="dot"></div>
+                            LIVE
+                        </div>
+                    </div>
+                    <div class="cat-feed" id="cat-feed">
+                        <!-- CAT activity items populated by JS -->
+                    </div>
+                </div>
+
+                <!-- Recent Transactions -->
+                <div class="section-header">
+                    <span class="section-title">Viimeaikaiset tapahtumat</span>
+                    <button class="section-link" onclick="showScreen('transactions')">Näytä kaikki</button>
+                </div>
+                <div class="transaction-list" id="recent-transactions">
+                    <!-- Populated by JS -->
+                </div>
+            </div>
+
+            <!-- WALLET SCREEN -->
+            <div id="screen-wallet" class="screen">
+                <!-- Main Wallet Balance -->
+                <div class="card balance-card">
+                    <div class="balance-label">Pääsalkku</div>
+                    <div class="balance-amount" id="main-wallet-balance">0.52341234 BTC</div>
+                    <div class="balance-btc" id="main-wallet-eur">≈ 46 500,00 €</div>
+                </div>
+
+                <!-- CAT Wallet -->
+                <div class="card cat-card">
+                    <div class="cat-header">
+                        <div>
+                            <div class="cat-title">C-A-T Automaattitili</div>
+                            <div class="cat-balance" id="cat-wallet-balance">0.12345678 BTC</div>
+                        </div>
+                        <button class="action-btn cat-action" onclick="openModal('use-cat')" style="padding: 10px 16px; flex-direction: row; gap: 8px;">
+                            <span>Käytä CAT</span>
+                        </button>
+                    </div>
+                </div>
+
+                <div class="section-header mt-md">
+                    <span class="section-title">Pikatoiminnot</span>
+                </div>
+                <div class="quick-actions six-col">
+                    <button class="action-btn" onclick="openModal('buy')">
+                        <div class="action-icon"><svg viewBox="0 0 20 20" fill="currentColor"><path d="M4 4a2 2 0 00-2 2v1h16V6a2 2 0 00-2-2H4z"/><path fill-rule="evenodd" d="M18 9H2v5a2 2 0 002 2h12a2 2 0 002-2V9zM4 13a1 1 0 011-1h1a1 1 0 110 2H5a1 1 0 01-1-1zm5-1a1 1 0 100 2h1a1 1 0 100-2H9z" clip-rule="evenodd"/></svg></div>
+                        <div class="action-label">Osta</div>
+                    </button>
+                    <button class="action-btn" onclick="openModal('sell')">
+                        <div class="action-icon"><svg viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M4 4a2 2 0 00-2 2v4a2 2 0 002 2V6h10a2 2 0 00-2-2H4zm2 6a2 2 0 012-2h8a2 2 0 012 2v4a2 2 0 01-2 2H8a2 2 0 01-2-2v-4zm6 4a2 2 0 100-4 2 2 0 000 4z" clip-rule="evenodd"/></svg></div>
+                        <div class="action-label">Myy</div>
+                    </button>
+                    <button class="action-btn" onclick="openModal('swap')">
+                        <div class="action-icon"><svg viewBox="0 0 20 20" fill="currentColor"><path d="M8 5a1 1 0 100 2h5.586l-1.293 1.293a1 1 0 001.414 1.414l3-3a1 1 0 000-1.414l-3-3a1 1 0 10-1.414 1.414L13.586 5H8zM12 15a1 1 0 100-2H6.414l1.293-1.293a1 1 0 10-1.414-1.414l-3 3a1 1 0 000 1.414l3 3a1 1 0 001.414-1.414L6.414 15H12z"/></svg></div>
+                        <div class="action-label">Vaihda</div>
+                    </button>
+                    <button class="action-btn" onclick="openModal('send')">
+                        <div class="action-icon"><svg viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M3 17a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm3.293-7.707a1 1 0 011.414 0L9 10.586V3a1 1 0 112 0v7.586l1.293-1.293a1 1 0 111.414 1.414l-3 3a1 1 0 01-1.414 0l-3-3a1 1 0 010-1.414z" clip-rule="evenodd"/></svg></div>
+                        <div class="action-label">Lähetä</div>
+                    </button>
+                    <button class="action-btn" onclick="openModal('receive')">
+                        <div class="action-icon"><svg viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M3 17a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zM6.293 6.707a1 1 0 010-1.414l3-3a1 1 0 011.414 0l3 3a1 1 0 01-1.414 1.414L11 5.414V13a1 1 0 11-2 0V5.414L7.707 6.707a1 1 0 01-1.414 0z" clip-rule="evenodd"/></svg></div>
+                        <div class="action-label">Vastaanota</div>
+                    </button>
+                    <button class="action-btn cat-action" onclick="openModal('use-cat')">
+                        <div class="action-icon"><svg viewBox="0 0 20 20" fill="currentColor"><path d="M13 7H7v6h6V7z"/><path fill-rule="evenodd" d="M7 2a1 1 0 012 0v1h2V2a1 1 0 112 0v1h2a2 2 0 012 2v2h1a1 1 0 110 2h-1v2h1a1 1 0 110 2h-1v2a2 2 0 01-2 2h-2v1a1 1 0 11-2 0v-1H9v1a1 1 0 11-2 0v-1H5a2 2 0 01-2-2v-2H2a1 1 0 110-2h1V9H2a1 1 0 010-2h1V5a2 2 0 012-2h2V2zM5 5h10v10H5V5z" clip-rule="evenodd"/></svg></div>
+                        <div class="action-label">Käytä CAT</div>
+                    </button>
+                </div>
+
+                <!-- CAT Transfer Buttons -->
+                <div class="section-header mt-md">
+                    <span class="section-title">CAT-tilin hallinta</span>
+                </div>
+                <div style="display: flex; gap: var(--space-sm);">
+                    <button class="btn-primary cat-btn" style="flex: 1;" onclick="openModal('deposit-cat')">Talleta CAT-tilille</button>
+                    <button class="btn-secondary" style="flex: 1;" onclick="openModal('withdraw-cat')">Nosta CAT-tililtä</button>
+                </div>
+
+                <!-- Wallet Address -->
+                <div class="card mt-lg">
+                    <div class="section-title" style="margin-bottom: var(--space-sm);">Vastaanotto-osoite</div>
+                    <div style="font-family: 'SF Mono', Monaco, monospace; font-size: 11px; word-break: break-all; color: var(--text-secondary); background: var(--bg-tertiary); padding: var(--space-md); border-radius: var(--radius-sm);">
+                        bc1qxy2kgdygjrsqtzq2n0yrf2493p83kkfjhx0wlh
+                    </div>
+
+                    <div style="display: flex; gap: var(--space-2); margin-top: var(--space-3);">
+                        <button class="btn-secondary" style="flex: 1;" onclick="copyToClipboard('bc1qxy2kgdygjrsqtzq2n0yrf2493p83kkfjhx0wlh', this)">
+                            <svg style="width: 16px; height: 16px;" viewBox="0 0 20 20" fill="currentColor">
+                                <path d="M8 2a1 1 0 000 2h2a1 1 0 100-2H8z"/>
+                                <path d="M3 5a2 2 0 012-2 3 3 0 003 3h2a3 3 0 003-3 2 2 0 012 2v6h-4.586l1.293-1.293a1 1 0 00-1.414-1.414l-3 3a1 1 0 000 1.414l3 3a1 1 0 001.414-1.414L10.414 13H15v3a2 2 0 01-2 2H5a2 2 0 01-2-2V5zM15 11h2a1 1 0 110 2h-2v-2z"/>
+                            </svg>
+                            Copy Address
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- TRANSACTIONS SCREEN -->
+            <div id="screen-transactions" class="screen">
+                <div class="section-header">
+                    <span class="section-title">Tapahtumahistoria</span>
+                    <button class="section-link" onclick="exportCSV()">📥 Vie CSV</button>
+                </div>
+                <div class="transaction-list" id="full-transaction-list">
+                    <!-- Populated by JS -->
+                </div>
+
+                <!-- Simulate Button -->
+                <div class="card mt-lg">
+                    <div class="section-title" style="margin-bottom: var(--space-sm);">Testityökalut</div>
+                    <button class="btn-secondary" style="width: 100%;" onclick="simulateWeekPerformance()">🧪 Simuloi 1 viikon kehitys</button>
+                </div>
+            </div>
+
+            <!-- TRADE SCREEN -->
+            <div id="screen-trade" class="screen">
+                <div class="section-header">
+                    <span class="section-title">Kaupankäynti</span>
+                </div>
+
+                <!-- Quick Trade Actions -->
+                <div class="quick-actions" style="grid-template-columns: repeat(2, 1fr);">
+                    <button class="action-btn" onclick="openModal('buy')" style="padding: var(--space-lg);">
+                        <div class="action-icon" style="width: 56px; height: 56px; font-size: 28px;"><svg viewBox="0 0 20 20" fill="currentColor"><path d="M4 4a2 2 0 00-2 2v1h16V6a2 2 0 00-2-2H4z"/><path fill-rule="evenodd" d="M18 9H2v5a2 2 0 002 2h12a2 2 0 002-2V9zM4 13a1 1 0 011-1h1a1 1 0 110 2H5a1 1 0 01-1-1zm5-1a1 1 0 100 2h1a1 1 0 100-2H9z" clip-rule="evenodd"/></svg></div>
+                        <div class="action-label" style="font-size: 14px;">Osta BTC</div>
+                    </button>
+                    <button class="action-btn" onclick="openModal('sell')" style="padding: var(--space-lg);">
+                        <div class="action-icon" style="width: 56px; height: 56px; font-size: 28px;"><svg viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M4 4a2 2 0 00-2 2v4a2 2 0 002 2V6h10a2 2 0 00-2-2H4zm2 6a2 2 0 012-2h8a2 2 0 012 2v4a2 2 0 01-2 2H8a2 2 0 01-2-2v-4zm6 4a2 2 0 100-4 2 2 0 000 4z" clip-rule="evenodd"/></svg></div>
+                        <div class="action-label" style="font-size: 14px;">Myy BTC</div>
+                    </button>
+                </div>
+
+                <!-- Price Card -->
+                <div class="card">
+                    <div class="section-title" style="margin-bottom: var(--space-md);">BTC Markkinahinta</div>
+                    <div style="font-size: 28px; font-weight: 700; margin-bottom: var(--space-xs);" id="market-price">89 000,00 €</div>
+                    <div style="color: var(--success); font-size: 14px;">+2.45% (24h)</div>
+                </div>
+
+                <!-- Slippage Settings -->
+                <div class="card">
+                    <div class="section-title" style="margin-bottom: var(--space-sm);">Liukuma-asetus</div>
+                    <div class="slippage-presets">
+                        <button class="slippage-btn" onclick="setSlippage(0.1)">0.1%</button>
+                        <button class="slippage-btn active" onclick="setSlippage(0.5)">0.5%</button>
+                        <button class="slippage-btn" onclick="setSlippage(1.0)">1.0%</button>
+                        <button class="slippage-btn" onclick="setSlippage(2.0)">2.0%</button>
+                    </div>
+                </div>
+
+                <!-- Admin Price Editor -->
+                <div class="card">
+                    <div class="section-title" style="margin-bottom: var(--space-sm);">🔧 Testityökalu: Muokkaa hintaa</div>
+                    <input type="number" class="modal-input" id="admin-price-input" placeholder="Syötä uusi hinta (EUR)" style="margin-bottom: var(--space-sm);">
+                    <button class="btn-secondary" style="width: 100%;" onclick="setAdminPrice()">Päivitä markkinahinta</button>
+                </div>
+            </div>
+
+            <!-- SETTINGS SCREEN -->
+            <div id="screen-settings" class="screen">
+                <div class="settings-section">
+                    <div class="settings-title">Tili</div>
+                    <div class="settings-list">
+                        <div class="settings-item">
+                            <div class="settings-icon"><svg viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z" clip-rule="evenodd"/></svg></div>
+                            <div class="settings-info">
+                                <div class="settings-label" id="settings-username">Demo User</div>
+                                <div class="settings-value" id="settings-email">demo@cryptovault.fi</div>
+                            </div>
+                            <div class="settings-arrow">›</div>
+                        </div>
+                        <div class="settings-item" onclick="logout()">
+                            <div class="settings-icon"><svg viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M3 3a1 1 0 00-1 1v12a1 1 0 102 0V4a1 1 0 00-1-1zm10.293 9.293a1 1 0 001.414 1.414l3-3a1 1 0 000-1.414l-3-3a1 1 0 10-1.414 1.414L14.586 9H7a1 1 0 100 2h7.586l-1.293 1.293z" clip-rule="evenodd"/></svg></div>
+                            <div class="settings-info">
+                                <div class="settings-label">Kirjaudu ulos</div>
+                            </div>
+                            <div class="settings-arrow">›</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="settings-section">
+                    <div class="settings-title">C-A-T Automaattikauppa</div>
+                    <div class="settings-list">
+                        <div class="settings-item">
+                            <div class="settings-icon"><svg viewBox="0 0 20 20" fill="currentColor"><path d="M13 7H7v6h6V7z"/><path fill-rule="evenodd" d="M7 2a1 1 0 012 0v1h2V2a1 1 0 112 0v1h2a2 2 0 012 2v2h1a1 1 0 110 2h-1v2h1a1 1 0 110 2h-1v2a2 2 0 01-2 2h-2v1a1 1 0 11-2 0v-1H9v1a1 1 0 11-2 0v-1H5a2 2 0 01-2-2v-2H2a1 1 0 110-2h1V9H2a1 1 0 010-2h1V5a2 2 0 012-2h2V2zM5 5h10v10H5V5z" clip-rule="evenodd"/></svg></div>
+                            <div class="settings-info">
+                                <div class="settings-label">Automaattinen kaupankäynti</div>
+                                <div class="settings-value">CAT tekee kauppoja puolestasi</div>
+                            </div>
+                            <div class="toggle-switch cat-toggle active" id="auto-trade-toggle" onclick="toggleAutoTrade()"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="settings-section">
+                    <div class="settings-title">Asetukset</div>
+                    <div class="settings-list">
+                        <div class="settings-item">
+                            <div class="settings-icon"><svg viewBox="0 0 20 20" fill="currentColor"><path d="M17.293 13.293A8 8 0 016.707 2.707a8.001 8.001 0 1010.586 10.586z"/></svg></div>
+                            <div class="settings-info">
+                                <div class="settings-label">Tumma teema</div>
+                                <div class="settings-value">Oletuksena päällä</div>
+                            </div>
+                            <div class="toggle-switch active" id="theme-toggle" onclick="toggleTheme()"></div>
+                        </div>
+                        <div class="settings-item">
+                            <div class="settings-icon"><svg viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM4.332 8.027a6.012 6.012 0 011.912-2.706C6.512 5.73 6.974 6 7.5 6A1.5 1.5 0 019 7.5V8a2 2 0 004 0 2 2 0 011.523-1.943A5.977 5.977 0 0116 10c0 .34-.028.675-.083 1H15a2 2 0 00-2 2v2.197A5.973 5.973 0 0110 16v-2a2 2 0 00-2-2 2 2 0 01-2-2 2 2 0 00-1.668-1.973z" clip-rule="evenodd"/></svg></div>
+                            <div class="settings-info">
+                                <div class="settings-label">Kieli</div>
+                                <div class="settings-value" id="settings-language">Suomi</div>
+                            </div>
+                            <div class="settings-arrow">›</div>
+                        </div>
+                        <div class="settings-item">
+                            <div class="settings-icon"><svg viewBox="0 0 20 20" fill="currentColor"><path d="M10 2a6 6 0 00-6 6v3.586l-.707.707A1 1 0 004 14h12a1 1 0 00.707-1.707L16 11.586V8a6 6 0 00-6-6zM10 18a3 3 0 01-3-3h6a3 3 0 01-3 3z"/></svg></div>
+                            <div class="settings-info">
+                                <div class="settings-label">Ilmoitukset</div>
+                                <div class="settings-value">Push-ilmoitukset</div>
+                            </div>
+                            <div class="toggle-switch active" id="notif-toggle" onclick="toggleNotifSetting()"></div>
+                        </div>
+                        <div class="settings-item">
+                            <div class="settings-icon"><svg viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-12a1 1 0 10-2 0v4a1 1 0 00.293.707l2.828 2.829a1 1 0 101.415-1.415L11 9.586V6z" clip-rule="evenodd"/></svg></div>
+                            <div class="settings-info">
+                                <div class="settings-label">Simuloi verkkoviive</div>
+                                <div class="settings-value">QA-testaus</div>
+                            </div>
+                            <div class="toggle-switch" id="delay-toggle" onclick="toggleNetworkDelay()"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="settings-section">
+                    <div class="settings-title">Tietoja</div>
+                    <div class="settings-list">
+                        <div class="settings-item" onclick="showScreen('faq')">
+                            <div class="settings-icon"><svg viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-8-3a1 1 0 00-.867.5 1 1 0 11-1.731-1A3 3 0 0113 8a3.001 3.001 0 01-2 2.83V11a1 1 0 11-2 0v-1a1 1 0 011-1 1 1 0 100-2zm0 8a1 1 0 100-2 1 1 0 000 2z" clip-rule="evenodd"/></svg></div>
+                            <div class="settings-info">
+                                <div class="settings-label">FAQ</div>
+                                <div class="settings-value">Frequently Asked Questions</div>
+                            </div>
+                            <div class="settings-arrow">›</div>
+                        </div>
+                        <div class="settings-item">
+                            <div class="settings-icon"><svg viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd"/></svg></div>
+                            <div class="settings-info">
+                                <div class="settings-label">Versio</div>
+                                <div class="settings-value">v1.03 (Demo)</div>
+                            </div>
+                        </div>
+                        <div class="settings-item" onclick="resetDemo()">
+                            <div class="settings-icon"><svg viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M4 2a1 1 0 011 1v2.101a7.002 7.002 0 0111.601 2.566 1 1 0 11-1.885.666A5.002 5.002 0 005.999 7H9a1 1 0 010 2H4a1 1 0 01-1-1V3a1 1 0 011-1zm.008 9.057a1 1 0 011.276.61A5.002 5.002 0 0014.001 13H11a1 1 0 110-2h5a1 1 0 011 1v5a1 1 0 11-2 0v-2.101a7.002 7.002 0 01-11.601-2.566 1 1 0 01.61-1.276z" clip-rule="evenodd"/></svg></div>
+                            <div class="settings-info">
+                                <div class="settings-label">Palauta demo-tila</div>
+                                <div class="settings-value">Nollaa kaikki tiedot</div>
+                            </div>
+                            <div class="settings-arrow">›</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- FAQ SCREEN -->
+            <div id="screen-faq" class="screen">
+                <div class="section-header">
+                    <span class="section-title">Frequently Asked Questions</span>
+                </div>
+                
+                <div class="accordion">
+                    <div class="accordion-item">
+                        <button class="accordion-header" aria-expanded="false" aria-controls="faq-1">
+                            <span>What is CryptoApp?</span>
+                            <svg class="accordion-icon" viewBox="0 0 20 20" fill="currentColor">
+                                <path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd"/>
+                            </svg>
+                        </button>
+                        <div id="faq-1" class="accordion-content" hidden>
+                            CryptoApp is a professional mobile-first crypto banking demonstration application. It simulates a full-featured crypto wallet with automated trading capabilities. All data and transactions are simulated for demonstration purposes only.
+                        </div>
+                    </div>
+                    
+                    <div class="accordion-item">
+                        <button class="accordion-header" aria-expanded="false" aria-controls="faq-2">
+                            <span>Is this a real crypto wallet?</span>
+                            <svg class="accordion-icon" viewBox="0 0 20 20" fill="currentColor">
+                                <path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd"/>
+                            </svg>
+                        </button>
+                        <div id="faq-2" class="accordion-content" hidden>
+                            No. CryptoApp is a demonstration application only. It does not connect to any real blockchain, does not handle real cryptocurrency, and does not integrate with actual exchanges. All balances, prices, and transactions are simulated locally in your browser.
+                        </div>
+                    </div>
+                    
+                    <div class="accordion-item">
+                        <button class="accordion-header" aria-expanded="false" aria-controls="faq-3">
+                            <span>How do I log in?</span>
+                            <svg class="accordion-icon" viewBox="0 0 20 20" fill="currentColor">
+                                <path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd"/>
+                            </svg>
+                        </button>
+                        <div id="faq-3" class="accordion-content" hidden>
+                            Use the demo account credentials: username "demo" and password "demo123". You can also register a new account, which will be stored locally in your browser's localStorage. No actual authentication or server validation occurs.
+                        </div>
+                    </div>
+                    
+                    <div class="accordion-item">
+                        <button class="accordion-header" aria-expanded="false" aria-controls="faq-4">
+                            <span>What is CAT automated trading?</span>
+                            <svg class="accordion-icon" viewBox="0 0 20 20" fill="currentColor">
+                                <path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd"/>
+                            </svg>
+                        </button>
+                        <div id="faq-4" class="accordion-content" hidden>
+                            CAT (Cryptocurrency Automated Trading) is a simulated trading bot feature that demonstrates automated arbitrage trading between exchanges. In reality, no trades are executed. The feature shows mock activity to illustrate how such a system might work.
+                        </div>
+                    </div>
+                    
+                    <div class="accordion-item">
+                        <button class="accordion-header" aria-expanded="false" aria-controls="faq-5">
+                            <span>Is my data secure?</span>
+                            <svg class="accordion-icon" viewBox="0 0 20 20" fill="currentColor">
+                                <path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd"/>
+                            </svg>
+                        </button>
+                        <div id="faq-5" class="accordion-content" hidden>
+                            All data in CryptoApp is stored locally in your browser using localStorage. No data is transmitted to any server. Since this is a demonstration app with no real value, there are no security risks associated with its use. You can reset all data at any time from the Settings screen.
+                        </div>
+                    </div>
+                    
+                    <div class="accordion-item">
+                        <button class="accordion-header" aria-expanded="false" aria-controls="faq-6">
+                            <span>Can I use this as a real wallet?</span>
+                            <svg class="accordion-icon" viewBox="0 0 20 20" fill="currentColor">
+                                <path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd"/>
+                            </svg>
+                        </button>
+                        <div id="faq-6" class="accordion-content" hidden>
+                            No. CryptoApp is strictly a demonstration application and should not be used to manage real cryptocurrency. It does not generate real wallet addresses, does not connect to blockchain networks, and cannot send or receive real cryptocurrency.
+                        </div>
+                    </div>
+                    
+                    <div class="accordion-item">
+                        <button class="accordion-header" aria-expanded="false" aria-controls="faq-7">
+                            <span>Does this work offline?</span>
+                            <svg class="accordion-icon" viewBox="0 0 20 20" fill="currentColor">
+                                <path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd"/>
+                            </svg>
+                        </button>
+                        <div id="faq-7" class="accordion-content" hidden>
+                            Yes. CryptoApp is entirely self-contained and works offline once loaded. All functionality runs in your browser with no external API calls or CDN dependencies.
+                        </div>
+                    </div>
+                    
+                    <div class="accordion-item">
+                        <button class="accordion-header" aria-expanded="false" aria-controls="faq-8">
+                            <span>What technologies power this demo?</span>
+                            <svg class="accordion-icon" viewBox="0 0 20 20" fill="currentColor">
+                                <path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd"/>
+                            </svg>
+                        </button>
+                        <div id="faq-8" class="accordion-content" hidden>
+                            CryptoApp is built with vanilla HTML, CSS, and JavaScript. It uses a custom design token system, localStorage for data persistence, and Canvas API for charts. No external frameworks, libraries, or build tools are required.
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </main>
+
+        <!-- Bottom Navigation -->
+        <nav class="bottom-nav" role="navigation" aria-label="Päänavigaatio">
+            <button type="button" class="nav-item active" onclick="showScreen('home')">
+                <div class="nav-icon"><svg viewBox="0 0 20 20" fill="currentColor"><path d="M10.707 2.293a1 1 0 00-1.414 0l-7 7a1 1 0 001.414 1.414L4 10.414V17a1 1 0 001 1h2a1 1 0 001-1v-2a1 1 0 011-1h2a1 1 0 011 1v2a1 1 0 001 1h2a1 1 0 001-1v-6.586l.293.293a1 1 0 001.414-1.414l-7-7z"/></svg></div>
+                <div class="nav-label">Koti</div>
+            </button>
+            <button type="button" class="nav-item" onclick="showScreen('wallet')">
+                <div class="nav-icon"><svg viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M4 4a2 2 0 00-2 2v4a2 2 0 002 2V6h10a2 2 0 00-2-2H4zm2 6a2 2 0 012-2h8a2 2 0 012 2v4a2 2 0 01-2 2H8a2 2 0 01-2-2v-4zm6 4a2 2 0 100-4 2 2 0 000 4z" clip-rule="evenodd"/></svg></div>
+                <div class="nav-label">Lompakko</div>
+            </button>
+            <button type="button" class="nav-item" onclick="showScreen('trade')">
+                <div class="nav-icon"><svg viewBox="0 0 20 20" fill="currentColor"><path d="M2 11a1 1 0 011-1h2a1 1 0 011 1v5a1 1 0 01-1 1H3a1 1 0 01-1-1v-5zM8 7a1 1 0 011-1h2a1 1 0 011 1v9a1 1 0 01-1 1H9a1 1 0 01-1-1V7zM14 4a1 1 0 011-1h2a1 1 0 011 1v12a1 1 0 01-1 1h-2a1 1 0 01-1-1V4z"/></svg></div>
+                <div class="nav-label">Kauppa</div>
+            </button>
+            <button type="button" class="nav-item" onclick="showScreen('transactions')">
+                <div class="nav-icon"><svg viewBox="0 0 20 20" fill="currentColor"><path d="M8 3a1 1 0 011-1h2a1 1 0 110 2H9a1 1 0 01-1-1z"/><path d="M6 3a2 2 0 00-2 2v11a2 2 0 002 2h8a2 2 0 002-2V5a2 2 0 00-2-2 3 3 0 01-3 3H9a3 3 0 01-3-3z"/></svg></div>
+                <div class="nav-label">Historia</div>
+            </button>
+            <button type="button" class="nav-item" onclick="showScreen('settings')">
+                <div class="nav-icon"><svg viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M11.49 3.17c-.38-1.56-2.6-1.56-2.98 0a1.532 1.532 0 01-2.286.948c-1.372-.836-2.942.734-2.106 2.106.54.886.061 2.042-.947 2.287-1.561.379-1.561 2.6 0 2.978a1.532 1.532 0 01.947 2.287c-.836 1.372.734 2.942 2.106 2.106a1.532 1.532 0 012.287.947c.379 1.561 2.6 1.561 2.978 0a1.533 1.533 0 012.287-.947c1.372.836 2.942-.734 2.106-2.106a1.533 1.533 0 01.947-2.287c1.561-.379 1.561-2.6 0-2.978a1.532 1.532 0 01-.947-2.287c.836-1.372-.734-2.942-2.106-2.106a1.532 1.532 0 01-2.287-.947zM10 13a3 3 0 100-6 3 3 0 000 6z" clip-rule="evenodd"/></svg></div>
+                <div class="nav-label">Asetukset</div>
+            </button>
+        </nav>
+
+        <!-- FOOTER -->
+        <footer class="app-footer">
+            <div class="footer-content">
+                <div class="footer-logo">
+                    <svg viewBox="0 0 24 24" fill="currentColor">
+                        <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8zm.31-8.86c-1.77-.45-2.34-.94-2.34-1.67 0-.84.79-1.43 2.1-1.43 1.38 0 1.9.66 1.94 1.64h1.71c-.05-1.34-.87-2.57-2.49-2.97V5H10.9v1.69c-1.51.32-2.72 1.3-2.72 2.81 0 1.79 1.49 2.69 3.66 3.21 1.95.46 2.34 1.15 2.34 1.87 0 .53-.39 1.39-2.1 1.39-1.6 0-2.23-.72-2.32-1.64H8.04c.1 1.7 1.36 2.66 2.86 2.97V19h2.34v-1.67c1.52-.29 2.72-1.16 2.73-2.77-.01-2.2-1.9-2.96-3.66-3.42z"/>
+                    </svg>
+                    <span>CryptoApp</span>
+                </div>
+                <p class="footer-text">
+                    A professional mobile-first crypto banking demonstration. All features are simulated for educational and presentation purposes.
+                </p>
+                <div class="footer-links">
+                    <a href="#" class="footer-link" onclick="showScreen('faq'); return false;">FAQ</a>
+                    <span class="footer-text" style="margin: 0;">|</span>
+                    <span class="footer-text" style="margin: 0;">Privacy: Data stored locally only</span>
+                </div>
+                <div class="footer-version">
+                    Version: cryptoapp.html | Demo Mode | No Real Transactions
+                </div>
+            </div>
+        </footer>
+
+    </div>
+
+    <!-- QA Toggle -->
+    <div class="qa-toggle" onclick="toggleNetworkDelay()">QA: Viive <span id="qa-delay-status">OFF</span></div>
+
+    <!-- MODALS -->
+    <!-- Send Modal -->
+    <div id="modal-send" class="modal-overlay" onclick="closeModalOnOverlay(event)">
+        <div class="modal">
+            <div class="modal-header">
+                <h3 class="modal-title">Lähetä BTC</h3>
+                <button class="modal-close" onclick="closeModal('send')">✕</button>
+            </div>
+            <div class="modal-body">
+                <div class="modal-form-group">
+                    <label class="modal-label">Vastaanottajan osoite</label>
+                    <input type="text" class="modal-input" id="send-address" placeholder="bc1q..." style="font-size: 14px;">
+                </div>
+                <div class="modal-form-group">
+                    <label class="modal-label">Määrä (BTC)</label>
+                    <input type="number" class="modal-input" id="send-amount" placeholder="0.00000000" step="0.00000001" oninput="updateSendPreview()">
+                    <div class="modal-input-hint">Käytettävissä: <span id="send-available">0.52341234</span> BTC</div>
+                </div>
+                <div class="modal-preview">
+                    <div class="modal-preview-row">
+                        <span class="modal-preview-label">Verkkomaksu (arvio)</span>
+                        <span class="modal-preview-value" id="send-fee">0.00001500 BTC</span>
+                    </div>
+                    <div class="modal-preview-row">
+                        <span class="modal-preview-label">Yhteensä</span>
+                        <span class="modal-preview-value highlight" id="send-total">0.00000000 BTC</span>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn-secondary" onclick="closeModal('send')">Peruuta</button>
+                <button class="btn-primary" onclick="confirmSend()">Vahvista lähetys</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Receive Modal -->
+    <div id="modal-receive" class="modal-overlay" onclick="closeModalOnOverlay(event)">
+        <div class="modal">
+            <div class="modal-header">
+                <h3 class="modal-title">Vastaanota BTC</h3>
+                <button class="modal-close" onclick="closeModal('receive')">✕</button>
+            </div>
+            <div class="modal-body">
+                <div style="text-align: center; margin-bottom: var(--space-lg);">
+                    <div style="width: 180px; height: 180px; background: white; border-radius: var(--radius-md); margin: 0 auto var(--space-md); display: flex; align-items: center; justify-content: center; font-size: 48px;">
+                        📱
+                    </div>
+                    <p style="color: var(--text-secondary); font-size: 13px;">Skannaa QR-koodi tai kopioi osoite</p>
+                </div>
+                <div class="modal-form-group">
+                    <label class="modal-label">Bitcoin-osoite</label>
+                    <div style="font-family: 'SF Mono', Monaco, monospace; font-size: 12px; word-break: break-all; background: var(--bg-tertiary); padding: var(--space-md); border-radius: var(--radius-sm); color: var(--text-secondary);">
+                        bc1qxy2kgdygjrsqtzq2n0yrf2493p83kkfjhx0wlh
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn-primary" onclick="copyAddress(); closeModal('receive');">📋 Kopioi osoite</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Buy Modal -->
+    <div id="modal-buy" class="modal-overlay" onclick="closeModalOnOverlay(event)">
+        <div class="modal">
+            <div class="modal-header">
+                <h3 class="modal-title">Osta BTC</h3>
+                <button class="modal-close" onclick="closeModal('buy')">✕</button>
+            </div>
+            <div class="modal-body">
+                <div class="modal-form-group">
+                    <label class="modal-label">Summa (EUR)</label>
+                    <input type="number" class="modal-input" id="buy-amount-eur" placeholder="100.00" oninput="updateBuyPreview()">
+                </div>
+                <div class="modal-preview">
+                    <div class="modal-preview-row">
+                        <span class="modal-preview-label">Markkinahinta</span>
+                        <span class="modal-preview-value" id="buy-price">89 000,00 €/BTC</span>
+                    </div>
+                    <div class="modal-preview-row">
+                        <span class="modal-preview-label">Palvelumaksu (1.5%)</span>
+                        <span class="modal-preview-value" id="buy-fee">0,00 €</span>
+                    </div>
+                    <div class="modal-preview-row">
+                        <span class="modal-preview-label">Saat noin</span>
+                        <span class="modal-preview-value highlight" id="buy-btc">0.00000000 BTC</span>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn-secondary" onclick="closeModal('buy')">Peruuta</button>
+                <button class="btn-primary" onclick="confirmBuy()">Vahvista osto</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Sell Modal -->
+    <div id="modal-sell" class="modal-overlay" onclick="closeModalOnOverlay(event)">
+        <div class="modal">
+            <div class="modal-header">
+                <h3 class="modal-title">Myy BTC</h3>
+                <button class="modal-close" onclick="closeModal('sell')">✕</button>
+            </div>
+            <div class="modal-body">
+                <div class="modal-form-group">
+                    <label class="modal-label">Määrä (BTC)</label>
+                    <input type="number" class="modal-input" id="sell-amount" placeholder="0.00000000" step="0.00000001" oninput="updateSellPreview()">
+                    <div class="modal-input-hint">Käytettävissä: <span id="sell-available">0.52341234</span> BTC</div>
+                </div>
+                <div class="modal-preview">
+                    <div class="modal-preview-row">
+                        <span class="modal-preview-label">Markkinahinta</span>
+                        <span class="modal-preview-value" id="sell-price">89 000,00 €/BTC</span>
+                    </div>
+                    <div class="modal-preview-row">
+                        <span class="modal-preview-label">Palvelumaksu (1.5%)</span>
+                        <span class="modal-preview-value" id="sell-fee">0,00 €</span>
+                    </div>
+                    <div class="modal-preview-row">
+                        <span class="modal-preview-label">Saat noin</span>
+                        <span class="modal-preview-value highlight" id="sell-eur">0,00 €</span>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn-secondary" onclick="closeModal('sell')">Peruuta</button>
+                <button class="btn-primary" onclick="confirmSell()">Vahvista myynti</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Swap Modal -->
+    <div id="modal-swap" class="modal-overlay" onclick="closeModalOnOverlay(event)">
+        <div class="modal">
+            <div class="modal-header">
+                <h3 class="modal-title">Vaihda krypto</h3>
+                <button class="modal-close" onclick="closeModal('swap')">✕</button>
+            </div>
+            <div class="modal-body">
+                <div class="modal-form-group">
+                    <label class="modal-label">Vaihdan (BTC)</label>
+                    <input type="number" class="modal-input" id="swap-from-amount" placeholder="0.00000000" step="0.00000001" oninput="updateSwapPreview()">
+                    <div class="modal-input-hint">Käytettävissä: <span id="swap-available">0.52341234</span> BTC</div>
+                </div>
+                <div style="text-align: center; margin: var(--space-md) 0;">
+                    <span style="font-size: 24px;">⇅</span>
+                </div>
+                <div class="modal-form-group">
+                    <label class="modal-label">Saan (ETH) - Demo</label>
+                    <input type="text" class="modal-input" id="swap-to-amount" placeholder="0.00000000" readonly style="background: var(--bg-elevated);">
+                </div>
+                <div class="modal-preview">
+                    <div class="modal-preview-row">
+                        <span class="modal-preview-label">Vaihtokurssi</span>
+                        <span class="modal-preview-value">1 BTC = 18.5 ETH</span>
+                    </div>
+                    <div class="modal-preview-row">
+                        <span class="modal-preview-label">Liukuma</span>
+                        <span class="modal-preview-value" id="swap-slippage">0.5%</span>
+                    </div>
+                    <div class="modal-preview-row">
+                        <span class="modal-preview-label">Verkkomaksu</span>
+                        <span class="modal-preview-value">0.00005 BTC</span>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn-secondary" onclick="closeModal('swap')">Peruuta</button>
+                <button class="btn-primary" onclick="confirmSwap()">Vahvista vaihto</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Use CAT Modal -->
+    <div id="modal-use-cat" class="modal-overlay" onclick="closeModalOnOverlay(event)">
+        <div class="modal">
+            <div class="modal-header">
+                <h3 class="modal-title">Käytä CAT-varoja</h3>
+                <button class="modal-close" onclick="closeModal('use-cat')">✕</button>
+            </div>
+            <div class="modal-body">
+                <div style="text-align: center; margin-bottom: var(--space-lg);">
+                    <div style="font-size: 48px; margin-bottom: var(--space-sm);"><svg viewBox="0 0 20 20" fill="currentColor"><path d="M13 7H7v6h6V7z"/><path fill-rule="evenodd" d="M7 2a1 1 0 012 0v1h2V2a1 1 0 112 0v1h2a2 2 0 012 2v2h1a1 1 0 110 2h-1v2h1a1 1 0 110 2h-1v2a2 2 0 01-2 2h-2v1a1 1 0 11-2 0v-1H9v1a1 1 0 11-2 0v-1H5a2 2 0 01-2-2v-2H2a1 1 0 110-2h1V9H2a1 1 0 010-2h1V5a2 2 0 012-2h2V2zM5 5h10v10H5V5z" clip-rule="evenodd"/></svg></div>
+                    <p style="color: var(--text-secondary);">Siirrä CAT-tililtä pääsalkkuun</p>
+                </div>
+                <div class="modal-form-group">
+                    <label class="modal-label">Määrä (BTC)</label>
+                    <input type="number" class="modal-input" id="use-cat-amount" placeholder="0.00000000" step="0.00000001">
+                    <div class="modal-input-hint">CAT-saldo: <span id="use-cat-available">0.12345678</span> BTC</div>
+                </div>
+                <button class="btn-secondary" style="width: 100%; margin-top: var(--space-sm);" onclick="useCatMax()">Käytä kaikki</button>
+            </div>
+            <div class="modal-footer">
+                <button class="btn-secondary" onclick="closeModal('use-cat')">Peruuta</button>
+                <button class="btn-primary cat-btn" onclick="confirmUseCat()">Vahvista siirto</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Deposit to CAT Modal -->
+    <div id="modal-deposit-cat" class="modal-overlay" onclick="closeModalOnOverlay(event)">
+        <div class="modal">
+            <div class="modal-header">
+                <h3 class="modal-title">Talleta CAT-tilille</h3>
+                <button class="modal-close" onclick="closeModal('deposit-cat')">✕</button>
+            </div>
+            <div class="modal-body">
+                <div style="text-align: center; margin-bottom: var(--space-lg);">
+                    <div style="font-size: 48px; margin-bottom: var(--space-sm);">🤖💰</div>
+                    <p style="color: var(--text-secondary);">Sijoita varoja CAT automaattikauppaan</p>
+                </div>
+                <div class="modal-form-group">
+                    <label class="modal-label">Määrä (BTC)</label>
+                    <input type="number" class="modal-input" id="deposit-cat-amount" placeholder="0.00000000" step="0.00000001">
+                    <div class="modal-input-hint">Pääsalkku: <span id="deposit-cat-available">0.52341234</span> BTC</div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn-secondary" onclick="closeModal('deposit-cat')">Peruuta</button>
+                <button class="btn-primary cat-btn" onclick="confirmDepositCat()">Talleta CAT-tilille</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Withdraw from CAT Modal -->
+    <div id="modal-withdraw-cat" class="modal-overlay" onclick="closeModalOnOverlay(event)">
+        <div class="modal">
+            <div class="modal-header">
+                <h3 class="modal-title">Nosta CAT-tililtä</h3>
+                <button class="modal-close" onclick="closeModal('withdraw-cat')">✕</button>
+            </div>
+            <div class="modal-body">
+                <div class="modal-form-group">
+                    <label class="modal-label">Määrä (BTC)</label>
+                    <input type="number" class="modal-input" id="withdraw-cat-amount" placeholder="0.00000000" step="0.00000001">
+                    <div class="modal-input-hint">CAT-saldo: <span id="withdraw-cat-available">0.12345678</span> BTC</div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn-secondary" onclick="closeModal('withdraw-cat')">Peruuta</button>
+                <button class="btn-primary" onclick="confirmWithdrawCat()">Nosta pääsalkkuun</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // ===== CONFIGURATION =====
+        const CONFIG = {
+            STORAGE_KEY: 'crypto_demo_db',
+            AUTH_KEY: 'crypto_auth',
+            SETTINGS_KEY: 'crypto_settings',
+            MOCK_DB_URL: '../data/mock_db.json',
+            DEFAULT_SLIPPAGE: 0.5,
+            BTC_TO_ETH_RATE: 18.5,
+            SERVICE_FEE: 0.015,
+            NETWORK_FEE_BTC: 0.000015,
+            // Demo wallet address (not a real address)
+            DEMO_BTC_ADDRESS: 'bc1qxy2kgdygjrsqtzq2n0yrf2493p83kkfjhx0wlh',
+        };
+
+        // ===== CONSTANTS =====
+        const EXCHANGES = ['Binance', 'Kraken', 'Coinbase', 'Bitstamp', 'Gemini', 'Bitfinex'];
+        
+        const MOCK_TX_DESCRIPTIONS = {
+            receive: ['Vastaanotettu Bitcoin', 'Palkka saapunut', 'Siirto ystävältä'],
+            send: ['Lähetys ulkoiseen lompakkoon', 'Maksu verkkokauppaan', 'Lahjoitus'],
+            cat_profit: ['CAT arbitraasituotto - Binance/Kraken', 'CAT tuotto - Coinbase/Gemini'],
+            swap: ['Vaihto BTC → ETH', 'Vaihto BTC → USDC']
+        };
+
+        // ===== APPLICATION STATE =====
+        let STATE = {
+            isLoggedIn: false,
+            currentUser: null,
+            db: null,
+            settings: {
+                theme: 'dark',
+                language: 'fi',
+                autoTrade: true,
+                notifications: true,
+                networkDelay: false,
+            },
+            currentScreen: 'home',
+            slippage: CONFIG.DEFAULT_SLIPPAGE,
+            notifications: [],
+            portfolioChart: false,
+            onboardingStep: 0,
+        };
+
+        // ===== TRANSLATIONS =====
+        const TRANSLATIONS = {
+            fi: {
+                home: 'Koti',
+                wallet: 'Lompakko',
+                trade: 'Kauppa',
+                history: 'Historia',
+                settings: 'Asetukset',
+                send: 'Lähetä',
+                receive: 'Vastaanota',
+                buy: 'Osta',
+                sell: 'Myy',
+                swap: 'Vaihda',
+            },
+            en: {
+                home: 'Home',
+                wallet: 'Wallet',
+                trade: 'Trade',
+                history: 'History',
+                settings: 'Settings',
+                send: 'Send',
+                receive: 'Receive',
+                buy: 'Buy',
+                sell: 'Sell',
+                swap: 'Swap',
+            }
+        };
+
+        // ===== UTILITY FUNCTIONS =====
+        function formatBTC(amount) {
+            return amount.toFixed(8) + ' BTC';
+        }
+
+        function formatEUR(amount) {
+            return amount.toLocaleString('fi-FI', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) + ' €';
+        }
+
+        function formatNumber(num) {
+            // Finnish format: space as thousand separator
+            return num.toLocaleString('fi-FI');
+        }
+
+        function generateId() {
+            return 'tx_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9);
+        }
+
+        function getTimestamp() {
+            return new Date().toISOString();
+        }
+
+        function formatRelativeTime(timestamp) {
+            const now = new Date();
+            const date = new Date(timestamp);
+            const diff = Math.floor((now - date) / 1000);
+            
+            if (diff < 60) return 'juuri nyt';
+            if (diff < 3600) return Math.floor(diff / 60) + ' min sitten';
+            if (diff < 86400) return Math.floor(diff / 3600) + ' h sitten';
+            return date.toLocaleDateString('fi-FI');
+        }
+
+        function seededRandom(seed) {
+            let t = Math.imul(seed, 0x6D2B79F5) + 0x6D2B79F5;
+            t = (t ^ (t >>> 15)) >>> 0;
+            t = Math.imul(t | 1, t ^ (t >>> 7)) >>> 0;
+            t = t ^ (t >>> 14);
+            return ((t >>> 0) / 4294967296);
+        }
+
+        async function simulateDelay() {
+            if (STATE.settings.networkDelay) {
+                const delay = 400 + Math.random() * 800;
+                await new Promise(resolve => setTimeout(resolve, delay));
+            }
+        }
+
+        // ===== DATABASE FUNCTIONS =====
+        async function loadDatabase() {
+            // Try localStorage first
+            const stored = localStorage.getItem(CONFIG.STORAGE_KEY);
+            if (stored) {
+                STATE.db = JSON.parse(stored);
+                return;
+            }
+
+            // Load from mock_db.json
+            try {
+                const response = await fetch(CONFIG.MOCK_DB_URL);
+                if (response.ok) {
+                    STATE.db = await response.json();
+                } else {
+                    STATE.db = getDefaultDatabase();
+                }
+            } catch (e) {
+                STATE.db = getDefaultDatabase();
+            }
+            
+            // Generate portfolio performance if not exists
+            if (!STATE.db.portfolio_performance.generated_at) {
+                generatePortfolioPerformance();
+            }
+            
+            saveDatabase();
+        }
+
+        function getDefaultDatabase() {
+            return {
+                users: [
+                    { 
+                        id: 'user_1', 
+                        username: 'demo', 
+                        displayName: 'Demo User', 
+                        email: 'demo@cryptovault.fi',
+                        wallets: ['main', 'cat'],
+                        settings: { theme: 'dark', language: 'fi', autoTrade: true, notifications: true },
+                        createdAt: '2024-01-15T10:00:00Z'
+                    }
+                ],
+                wallets: {
+                    main: { btc: 0.52341234, label: 'Pääsalkku' },
+                    cat: { btc: 0.12345678, label: 'C-A-T Automaattitili' }
+                },
+                transactions: [
+                    { id: 'tx_1', from: 'cat', to: 'main', amount_btc: 0.00234567, type: 'cat_profit', description: 'CAT arbitraasituotto - Binance/Kraken', ts: '2025-11-25T00:45:00Z', status: 'completed' },
+                    { id: 'tx_2', from: 'main', to: 'external', amount_btc: 0.01, type: 'send', description: 'Lähetys ulkoiseen lompakkoon', ts: '2025-11-24T18:30:00Z', status: 'completed' },
+                    { id: 'tx_3', from: 'external', to: 'main', amount_btc: 0.05, type: 'receive', description: 'Vastaanotettu Bitcoin', ts: '2025-11-24T12:00:00Z', status: 'completed' },
+                ],
+                cat_activity: [
+                    { id: 'cat_1', type: 'arbitrage', buy_exchange: 'Binance', sell_exchange: 'Kraken', buy_price_usd: 94850, sell_price_usd: 95120, amount_btc: 0.15, profit_btc: 0.00042631, user_share_percent: 3.19, user_profit_btc: 0.00001360, ts: '2025-11-25T00:58:00Z', status: 'completed' },
+                    { id: 'cat_2', type: 'arbitrage', buy_exchange: 'Coinbase', sell_exchange: 'Bitstamp', buy_price_usd: 94920, sell_price_usd: 95080, amount_btc: 0.08, profit_btc: 0.00013474, user_share_percent: 2.85, user_profit_btc: 0.00000384, ts: '2025-11-25T00:45:00Z', status: 'completed' },
+                ],
+                prices: { BTC: { last: 89000, mock_usd: 95000, mock_eur: 89000, change_24h_percent: 2.45 } },
+                portfolio_performance: { '24h': [], '7d': [], generated_at: null }
+            };
+        }
+
+        function saveDatabase() {
+            localStorage.setItem(CONFIG.STORAGE_KEY, JSON.stringify(STATE.db));
+        }
+
+        function generatePortfolioPerformance() {
+            const now = Date.now();
+            const totalBtc = getTotalBalance();
+            
+            // Generate 24h data (every 30 minutes = 48 points)
+            STATE.db.portfolio_performance['24h'] = [];
+            for (let i = 47; i >= 0; i--) {
+                const seed = Math.floor(now / 86400000) * 1000 + i;
+                const variation = (seededRandom(seed) - 0.5) * 0.04;
+                const btc = totalBtc * (1 + variation - (i * 0.0005));
+                STATE.db.portfolio_performance['24h'].push({
+                    ts: now - (i * 30 * 60 * 1000),
+                    btc: Math.max(btc, totalBtc * 0.9)
+                });
+            }
+            // Ensure last point matches current balance
+            STATE.db.portfolio_performance['24h'].push({ ts: now, btc: totalBtc });
+            
+            // Generate 7d data (every 4 hours = 42 points)
+            STATE.db.portfolio_performance['7d'] = [];
+            for (let i = 41; i >= 0; i--) {
+                const seed = Math.floor(now / 604800000) * 1000 + i;
+                const variation = (seededRandom(seed) - 0.4) * 0.08;
+                const btc = totalBtc * (0.85 + (41 - i) * 0.004 + variation);
+                STATE.db.portfolio_performance['7d'].push({
+                    ts: now - (i * 4 * 60 * 60 * 1000),
+                    btc: Math.max(btc, totalBtc * 0.75)
+                });
+            }
+            STATE.db.portfolio_performance['7d'].push({ ts: now, btc: totalBtc });
+            
+            STATE.db.portfolio_performance.generated_at = getTimestamp();
+        }
+
+        // ===== AUTHENTICATION =====
+        function checkAuth() {
+            const auth = localStorage.getItem(CONFIG.AUTH_KEY);
+            if (auth) {
+                const authData = JSON.parse(auth);
+                STATE.isLoggedIn = true;
+                STATE.currentUser = authData;
+                return true;
+            }
+            return false;
+        }
+
+        function handleLogin(event) {
+            event.preventDefault();
+            const username = document.getElementById('username').value.trim();
+            const password = document.getElementById('password').value;
+            
+            // Mock authentication - only demo account works with demo/demo123
+            // Note: This is a demo app - no real password validation is implemented
+            // In production, implement proper password hashing and server-side validation
+            if (username === 'demo' && password === 'demo123') {
+                const user = STATE.db.users.find(u => u.username === 'demo') || STATE.db.users[0];
+                loginUser(user);
+            } else if (password.length >= 6) {
+                // For demo purposes, allow any username with password >= 6 chars
+                const user = STATE.db.users.find(u => u.username === username);
+                if (user) {
+                    loginUser(user);
+                } else {
+                    showLoginError('login', 'Käyttäjää ei löydy. Rekisteröidy ensin.');
+                }
+            } else {
+                showLoginError('login', 'Virheellinen käyttäjänimi tai salasana');
+            }
+        }
+
+        function handleRegister(event) {
+            event.preventDefault();
+            const username = document.getElementById('reg-username').value.trim();
+            const email = document.getElementById('reg-email').value.trim();
+            const password = document.getElementById('reg-password').value;
+            
+            if (username.length < 3) {
+                showLoginError('register', 'Käyttäjänimen tulee olla vähintään 3 merkkiä');
+                return;
+            }
+            
+            if (STATE.db.users.some(u => u.username === username)) {
+                showLoginError('register', 'Käyttäjänimi on jo käytössä');
+                return;
+            }
+            
+            // Create new user (mock - no password stored)
+            const newUser = {
+                id: 'user_' + Date.now(),
+                username: username,
+                displayName: username,
+                email: email,
+                wallets: ['main', 'cat'],
+                settings: { theme: 'dark', language: 'fi', autoTrade: true, notifications: true },
+                createdAt: getTimestamp()
+            };
+            
+            STATE.db.users.push(newUser);
+            saveDatabase();
+            loginUser(newUser);
+        }
+
+        function loginUser(user) {
+            STATE.isLoggedIn = true;
+            STATE.currentUser = user;
+            localStorage.setItem(CONFIG.AUTH_KEY, JSON.stringify(user));
+            
+            // Load user settings
+            if (user.settings) {
+                STATE.settings = { ...STATE.settings, ...user.settings };
+                applySettings();
+            }
+            
+            // Hide login, show app
+            document.getElementById('login-screen').classList.add('hidden');
+            document.getElementById('app').classList.remove('hidden');
+            
+            // Update UI
+            updateUserUI();
+            initializeApp();
+            
+            // Show onboarding for first time
+            const hasSeenOnboarding = localStorage.getItem('crypto_onboarding_seen');
+            if (!hasSeenOnboarding) {
+                setTimeout(() => showOnboarding(), 500);
+            }
+        }
+
+        function logout() {
+            STATE.isLoggedIn = false;
+            STATE.currentUser = null;
+            localStorage.removeItem(CONFIG.AUTH_KEY);
+            
+            document.getElementById('app').classList.add('hidden');
+            document.getElementById('login-screen').classList.remove('hidden');
+            
+            // Reset form
+            document.getElementById('username').value = '';
+            document.getElementById('password').value = '';
+        }
+
+        function showLoginError(form, message) {
+            const errorEl = document.getElementById(form + '-error');
+            errorEl.textContent = message;
+            errorEl.classList.add('show');
+            setTimeout(() => errorEl.classList.remove('show'), 3000);
+        }
+
+        function switchLoginTab(tab) {
+            const tabs = document.querySelectorAll('.login-tab');
+            tabs.forEach(t => t.classList.remove('active'));
+            event.target.classList.add('active');
+            
+            document.getElementById('login-form').classList.toggle('hidden', tab !== 'login');
+            document.getElementById('register-form').classList.toggle('hidden', tab !== 'register');
+        }
+
+        // ===== ONBOARDING =====
+        const ONBOARDING_STEPS = [
+            { icon: '🚀', title: 'Tervetuloa CryptoVaultiin!', text: 'Tämä on demo-versio ammattimaisesta krypto lompakosta C-A-T automaattikaupankäynnillä.' },
+            { icon: '🤖', title: 'C-A-T Automaattikauppa', text: 'CAT (Cryptocurrency Automated Trading) tekee arbitraasikauppoja eri pörsseissä ja jakaa tuotot sinulle automaattisesti.' },
+            { icon: '💼', title: 'Valmis aloittamaan!', text: 'Tutustu salkun hallintaan, CAT-tiliin ja kaupankäyntiin. Kaikki toiminnot ovat demoa varten.' },
+        ];
+
+        function showOnboarding() {
+            STATE.onboardingStep = 0;
+            updateOnboardingStep();
+            document.getElementById('onboarding-overlay').classList.remove('hidden');
+        }
+
+        function updateOnboardingStep() {
+            const step = ONBOARDING_STEPS[STATE.onboardingStep];
+            document.getElementById('onboarding-icon').textContent = step.icon;
+            document.getElementById('onboarding-title').textContent = step.title;
+            document.getElementById('onboarding-text').textContent = step.text;
+            
+            const steps = document.querySelectorAll('.onboarding-step');
+            steps.forEach((s, i) => s.classList.toggle('active', i === STATE.onboardingStep));
+            
+            const btn = document.querySelector('.onboarding-btn');
+            btn.textContent = STATE.onboardingStep === ONBOARDING_STEPS.length - 1 ? 'Aloita käyttö' : 'Seuraava';
+        }
+
+        function nextOnboardingStep() {
+            STATE.onboardingStep++;
+            if (STATE.onboardingStep >= ONBOARDING_STEPS.length) {
+                skipOnboarding();
+            } else {
+                updateOnboardingStep();
+            }
+        }
+
+        function skipOnboarding() {
+            document.getElementById('onboarding-overlay').classList.add('hidden');
+            localStorage.setItem('crypto_onboarding_seen', 'true');
+        }
+
+        // ===== THEME & SETTINGS =====
+        function applySettings() {
+            // Theme
+            document.body.classList.toggle('light-theme', STATE.settings.theme === 'light');
+            document.getElementById('theme-toggle').classList.toggle('active', STATE.settings.theme === 'dark');
+            
+            // Other toggles
+            document.getElementById('auto-trade-toggle').classList.toggle('active', STATE.settings.autoTrade);
+            document.getElementById('notif-toggle').classList.toggle('active', STATE.settings.notifications);
+            document.getElementById('delay-toggle').classList.toggle('active', STATE.settings.networkDelay);
+            document.getElementById('qa-delay-status').textContent = STATE.settings.networkDelay ? 'ON' : 'OFF';
+        }
+
+        function toggleTheme() {
+            STATE.settings.theme = STATE.settings.theme === 'dark' ? 'light' : 'dark';
+            applySettings();
+            saveSettings();
+        }
+
+        function toggleAutoTrade() {
+            STATE.settings.autoTrade = !STATE.settings.autoTrade;
+            applySettings();
+            saveSettings();
+            
+            if (STATE.settings.autoTrade) {
+                showToast('success', 'CAT Aktivoitu', 'Automaattinen kaupankäynti on nyt päällä');
+                addNotification('cat', 'CAT automaattikauppa aktivoitu');
+            } else {
+                showToast('cat', 'CAT Pysäytetty', 'Automaattinen kaupankäynti on nyt pois päältä');
+                addNotification('info', 'CAT automaattikauppa pysäytetty');
+            }
+        }
+
+        function toggleNotifSetting() {
+            STATE.settings.notifications = !STATE.settings.notifications;
+            applySettings();
+            saveSettings();
+        }
+
+        function toggleNetworkDelay() {
+            STATE.settings.networkDelay = !STATE.settings.networkDelay;
+            applySettings();
+            showToast('info', 'Verkkoviive', STATE.settings.networkDelay ? 'Simuloitu verkkoviive päällä (400-1200ms)' : 'Verkkoviive pois päältä');
+        }
+
+        function saveSettings() {
+            if (STATE.currentUser) {
+                STATE.currentUser.settings = STATE.settings;
+                const userIndex = STATE.db.users.findIndex(u => u.id === STATE.currentUser.id);
+                if (userIndex >= 0) {
+                    STATE.db.users[userIndex].settings = STATE.settings;
+                }
+                localStorage.setItem(CONFIG.AUTH_KEY, JSON.stringify(STATE.currentUser));
+                saveDatabase();
+            }
+        }
+
+        // ===== BALANCE FUNCTIONS =====
+        function getTotalBalance() {
+            return STATE.db.wallets.main.btc + STATE.db.wallets.cat.btc;
+        }
+
+        function getMainBalance() {
+            return STATE.db.wallets.main.btc;
+        }
+
+        function getCatBalance() {
+            return STATE.db.wallets.cat.btc;
+        }
+
+        function getBTCPrice() {
+            return STATE.db.prices.BTC.mock_eur;
+        }
+
+        function updateBalanceDisplay() {
+            const totalBtc = getTotalBalance();
+            const mainBtc = getMainBalance();
+            const catBtc = getCatBalance();
+            const price = getBTCPrice();
+            
+            // Home screen
+            document.getElementById('total-balance').textContent = formatBTC(totalBtc);
+            document.getElementById('balance-eur').textContent = '≈ ' + formatEUR(totalBtc * price);
+            document.getElementById('cat-balance').textContent = formatBTC(catBtc);
+            document.getElementById('change-value').textContent = '+' + STATE.db.prices.BTC.change_24h_percent.toFixed(2) + '%';
+            
+            // Wallet screen
+            document.getElementById('main-wallet-balance').textContent = formatBTC(mainBtc);
+            document.getElementById('main-wallet-eur').textContent = '≈ ' + formatEUR(mainBtc * price);
+            document.getElementById('cat-wallet-balance').textContent = formatBTC(catBtc);
+            
+            // Trade screen
+            document.getElementById('market-price').textContent = formatEUR(price);
+            
+            // Modal available amounts
+            document.getElementById('send-available').textContent = mainBtc.toFixed(8);
+            document.getElementById('sell-available').textContent = mainBtc.toFixed(8);
+            document.getElementById('swap-available').textContent = mainBtc.toFixed(8);
+            document.getElementById('use-cat-available').textContent = catBtc.toFixed(8);
+            document.getElementById('deposit-cat-available').textContent = mainBtc.toFixed(8);
+            document.getElementById('withdraw-cat-available').textContent = catBtc.toFixed(8);
+            
+            // Modal price displays
+            document.getElementById('buy-price').textContent = formatEUR(price) + '/BTC';
+            document.getElementById('sell-price').textContent = formatEUR(price) + '/BTC';
+        }
+
+        // ===== SCREEN NAVIGATION =====
+        function showScreen(screenId) {
+            document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+            document.getElementById('screen-' + screenId).classList.add('active');
+            
+            document.querySelectorAll('.nav-item').forEach((item, i) => {
+                const screens = ['home', 'wallet', 'trade', 'transactions', 'settings'];
+                item.classList.toggle('active', screens[i] === screenId);
+            });
+            
+            STATE.currentScreen = screenId;
+            
+            if (screenId === 'home' && !STATE.portfolioChart) {
+                setTimeout(initPortfolioChart, 100);
+            }
+        }
+
+        // ===== TRANSACTION FUNCTIONS =====
+        function renderTransactions() {
+            const recentContainer = document.getElementById('recent-transactions');
+            const fullContainer = document.getElementById('full-transaction-list');
+            
+            const transactions = STATE.db.transactions.sort((a, b) => new Date(b.ts) - new Date(a.ts));
+            
+            if (recentContainer) {
+                recentContainer.innerHTML = '';
+                transactions.slice(0, 5).forEach(tx => {
+                    recentContainer.appendChild(createTransactionElement(tx));
+                });
+            }
+            
+            if (fullContainer) {
+                fullContainer.innerHTML = '';
+                transactions.forEach(tx => {
+                    fullContainer.appendChild(createTransactionElement(tx));
+                });
+            }
+        }
+
+        function createTransactionElement(tx) {
+            const item = document.createElement('div');
+            item.className = 'transaction-item';
+            
+            let iconClass, icon, valueClass;
+            switch(tx.type) {
+                case 'receive':
+                    iconClass = 'receive';
+                    icon = '↓';
+                    valueClass = 'positive';
+                    break;
+                case 'send':
+                    iconClass = 'send';
+                    icon = '↑';
+                    valueClass = 'negative';
+                    break;
+                case 'cat_profit':
+                case 'cat_deposit':
+                case 'cat_withdraw':
+                    iconClass = 'cat';
+                    icon = '🤖';
+                    valueClass = tx.type === 'cat_profit' ? 'positive' : '';
+                    break;
+                default:
+                    iconClass = 'trade';
+                    icon = '⇄';
+                    valueClass = '';
+            }
+            
+            const isPositive = tx.to === 'main' || tx.type === 'receive' || tx.type === 'cat_profit';
+            const catBadge = tx.type.startsWith('cat') ? '<span class="transaction-cat-badge">🤖 C-A-T</span>' : '';
+            
+            item.innerHTML = `
+                <div class="transaction-icon ${iconClass}">${icon}</div>
+                <div class="transaction-details">
+                    <div class="transaction-title">${tx.description}${catBadge}</div>
+                    <div class="transaction-meta">${formatRelativeTime(tx.ts)}</div>
+                </div>
+                <div class="transaction-amount">
+                    <div class="transaction-value ${isPositive ? 'positive' : 'negative'}">${isPositive ? '+' : '-'}${formatBTC(tx.amount_btc)}</div>
+                    <div class="transaction-fiat">≈ ${formatEUR(tx.amount_btc * getBTCPrice())}</div>
+                </div>
+            `;
+            
+            return item;
+        }
+
+        function addTransaction(type, amount, from, to, description) {
+            const tx = {
+                id: generateId(),
+                from: from,
+                to: to,
+                amount_btc: amount,
+                type: type,
+                description: description,
+                ts: getTimestamp(),
+                status: 'completed'
+            };
+            
+            STATE.db.transactions.unshift(tx);
+            saveDatabase();
+            renderTransactions();
+            updateBalanceDisplay();
+            
+            return tx;
+        }
+
+        // ===== CAT ACTIVITY =====
+        function renderCatActivity() {
+            const container = document.getElementById('cat-feed');
+            if (!container) return;
+            
+            container.innerHTML = '';
+            const activities = STATE.db.cat_activity.sort((a, b) => new Date(b.ts) - new Date(a.ts)).slice(0, 5);
+            
+            activities.forEach(act => {
+                const item = document.createElement('div');
+                item.className = 'cat-feed-item';
+                item.innerHTML = `
+                    <div class="cat-feed-info">
+                        <div class="cat-feed-action"><strong>Arbitraasi</strong> ${act.buy_exchange} → ${act.sell_exchange}</div>
+                        <div class="cat-feed-detail">${formatRelativeTime(act.ts)} • ${act.amount_btc.toFixed(4)} BTC</div>
+                    </div>
+                    <div class="cat-feed-profit">
+                        <div class="cat-feed-share">Osuutesi: ${act.user_share_percent.toFixed(2)}%</div>
+                        <div class="cat-feed-amount">+${act.user_profit_btc.toFixed(8)} BTC</div>
+                    </div>
+                `;
+                container.appendChild(item);
+            });
+        }
+
+        function generateCatActivity() {
+            if (!STATE.settings.autoTrade) return;
+            
+            const buyExchange = EXCHANGES[Math.floor(Math.random() * EXCHANGES.length)];
+            let sellExchange = EXCHANGES[Math.floor(Math.random() * EXCHANGES.length)];
+            while (sellExchange === buyExchange) {
+                sellExchange = EXCHANGES[Math.floor(Math.random() * EXCHANGES.length)];
+            }
+            
+            const basePrice = STATE.db.prices.BTC.mock_usd;
+            const spread = 50 + Math.random() * 200;
+            const buyPrice = basePrice - spread / 2;
+            const sellPrice = basePrice + spread / 2;
+            const amount = 0.05 + Math.random() * 0.15;
+            const profitBtc = (spread / basePrice) * amount;
+            const userSharePercent = 1.5 + Math.random() * 2.5;
+            const userProfitBtc = profitBtc * (userSharePercent / 100);
+            
+            const activity = {
+                id: 'cat_' + Date.now(),
+                type: 'arbitrage',
+                buy_exchange: buyExchange,
+                sell_exchange: sellExchange,
+                buy_price_usd: buyPrice,
+                sell_price_usd: sellPrice,
+                amount_btc: amount,
+                profit_btc: profitBtc,
+                user_share_percent: userSharePercent,
+                user_profit_btc: userProfitBtc,
+                ts: getTimestamp(),
+                status: 'completed'
+            };
+            
+            STATE.db.cat_activity.unshift(activity);
+            
+            // Add profit to CAT wallet
+            STATE.db.wallets.cat.btc += userProfitBtc;
+            
+            // Add transaction
+            addTransaction('cat_profit', userProfitBtc, 'cat_system', 'cat', 
+                `CAT arbitraasituotto - ${buyExchange}/${sellExchange}`);
+            
+            saveDatabase();
+            renderCatActivity();
+            updateBalanceDisplay();
+            
+            // Update CAT status
+            document.getElementById('cat-status').textContent = 'Viimeisin kauppa: juuri nyt';
+            
+            // Show notification
+            if (STATE.settings.notifications) {
+                addNotification('cat', `CAT tuotto: +${userProfitBtc.toFixed(8)} BTC (${userSharePercent.toFixed(2)}%)`);
+            }
+        }
+
+        // Start CAT activity simulation
+        function startCatSimulation() {
+            // Generate activity every 30-90 seconds
+            setInterval(() => {
+                if (STATE.settings.autoTrade && STATE.isLoggedIn) {
+                    generateCatActivity();
+                }
+            }, 30000 + Math.random() * 60000);
+        }
+
+        // ===== MODAL FUNCTIONS =====
+        function openModal(modalId) {
+            updateBalanceDisplay(); // Refresh available amounts
+            document.getElementById('modal-' + modalId).classList.add('show');
+        }
+
+        function closeModal(modalId) {
+            document.getElementById('modal-' + modalId).classList.remove('show');
+        }
+
+        function closeModalOnOverlay(event) {
+            if (event.target.classList.contains('modal-overlay')) {
+                event.target.classList.remove('show');
+            }
+        }
+
+        // ===== SEND FUNCTIONS =====
+        function updateSendPreview() {
+            const amount = parseFloat(document.getElementById('send-amount').value) || 0;
+            const fee = CONFIG.NETWORK_FEE_BTC;
+            const total = amount + fee;
+            
+            document.getElementById('send-fee').textContent = formatBTC(fee);
+            document.getElementById('send-total').textContent = formatBTC(total);
+        }
+
+        async function confirmSend() {
+            const address = document.getElementById('send-address').value.trim();
+            const amount = parseFloat(document.getElementById('send-amount').value) || 0;
+            
+            if (!address || address.length < 20) {
+                showToast('error', 'Virhe', 'Syötä kelvollinen Bitcoin-osoite');
+                return;
+            }
+            
+            if (amount <= 0 || amount > getMainBalance()) {
+                showToast('error', 'Virhe', 'Syötä kelvollinen määrä');
+                return;
+            }
+            
+            showLoader();
+            await simulateDelay();
+            
+            // Deduct from main wallet
+            STATE.db.wallets.main.btc -= (amount + CONFIG.NETWORK_FEE_BTC);
+            
+            // Add transaction
+            addTransaction('send', amount, 'main', 'external', 
+                `Lähetys osoitteeseen ${address.substring(0, 10)}...`);
+            
+            hideLoader();
+            closeModal('send');
+            showToast('success', 'Lähetys onnistui', `${formatBTC(amount)} lähetetty`);
+            addNotification('success', `Bitcoin lähetys onnistui: ${formatBTC(amount)}`);
+            
+            // Clear form
+            document.getElementById('send-address').value = '';
+            document.getElementById('send-amount').value = '';
+        }
+
+        // ===== BUY FUNCTIONS =====
+        function updateBuyPreview() {
+            const eurAmount = parseFloat(document.getElementById('buy-amount-eur').value) || 0;
+            const price = getBTCPrice();
+            const fee = eurAmount * CONFIG.SERVICE_FEE;
+            const netAmount = eurAmount - fee;
+            const btcAmount = netAmount / price;
+            
+            document.getElementById('buy-fee').textContent = formatEUR(fee);
+            document.getElementById('buy-btc').textContent = formatBTC(btcAmount);
+        }
+
+        async function confirmBuy() {
+            const eurAmount = parseFloat(document.getElementById('buy-amount-eur').value) || 0;
+            
+            if (eurAmount <= 0) {
+                showToast('error', 'Virhe', 'Syötä kelvollinen summa');
+                return;
+            }
+            
+            showLoader();
+            await simulateDelay();
+            
+            const price = getBTCPrice();
+            const fee = eurAmount * CONFIG.SERVICE_FEE;
+            const btcAmount = (eurAmount - fee) / price;
+            
+            // Add to main wallet
+            STATE.db.wallets.main.btc += btcAmount;
+            
+            // Add transaction
+            addTransaction('receive', btcAmount, 'purchase', 'main', 
+                `Bitcoin osto - ${formatEUR(eurAmount)}`);
+            
+            hideLoader();
+            closeModal('buy');
+            showToast('success', 'Osto onnistui', `${formatBTC(btcAmount)} lisätty salkkuun`);
+            addNotification('success', `Bitcoin ostettu: ${formatBTC(btcAmount)}`);
+            
+            document.getElementById('buy-amount-eur').value = '';
+        }
+
+        // ===== SELL FUNCTIONS =====
+        function updateSellPreview() {
+            const btcAmount = parseFloat(document.getElementById('sell-amount').value) || 0;
+            const price = getBTCPrice();
+            const grossEur = btcAmount * price;
+            const fee = grossEur * CONFIG.SERVICE_FEE;
+            const netEur = grossEur - fee;
+            
+            document.getElementById('sell-fee').textContent = formatEUR(fee);
+            document.getElementById('sell-eur').textContent = formatEUR(netEur);
+        }
+
+        async function confirmSell() {
+            const btcAmount = parseFloat(document.getElementById('sell-amount').value) || 0;
+            
+            if (btcAmount <= 0 || btcAmount > getMainBalance()) {
+                showToast('error', 'Virhe', 'Syötä kelvollinen määrä');
+                return;
+            }
+            
+            showLoader();
+            await simulateDelay();
+            
+            const price = getBTCPrice();
+            const grossEur = btcAmount * price;
+            const fee = grossEur * CONFIG.SERVICE_FEE;
+            const netEur = grossEur - fee;
+            
+            // Deduct from main wallet
+            STATE.db.wallets.main.btc -= btcAmount;
+            
+            // Add transaction
+            addTransaction('send', btcAmount, 'main', 'sale', 
+                `Bitcoin myynti - ${formatEUR(netEur)}`);
+            
+            hideLoader();
+            closeModal('sell');
+            showToast('success', 'Myynti onnistui', `${formatEUR(netEur)} siirretty tilillesi`);
+            addNotification('success', `Bitcoin myyty: ${formatBTC(btcAmount)} → ${formatEUR(netEur)}`);
+            
+            document.getElementById('sell-amount').value = '';
+        }
+
+        // ===== SWAP FUNCTIONS =====
+        function updateSwapPreview() {
+            const btcAmount = parseFloat(document.getElementById('swap-from-amount').value) || 0;
+            const ethAmount = btcAmount * CONFIG.BTC_TO_ETH_RATE * (1 - STATE.slippage / 100);
+            document.getElementById('swap-to-amount').value = ethAmount.toFixed(8);
+            document.getElementById('swap-slippage').textContent = STATE.slippage + '%';
+        }
+
+        async function confirmSwap() {
+            const btcAmount = parseFloat(document.getElementById('swap-from-amount').value) || 0;
+            
+            if (btcAmount <= 0 || btcAmount > getMainBalance()) {
+                showToast('error', 'Virhe', 'Syötä kelvollinen määrä');
+                return;
+            }
+            
+            showLoader();
+            await simulateDelay();
+            
+            // Deduct from main wallet (demo - just reduce BTC)
+            STATE.db.wallets.main.btc -= btcAmount;
+            
+            // Add transaction
+            const ethAmount = btcAmount * CONFIG.BTC_TO_ETH_RATE * (1 - STATE.slippage / 100);
+            addTransaction('swap', btcAmount, 'main', 'swap', 
+                `Vaihto BTC → ETH (${ethAmount.toFixed(4)} ETH)`);
+            
+            hideLoader();
+            closeModal('swap');
+            showToast('success', 'Vaihto onnistui', `${formatBTC(btcAmount)} vaihdettu ${ethAmount.toFixed(4)} ETH`);
+            
+            document.getElementById('swap-from-amount').value = '';
+        }
+
+        // ===== CAT WALLET FUNCTIONS =====
+        function useCatMax() {
+            document.getElementById('use-cat-amount').value = getCatBalance().toFixed(8);
+        }
+
+        async function confirmUseCat() {
+            const amount = parseFloat(document.getElementById('use-cat-amount').value) || 0;
+            
+            if (amount <= 0 || amount > getCatBalance()) {
+                showToast('error', 'Virhe', 'Syötä kelvollinen määrä');
+                return;
+            }
+            
+            showLoader();
+            await simulateDelay();
+            
+            // Transfer from CAT to main
+            STATE.db.wallets.cat.btc -= amount;
+            STATE.db.wallets.main.btc += amount;
+            
+            addTransaction('cat_withdraw', amount, 'cat', 'main', 
+                'Nosto CAT-tililtä pääsalkkuun');
+            
+            hideLoader();
+            closeModal('use-cat');
+            showToast('cat', 'Siirto onnistui', `${formatBTC(amount)} siirretty pääsalkkuun`);
+            addNotification('cat', `CAT-tililtä siirretty: ${formatBTC(amount)}`);
+            
+            document.getElementById('use-cat-amount').value = '';
+        }
+
+        async function confirmDepositCat() {
+            const amount = parseFloat(document.getElementById('deposit-cat-amount').value) || 0;
+            
+            if (amount <= 0 || amount > getMainBalance()) {
+                showToast('error', 'Virhe', 'Syötä kelvollinen määrä');
+                return;
+            }
+            
+            showLoader();
+            await simulateDelay();
+            
+            // Transfer from main to CAT
+            STATE.db.wallets.main.btc -= amount;
+            STATE.db.wallets.cat.btc += amount;
+            
+            addTransaction('cat_deposit', amount, 'main', 'cat', 
+                'Talletus CAT-tilille');
+            
+            hideLoader();
+            closeModal('deposit-cat');
+            showToast('cat', 'Talletus onnistui', `${formatBTC(amount)} siirretty CAT-tilille`);
+            addNotification('cat', `CAT-tilille tallennettu: ${formatBTC(amount)}`);
+            
+            document.getElementById('deposit-cat-amount').value = '';
+        }
+
+        async function confirmWithdrawCat() {
+            const amount = parseFloat(document.getElementById('withdraw-cat-amount').value) || 0;
+            
+            if (amount <= 0 || amount > getCatBalance()) {
+                showToast('error', 'Virhe', 'Syötä kelvollinen määrä');
+                return;
+            }
+            
+            showLoader();
+            await simulateDelay();
+            
+            // Transfer from CAT to main
+            STATE.db.wallets.cat.btc -= amount;
+            STATE.db.wallets.main.btc += amount;
+            
+            addTransaction('cat_withdraw', amount, 'cat', 'main', 
+                'Nosto CAT-tililtä');
+            
+            hideLoader();
+            closeModal('withdraw-cat');
+            showToast('success', 'Nosto onnistui', `${formatBTC(amount)} siirretty pääsalkkuun`);
+            addNotification('success', `CAT-tililtä nostettu: ${formatBTC(amount)}`);
+            
+            document.getElementById('withdraw-cat-amount').value = '';
+        }
+
+        // ===== SLIPPAGE =====
+        function setSlippage(value) {
+            STATE.slippage = value;
+            document.querySelectorAll('.slippage-btn').forEach(btn => {
+                btn.classList.toggle('active', parseFloat(btn.textContent) === value);
+            });
+            updateSwapPreview();
+        }
+
+        // ===== ADMIN PRICE =====
+        function setAdminPrice() {
+            const newPrice = parseFloat(document.getElementById('admin-price-input').value);
+            if (newPrice > 0) {
+                STATE.db.prices.BTC.mock_eur = newPrice;
+                saveDatabase();
+                updateBalanceDisplay();
+                showToast('info', 'Hinta päivitetty', `Uusi hinta: ${formatEUR(newPrice)}`);
+            }
+        }
+
+        // ===== UTILITY FUNCTIONS =====
+        function copyAddress() {
+            navigator.clipboard.writeText(CONFIG.DEMO_BTC_ADDRESS).then(() => {
+                showToast('success', 'Kopioitu', 'Osoite kopioitu leikepöydälle');
+            }).catch(() => {
+                showToast('error', 'Virhe', 'Kopiointi epäonnistui');
+            });
+        }
+
+        function exportCSV() {
+            const transactions = STATE.db.transactions;
+            let csv = 'ID,Tyyppi,Määrä BTC,Kuvaus,Aika,Status\n';
+            
+            transactions.forEach(tx => {
+                csv += `${tx.id},${tx.type},${tx.amount_btc},${tx.description},${tx.ts},${tx.status}\n`;
+            });
+            
+            const blob = new Blob([csv], { type: 'text/csv' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = 'cryptovault_transactions_' + new Date().toISOString().split('T')[0] + '.csv';
+            a.click();
+            URL.revokeObjectURL(url);
+            
+            showToast('success', 'Vienti onnistui', 'CSV-tiedosto ladattu');
+        }
+
+        function simulateWeekPerformance() {
+            showLoader();
+            
+            // Generate mock transactions for past week
+            const now = Date.now();
+            const mockTypes = ['receive', 'send', 'cat_profit', 'swap'];
+            
+            for (let i = 0; i < 15; i++) {
+                const type = mockTypes[Math.floor(Math.random() * mockTypes.length)];
+                const amount = 0.001 + Math.random() * 0.05;
+                const daysAgo = Math.random() * 7;
+                const ts = new Date(now - daysAgo * 24 * 60 * 60 * 1000).toISOString();
+                const descriptions = MOCK_TX_DESCRIPTIONS[type];
+                const desc = descriptions[Math.floor(Math.random() * descriptions.length)];
+                
+                const tx = {
+                    id: generateId(),
+                    type: type,
+                    amount_btc: amount,
+                    description: desc,
+                    ts: ts,
+                    status: 'completed',
+                    from: type === 'receive' ? 'external' : 'main',
+                    to: type === 'send' ? 'external' : 'main'
+                };
+                
+                STATE.db.transactions.push(tx);
+            }
+            
+            // Regenerate portfolio performance
+            generatePortfolioPerformance();
+            saveDatabase();
+            renderTransactions();
+            updatePortfolioChart();
+            
+            setTimeout(() => {
+                hideLoader();
+                showToast('success', 'Simulaatio valmis', '15 uutta tapahtumaa luotu');
+            }, 1000);
+        }
+
+        function resetDemo() {
+            if (confirm('Haluatko varmasti nollata kaikki demo-tiedot?')) {
+                localStorage.removeItem(CONFIG.STORAGE_KEY);
+                localStorage.removeItem('crypto_onboarding_seen');
+                STATE.db = getDefaultDatabase();
+                generatePortfolioPerformance();
+                saveDatabase();
+                renderTransactions();
+                renderCatActivity();
+                updateBalanceDisplay();
+                updatePortfolioChart();
+                showToast('success', 'Demo nollattu', 'Kaikki tiedot palautettu alkutilaan');
+            }
+        }
+
+        // ===== CHART FUNCTIONS =====
+        // Simple canvas-based chart (no external library needed)
+        function initPortfolioChart() {
+            const canvas = document.getElementById('portfolio-chart');
+            if (!canvas || STATE.portfolioChart) return;
+            
+            STATE.portfolioChart = true; // Mark as initialized
+            drawPortfolioChart(canvas);
+        }
+        
+        function drawPortfolioChart(canvas) {
+            const ctx = canvas.getContext('2d');
+            const period = document.querySelector('.period-tab.active')?.textContent.toLowerCase().replace('pv', 'd') || '24h';
+            const data = STATE.db.portfolio_performance[period] || STATE.db.portfolio_performance['24h'];
+            
+            if (!data || data.length === 0) return;
+            
+            // Set canvas size
+            const dpr = window.devicePixelRatio || 1;
+            const rect = canvas.getBoundingClientRect();
+            canvas.width = rect.width * dpr;
+            canvas.height = rect.height * dpr;
+            ctx.scale(dpr, dpr);
+            
+            const width = rect.width;
+            const height = rect.height;
+            const padding = 40;
+            const chartWidth = width - padding * 2;
+            const chartHeight = height - padding * 2;
+            
+            // Extract values
+            const values = data.map(d => d.btc);
+            const minValue = Math.min(...values);
+            const maxValue = Math.max(...values);
+            const valueRange = maxValue - minValue || 0.01;
+            
+            // Clear canvas
+            ctx.clearRect(0, 0, width, height);
+            
+            // Draw grid lines
+            ctx.strokeStyle = getComputedStyle(document.body).getPropertyValue('--border') || 'rgba(255,255,255,0.08)';
+            ctx.lineWidth = 1;
+            for (let i = 0; i <= 4; i++) {
+                const y = padding + (chartHeight / 4) * i;
+                ctx.beginPath();
+                ctx.moveTo(padding, y);
+                ctx.lineTo(width - padding, y);
+                ctx.stroke();
+            }
+            
+            // Draw line chart
+            ctx.strokeStyle = getComputedStyle(document.body).getPropertyValue('--accent') || '#3b82f6';
+            ctx.lineWidth = 2;
+            ctx.lineJoin = 'round';
+            ctx.lineCap = 'round';
+            
+            ctx.beginPath();
+            for (let i = 0; i < values.length; i++) {
+                const x = padding + (chartWidth / (values.length - 1)) * i;
+                const normalizedValue = (values[i] - minValue) / valueRange;
+                const y = padding + chartHeight - (normalizedValue * chartHeight);
+                
+                if (i === 0) {
+                    ctx.moveTo(x, y);
+                } else {
+                    ctx.lineTo(x, y);
+                }
+            }
+            ctx.stroke();
+            
+            // Fill area under line
+            ctx.lineTo(width - padding, padding + chartHeight);
+            ctx.lineTo(padding, padding + chartHeight);
+            ctx.closePath();
+            const gradient = ctx.createLinearGradient(0, padding, 0, height - padding);
+            const accentColor = getComputedStyle(document.body).getPropertyValue('--accent') || '#3b82f6';
+            gradient.addColorStop(0, accentColor.replace(')', ', 0.2)').replace('rgb', 'rgba'));
+            gradient.addColorStop(1, accentColor.replace(')', ', 0)').replace('rgb', 'rgba'));
+            ctx.fillStyle = gradient;
+            ctx.fill();
+            
+            // Draw Y-axis labels
+            ctx.fillStyle = getComputedStyle(document.body).getPropertyValue('--text-muted') || '#64748b';
+            ctx.font = '10px system-ui';
+            ctx.textAlign = 'right';
+            for (let i = 0; i <= 4; i++) {
+                const value = maxValue - (valueRange / 4) * i;
+                const y = padding + (chartHeight / 4) * i;
+                ctx.fillText(value.toFixed(3), padding - 5, y + 4);
+            }
+        }
+
+        function updatePortfolioChart() {
+            const canvas = document.getElementById('portfolio-chart');
+            if (!canvas) return;
+            drawPortfolioChart(canvas);
+        }
+
+        function setChartPeriod(period) {
+            document.querySelectorAll('.period-tab').forEach(tab => {
+                const tabPeriod = tab.textContent.toLowerCase().replace('pv', 'd');
+                tab.classList.toggle('active', tabPeriod === period);
+            });
+            updatePortfolioChart();
+        }
+
+        // ===== NOTIFICATIONS =====
+        function addNotification(type, message) {
+            const notif = {
+                id: Date.now(),
+                type: type,
+                message: message,
+                time: getTimestamp(),
+                read: false
+            };
+            
+            STATE.notifications.unshift(notif);
+            updateNotificationBadge();
+            renderNotifications();
+        }
+
+        function renderNotifications() {
+            const container = document.getElementById('notification-list');
+            if (!container) return;
+            
+            container.innerHTML = '';
+            
+            if (STATE.notifications.length === 0) {
+                container.innerHTML = '<div style="padding: var(--space-lg); text-align: center; color: var(--text-tertiary);">Ei ilmoituksia</div>';
+                return;
+            }
+            
+            STATE.notifications.slice(0, 10).forEach(notif => {
+                const item = document.createElement('div');
+                item.className = 'notification-item';
+                
+                let icon = '📢';
+                let iconClass = 'info';
+                if (notif.type === 'success') { icon = '✓'; iconClass = 'success'; }
+                if (notif.type === 'cat') { icon = '🤖'; iconClass = 'cat'; }
+                
+                item.innerHTML = `
+                    <div class="notification-icon ${iconClass}">${icon}</div>
+                    <div class="notification-content">
+                        <div class="notification-message">${notif.message}</div>
+                        <div class="notification-time">${formatRelativeTime(notif.time)}</div>
+                    </div>
+                `;
+                container.appendChild(item);
+            });
+        }
+
+        function updateNotificationBadge() {
+            const unreadCount = STATE.notifications.filter(n => !n.read).length;
+            const badge = document.getElementById('notification-badge');
+            badge.textContent = unreadCount;
+            badge.classList.toggle('hidden', unreadCount === 0);
+        }
+
+        function toggleNotifications() {
+            const panel = document.getElementById('notification-panel');
+            panel.classList.toggle('show');
+            
+            if (panel.classList.contains('show')) {
+                // Mark all as read
+                STATE.notifications.forEach(n => n.read = true);
+                updateNotificationBadge();
+            }
+        }
+
+        function clearNotifications() {
+            STATE.notifications = [];
+            renderNotifications();
+            updateNotificationBadge();
+            toggleNotifications();
+        }
+
+        // ===== TOAST =====
+        function showToast(type, title, message) {
+            const container = document.getElementById('toast-container');
+            const toast = document.createElement('div');
+            toast.className = 'toast ' + type;
+            
+            let icon = 'ℹ️';
+            if (type === 'success') icon = '✓';
+            if (type === 'error') icon = '✗';
+            if (type === 'cat') icon = '🤖';
+            
+            toast.innerHTML = `
+                <div class="toast-icon">${icon}</div>
+                <div class="toast-content">
+                    <div class="toast-title">${title}</div>
+                    <div class="toast-message">${message}</div>
+                </div>
+            `;
+            
+            container.appendChild(toast);
+            
+            setTimeout(() => {
+                toast.style.opacity = '0';
+                toast.style.transform = 'translateX(100%)';
+                setTimeout(() => toast.remove(), 300);
+            }, 3000);
+        }
+
+        // ===== LOADER =====
+        function showLoader() {
+            document.getElementById('loader-overlay').classList.add('show');
+        }
+
+        function hideLoader() {
+            document.getElementById('loader-overlay').classList.remove('show');
+        }
+
+        // ===== SEARCH =====
+        function toggleSearch() {
+            const overlay = document.getElementById('search-overlay');
+            overlay.classList.toggle('show');
+            if (overlay.classList.contains('show')) {
+                document.getElementById('search-input').focus();
+            }
+        }
+
+        function handleSearch(event) {
+            if (event.key === 'Escape') {
+                toggleSearch();
+                return;
+            }
+            
+            const query = event.target.value.toLowerCase();
+            // Simple navigation shortcuts
+            if (query === 'p' || query === 'portfolio') {
+                showScreen('home');
+                toggleSearch();
+            } else if (query === 't' || query === 'trade' || query === 'kauppa') {
+                showScreen('trade');
+                toggleSearch();
+            } else if (query === 'w' || query === 'wallet' || query === 'lompakko') {
+                showScreen('wallet');
+                toggleSearch();
+            }
+        }
+
+        // Keyboard shortcuts
+        document.addEventListener('keydown', function(e) {
+            // Don't trigger if typing in input
+            if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') return;
+            
+            if (e.key === 'p' || e.key === 'P') showScreen('home');
+            if (e.key === 't' || e.key === 'T') showScreen('trade');
+            if (e.key === 'w' || e.key === 'W') showScreen('wallet');
+            if (e.key === 'Escape') {
+                document.getElementById('search-overlay').classList.remove('show');
+                document.querySelectorAll('.modal-overlay.show').forEach(m => m.classList.remove('show'));
+            }
+            if (e.key === '/' && !e.ctrlKey && !e.metaKey) {
+                e.preventDefault();
+                toggleSearch();
+            }
+        });
+
+        // ===== USER UI =====
+        function updateUserUI() {
+            if (!STATE.currentUser) return;
+            
+            // Avatar initials
+            const initials = STATE.currentUser.displayName
+                .split(' ')
+                .map(n => n[0])
+                .join('')
+                .toUpperCase()
+                .substring(0, 2);
+            document.getElementById('user-avatar').textContent = initials;
+            
+            // Settings
+            document.getElementById('settings-username').textContent = STATE.currentUser.displayName;
+            document.getElementById('settings-email').textContent = STATE.currentUser.email;
+        }
+
+        // ===== INITIALIZATION =====
+        async function initializeApp() {
+            updateBalanceDisplay();
+            renderTransactions();
+            renderCatActivity();
+            renderNotifications();
+            updateNotificationBadge();
+            
+            // Initialize chart after delay
+            setTimeout(initPortfolioChart, 300);
+            
+            // Start CAT simulation
+            startCatSimulation();
+            
+            // Update CAT status periodically
+            setInterval(() => {
+                const lastActivity = STATE.db.cat_activity[0];
+                if (lastActivity) {
+                    document.getElementById('cat-status').textContent = 
+                        'Viimeisin kauppa: ' + formatRelativeTime(lastActivity.ts);
+                }
+            }, 30000);
+        }
+
+        // ===== MAIN =====
+        async function main() {
+            // Load database
+            await loadDatabase();
+            
+            // Load settings
+            const savedSettings = localStorage.getItem(CONFIG.SETTINGS_KEY);
+            if (savedSettings) {
+                STATE.settings = { ...STATE.settings, ...JSON.parse(savedSettings) };
+            }
+            applySettings();
+            
+            // Check authentication
+            if (checkAuth()) {
+                document.getElementById('login-screen').classList.add('hidden');
+                document.getElementById('app').classList.remove('hidden');
+                updateUserUI();
+                initializeApp();
+            }
+            
+            console.log('CryptoApp initialized - Demo Mode');
+        }
+
+
+        // Show demo banner if not dismissed
+        function checkDemoBanner() {
+            const dismissed = localStorage.getItem('cryptoapp_banner_dismissed');
+            if (!dismissed) {
+                const banner = document.getElementById('demo-banner');
+                if (banner) {
+                    banner.style.display = 'flex';
+                }
+            }
+        }
+        
+        // Call after login
+        setTimeout(checkDemoBanner, 500);
+
+        // Start the app
+        document.addEventListener('DOMContentLoaded', main);
+    </script>
+    <script src="assets/ui.js"></script>
+</body>
+</html>
