@@ -21,9 +21,16 @@
             --warning: #f59e0b;
             --info: #3b82f6;
             
+            /* CAT Brand Colors */
+            --cat-primary: #8b5cf6;
+            --cat-light: #a78bfa;
+            --cat-bg: rgba(139, 92, 246, 0.15);
+            
             /* Desktop-specific colors */
             --bg-primary: #fafbfc;
             --bg-secondary: #f8fafc;
+            --bg-tertiary: #f1f5f9;
+            --bg-elevated: #ffffff;
             --surface: #ffffff;
             --surface-elevated: #ffffff;
             --border: rgba(148, 163, 184, 0.15);
@@ -48,6 +55,14 @@
             --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
             --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
             --shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+            --shadow-glow: 0 0 20px rgba(102, 126, 234, 0.3);
+            
+            /* Border Radius */
+            --radius-sm: 0.5rem;
+            --radius-md: 0.75rem;
+            --radius-lg: 1rem;
+            --radius-xl: 1.5rem;
+            --radius-2xl: 2rem;
             
             /* Desktop breakpoints */
             --desktop-max-width: 1400px;
@@ -1914,7 +1929,7 @@
                                     Realistic Volatility
                                 </label>
                                 <label style="display: flex; align-items: center; gap: 0.5rem;">
-                                    <input type="checkbox" id="notifications" checked onchange="toggleNotifications()">
+                                    <input type="checkbox" id="notifications" checked onchange="toggleNotificationSetting()">
                                     Desktop Notifications
                                 </label>
                             </div>
@@ -2190,7 +2205,7 @@
             }
         }
         
-        function toggleNotifications() {
+        function toggleNotificationSetting() {
             const enabled = document.getElementById('notifications').checked;
             if (demoEngine) {
                 demoEngine.settings.notifications = enabled;
@@ -2485,6 +2500,99 @@
             navigator.clipboard.writeText(address).then(() => {
                 addNotification('copy', 'Osoite kopioitu leikepöydälle', 'success');
             });
+        }
+        
+        // ===== ADDED: MODAL PREVIEW FUNCTIONS =====
+        function updateSendPreview() {
+            const amount = parseFloat(document.getElementById('send-amount')?.value) || 0;
+            const fee = 0.00001500;
+            const total = amount + fee;
+            const totalEl = document.getElementById('send-total');
+            if (totalEl) totalEl.textContent = `${total.toFixed(8)} BTC`;
+        }
+        
+        function updateBuyPreview() {
+            const eurAmount = parseFloat(document.getElementById('buy-amount-eur')?.value) || 0;
+            const btcPrice = 89000;
+            const fee = eurAmount * 0.015; // 1.5% fee
+            const btcAmount = (eurAmount - fee) / btcPrice;
+            
+            const feeEl = document.getElementById('buy-fee');
+            const btcEl = document.getElementById('buy-btc');
+            if (feeEl) feeEl.textContent = `${fee.toFixed(2)} €`;
+            if (btcEl) btcEl.textContent = `${btcAmount.toFixed(8)} BTC`;
+        }
+        
+        function updateSellPreview() {
+            // Similar to buyPreview but reversed
+            const btcAmount = parseFloat(document.getElementById('sell-amount-btc')?.value) || 0;
+            const btcPrice = 89000;
+            const eurValue = btcAmount * btcPrice;
+            const fee = eurValue * 0.015;
+            const total = eurValue - fee;
+            
+            const feeEl = document.getElementById('sell-fee');
+            const totalEl = document.getElementById('sell-total');
+            if (feeEl) feeEl.textContent = `${fee.toFixed(2)} €`;
+            if (totalEl) totalEl.textContent = `${total.toFixed(2)} €`;
+        }
+        
+        function updateSwapPreview() {
+            // Swap between BTC and ETH
+            const fromAmount = parseFloat(document.getElementById('swap-from-amount')?.value) || 0;
+            const rate = 0.03; // Example rate
+            const toAmount = fromAmount * rate;
+            
+            const toEl = document.getElementById('swap-to-amount');
+            if (toEl) toEl.value = toAmount.toFixed(8);
+        }
+        
+        // ===== ADDED: ONBOARDING FUNCTIONS =====
+        let onboardingStep = 0;
+        const onboardingSteps = [
+            {
+                icon: '🚀',
+                title: 'Tervetuloa CryptoVaultiin!',
+                text: 'Tämä on demo-versio ammattimaisesta krypto lompakosta C-A-T automaattikaupankäynnillä.'
+            },
+            {
+                icon: '💰',
+                title: 'Hallitse cryptojasi',
+                text: 'Osta, myy ja vaihda kryptovaluuttoja turvallisesti ja helposti.'
+            },
+            {
+                icon: '🤖',
+                title: 'CAT Automaattikauppa',
+                text: 'Aktivoi C-A-T automaattikauppa, joka tekee kauppoja puolestasi.'
+            }
+        ];
+        
+        function nextOnboardingStep() {
+            onboardingStep++;
+            if (onboardingStep >= onboardingSteps.length) {
+                skipOnboarding();
+                return;
+            }
+            
+            const step = onboardingSteps[onboardingStep];
+            const iconEl = document.getElementById('onboarding-icon');
+            const titleEl = document.getElementById('onboarding-title');
+            const textEl = document.getElementById('onboarding-text');
+            
+            if (iconEl) iconEl.textContent = step.icon;
+            if (titleEl) titleEl.textContent = step.title;
+            if (textEl) textEl.textContent = step.text;
+            
+            // Update step indicators
+            document.querySelectorAll('.onboarding-step').forEach((el, idx) => {
+                el.classList.toggle('active', idx === onboardingStep);
+            });
+        }
+        
+        function skipOnboarding() {
+            const overlay = document.getElementById('onboarding-overlay');
+            if (overlay) overlay.classList.add('hidden');
+            localStorage.setItem('onboardingCompleted', 'true');
         }
         
         // ===== INITIALIZE ON LOAD =====
