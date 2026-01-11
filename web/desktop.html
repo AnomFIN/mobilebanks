@@ -1651,15 +1651,14 @@
                         
                         <div class="card">
                             <div class="card-header">
-                                <div class="card-title">BTC Price</div>
+                                <div class="card-title">BTC Price (24h)</div>
                             </div>
-                            <div class="chart-container">
-                                <div class="chart-line"></div>
-                                <span>Interactive chart placeholder</span>
+                            <div class="chart-container" style="height: 250px; position: relative;">
+                                <canvas id="btcPriceChart" width="600" height="250"></canvas>
                             </div>
                             <div style="margin-top: 1rem;">
                                 <div style="font-size: 1.5rem; font-weight: 600;" id="btcPrice">€42,856.23</div>
-                                <div class="text-success">+1.82% today</div>
+                                <div class="text-success" id="btcChange">+1.82% today</div>
                             </div>
                         </div>
                     </div>
@@ -1819,10 +1818,14 @@
                 <div class="card">
                     <div class="card-header">
                         <div class="card-title">Price Chart</div>
+                        <div style="display: flex; gap: 0.5rem;">
+                            <button class="btn btn-sm" onclick="changeTradingTimeframe('24h')">24h</button>
+                            <button class="btn btn-sm" onclick="changeTradingTimeframe('7d')">7d</button>
+                            <button class="btn btn-sm" onclick="changeTradingTimeframe('30d')">30d</button>
+                        </div>
                     </div>
-                    <div class="chart-container" style="height: 400px;">
-                        <div class="chart-line"></div>
-                        <span>Advanced trading chart placeholder</span>
+                    <div class="chart-container" style="height: 400px; position: relative;">
+                        <canvas id="tradingChart" width="800" height="400"></canvas>
                     </div>
                 </div>
             </div>
@@ -2304,6 +2307,9 @@
             if (loginScreen) loginScreen.classList.add('hidden');
             if (appContainer) appContainer.classList.remove('hidden');
             addNotification('welcome', `Tervetuloa, ${user.username}!`, 'success');
+            
+            // Initialize charts after login
+            initializeCharts();
         }
         
         function showLoginError(id, message) {
@@ -2595,6 +2601,291 @@
             localStorage.setItem('onboardingCompleted', 'true');
         }
         
+        // ===== CHART RENDERING FUNCTIONS =====
+        let chartData = {
+            btc: [],
+            trading: [],
+            timeframe: '24h'
+        };
+        
+        // Generate realistic price data
+        function generatePriceData(points, basePrice, volatility = 0.02) {
+            const data = [];
+            let price = basePrice;
+            
+            for (let i = 0; i < points; i++) {
+                const change = (Math.random() - 0.48) * volatility * price;
+                price += change;
+                data.push({
+                    time: Date.now() - (points - i) * 3600000,
+                    price: price,
+                    volume: Math.random() * 1000 + 500
+                });
+            }
+            return data;
+        }
+        
+        // Render BTC Price Line Chart
+        function renderBTCChart() {
+            const canvas = document.getElementById('btcPriceChart');
+            if (!canvas) return;
+            
+            const ctx = canvas.getContext('2d');
+            const width = canvas.width;
+            const height = canvas.height;
+            const padding = 40;
+            
+            // Clear canvas
+            ctx.clearRect(0, 0, width, height);
+            
+            // Generate or use existing data
+            if (chartData.btc.length === 0) {
+                chartData.btc = generatePriceData(24, 42000, 0.015);
+            }
+            
+            const data = chartData.btc;
+            const prices = data.map(d => d.price);
+            const minPrice = Math.min(...prices);
+            const maxPrice = Math.max(...prices);
+            const priceRange = maxPrice - minPrice;
+            
+            // Draw grid
+            ctx.strokeStyle = '#e5e7eb';
+            ctx.lineWidth = 1;
+            for (let i = 0; i <= 5; i++) {
+                const y = padding + (height - 2 * padding) * i / 5;
+                ctx.beginPath();
+                ctx.moveTo(padding, y);
+                ctx.lineTo(width - padding, y);
+                ctx.stroke();
+            }
+            
+            // Draw price labels
+            ctx.fillStyle = '#6b7280';
+            ctx.font = '11px -apple-system, sans-serif';
+            ctx.textAlign = 'right';
+            for (let i = 0; i <= 5; i++) {
+                const price = maxPrice - (priceRange * i / 5);
+                const y = padding + (height - 2 * padding) * i / 5;
+                ctx.fillText('€' + price.toFixed(0), padding - 5, y + 4);
+            }
+            
+            // Draw line chart with gradient
+            const gradient = ctx.createLinearGradient(0, padding, 0, height - padding);
+            gradient.addColorStop(0, 'rgba(102, 126, 234, 0.3)');
+            gradient.addColorStop(1, 'rgba(102, 126, 234, 0.05)');
+            
+            // Draw area under line
+            ctx.beginPath();
+            ctx.moveTo(padding, height - padding);
+            data.forEach((point, i) => {
+                const x = padding + (width - 2 * padding) * i / (data.length - 1);
+                const y = padding + (height - 2 * padding) * (1 - (point.price - minPrice) / priceRange);
+                if (i === 0) {
+                    ctx.lineTo(x, y);
+                } else {
+                    ctx.lineTo(x, y);
+                }
+            });
+            ctx.lineTo(width - padding, height - padding);
+            ctx.closePath();
+            ctx.fillStyle = gradient;
+            ctx.fill();
+            
+            // Draw line
+            ctx.beginPath();
+            data.forEach((point, i) => {
+                const x = padding + (width - 2 * padding) * i / (data.length - 1);
+                const y = padding + (height - 2 * padding) * (1 - (point.price - minPrice) / priceRange);
+                if (i === 0) {
+                    ctx.moveTo(x, y);
+                } else {
+                    ctx.lineTo(x, y);
+                }
+            });
+            ctx.strokeStyle = '#667eea';
+            ctx.lineWidth = 2;
+            ctx.stroke();
+            
+            // Draw points
+            data.forEach((point, i) => {
+                if (i % 3 === 0) { // Show every 3rd point
+                    const x = padding + (width - 2 * padding) * i / (data.length - 1);
+                    const y = padding + (height - 2 * padding) * (1 - (point.price - minPrice) / priceRange);
+                    ctx.beginPath();
+                    ctx.arc(x, y, 3, 0, Math.PI * 2);
+                    ctx.fillStyle = '#667eea';
+                    ctx.fill();
+                }
+            });
+            
+            // Update current price
+            const currentPrice = data[data.length - 1].price;
+            const priceChange = ((currentPrice - data[0].price) / data[0].price * 100);
+            document.getElementById('btcPrice').textContent = '€' + currentPrice.toFixed(2);
+            const changeEl = document.getElementById('btcChange');
+            if (changeEl) {
+                changeEl.textContent = (priceChange > 0 ? '+' : '') + priceChange.toFixed(2) + '% today';
+                changeEl.className = priceChange > 0 ? 'text-success' : 'text-error';
+            }
+        }
+        
+        // Render Trading Chart (Candlestick-style)
+        function renderTradingChart() {
+            const canvas = document.getElementById('tradingChart');
+            if (!canvas) return;
+            
+            const ctx = canvas.getContext('2d');
+            const width = canvas.width;
+            const height = canvas.height;
+            const padding = 50;
+            
+            // Clear canvas
+            ctx.clearRect(0, 0, width, height);
+            
+            // Generate candlestick data based on timeframe
+            const points = chartData.timeframe === '24h' ? 24 : chartData.timeframe === '7d' ? 168 : 720;
+            if (chartData.trading.length === 0 || chartData.trading.length !== points) {
+                chartData.trading = generateCandlestickData(points, 42000);
+            }
+            
+            const data = chartData.trading.slice(0, Math.min(50, points)); // Show last 50 candles
+            const prices = data.flatMap(d => [d.high, d.low]);
+            const minPrice = Math.min(...prices);
+            const maxPrice = Math.max(...prices);
+            const priceRange = maxPrice - minPrice;
+            
+            // Draw background grid
+            ctx.strokeStyle = '#e5e7eb';
+            ctx.lineWidth = 1;
+            for (let i = 0; i <= 5; i++) {
+                const y = padding + (height - 2 * padding) * i / 5;
+                ctx.beginPath();
+                ctx.moveTo(padding, y);
+                ctx.lineTo(width - padding, y);
+                ctx.stroke();
+            }
+            
+            // Draw price labels
+            ctx.fillStyle = '#6b7280';
+            ctx.font = '12px -apple-system, sans-serif';
+            ctx.textAlign = 'right';
+            for (let i = 0; i <= 5; i++) {
+                const price = maxPrice - (priceRange * i / 5);
+                const y = padding + (height - 2 * padding) * i / 5;
+                ctx.fillText('€' + price.toFixed(0), padding - 5, y + 4);
+            }
+            
+            // Draw candlesticks
+            const candleWidth = (width - 2 * padding) / data.length * 0.6;
+            data.forEach((candle, i) => {
+                const x = padding + (width - 2 * padding) * (i + 0.5) / data.length;
+                const yHigh = padding + (height - 2 * padding) * (1 - (candle.high - minPrice) / priceRange);
+                const yLow = padding + (height - 2 * padding) * (1 - (candle.low - minPrice) / priceRange);
+                const yOpen = padding + (height - 2 * padding) * (1 - (candle.open - minPrice) / priceRange);
+                const yClose = padding + (height - 2 * padding) * (1 - (candle.close - minPrice) / priceRange);
+                
+                const isGreen = candle.close > candle.open;
+                const color = isGreen ? '#10b981' : '#ef4444';
+                
+                // Draw wick
+                ctx.strokeStyle = color;
+                ctx.lineWidth = 1;
+                ctx.beginPath();
+                ctx.moveTo(x, yHigh);
+                ctx.lineTo(x, yLow);
+                ctx.stroke();
+                
+                // Draw body
+                ctx.fillStyle = color;
+                const bodyHeight = Math.abs(yClose - yOpen);
+                const bodyY = Math.min(yOpen, yClose);
+                ctx.fillRect(x - candleWidth / 2, bodyY, candleWidth, Math.max(bodyHeight, 1));
+            });
+            
+            // Draw volume bars
+            const maxVolume = Math.max(...data.map(d => d.volume));
+            const volumeHeight = 60;
+            data.forEach((candle, i) => {
+                const x = padding + (width - 2 * padding) * (i + 0.5) / data.length;
+                const barHeight = (candle.volume / maxVolume) * volumeHeight;
+                const y = height - padding - barHeight;
+                
+                ctx.fillStyle = candle.close > candle.open ? 'rgba(16, 185, 129, 0.3)' : 'rgba(239, 68, 68, 0.3)';
+                ctx.fillRect(x - candleWidth / 2, y, candleWidth, barHeight);
+            });
+            
+            // Draw title
+            ctx.fillStyle = '#111827';
+            ctx.font = 'bold 14px -apple-system, sans-serif';
+            ctx.textAlign = 'left';
+            ctx.fillText('BTC/EUR', padding, padding - 15);
+            
+            // Draw current price
+            const currentPrice = data[data.length - 1].close;
+            ctx.fillStyle = '#667eea';
+            ctx.font = 'bold 16px -apple-system, sans-serif';
+            ctx.fillText('€' + currentPrice.toFixed(2), padding + 100, padding - 15);
+        }
+        
+        function generateCandlestickData(count, basePrice) {
+            const data = [];
+            let price = basePrice;
+            
+            for (let i = 0; i < count; i++) {
+                const open = price;
+                const volatility = basePrice * 0.01;
+                const high = open + Math.random() * volatility;
+                const low = open - Math.random() * volatility;
+                const close = low + Math.random() * (high - low);
+                price = close;
+                
+                data.push({
+                    time: Date.now() - (count - i) * 3600000,
+                    open,
+                    high,
+                    low,
+                    close,
+                    volume: Math.random() * 1000 + 200
+                });
+            }
+            return data;
+        }
+        
+        function changeTradingTimeframe(timeframe) {
+            chartData.timeframe = timeframe;
+            chartData.trading = []; // Reset data
+            renderTradingChart();
+        }
+        
+        // Update charts periodically
+        function updateCharts() {
+            // Add new data point to BTC chart
+            if (chartData.btc.length > 0) {
+                const lastPrice = chartData.btc[chartData.btc.length - 1].price;
+                const newPrice = lastPrice * (1 + (Math.random() - 0.5) * 0.002);
+                chartData.btc.push({
+                    time: Date.now(),
+                    price: newPrice,
+                    volume: Math.random() * 1000 + 500
+                });
+                if (chartData.btc.length > 24) {
+                    chartData.btc.shift();
+                }
+                renderBTCChart();
+            }
+        }
+        
+        // Initialize charts
+        function initializeCharts() {
+            setTimeout(() => {
+                renderBTCChart();
+                renderTradingChart();
+                // Update charts every 10 seconds
+                setInterval(updateCharts, 10000);
+            }, 1000);
+        }
+        
         // ===== INITIALIZE ON LOAD =====
         document.addEventListener('DOMContentLoaded', () => {
             // Check if user is logged in
@@ -2613,6 +2904,11 @@
             
             renderNotifications();
             updateNotificationBadge();
+            
+            // Initialize charts after login check
+            if (isLoggedIn) {
+                initializeCharts();
+            }
         });
         
         // Replace demo mode alerts with modals
