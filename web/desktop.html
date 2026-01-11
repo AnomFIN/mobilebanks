@@ -1,491 +1,701 @@
 <!DOCTYPE html>
-<html lang="fi">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>CryptoBank Desktop - Professional Banking Platform</title>
-    <meta name="description" content="Desktop-optimized crypto banking demo platform">
-    
-    <!-- Favicon -->
-    <link rel="icon" href="crypto-icon.svg" type="image/svg+xml">
-    
+    <title>CryptoExchange - Next-Generation Crypto Trading Platform</title>
     <style>
-        /* ===== DESIGN SYSTEM ===== */
+        /* Design System with premium dark theme */
         :root {
-            /* Colors */
-            --primary: #667eea;
-            --primary-dark: #5a67d8;
-            --accent: #8b5cf6;
+            --primary-bg: linear-gradient(135deg, #0a0e27 0%, #000000 100%);
+            --surface-dark: #0f1419;
+            --surface-elevated: #1a1f2e;
+            --surface-card: #141923;
+            --neon-blue: #00d4ff;
+            --neon-cyan: #00ffff;
+            --accent-purple: #6366f1;
+            --glass-bg: rgba(20, 25, 35, 0.7);
+            --glass-border: rgba(0, 212, 255, 0.1);
+            --text-primary: #ffffff;
+            --text-secondary: #94a3b8;
+            --text-tertiary: #64748b;
             --success: #10b981;
             --error: #ef4444;
-            --warning: #f59e0b;
-            --info: #3b82f6;
-            
-            /* CAT Brand Colors */
-            --cat-primary: #8b5cf6;
-            --cat-light: #a78bfa;
-            --cat-bg: rgba(139, 92, 246, 0.15);
-            
-            /* Desktop-specific colors */
-            --bg-primary: #fafbfc;
-            --bg-secondary: #f8fafc;
-            --bg-tertiary: #f1f5f9;
-            --bg-elevated: #ffffff;
-            --surface: #ffffff;
-            --surface-elevated: #ffffff;
-            --border: rgba(148, 163, 184, 0.15);
-            --border-hover: rgba(148, 163, 184, 0.25);
-            
-            /* Text */
-            --text-primary: #0f172a;
-            --text-secondary: #475569;
-            --text-tertiary: #94a3b8;
-            --text-inverse: #ffffff;
-            
-            /* Spacing for desktop */
-            --space-xs: 0.25rem;
-            --space-sm: 0.5rem;
-            --space-md: 1rem;
-            --space-lg: 1.5rem;
-            --space-xl: 2rem;
-            --space-2xl: 3rem;
-            
-            /* Shadows */
-            --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
-            --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
-            --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
-            --shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
-            --shadow-glow: 0 0 20px rgba(102, 126, 234, 0.3);
-            
-            /* Border Radius */
-            --radius-sm: 0.5rem;
-            --radius-md: 0.75rem;
-            --radius-lg: 1rem;
-            --radius-xl: 1.5rem;
-            --radius-2xl: 2rem;
-            
-            /* Desktop breakpoints */
-            --desktop-max-width: 1400px;
-            --sidebar-width: 280px;
-            --header-height: 70px;
+            --space-2: 0.5rem;
+            --space-3: 0.75rem;
+            --space-4: 1rem;
+            --space-6: 1.5rem;
+            --space-8: 2rem;
+            --space-12: 3rem;
+            --radius-sm: 8px;
+            --radius-md: 12px;
+            --radius-lg: 16px;
+            --radius-xl: 24px;
+            --shadow-glow-blue: 0 0 40px rgba(0, 212, 255, 0.3);
+            --shadow-card: 0 4px 24px rgba(0, 0, 0, 0.4);
+            --transition-fast: 150ms ease;
+            --transition-normal: 250ms ease;
         }
         
-        /* ===== RESET & BASE ===== */
-        * {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
-        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
         
         body {
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-            background: var(--bg-primary);
+            background: var(--primary-bg);
             color: var(--text-primary);
             line-height: 1.6;
-            overflow-x: hidden;
+            -webkit-font-smoothing: antialiased;
         }
         
-        /* ===== LAYOUT ===== */
-        .app {
-            display: grid;
-            grid-template-areas: 
-                "header header header"
-                "sidebar main rightbar";
-            grid-template-columns: var(--sidebar-width) 1fr 320px;
-            grid-template-rows: var(--header-height) 1fr;
+        .landing-page {
             min-height: 100vh;
-            max-width: 1600px;
-            margin: 0 auto;
+            display: grid;
+            grid-template-columns: 45% 55%;
         }
         
-        /* Responsive layout */
-        @media (max-width: 1200px) {
-            .app {
-                grid-template-areas: 
-                    "header header"
-                    "sidebar main";
-                grid-template-columns: var(--sidebar-width) 1fr;
-            }
-            .right-sidebar {
-                display: none !important;
-            }
+        @media (max-width: 1024px) {
+            .landing-page { grid-template-columns: 1fr; }
+            .hero-side { display: none; }
         }
         
-        @media (max-width: 768px) {
-            .app {
-                grid-template-areas: 
-                    "header"
-                    "main";
-                grid-template-columns: 1fr;
-            }
-            .sidebar {
-                display: none !important;
-            }
-            .right-sidebar {
-                display: none !important;
-            }
-        }
-        
-        /* Header */
-        .header {
-            grid-area: header;
+        .auth-side {
+            background: var(--surface-dark);
+            padding: var(--space-12);
             display: flex;
+            flex-direction: column;
+            justify-content: center;
             align-items: center;
-            justify-content: space-between;
-            padding: 0 var(--space-xl);
-            background: var(--surface);
-            border-bottom: 1px solid var(--border);
-            backdrop-filter: blur(20px);
-            position: sticky;
-            top: 0;
-            z-index: 100;
+            position: relative;
+            overflow: hidden;
         }
         
-        .header-left {
-            display: flex;
-            align-items: center;
-            gap: var(--space-lg);
+        .auth-side::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(0, 212, 255, 0.05) 0%, transparent 70%);
+            animation: pulse 8s ease-in-out infinite;
+        }
+        
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); opacity: 1; }
+            50% { transform: scale(1.1); opacity: 0.8; }
+        }
+        
+        .auth-container {
+            max-width: 440px;
+            width: 100%;
+            position: relative;
+            z-index: 1;
         }
         
         .logo {
             display: flex;
             align-items: center;
-            gap: var(--space-sm);
-            font-size: 1.5rem;
+            gap: var(--space-3);
+            margin-bottom: var(--space-8);
+            font-size: 2rem;
             font-weight: 700;
-            color: var(--primary);
         }
         
         .logo-icon {
-            width: 32px;
-            height: 32px;
-            background: linear-gradient(135deg, var(--primary), var(--accent));
-            border-radius: 8px;
+            width: 48px;
+            height: 48px;
+            background: linear-gradient(135deg, var(--neon-blue), var(--accent-purple));
+            border-radius: var(--radius-md);
             display: flex;
             align-items: center;
             justify-content: center;
-            color: white;
+            box-shadow: var(--shadow-glow-blue);
         }
         
-        .header-right {
+        .auth-tabs {
             display: flex;
-            align-items: center;
-            gap: var(--space-md);
+            gap: var(--space-2);
+            margin-bottom: var(--space-8);
+            background: var(--surface-elevated);
+            padding: 0.25rem;
+            border-radius: var(--radius-md);
         }
         
-        .demo-badge {
-            background: var(--warning);
-            color: white;
-            padding: var(--space-xs) var(--space-sm);
-            border-radius: 6px;
-            font-size: 0.75rem;
+        .auth-tab {
+            flex: 1;
+            padding: var(--space-3) var(--space-6);
+            border: none;
+            background: transparent;
+            color: var(--text-secondary);
+            font-size: 1rem;
             font-weight: 600;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-        }
-        
-        .user-profile {
-            display: flex;
-            align-items: center;
-            gap: var(--space-sm);
-            padding: var(--space-sm) var(--space-md);
-            border-radius: 8px;
+            border-radius: var(--radius-sm);
             cursor: pointer;
-            transition: background 0.2s ease;
+            transition: var(--transition-fast);
         }
         
-        .user-profile:hover {
-            background: var(--bg-secondary);
+        .auth-tab.active {
+            background: var(--neon-blue);
+            color: var(--surface-dark);
+            box-shadow: var(--shadow-glow-blue);
         }
         
-        .user-avatar {
-            width: 32px;
-            height: 32px;
-            border-radius: 50%;
-            background: linear-gradient(135deg, var(--primary), var(--accent));
+        .auth-content {
+            background: var(--glass-bg);
+            backdrop-filter: blur(20px);
+            border: 1px solid var(--glass-border);
+            border-radius: var(--radius-lg);
+            padding: var(--space-8);
+            box-shadow: var(--shadow-card);
+        }
+        
+        .login-method-tabs {
+            display: flex;
+            gap: var(--space-4);
+            margin-bottom: var(--space-6);
+            border-bottom: 2px solid var(--surface-elevated);
+        }
+        
+        .login-method-tab {
+            padding: var(--space-3) var(--space-4);
+            background: none;
+            border: none;
+            color: var(--text-secondary);
+            font-size: 0.875rem;
+            font-weight: 600;
+            cursor: pointer;
+            position: relative;
+            transition: var(--transition-fast);
+        }
+        
+        .login-method-tab.active {
+            color: var(--neon-blue);
+        }
+        
+        .login-method-tab.active::after {
+            content: '';
+            position: absolute;
+            bottom: -2px;
+            left: 0;
+            right: 0;
+            height: 2px;
+            background: var(--neon-blue);
+            box-shadow: var(--shadow-glow-blue);
+        }
+        
+        .login-method-content {
+            display: none;
+        }
+        
+        .login-method-content.active {
+            display: block;
+        }
+        
+        .qr-login {
+            text-align: center;
+        }
+        
+        .qr-code-container {
+            position: relative;
+            width: 200px;
+            height: 200px;
+            margin: var(--space-6) auto;
+            background: white;
+            border-radius: var(--radius-md);
             display: flex;
             align-items: center;
             justify-content: center;
-            color: white;
-            font-weight: 600;
         }
         
-        /* Sidebar */
+        .qr-code-container::before {
+            content: '';
+            position: absolute;
+            inset: -4px;
+            background: linear-gradient(45deg, var(--neon-blue), var(--neon-cyan));
+            border-radius: var(--radius-md);
+            z-index: -1;
+            animation: spin 3s linear infinite;
+        }
+        
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+        
+        .qr-steps {
+            text-align: left;
+            margin-top: var(--space-6);
+        }
+        
+        .qr-step {
+            display: flex;
+            align-items: center;
+            gap: var(--space-3);
+            margin-bottom: var(--space-3);
+            font-size: 0.875rem;
+            color: var(--text-secondary);
+        }
+        
+        .qr-step-number {
+            width: 24px;
+            height: 24px;
+            background: var(--surface-elevated);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            color: var(--neon-blue);
+        }
+        
+        .form-group {
+            margin-bottom: var(--space-4);
+        }
+        
+        .form-label {
+            display: block;
+            font-size: 0.875rem;
+            font-weight: 600;
+            margin-bottom: var(--space-2);
+            color: var(--text-secondary);
+        }
+        
+        .form-input {
+            width: 100%;
+            padding: var(--space-3) var(--space-4);
+            background: var(--surface-elevated);
+            border: 1px solid transparent;
+            border-radius: var(--radius-sm);
+            color: var(--text-primary);
+            font-size: 1rem;
+            transition: var(--transition-fast);
+        }
+        
+        .form-input:focus {
+            outline: none;
+            border-color: var(--neon-blue);
+            box-shadow: 0 0 0 3px rgba(0, 212, 255, 0.1);
+        }
+        
+        .form-checkbox {
+            display: flex;
+            align-items: center;
+            gap: var(--space-2);
+            font-size: 0.875rem;
+            color: var(--text-secondary);
+        }
+        
+        .btn-primary {
+            width: 100%;
+            padding: var(--space-4);
+            background: linear-gradient(135deg, var(--neon-blue), var(--accent-purple));
+            border: none;
+            border-radius: var(--radius-sm);
+            color: var(--surface-dark);
+            font-size: 1rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: var(--transition-normal);
+            box-shadow: var(--shadow-glow-blue);
+            margin-top: var(--space-4);
+        }
+        
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 0 50px rgba(0, 212, 255, 0.5);
+        }
+        
+        .hero-side {
+            background: linear-gradient(135deg, #0a0e27 0%, #1a1f2e 100%);
+            padding: var(--space-12);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .hero-side::before {
+            content: '';
+            position: absolute;
+            top: 20%;
+            right: -10%;
+            width: 60%;
+            height: 60%;
+            background: radial-gradient(circle, rgba(99, 102, 241, 0.15) 0%, transparent 70%);
+            filter: blur(80px);
+        }
+        
+        .hero-content {
+            position: relative;
+            z-index: 1;
+        }
+        
+        .hero-headline {
+            font-size: 3.5rem;
+            font-weight: 800;
+            line-height: 1.1;
+            margin-bottom: var(--space-6);
+            background: linear-gradient(135deg, var(--text-primary), var(--neon-blue));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        
+        .hero-subheadline {
+            font-size: 1.25rem;
+            color: var(--text-secondary);
+            margin-bottom: var(--space-8);
+            line-height: 1.6;
+        }
+        
+        .hero-metrics {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: var(--space-6);
+            margin-bottom: var(--space-8);
+        }
+        
+        .metric {
+            text-align: center;
+        }
+        
+        .metric-value {
+            font-size: 2rem;
+            font-weight: 700;
+            color: var(--neon-blue);
+            display: block;
+        }
+        
+        .metric-label {
+            font-size: 0.875rem;
+            color: var(--text-secondary);
+            margin-top: var(--space-2);
+        }
+        
+        .hero-cta {
+            display: flex;
+            gap: var(--space-4);
+            margin-bottom: var(--space-8);
+        }
+        
+        .btn-hero {
+            padding: var(--space-4) var(--space-8);
+            border-radius: var(--radius-md);
+            font-size: 1.125rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: var(--transition-normal);
+            border: none;
+        }
+        
+        .btn-hero-primary {
+            background: linear-gradient(135deg, var(--neon-blue), var(--accent-purple));
+            color: var(--surface-dark);
+            box-shadow: var(--shadow-glow-blue);
+        }
+        
+        .btn-hero-secondary {
+            background: transparent;
+            color: var(--text-primary);
+            border: 2px solid var(--neon-blue);
+        }
+        
+        .hero-visuals {
+            display: flex;
+            gap: var(--space-6);
+            margin-top: var(--space-12);
+            position: relative;
+        }
+        
+        .device-mockup {
+            background: var(--surface-card);
+            border-radius: var(--radius-lg);
+            padding: var(--space-4);
+            box-shadow: var(--shadow-card);
+            position: relative;
+        }
+        
+        .laptop-mockup {
+            width: 60%;
+            aspect-ratio: 16/10;
+            background: linear-gradient(135deg, #1a1f2e, #0f1419);
+            border-radius: var(--radius-md);
+        }
+        
+        .phone-mockup {
+            width: 30%;
+            aspect-ratio: 9/19;
+            background: linear-gradient(135deg, #1a1f2e, #0f1419);
+            border-radius: var(--radius-xl);
+            transform: translateY(20%);
+        }
+        
+        .trust-badges {
+            display: flex;
+            gap: var(--space-6);
+            margin-top: var(--space-8);
+            flex-wrap: wrap;
+        }
+        
+        .badge {
+            display: flex;
+            align-items: center;
+            gap: var(--space-2);
+            padding: var(--space-2) var(--space-4);
+            background: var(--surface-elevated);
+            border-radius: var(--radius-sm);
+            font-size: 0.875rem;
+            color: var(--text-secondary);
+        }
+        
+        .payment-logos {
+            display: flex;
+            gap: var(--space-4);
+            margin-top: var(--space-6);
+            flex-wrap: wrap;
+        }
+        
+        .payment-logo {
+            width: 60px;
+            height: 40px;
+            background: var(--surface-elevated);
+            border-radius: var(--radius-sm);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.75rem;
+            color: var(--text-tertiary);
+        }
+        
+        .main-app {
+            display: none;
+            min-height: 100vh;
+            grid-template-areas:
+                "sidebar header"
+                "sidebar main";
+            grid-template-columns: 280px 1fr;
+            grid-template-rows: 70px 1fr;
+        }
+        
+        .main-app.active {
+            display: grid;
+        }
+        
         .sidebar {
             grid-area: sidebar;
-            background: var(--surface);
-            border-right: 1px solid var(--border);
-            padding: var(--space-lg);
-            overflow-y: auto;
+            background: var(--surface-dark);
+            border-right: 1px solid rgba(255, 255, 255, 0.05);
+            padding: var(--space-6);
+        }
+        
+        .sidebar-logo {
+            display: flex;
+            align-items: center;
+            gap: var(--space-3);
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin-bottom: var(--space-8);
         }
         
         .nav-menu {
             list-style: none;
-            display: flex;
-            flex-direction: column;
-            gap: var(--space-xs);
         }
         
         .nav-item {
-            display: block;
+            margin-bottom: var(--space-2);
         }
         
         .nav-link {
             display: flex;
             align-items: center;
-            gap: var(--space-md);
-            padding: var(--space-md) var(--space-lg);
-            border-radius: 12px;
+            gap: var(--space-3);
+            padding: var(--space-3) var(--space-4);
             color: var(--text-secondary);
             text-decoration: none;
+            border-radius: var(--radius-sm);
+            transition: var(--transition-fast);
             font-weight: 500;
-            transition: all 0.2s ease;
-            cursor: pointer;
         }
         
         .nav-link:hover,
         .nav-link.active {
-            background: var(--bg-secondary);
-            color: var(--primary);
+            background: var(--surface-elevated);
+            color: var(--neon-blue);
         }
         
-        .nav-icon {
-            width: 20px;
-            height: 20px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-        
-        /* Main Content */
-        .main {
-            grid-area: main;
-            padding: var(--space-xl);
-            overflow-y: auto;
-            background: var(--bg-primary);
-        }
-        
-        /* Right Sidebar */
-        .right-sidebar {
-            grid-area: rightbar;
-            padding: var(--space-xl);
-            background: var(--surface);
-            border-left: 1px solid var(--border);
-            overflow-y: auto;
-        }
-        
-        .ad-container {
-            margin-bottom: var(--space-lg);
-        }
-        
-        .ad-banner {
-            background: linear-gradient(135deg, var(--primary), var(--accent));
-            border-radius: var(--radius-lg);
-            padding: var(--space-lg);
-            color: white;
-            text-align: center;
-            cursor: pointer;
-            transition: transform 0.2s;
-        }
-        
-        .ad-banner:hover {
-            transform: translateY(-2px);
-        }
-        
-        .ad-banner.large {
-            min-height: 250px;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            gap: var(--space-md);
-        }
-        
-        .ad-banner.medium {
-            min-height: 150px;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            gap: var(--space-sm);
-        }
-        
-        .ad-banner.small {
-            min-height: 100px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-        
-        .ad-title {
-            font-size: 1.2rem;
-            font-weight: 700;
-            margin-bottom: var(--space-sm);
-        }
-        
-        .ad-description {
-            font-size: 0.9rem;
-            opacity: 0.9;
-        }
-        
-        .ad-cta {
-            background: white;
-            color: var(--primary);
-            padding: var(--space-sm) var(--space-lg);
-            border-radius: var(--radius-md);
-            font-weight: 600;
-            margin-top: var(--space-md);
-        }
-        
-        .info-widget {
-            background: var(--surface);
-            border: 1px solid var(--border);
-            border-radius: var(--radius-lg);
-            padding: var(--space-lg);
-            margin-bottom: var(--space-lg);
-        }
-        
-        .info-widget-title {
-            font-size: 1rem;
-            font-weight: 600;
-            margin-bottom: var(--space-md);
-            color: var(--text-primary);
-        }
-        
-        .info-widget-content {
-            font-size: 0.9rem;
-            color: var(--text-secondary);
-            line-height: 1.6;
-        }
-        
-        .page-header {
+        .app-header {
+            grid-area: header;
+            background: var(--surface-dark);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+            padding: 0 var(--space-6);
             display: flex;
             align-items: center;
             justify-content: space-between;
-            margin-bottom: var(--space-2xl);
         }
         
-        .page-title {
+        .search-bar {
+            flex: 1;
+            max-width: 400px;
+        }
+        
+        .search-input {
+            width: 100%;
+            padding: var(--space-3) var(--space-4);
+            background: var(--surface-elevated);
+            border: none;
+            border-radius: var(--radius-sm);
+            color: var(--text-primary);
+        }
+        
+        .header-actions {
+            display: flex;
+            align-items: center;
+            gap: var(--space-4);
+        }
+        
+        .header-btn {
+            width: 40px;
+            height: 40px;
+            background: var(--surface-elevated);
+            border: none;
+            border-radius: var(--radius-sm);
+            color: var(--text-secondary);
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: var(--transition-fast);
+        }
+        
+        .header-btn:hover {
+            background: var(--surface-card);
+            color: var(--neon-blue);
+        }
+        
+        .main-content {
+            grid-area: main;
+            background: var(--surface-dark);
+            padding: var(--space-8);
+            overflow-y: auto;
+        }
+        
+        .dashboard-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: var(--space-6);
+            margin-bottom: var(--space-8);
+        }
+        
+        .stat-card {
+            background: var(--surface-card);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            border-radius: var(--radius-lg);
+            padding: var(--space-6);
+            transition: var(--transition-normal);
+        }
+        
+        .stat-card:hover {
+            border-color: var(--neon-blue);
+            box-shadow: var(--shadow-glow-blue);
+            transform: translateY(-4px);
+        }
+        
+        .stat-label {
+            font-size: 0.875rem;
+            color: var(--text-secondary);
+            margin-bottom: var(--space-2);
+        }
+        
+        .stat-value {
             font-size: 2rem;
             font-weight: 700;
             color: var(--text-primary);
+            font-variant-numeric: tabular-nums;
         }
         
-        .page-subtitle {
-            color: var(--text-secondary);
-            margin-top: var(--space-xs);
-        }
-        
-        /* Dashboard Grid */
-        .dashboard-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-            gap: var(--space-xl);
-            margin-bottom: var(--space-xl);
-        }
-        
-        .dashboard-section {
-            display: grid;
-            gap: var(--space-lg);
-        }
-        
-        /* Cards */
-        .card {
-            background: var(--surface);
-            border: 1px solid var(--border);
-            border-radius: 16px;
-            padding: var(--space-xl);
-            box-shadow: var(--shadow-sm);
-            transition: all 0.2s ease;
-        }
-        
-        .card:hover {
-            border-color: var(--border-hover);
-            box-shadow: var(--shadow-md);
-        }
-        
-        .card-header {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            margin-bottom: var(--space-lg);
-        }
-        
-        .card-title {
-            font-size: 1.25rem;
-            font-weight: 600;
-            color: var(--text-primary);
-        }
-        
-        .card-subtitle {
-            color: var(--text-secondary);
+        .stat-change {
             font-size: 0.875rem;
-            margin-top: var(--space-xs);
+            margin-top: var(--space-2);
         }
         
-        /* Balance Card */
-        .balance-card {
-            background: linear-gradient(135deg, var(--primary), var(--accent));
-            color: var(--text-inverse);
-            border: none;
-        }
-        
-        .balance-amount {
-            font-size: 3rem;
-            font-weight: 700;
-            margin: var(--space-lg) 0;
-        }
-        
-        .balance-change {
-            display: flex;
-            align-items: center;
-            gap: var(--space-sm);
-            font-size: 0.875rem;
-            opacity: 0.9;
-        }
-        
-        .change-positive {
+        .stat-change.positive {
             color: var(--success);
         }
         
-        .change-negative {
+        .stat-change.negative {
             color: var(--error);
         }
         
-        /* Portfolio Grid */
-        .portfolio-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
-            gap: var(--space-lg);
+        .asset-table {
+            background: var(--surface-card);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            border-radius: var(--radius-lg);
+            overflow: hidden;
         }
         
-        .asset-card {
+        .table-header {
+            padding: var(--space-6);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
             display: flex;
+            justify-content: space-between;
             align-items: center;
-            gap: var(--space-md);
-            padding: var(--space-lg);
         }
         
-        .asset-icon {
-            width: 48px;
-            height: 48px;
-            border-radius: 12px;
-            background: linear-gradient(135deg, var(--primary), var(--accent));
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: white;
-            font-weight: 600;
+        .table-title {
             font-size: 1.25rem;
+            font-weight: 700;
+        }
+        
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        
+        thead tr {
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+        }
+        
+        th {
+            padding: var(--space-4);
+            text-align: left;
+            font-size: 0.875rem;
+            font-weight: 600;
+            color: var(--text-secondary);
+        }
+        
+        tbody tr {
+            border-bottom: 1px solid rgba(255, 255, 255, 0.02);
+            transition: var(--transition-fast);
+        }
+        
+        tbody tr:hover {
+            background: rgba(0, 212, 255, 0.02);
+        }
+        
+        td {
+            padding: var(--space-4);
+            font-variant-numeric: tabular-nums;
         }
         
         .asset-info {
-            flex: 1;
+            display: flex;
+            align-items: center;
+            gap: var(--space-3);
+        }
+        
+        .asset-icon {
+            width: 32px;
+            height: 32px;
+            background: var(--surface-elevated);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
         }
         
         .asset-name {
             font-weight: 600;
-            color: var(--text-primary);
         }
         
         .asset-symbol {
@@ -493,2657 +703,523 @@
             font-size: 0.875rem;
         }
         
-        .asset-balance {
-            font-weight: 600;
-            color: var(--text-primary);
-            margin-top: var(--space-xs);
-        }
-        
-        .asset-value {
-            color: var(--text-secondary);
-            font-size: 0.875rem;
-        }
-        
-        /* Chart placeholder */
-        .chart-container {
-            height: 200px;
-            background: var(--bg-secondary);
-            border-radius: 12px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: var(--text-secondary);
-            position: relative;
-            overflow: hidden;
-        }
-        
-        .chart-line {
-            position: absolute;
-            bottom: 20px;
-            left: 20px;
-            right: 20px;
-            height: 2px;
-            background: linear-gradient(to right, var(--primary), var(--accent));
-            border-radius: 1px;
-        }
-        
-        .chart-line::before {
-            content: '';
-            position: absolute;
-            top: -10px;
-            right: 0;
-            width: 20px;
-            height: 20px;
-            background: var(--accent);
-            border-radius: 50%;
-            opacity: 0.8;
-        }
-        
-        /* Transactions */
-        .transaction-list {
-            display: flex;
-            flex-direction: column;
-            gap: var(--space-sm);
-        }
-        
-        .transaction-item {
-            display: flex;
-            align-items: center;
-            justify-content: between;
-            padding: var(--space-md);
-            border-radius: 12px;
-            transition: background 0.2s ease;
-            cursor: pointer;
-        }
-        
-        .transaction-item:hover {
-            background: var(--bg-secondary);
-        }
-        
-        .transaction-icon {
-            width: 40px;
-            height: 40px;
-            border-radius: 10px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            margin-right: var(--space-md);
-            font-size: 1.125rem;
-        }
-        
-        .transaction-buy {
-            background: rgba(16, 185, 129, 0.1);
-            color: var(--success);
-        }
-        
-        .transaction-sell {
-            background: rgba(239, 68, 68, 0.1);
-            color: var(--error);
-        }
-        
-        .transaction-details {
-            flex: 1;
-        }
-        
-        .transaction-title {
-            font-weight: 600;
-            color: var(--text-primary);
-        }
-        
-        .transaction-subtitle {
-            color: var(--text-secondary);
-            font-size: 0.875rem;
-        }
-        
-        .transaction-amount {
-            text-align: right;
-        }
-        
-        .transaction-value {
-            font-weight: 600;
-            color: var(--text-primary);
-        }
-        
-        .transaction-date {
-            color: var(--text-secondary);
-            font-size: 0.875rem;
-        }
-        
-        /* Buttons */
-        .btn {
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            gap: var(--space-sm);
-            padding: var(--space-md) var(--space-lg);
-            border-radius: 12px;
-            font-weight: 600;
-            text-decoration: none;
-            transition: all 0.2s ease;
-            cursor: pointer;
-            border: none;
-            font-size: 0.875rem;
-        }
-        
-        .btn-primary {
-            background: var(--primary);
-            color: var(--text-inverse);
-        }
-        
-        .btn-primary:hover {
-            background: var(--primary-dark);
-            transform: translateY(-1px);
-            box-shadow: var(--shadow-lg);
-        }
-        
-        .btn-secondary {
-            background: var(--bg-secondary);
-            color: var(--text-primary);
-            border: 1px solid var(--border);
-        }
-        
-        .btn-secondary:hover {
-            background: var(--surface);
-            border-color: var(--border-hover);
-        }
-        
-        /* Action Buttons */
-        .action-buttons {
-            display: flex;
-            gap: var(--space-md);
-            margin-top: var(--space-lg);
-        }
-        
-        /* Responsive */
-        @media (max-width: 1200px) {
-            .app {
-                grid-template-columns: 240px 1fr;
-            }
-            
-            :root {
-                --sidebar-width: 240px;
-            }
-        }
-        
-        @media (max-width: 768px) {
-            .app {
-                grid-template-areas: 
-                    "header"
-                    "main";
-                grid-template-columns: 1fr;
-                grid-template-rows: var(--header-height) 1fr;
-            }
-            
-            .sidebar {
-                display: none;
-            }
-            
-            .main {
-                padding: var(--space-lg);
-            }
-            
-            .dashboard-grid {
-                grid-template-columns: 1fr;
-            }
-            
-            .portfolio-grid {
-                grid-template-columns: 1fr;
-            }
-        }
-        
-        /* Utilities */
-        .text-success { color: var(--success); }
-        .text-error { color: var(--error); }
-        .text-warning { color: var(--warning); }
-        .text-info { color: var(--info); }
-        
-        .bg-success { background: var(--success); }
-        .bg-error { background: var(--error); }
-        .bg-warning { background: var(--warning); }
-        .bg-info { background: var(--info); }
-        
-        .hidden { display: none; }
-        .visible { display: block; }
-        
-        /* Loading animation */
-        .loading {
-            animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
-        }
-        
-        @keyframes pulse {
-            0%, 100% {
-                opacity: 1;
-            }
-            50% {
-                opacity: .5;
-            }
-        }
-        
-        /* Dark mode support */
-        @media (prefers-color-scheme: dark) {
-            :root {
-                --bg-primary: #0f172a;
-                --bg-secondary: #1e293b;
-                --surface: #334155;
-                --border: rgba(148, 163, 184, 0.1);
-                --text-primary: #f1f5f9;
-                --text-secondary: #cbd5e1;
-                --text-tertiary: #64748b;
-            }
-        }
-    
-        
-        /* ===== ADDED FROM MOBILE: LOGIN & AUTH ===== */
-        /* ===== LOGIN SCREEN ===== */
-        .login-screen {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: var(--bg-primary);
-            z-index: 1000;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            padding: var(--space-lg);
-        }
-
-        .login-screen.hidden {
-            display: none;
-        }
-
-        .login-logo {
+        .sparkline {
             width: 80px;
-            height: 80px;
-            background: linear-gradient(135deg, var(--primary) 0%, var(--cat-primary) 100%);
-            border-radius: var(--radius-xl);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            margin-bottom: var(--space-lg);
-            box-shadow: var(--shadow-glow);
+            height: 30px;
         }
-
-        .login-logo svg {
-            width: 48px;
-            height: 48px;
-            color: white;
-        }
-
-        .login-title {
-            font-size: 28px;
-            font-weight: 700;
-            margin-bottom: var(--space-xs);
-            background: linear-gradient(135deg, var(--primary) 0%, var(--cat-primary) 100%);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-        }
-
-        .login-subtitle {
-            color: var(--text-secondary);
-            font-size: 14px;
-            margin-bottom: var(--space-xl);
-        }
-
-        .login-form {
-            width: 100%;
-            max-width: 340px;
-        }
-
-        .form-group {
-            margin-bottom: var(--space-md);
-        }
-
-        .form-label {
-            display: block;
-            font-size: 13px;
-            font-weight: 600;
-            color: var(--text-secondary);
-            margin-bottom: var(--space-xs);
-        }
-
-        .form-input {
-            width: 100%;
-            padding: 14px 16px;
-            background: var(--bg-tertiary);
-            border: 1px solid var(--border-medium);
-            border-radius: var(--radius-md);
-            color: var(--text-primary);
-            font-size: 15px;
-            transition: var(--transition);
-        }
-
-        .form-input:focus {
-            outline: none;
-            border-color: var(--primary);
-            box-shadow: 0 0 0 3px var(--primary-bg);
-        }
-
-        .form-input::placeholder {
-            color: var(--text-muted);
-        }
-
-        .login-btn {
-            width: 100%;
-            padding: 16px;
-            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
-            border: none;
-            border-radius: var(--radius-md);
-            color: white;
-            font-size: 16px;
-            font-weight: 600;
-            cursor: pointer;
-            transition: var(--transition);
-            margin-top: var(--space-sm);
-        }
-
-        .login-btn:hover {
-            transform: translateY(-2px);
-            box-shadow: var(--shadow-lg);
-        }
-
-        .login-btn:active {
-            transform: translateY(0);
-        }
-
-        .login-demo-hint {
-            margin-top: var(--space-lg);
-            padding: var(--space-md);
-            background: var(--primary-bg);
-            border-radius: var(--radius-md);
-            text-align: center;
-        }
-
-        .login-demo-hint p {
-            font-size: 13px;
-            color: var(--text-secondary);
-            margin-bottom: var(--space-xs);
-        }
-
-        .login-demo-hint strong {
-            color: var(--primary);
-        }
-
-        .login-tabs {
-            display: flex;
-            margin-bottom: var(--space-lg);
-            background: var(--bg-tertiary);
-            border-radius: var(--radius-full);
-            padding: 4px;
-        }
-
-        .login-tab {
-            flex: 1;
-            padding: 10px 20px;
-            border: none;
-            background: transparent;
-            border-radius: var(--radius-full);
-            font-size: 14px;
-            font-weight: 600;
-            color: var(--text-tertiary);
-            cursor: pointer;
-            transition: var(--transition);
-        }
-
-        .login-tab.active {
-            background: var(--bg-card);
-            color: var(--text-primary);
-            box-shadow: var(--shadow-sm);
-        }
-
-        .login-error {
-            background: var(--error-light);
-            color: var(--error);
-            padding: var(--space-sm) var(--space-md);
-            border-radius: var(--radius-sm);
-            font-size: 13px;
-            margin-bottom: var(--space-md);
-            display: none;
-        }
-
-        .login-error.show {
-            display: block;
-        }
-
-        /* ===== ONBOARDING MODAL ===== */
-        .onboarding-overlay {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0, 0, 0, 0.8);
-            backdrop-filter: blur(10px);
-            z-index: 500;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            padding: var(--space-lg);
-        }
-
-        .onboarding-overlay.hidden {
-            display: none;
-        }
-
-        .onboarding-modal {
-            background: var(--bg-card);
-            border-radius: var(--radius-xl);
-            padding: var(--space-xl);
-            max-width: 400px;
-            width: 100%;
-            text-align: center;
-            border: 1px solid var(--border-light);
-        }
-
-        .onboarding-icon {
-            font-size: 48px;
-            margin-bottom: var(--space-md);
-        }
-
-        .onboarding-title {
-            font-size: 22px;
-            font-weight: 700;
-            margin-bottom: var(--space-sm);
-        }
-
-        .onboarding-text {
-            color: var(--text-secondary);
-            font-size: 14px;
-            margin-bottom: var(--space-lg);
-            line-height: 1.6;
-        }
-
-        .onboarding-steps {
-            display: flex;
-            justify-content: center;
-            gap: var(--space-sm);
-            margin-bottom: var(--space-lg);
-        }
-
-        .onboarding-step {
-            width: 8px;
-            height: 8px;
-            border-radius: 50%;
-            background: var(--border-medium);
-            transition: var(--transition);
-        }
-
-        .onboarding-step.active {
-            background: var(--primary);
-            width: 24px;
-            border-radius: var(--radius-full);
-        }
-
-        .onboarding-btn {
-            width: 100%;
-            padding: 14px;
-            background: var(--primary);
-            border: none;
-            border-radius: var(--radius-md);
-            color: white;
-            font-size: 15px;
-            font-weight: 600;
-            cursor: pointer;
-            transition: var(--transition);
-        }
-
-        .onboarding-btn:hover {
-            background: var(--primary-light);
-        }
-
-        .onboarding-skip {
-            margin-top: var(--space-md);
-            background: none;
-            border: none;
-            color: var(--text-tertiary);
-            font-size: 13px;
-            cursor: pointer;
-        }
-
-        .onboarding-skip:hover {
-            color: var(--text-secondary);
-        }
-
-        /* ===== APP CONTAINER ===== */
-        .app {
-            max-width: 430px;
-            margin: 0 auto;
-            min-height: 100vh;
-            background: var(--bg-primary);
-            position: relative;
-        }
-
-        .app.hidden {
-            display: none;
-        }
-
-        /* ===== HEADER ===== */
-        .header {
-            position: fixed;
-            top: 0;
-            left: 50%;
-            transform: translateX(-50%);
-            width: 100%;
-            max-width: 430px;
-            height: 60px;
-            background: rgba(10, 10, 15, 0.95);
-            backdrop-filter: blur(20px);
-            -webkit-backdrop-filter: blur(20px);
-            border-bottom: 1px solid var(--border-light);
-            z-index: 100;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            padding: 0 var(--space-md);
-        }
-
-        .light-theme .header {
-            background: rgba(255, 255, 255, 0.95);
-        }
-
-        .header-logo {
-            display: flex;
-            align-items: center;
-            gap: var(--space-sm);
-        }
-
-        .header-logo svg {
-            width: 28px;
-            height: 28px;
-            color: var(--primary);
-        }
-
-        .header-logo span {
-            font-size: 18px;
-            font-weight: 700;
-            background: linear-gradient(135deg, var(--primary) 0%, var(--cat-primary) 100%);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-        }
-
-        .header-actions {
-            display: flex;
-            align-items: center;
-            gap: var(--space-sm);
-        }
-
-        .header-btn {
-            width: 36px;
-            height: 36px;
-            border-radius: var(--radius-md);
-            background: var(--bg-tertiary);
-            border: 1px solid var(--border-light);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            cursor: pointer;
-            transition: var(--transition);
-            font-size: 16px;
-        }
-
-        .header-btn:hover {
-            background: var(--bg-elevated);
-            border-color: var(--border-medium);
-        }
-
-        .user-avatar {
-            width: 36px;
-            height: 36px;
-            border-radius: var(--radius-md);
-            background: linear-gradient(135deg, var(--cat-primary) 0%, var(--primary) 100%);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 13px;
-            font-weight: 700;
-            color: white;
-            cursor: pointer;
-        }
-
-        /* ===== NOTIFICATION
         
-        /* ===== ADDED FROM MOBILE: MODALS ===== */
-        
-        
-        /* ===== ADDED FROM MOBILE: NOTIFICATIONS ===== */
-        /* ===== NOTIFICATION CENTER ===== */
-        .notification-badge {
-            position: absolute;
-            top: -4px;
-            right: -4px;
-            width: 18px;
-            height: 18px;
-            background: var(--error);
-            border-radius: 50%;
-            font-size: 10px;
-            font-weight: 700;
-            color: white;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-
-        .notification-badge.hidden {
-            display: none;
-        }
-
-        .notification-panel {
-            position: fixed;
-            top: 60px;
-            right: 0;
-            width: 100%;
-            max-width: 430px;
-            max-height: 400px;
-            background: var(--bg-card);
-            border: 1px solid var(--border-light);
-            border-radius: 0 0 var(--radius-lg) var(--radius-lg);
-            z-index: 99;
-            overflow-y: auto;
-            box-shadow: var(--shadow-lg);
-            transform: translateY(-100%);
-            opacity: 0;
-            transition: var(--transition);
-            pointer-events: none;
-        }
-
-        .notification-panel.show {
-            transform: translateY(0);
-            opacity: 1;
-            pointer-events: auto;
-        }
-
-        .notification-header {
-            padding: var(--space-md);
-            border-bottom: 1px solid var(--border-light);
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        .notification-title {
-            font-size: 15px;
-            font-weight: 600;
-        }
-
-        .notification-clear {
-            font-size: 12px;
-            color: var(--primary);
-            background: none;
-            border: none;
-            cursor: pointer;
-        }
-
-        .notification-item {
-            padding: var(--space-md);
-            border-bottom: 1px solid var(--border-light);
-            display: flex;
-            align-items: flex-start;
-            gap: var(--space-sm);
-        }
-
-        .notification-item:last-child {
-            border-bottom: none;
-        }
-
-        .notification-icon {
-            width: 32px;
-            height: 32px;
-            border-radius: var(--radius-sm);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 14px;
-            flex-shrink: 0;
-        }
-
-        .notification-icon.success {
-            background: var(--success-light);
-        }
-
-        .notification-icon.cat {
-            background: var(--cat-bg);
-        }
-
-        .notification-icon.info {
-            background: var(--primary-bg);
-        }
-
-        .notification-content {
-            flex: 1;
-        }
-
-        .notification-message {
-            font-size: 13px;
-            color: var(--text-primary);
-            margin-bottom: 2px;
-        }
-
-        .notification-time {
-            font-size: 11px;
-            color: var(--text-tertiary);
-        }
-
-        /* ===== MAIN CONTENT ===== */
-        .main-content {
-            padding-top: 60px;
-            padding-bottom: 90px;
-            min-height: 100vh;
-        }
-
-        /* ===== SCREENS ===== */
-        .screen {
-            display: none;
-            padding: var(--space-md);
-            animation: fadeIn 0.2s ease;
-        }
-
-        .screen.active {
-            display: block;
-        }
-
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(8px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-
-        /* ===== CARDS ===== */
-        .card {
-            background: var(--bg-card);
-            border-radius: var(--radius-lg);
-            border: 1px solid var(--border-light);
-            padding: var(--space-lg);
-            margin-bottom: var(--space-md);
-            transition: var(--transition);
-        }
-
-        .card:hover {
-            border-color: var(--border-medium);
-        }
-
-        /* ===== BALANCE CARD ===== */
-        .balance-card {
-            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
-            color: white;
-            border: none;
-            position: relative;
-            overflow: hidden;
-        }
-
-        .balance-card::before {
-            content: '';
-            position: absolute;
-            top: -50%;
-            right: -30%;
-            width: 200px;
-            height: 200px;
-            background: rgba(255, 255, 255, 0.1);
-            border-radius: 50%;
-        }
-
-        .balance-label {
-            font-size: 13px;
-            opacity: 0.85;
-            margin-bottom: var(--space-xs);
-            font-weight: 500;
-        }
-
-        .balance-amount {
-            font-size: 32px;
-            font-weight: 700;
-            letter-spacing: -1px;
-            margin-bottom: var(--space-sm);
-            font-family: 'SF Mono', Monaco, monospace;
-        }
-
-        .balance-btc {
-            font-size: 14px;
-            opacity: 0.9;
-            font-family: 'SF Mono', Monaco, monospace;
-            margin-bottom: var(--space-sm);
-        }
-
-        .balance-change {
-            display: inline-flex;
-            align-items: center;
-            gap: 4px;
-            font-size: 13px;
-            padding: 4px 10px;
-            background: rgba(255, 255, 255, 0.2);
-            border-radius: var(--radius-full);
-            font-weight: 500;
-        }
-
-        .balance-change.positive {
-            background: rgba(16, 185, 129, 0.3);
-        }
-
-        .balance-change.negative {
-            background: rgba(239, 68, 68, 0.3);
-        }
-
-        /* ===== CAT CARD
-        
-        /* ===== ADDED FROM MOBILE: CAT SYSTEM ===== */
-        /* ===== CAT CARD ===== */
-        .cat-card {
-            background: linear-gradient(135deg, var(--cat-primary) 0%, #7c3aed 100%);
-            color: white;
-            border: none;
-            position: relative;
-            overflow: hidden;
-        }
-
-        .cat-card::before {
-            content: '';
-            position: absolute;
-            top: -30%;
-            right: -20%;
-            width: 150px;
-            height: 150px;
-            background: rgba(255, 255, 255, 0.1);
-            border-radius: 50%;
-        }
-
-        .cat-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: flex-start;
-            margin-bottom: var(--space-md);
-        }
-
-        .cat-badge {
-            display: flex;
-            align-items: center;
-            gap: var(--space-xs);
-            padding: 4px 10px;
-            background: rgba(255, 255, 255, 0.2);
-            border-radius: var(--radius-full);
-            font-size: 11px;
-            font-weight: 600;
-        }
-
-        .cat-badge .pulse {
-            width: 6px;
-            height: 6px;
-            background: #10b981;
-            border-radius: 50%;
-            animation: pulse 2s infinite;
-        }
-
-        @keyframes pulse {
-            0%, 100% { opacity: 1; }
-            50% { opacity: 0.5; }
-        }
-
-        .cat-title {
-            font-size: 13px;
-            opacity: 0.85;
-        }
-
-        .cat-balance {
-            font-size: 26px;
-            font-weight: 700;
-            font-family: 'SF Mono', Monaco, monospace;
-            margin-bottom: var(--space-sm);
-        }
-
-        .cat-status {
-            font-size: 12px;
-            opacity: 0.8;
-        }
-
-        /* ===== CAT ACTIVITY
-        
-        /* ===== ADDED: LOADER & OVERLAY ===== */
-        .loader-overlay {
-            position: fixed;
-            inset: 0;
-            background: rgba(0, 0, 0, 0.7);
-            display: none;
-            align-items: center;
-            justify-content: center;
-            z-index: 10000;
-        }
-        .loader-overlay.show {
-            display: flex;
-        }
-        .loader {
-            width: 48px;
-            height: 48px;
-            border: 4px solid rgba(255, 255, 255, 0.1);
-            border-top-color: var(--primary);
-            border-radius: 50%;
-            animation: spin 0.8s linear infinite;
-        }
-        @keyframes spin {
-            to { transform: rotate(360deg); }
+        .hidden {
+            display: none !important;
         }
     </style>
 </head>
 <body>
-    
-    <!-- LOGIN SCREEN -->
-    <div id="login-screen" class="login-screen">
-        <!-- Login ads banner (top) -->
-        <div class="login-ad-banner" style="margin-bottom: 2rem;">
-            <div class="ad-banner medium" style="background: linear-gradient(135deg, #10b981, #059669);">
-                <div class="ad-title">🚀 Start Trading Crypto Today!</div>
-                <div class="ad-description">Join thousands of traders. Get €50 bonus! (Demo)</div>
-            </div>
-        </div>
-        
-        <div class="login-logo">
-            <svg viewBox="0 0 24 24" fill="currentColor">
-                <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8zm.31-8.86c-1.77-.45-2.34-.94-2.34-1.67 0-.84.79-1.43 2.1-1.43 1.38 0 1.9.66 1.94 1.64h1.71c-.05-1.34-.87-2.57-2.49-2.97V5H10.9v1.69c-1.51.32-2.72 1.3-2.72 2.81 0 1.79 1.49 2.69 3.66 3.21 1.95.46 2.34 1.15 2.34 1.87 0 .53-.39 1.39-2.1 1.39-1.6 0-2.23-.72-2.32-1.64H8.04c.1 1.7 1.36 2.66 2.86 2.97V19h2.34v-1.67c1.52-.29 2.72-1.16 2.73-2.77-.01-2.2-1.9-2.96-3.66-3.42z"/>
-            </svg>
-        </div>
-        <h1 class="login-title">CryptoVault</h1>
-        <p class="login-subtitle">Turvallinen krypto lompakko + C-A-T automaattikauppa</p>
-        
-        <div class="login-tabs">
-            <button class="login-tab active" onclick="switchLoginTab('login')">Kirjaudu</button>
-            <button class="login-tab" onclick="switchLoginTab('register')">Rekisteröidy</button>
-        </div>
-        
-        <form class="login-form" id="login-form" onsubmit="handleLogin(event)">
-            <div class="login-error" id="login-error"></div>
-            <div class="form-group">
-                <label class="form-label" for="username">Käyttäjänimi</label>
-                <input type="text" id="username" class="form-input" placeholder="Syötä käyttäjänimi" required autocomplete="username">
-            </div>
-            <div class="form-group">
-                <label class="form-label" for="password">Salasana</label>
-                <input type="password" id="password" class="form-input" placeholder="Syötä salasana" required autocomplete="current-password">
-            </div>
-            <button type="submit" class="login-btn">Kirjaudu sisään</button>
-        </form>
-        
-        <form class="login-form hidden" id="register-form" onsubmit="handleRegister(event)">
-            <div class="login-error" id="register-error"></div>
-            <div class="form-group">
-                <label class="form-label" for="reg-username">Käyttäjänimi</label>
-                <input type="text" id="reg-username" class="form-input" placeholder="Valitse käyttäjänimi" required autocomplete="username">
-            </div>
-            <div class="form-group">
-                <label class="form-label" for="reg-email">Sähköposti</label>
-                <input type="email" id="reg-email" class="form-input" placeholder="sinun@email.fi" required autocomplete="email">
-            </div>
-            <div class="form-group">
-                <label class="form-label" for="reg-password">Salasana</label>
-                <input type="password" id="reg-password" class="form-input" placeholder="Valitse salasana" required autocomplete="new-password">
-            </div>
-            <button type="submit" class="login-btn">Rekisteröidy</button>
-        </form>
-        
-        <div class="login-demo-hint">
-            <p>Demo-käyttäjä:</p>
-            <p><strong>demo</strong> / <strong>demo123</strong></p>
-        </div>
-        
-        <!-- Login ads banner (bottom) -->
-        <div class="login-ad-banner" style="margin-top: 2rem;">
-            <div class="ad-banner small" style="background: linear-gradient(135deg, #f59e0b, #d97706);">
-                <div style="font-size: 0.9rem; font-weight: 600;">💰 Limited Offer: 0% Trading Fees! (Demo)</div>
-            </div>
-        </div>
-    </div>
-
-    <!-- ONBOARDING
-    
-    <!-- ONBOARDING -->
-    <div id="onboarding-overlay" class="onboarding-overlay hidden">
-        <div class="onboarding-modal">
-            <div class="onboarding-icon" id="onboarding-icon">🚀</div>
-            <h2 class="onboarding-title" id="onboarding-title">Tervetuloa CryptoVaultiin!</h2>
-            <p class="onboarding-text" id="onboarding-text">Tämä on demo-versio ammattimaisesta krypto lompakosta C-A-T automaattikaupankäynnillä.</p>
-            <div class="onboarding-steps">
-                <div class="onboarding-step active"></div>
-                <div class="onboarding-step"></div>
-                <div class="onboarding-step"></div>
-            </div>
-            <button class="onboarding-btn" onclick="nextOnboardingStep()">Seuraava</button>
-            <button class="onboarding-skip" onclick="skipOnboarding()">Ohita esittely</button>
-        </div>
-    </div>
-
-    <!-- NOTIFICATION
-    
-    <!-- NOTIFICATION PANEL -->
-    <div id="notification-panel" class="notification-panel">
-        <div class="notification-header">
-            <span class="notification-title">Ilmoitukset</span>
-            <button class="notification-clear" onclick="clearNotifications()">Tyhjennä</button>
-        </div>
-        <div id="notification-list"></div>
-    </div>
-
-    <!-- TOAST
-    
-    <!-- LOADER -->
-    <div id="loader-overlay" class="loader-overlay">
-        <div class="loader"></div>
-    </div>
-    
-    <!-- MODALS -->
-    <div id="modal-send" class="modal-overlay" onclick="closeModalOnOverlay(event)">
-        <div class="modal">
-            <div class="modal-header">
-                <h3 class="modal-title">Lähetä BTC</h3>
-                <button class="modal-close" onclick="closeModal('send')">✕</button>
-            </div>
-            <div class="modal-body">
-                <div class="modal-form-group">
-                    <label class="modal-label">Vastaanottajan osoite</label>
-                    <input type="text" class="modal-input" id="send-address" placeholder="bc1q..." style="font-size: 14px;">
-                </div>
-                <div class="modal-form-group">
-                    <label class="modal-label">Määrä (BTC)</label>
-                    <input type="number" class="modal-input" id="send-amount" placeholder="0.00000000" step="0.00000001" oninput="updateSendPreview()">
-                    <div class="modal-input-hint">Käytettävissä: <span id="send-available">0.52341234</span> BTC</div>
-                </div>
-                <div class="modal-preview">
-                    <div class="modal-preview-row">
-                        <span class="modal-preview-label">Verkkomaksu (arvio)</span>
-                        <span class="modal-preview-value" id="send-fee">0.00001500 BTC</span>
-                    </div>
-                    <div class="modal-preview-row">
-                        <span class="modal-preview-label">Yhteensä</span>
-                        <span class="modal-preview-value highlight" id="send-total">0.00000000 BTC</span>
-                    </div>
-                </div>
-            </div>
-            <div class="modal-footer">
-                <button class="btn-secondary" onclick="closeModal('send')">Peruuta</button>
-                <button class="btn-primary" onclick="confirmSend()">Vahvista lähetys</button>
-            </div>
-        </div>
-    </div>
-
-    <!-- Receive Modal
-    <div id="modal-receive" class="modal-overlay" onclick="closeModalOnOverlay(event)">
-        <div class="modal">
-            <div class="modal-header">
-                <h3 class="modal-title">Vastaanota BTC</h3>
-                <button class="modal-close" onclick="closeModal('receive')">✕</button>
-            </div>
-            <div class="modal-body">
-                <div style="text-align: center; margin-bottom: var(--space-lg);">
-                    <div style="width: 180px; height: 180px; background: white; border-radius: var(--radius-md); margin: 0 auto var(--space-md); display: flex; align-items: center; justify-content: center; font-size: 48px;">
-                        📱
-                    </div>
-                    <p style="color: var(--text-secondary); font-size: 13px;">Skannaa QR-koodi tai kopioi osoite</p>
-                </div>
-                <div class="modal-form-group">
-                    <label class="modal-label">Bitcoin-osoite</label>
-                    <div style="font-family: 'SF Mono', Monaco, monospace; font-size: 12px; word-break: break-all; background: var(--bg-tertiary); padding: var(--space-md); border-radius: var(--radius-sm); color: var(--text-secondary);">
-                        bc1qxy2kgdygjrsqtzq2n0yrf2493p83kkfjhx0wlh
-                    </div>
-                </div>
-            </div>
-            <div class="modal-footer">
-                <button class="btn-primary" onclick="copyAddress(); closeModal('receive');">📋 Kopioi osoite</button>
-            </div>
-        </div>
-    </div>
-
-    <!-- Buy Modal
-    <div id="modal-buy" class="modal-overlay" onclick="closeModalOnOverlay(event)">
-        <div class="modal">
-            <div class="modal-header">
-                <h3 class="modal-title">Osta BTC</h3>
-                <button class="modal-close" onclick="closeModal('buy')">✕</button>
-            </div>
-            <div class="modal-body">
-                <div class="modal-form-group">
-                    <label class="modal-label">Summa (EUR)</label>
-                    <input type="number" class="modal-input" id="buy-amount-eur" placeholder="100.00" oninput="updateBuyPreview()">
-                </div>
-                <div class="modal-preview">
-                    <div class="modal-preview-row">
-                        <span class="modal-preview-label">Markkinahinta</span>
-                        <span class="modal-preview-value" id="buy-price">89 000,00 €/BTC</span>
-                    </div>
-                    <div class="modal-preview-row">
-                        <span class="modal-preview-label">Palvelumaksu (1.5%)</span>
-                        <span class="modal-preview-value" id="buy-fee">0,00 €</span>
-                    </div>
-                    <div class="modal-preview-row">
-                        <span class="modal-preview-label">Saat noin</span>
-                        <span class="modal-preview-value highlight" id="buy-btc">0.00000000 BTC</span>
-                    </div>
-                </div>
-            </div>
-            <div class="modal-footer">
-                <button class="btn-secondary" onclick="closeModal('buy')">Peruuta</button>
-                <button class="btn-primary" onclick="confirmBuy()">Vahvista osto</button>
-            </div>
-        </div>
-    </div>
-
-    <!-- Sell Modal
-    <div id="modal-sell" class="modal-overlay" onclick="closeModalOnOverlay(event)">
-        <div class="modal">
-            <div class="modal-header">
-                <h3 class="modal-title">Myy BTC</h3>
-                <button class="modal-close" onclick="closeModal('sell')">✕</button>
-            </div>
-            <div class="modal-body">
-                <div class="modal-form-group">
-                    <label class="modal-label">Määrä (BTC)</label>
-                    <input type="number" class="modal-input" id="sell-amount" placeholder="0.00000000" step="0.00000001" oninput="updateSellPreview()">
-                    <div class="modal-input-hint">Käytettävissä: <span id="sell-available">0.52341234</span> BTC</div>
-                </div>
-                <div class="modal-preview">
-                    <div class="modal-preview-row">
-                        <span class="modal-preview-label">Markkinahinta</span>
-                        <span class="modal-preview-value" id="sell-price">89 000,00 €/BTC</span>
-                    </div>
-                    <div class="modal-preview-row">
-                        <span class="modal-preview-label">Palvelumaksu (1.5%)</span>
-                        <span class="modal-preview-value" id="sell-fee">0,00 €</span>
-                    </div>
-                    <div class="modal-preview-row">
-                        <span class="modal-preview-label">Saat noin</span>
-                        <span class="modal-preview-value highlight" id="sell-eur">0,00 €</span>
-                    </div>
-                </div>
-            </div>
-            <div class="modal-footer">
-                <button class="btn-secondary" onclick="closeModal('sell')">Peruuta</button>
-                <button class="btn-primary" onclick="confirmSell()">Vahvista myynti</button>
-            </div>
-        </div>
-    </div>
-
-    <!-- Swap Modal
-    <div id="modal-swap" class="modal-overlay" onclick="closeModalOnOverlay(event)">
-        <div class="modal">
-            <div class="modal-header">
-                <h3 class="modal-title">Vaihda krypto</h3>
-                <button class="modal-close" onclick="closeModal('swap')">✕</button>
-            </div>
-            <div class="modal-body">
-                <div class="modal-form-group">
-                    <label class="modal-label">Vaihdan (BTC)</label>
-                    <input type="number" class="modal-input" id="swap-from-amount" placeholder="0.00000000" step="0.00000001" oninput="updateSwapPreview()">
-                    <div class="modal-input-hint">Käytettävissä: <span id="swap-available">0.52341234</span> BTC</div>
-                </div>
-                <div style="text-align: center; margin: var(--space-md) 0;">
-                    <span style="font-size: 24px;">⇅</span>
-                </div>
-                <div class="modal-form-group">
-                    <label class="modal-label">Saan (ETH) - Demo</label>
-                    <input type="text" class="modal-input" id="swap-to-amount" placeholder="0.00000000" readonly style="background: var(--bg-elevated);">
-                </div>
-                <div class="modal-preview">
-                    <div class="modal-preview-row">
-                        <span class="modal-preview-label">Vaihtokurssi</span>
-                        <span class="modal-preview-value">1 BTC = 18.5 ETH</span>
-                    </div>
-                    <div class="modal-preview-row">
-                        <span class="modal-preview-label">Liukuma</span>
-                        <span class="modal-preview-value" id="swap-slippage">0.5%</span>
-                    </div>
-                    <div class="modal-preview-row">
-                        <span class="modal-preview-label">Verkkomaksu</span>
-                        <span class="modal-preview-value">0.00005 BTC</span>
-                    </div>
-                </div>
-            </div>
-            <div class="modal-footer">
-                <button class="btn-secondary" onclick="closeModal('swap')">Peruuta</button>
-                <button class="btn-primary" onclick="confirmSwap()">Vahvista vaihto</button>
-            </div>
-        </div>
-    </div>
-
-    <!-- Use CAT Modal
-    
-    
-    
-    
-    <div class="app">
-        <!-- Header -->
-        <header class="header">
-            <div class="header-left">
+    <!-- LANDING PAGE -->
+    <div class="landing-page" id="landingPage">
+        <!-- Left Side - Auth Panel -->
+        <div class="auth-side">
+            <div class="auth-container">
                 <div class="logo">
                     <div class="logo-icon">₿</div>
-                    <span>CryptoBank Desktop</span>
+                    <span>CryptoExchange</span>
+                </div>
+                
+                <div class="auth-tabs">
+                    <button class="auth-tab active" onclick="switchAuthTab('login')">Log In</button>
+                    <button class="auth-tab" onclick="switchAuthTab('signup')">Sign Up</button>
+                </div>
+                
+                <!-- Login Content -->
+                <div class="auth-content" id="loginContent">
+                    <div class="login-method-tabs">
+                        <button class="login-method-tab active" onclick="switchLoginMethod('qr')">QR Code</button>
+                        <button class="login-method-tab" onclick="switchLoginMethod('passkey')">Passkey</button>
+                        <button class="login-method-tab" onclick="switchLoginMethod('email')">Email</button>
+                    </div>
+                    
+                    <!-- QR Code Login -->
+                    <div class="login-method-content active" id="qrMethod">
+                        <div class="qr-login">
+                            <div class="qr-code-container">
+                                <div style="font-size: 3rem;">📱</div>
+                            </div>
+                            <p style="color: var(--text-secondary); margin-bottom: var(--space-6);">
+                                Scan with mobile app to login instantly
+                            </p>
+                            <div class="qr-steps">
+                                <div class="qr-step">
+                                    <span class="qr-step-number">1</span>
+                                    <span>Open CryptoExchange mobile app</span>
+                                </div>
+                                <div class="qr-step">
+                                    <span class="qr-step-number">2</span>
+                                    <span>Tap "Scan QR" in settings</span>
+                                </div>
+                                <div class="qr-step">
+                                    <span class="qr-step-number">3</span>
+                                    <span>Login instantly and securely</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Passkey Login -->
+                    <div class="login-method-content" id="passkeyMethod">
+                        <div style="text-align: center; padding: var(--space-8);">
+                            <div style="font-size: 4rem; margin-bottom: var(--space-4);">🔐</div>
+                            <h3 style="margin-bottom: var(--space-3);">Login with Passkey</h3>
+                            <p style="color: var(--text-secondary); margin-bottom: var(--space-6);">
+                                Use your biometric authentication or security key
+                            </p>
+                            <button class="btn-primary" onclick="demoLogin()">Use Passkey (Demo)</button>
+                        </div>
+                    </div>
+                    
+                    <!-- Email Login -->
+                    <div class="login-method-content" id="emailMethod">
+                        <form onsubmit="return handleLogin(event)">
+                            <div class="form-group">
+                                <label class="form-label">Email</label>
+                                <input type="email" class="form-input" placeholder="your@email.com" value="demo@cryptoexchange.com">
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">Password</label>
+                                <input type="password" class="form-input" placeholder="••••••••" value="demo123">
+                            </div>
+                            <div class="form-checkbox">
+                                <input type="checkbox" id="remember">
+                                <label for="remember">Remember me</label>
+                            </div>
+                            <button type="submit" class="btn-primary">Log In</button>
+                            <div style="text-align: center; margin-top: var(--space-4);">
+                                <a href="#" style="color: var(--neon-blue); font-size: 0.875rem;">Forgot password?</a>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+                
+                <!-- Sign Up Content -->
+                <div class="auth-content hidden" id="signupContent">
+                    <form onsubmit="return handleSignup(event)">
+                        <div class="form-group">
+                            <label class="form-label">Full Name</label>
+                            <input type="text" class="form-input" placeholder="John Doe" required>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Email</label>
+                            <input type="email" class="form-input" placeholder="your@email.com" required>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Password</label>
+                            <input type="password" class="form-input" placeholder="••••••••" required>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Confirm Password</label>
+                            <input type="password" class="form-input" placeholder="••••••••" required>
+                        </div>
+                        <div class="form-checkbox">
+                            <input type="checkbox" id="terms" required>
+                            <label for="terms">I agree to Terms & Conditions</label>
+                        </div>
+                        <div class="form-checkbox">
+                            <input type="checkbox" id="marketing">
+                            <label for="marketing">Send me marketing updates</label>
+                        </div>
+                        <button type="submit" class="btn-primary">Create Account</button>
+                    </form>
                 </div>
             </div>
-            <div class="header-right">
-                <div class="demo-badge">DEMO</div>
-                <div class="user-profile">
-                    <div class="user-avatar">JD</div>
-                    <span>John Doe</span>
+        </div>
+        
+        <!-- Right Side - Marketing Hero -->
+        <div class="hero-side">
+            <div class="hero-content">
+                <h1 class="hero-headline">Next-generation crypto trading platform</h1>
+                <p class="hero-subheadline">
+                    Trade Bitcoin, Ethereum and 50+ crypto assets with institutional-grade tools.
+                </p>
+                
+                <div class="hero-metrics">
+                    <div class="metric">
+                        <span class="metric-value">120M+</span>
+                        <span class="metric-label">Users</span>
+                    </div>
+                    <div class="metric">
+                        <span class="metric-value">€900B+</span>
+                        <span class="metric-label">Trading Volume</span>
+                    </div>
+                    <div class="metric">
+                        <span class="metric-value">190+</span>
+                        <span class="metric-label">Countries</span>
+                    </div>
+                    <div class="metric">
+                        <span class="metric-value">99.99%</span>
+                        <span class="metric-label">Uptime</span>
+                    </div>
                 </div>
+                
+                <div class="hero-cta">
+                    <button class="btn-hero btn-hero-primary" onclick="demoLogin()">Start Trading</button>
+                    <button class="btn-hero btn-hero-secondary" onclick="demoLogin()">Try Demo</button>
+                </div>
+                
+                <div class="hero-visuals">
+                    <div class="device-mockup laptop-mockup"></div>
+                    <div class="device-mockup phone-mockup"></div>
+                </div>
+                
+                <div class="trust-badges">
+                    <div class="badge">🔒 SOC2 Certified</div>
+                    <div class="badge">❄️ Cold Storage</div>
+                    <div class="badge">⚡ Instant Withdrawals</div>
+                    <div class="badge">✅ Regulated</div>
+                </div>
+                
+                <div class="payment-logos">
+                    <div class="payment-logo">VISA</div>
+                    <div class="payment-logo">MC</div>
+                    <div class="payment-logo">🍎Pay</div>
+                    <div class="payment-logo">GPay</div>
+                    <div class="payment-logo">PayPal</div>
+                    <div class="payment-logo">Skrill</div>
+                    <div class="payment-logo">Trustly</div>
+                </div>
+                
+                <div style="display: flex; gap: var(--space-4); margin-top: var(--space-6);">
+                    <div style="padding: var(--space-3) var(--space-6); background: black; border-radius: var(--radius-sm); font-size: 0.875rem;">
+                        📱 App Store
+                    </div>
+                    <div style="padding: var(--space-3) var(--space-6); background: black; border-radius: var(--radius-sm); font-size: 0.875rem;">
+                        🤖 Google Play
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- MAIN APPLICATION (Hidden by default) -->
+    <div class="main-app" id="mainApp">
+        <!-- Sidebar -->
+        <aside class="sidebar">
+            <div class="sidebar-logo">
+                <div class="logo-icon" style="width: 36px; height: 36px; font-size: 1.25rem;">₿</div>
+                <span>CryptoExchange</span>
+            </div>
+            
+            <nav>
+                <ul class="nav-menu">
+                    <li class="nav-item">
+                        <a href="#" class="nav-link active">
+                            <span>🏠</span>
+                            <span>Dashboard</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="#" class="nav-link">
+                            <span>📈</span>
+                            <span>Markets</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="#" class="nav-link">
+                            <span>💼</span>
+                            <span>Portfolio</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="#" class="nav-link">
+                            <span>💱</span>
+                            <span>Trade</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="#" class="nav-link">
+                            <span>💰</span>
+                            <span>Earn</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="#" class="nav-link">
+                            <span>📋</span>
+                            <span>Activity</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="#" class="nav-link">
+                            <span>👛</span>
+                            <span>Wallet</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="#" class="nav-link">
+                            <span>💳</span>
+                            <span>Cards</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="#" class="nav-link">
+                            <span>⚙️</span>
+                            <span>Settings</span>
+                        </a>
+                    </li>
+                </ul>
+            </nav>
+        </aside>
+        
+        <!-- Top Header -->
+        <header class="app-header">
+            <div class="search-bar">
+                <input type="search" class="search-input" placeholder="Search assets...">
+            </div>
+            <div class="header-actions">
+                <div style="padding: var(--space-2) var(--space-4); background: var(--success); border-radius: var(--radius-sm); font-size: 0.875rem; font-weight: 600;">
+                    🟢 Market Open
+                </div>
+                <button class="header-btn">🔔</button>
+                <button class="header-btn">👤</button>
             </div>
         </header>
         
-        <!-- Sidebar -->
-        <nav class="sidebar">
-            <ul class="nav-menu">
-                <li class="nav-item">
-                    <a href="#" class="nav-link active" data-page="dashboard">
-                        <span class="nav-icon">🏠</span>
-                        <span>Dashboard</span>
-                    </a>
-                </li>
-                <li class="nav-item">
-                    <a href="#" class="nav-link" data-page="portfolio">
-                        <span class="nav-icon">💼</span>
-                        <span>Portfolio</span>
-                    </a>
-                </li>
-                <li class="nav-item">
-                    <a href="#" class="nav-link" data-page="trading">
-                        <span class="nav-icon">📈</span>
-                        <span>Trading</span>
-                    </a>
-                </li>
-                <li class="nav-item">
-                    <a href="#" class="nav-link" data-page="activity">
-                        <span class="nav-icon">📋</span>
-                        <span>Activity</span>
-                    </a>
-                </li>
-                <li class="nav-item">
-                    <a href="#" class="nav-link" data-page="settings">
-                        <span class="nav-icon">⚙️</span>
-                        <span>Settings</span>
-                    </a>
-                </li>
-            </ul>
-        </nav>
-        
         <!-- Main Content -->
-        <main class="main">
-            <!-- Dashboard Page -->
-            <div id="dashboard" class="page">
-                <div class="page-header">
-                    <div>
-                        <h1 class="page-title">Dashboard</h1>
-                        <p class="page-subtitle">Welcome back to your crypto portfolio</p>
-                    </div>
+        <main class="main-content">
+            <!-- Dashboard Stats -->
+            <div class="dashboard-grid">
+                <div class="stat-card">
+                    <div class="stat-label">Total Balance</div>
+                    <div class="stat-value">€125,432.50</div>
+                    <div class="stat-change positive">↗ +€2,345.80 (1.9%) today</div>
                 </div>
-                
-                <div class="dashboard-grid">
-                    <!-- Balance Section -->
-                    <div class="dashboard-section">
-                        <div class="card balance-card">
-                            <div class="card-header">
-                                <div class="card-title">Total Balance</div>
-                            </div>
-                            <div class="balance-amount" id="totalBalance">€45,632.89</div>
-                            <div class="balance-change">
-                                <span class="text-success">↗ +2.34%</span>
-                                <span>Last 24h</span>
-                            </div>
-                        </div>
-                        
-                        <div class="card">
-                            <div class="card-header">
-                                <div class="card-title">BTC Price (24h)</div>
-                            </div>
-                            <div class="chart-container" style="height: 250px; position: relative;">
-                                <canvas id="btcPriceChart" width="600" height="250"></canvas>
-                            </div>
-                            <div style="margin-top: 1rem;">
-                                <div style="font-size: 1.5rem; font-weight: 600;" id="btcPrice">€42,856.23</div>
-                                <div class="text-success" id="btcChange">+1.82% today</div>
-                            </div>
-                        </div>
-                    </div>
-                    
-                    <!-- Portfolio Section -->
-                    <div class="dashboard-section">
-                        <div class="card">
-                            <div class="card-header">
-                                <div class="card-title">Portfolio</div>
-                                <a href="#" class="btn btn-secondary">View All</a>
-                            </div>
-                            <div class="portfolio-grid">
-                                <div class="asset-card">
-                                    <div class="asset-icon">₿</div>
-                                    <div class="asset-info">
-                                        <div class="asset-name">Bitcoin</div>
-                                        <div class="asset-symbol">BTC</div>
-                                        <div class="asset-balance">0.8432 BTC</div>
-                                        <div class="asset-value">€36,142.89</div>
-                                    </div>
-                                </div>
-                                
-                                <div class="asset-card">
-                                    <div class="asset-icon" style="background: linear-gradient(135deg, #f59e0b, #d97706);">Ξ</div>
-                                    <div class="asset-info">
-                                        <div class="asset-name">Ethereum</div>
-                                        <div class="asset-symbol">ETH</div>
-                                        <div class="asset-balance">3.2156 ETH</div>
-                                        <div class="asset-value">€8,490.00</div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        
-                        <div class="card">
-                            <div class="card-header">
-                                <div class="card-title">Recent Activity</div>
-                                <a href="#" class="btn btn-secondary">View All</a>
-                            </div>
-                            <div class="transaction-list">
-                                <div class="transaction-item">
-                                    <div class="transaction-icon transaction-buy">↗</div>
-                                    <div class="transaction-details">
-                                        <div class="transaction-title">Buy Bitcoin</div>
-                                        <div class="transaction-subtitle">Completed</div>
-                                    </div>
-                                    <div class="transaction-amount">
-                                        <div class="transaction-value">+0.0234 BTC</div>
-                                        <div class="transaction-date">Today 14:32</div>
-                                    </div>
-                                </div>
-                                
-                                <div class="transaction-item">
-                                    <div class="transaction-icon transaction-sell">↙</div>
-                                    <div class="transaction-details">
-                                        <div class="transaction-title">Sell Ethereum</div>
-                                        <div class="transaction-subtitle">Completed</div>
-                                    </div>
-                                    <div class="transaction-amount">
-                                        <div class="transaction-value">-0.5 ETH</div>
-                                        <div class="transaction-date">Yesterday</div>
-                                    </div>
-                                </div>
-                                
-                                <div class="transaction-item">
-                                    <div class="transaction-icon transaction-buy">↗</div>
-                                    <div class="transaction-details">
-                                        <div class="transaction-title">Buy Ethereum</div>
-                                        <div class="transaction-subtitle">Completed</div>
-                                    </div>
-                                    <div class="transaction-amount">
-                                        <div class="transaction-value">+1.2 ETH</div>
-                                        <div class="transaction-date">2 days ago</div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
+                <div class="stat-card">
+                    <div class="stat-label">24h P/L</div>
+                    <div class="stat-value">+€5,234.20</div>
+                    <div class="stat-change positive">↗ +4.35%</div>
                 </div>
-                
-                <div class="action-buttons">
-                    <button class="btn btn-primary" onclick="openModal('buy')">🔼 Buy Crypto</button>
-                    <button class="btn btn-secondary" onclick="openModal('sell')">🔻 Sell Crypto</button>
-                    <button class="btn btn-secondary" onclick="openModal('send')">💸 Send</button>
-                    <button class="btn btn-secondary" onclick="openModal('receive')">💰 Receive</button>
+                <div class="stat-card">
+                    <div class="stat-label">BTC Price</div>
+                    <div class="stat-value">€89,432.00</div>
+                    <div class="stat-change positive">↗ +2.15%</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-label">ETH Price</div>
+                    <div class="stat-value">€3,245.80</div>
+                    <div class="stat-change negative">↘ -0.85%</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-label">Market Cap</div>
+                    <div class="stat-value">€2.1T</div>
+                    <div class="stat-change positive">↗ +1.2%</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-label">BTC Dominance</div>
+                    <div class="stat-value">54.2%</div>
+                    <div class="stat-change positive">↗ +0.3%</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-label">Fear & Greed</div>
+                    <div class="stat-value">65</div>
+                    <div style="color: var(--neon-cyan); font-size: 0.875rem; margin-top: var(--space-2);">Greed</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-label">24h Volume</div>
+                    <div class="stat-value">€42.5B</div>
+                    <div class="stat-change positive">↗ +12.4%</div>
                 </div>
             </div>
             
-            <!-- Portfolio Page -->
-            <div id="portfolio" class="page hidden">
-                <div class="page-header">
-                    <div>
-                        <h1 class="page-title">Portfolio</h1>
-                        <p class="page-subtitle">Manage your crypto holdings</p>
+            <!-- Assets Table -->
+            <div class="asset-table">
+                <div class="table-header">
+                    <h2 class="table-title">Markets</h2>
+                    <div style="display: flex; gap: var(--space-2);">
+                        <button style="padding: var(--space-2) var(--space-3); background: var(--neon-blue); border: none; border-radius: var(--radius-sm); color: var(--surface-dark); font-weight: 600; cursor: pointer;">All</button>
+                        <button style="padding: var(--space-2) var(--space-3); background: var(--surface-elevated); border: none; border-radius: var(--radius-sm); color: var(--text-secondary); cursor: pointer;">Favorites</button>
+                        <button style="padding: var(--space-2) var(--space-3); background: var(--surface-elevated); border: none; border-radius: var(--radius-sm); color: var(--text-secondary); cursor: pointer;">Gainers</button>
+                        <button style="padding: var(--space-2) var(--space-3); background: var(--surface-elevated); border: none; border-radius: var(--radius-sm); color: var(--text-secondary); cursor: pointer;">Losers</button>
                     </div>
                 </div>
-                
-                <div class="card">
-                    <div class="card-header">
-                        <div class="card-title">Holdings</div>
-                    </div>
-                    <div class="portfolio-grid">
-                        <div class="asset-card">
-                            <div class="asset-icon">₿</div>
-                            <div class="asset-info">
-                                <div class="asset-name">Bitcoin</div>
-                                <div class="asset-symbol">BTC</div>
-                                <div class="asset-balance">0.8432 BTC</div>
-                                <div class="asset-value">€36,142.89</div>
-                            </div>
-                        </div>
-                        
-                        <div class="asset-card">
-                            <div class="asset-icon" style="background: linear-gradient(135deg, #f59e0b, #d97706);">Ξ</div>
-                            <div class="asset-info">
-                                <div class="asset-name">Ethereum</div>
-                                <div class="asset-symbol">ETH</div>
-                                <div class="asset-balance">3.2156 ETH</div>
-                                <div class="asset-value">€8,490.00</div>
-                            </div>
-                        </div>
-                        
-                        <div class="asset-card">
-                            <div class="asset-icon" style="background: linear-gradient(135deg, #8b5cf6, #a78bfa);">P</div>
-                            <div class="asset-info">
-                                <div class="asset-name">PINJA Token</div>
-                                <div class="asset-symbol">PINJA</div>
-                                <div class="asset-balance">1,000 PINJA</div>
-                                <div class="asset-value">€1,000.00</div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            
-            <!-- Trading Page -->
-            <div id="trading" class="page hidden">
-                <div class="page-header">
-                    <div>
-                        <h1 class="page-title">Trading</h1>
-                        <p class="page-subtitle">Buy and sell crypto assets</p>
-                    </div>
-                </div>
-                
-                <div class="card">
-                    <div class="card-header">
-                        <div class="card-title">Quick Trade</div>
-                    </div>
-                    <div class="action-buttons">
-                        <button class="btn btn-primary" onclick="openModal('buy')">Buy Bitcoin</button>
-                        <button class="btn btn-primary" onclick="openModal('buy')">Buy Ethereum</button>
-                        <button class="btn btn-secondary" onclick="openModal('sell')">Sell Bitcoin</button>
-                        <button class="btn btn-secondary" onclick="openModal('sell')">Sell Ethereum</button>
-                    </div>
-                </div>
-                
-                <div class="card">
-                    <div class="card-header">
-                        <div class="card-title">Price Chart</div>
-                        <div style="display: flex; gap: 0.5rem;">
-                            <button class="btn btn-sm" onclick="changeTradingTimeframe('24h')">24h</button>
-                            <button class="btn btn-sm" onclick="changeTradingTimeframe('7d')">7d</button>
-                            <button class="btn btn-sm" onclick="changeTradingTimeframe('30d')">30d</button>
-                        </div>
-                    </div>
-                    <div class="chart-container" style="height: 400px; position: relative;">
-                        <canvas id="tradingChart" width="800" height="400"></canvas>
-                    </div>
-                </div>
-            </div>
-            
-            <!-- Activity Page -->
-            <div id="activity" class="page hidden">
-                <div class="page-header">
-                    <div>
-                        <h1 class="page-title">Activity</h1>
-                        <p class="page-subtitle">Transaction history and account activity</p>
-                    </div>
-                </div>
-                
-                <div class="card">
-                    <div class="card-header">
-                        <div class="card-title">Recent Transactions</div>
-                    </div>
-                    <div class="transaction-list">
-                        <div class="transaction-item">
-                            <div class="transaction-icon transaction-buy">↗</div>
-                            <div class="transaction-details">
-                                <div class="transaction-title">Buy Bitcoin</div>
-                                <div class="transaction-subtitle">Completed - Demo Transaction</div>
-                            </div>
-                            <div class="transaction-amount">
-                                <div class="transaction-value">+0.0234 BTC</div>
-                                <div class="transaction-date">Today 14:32</div>
-                            </div>
-                        </div>
-                        
-                        <div class="transaction-item">
-                            <div class="transaction-icon transaction-sell">↙</div>
-                            <div class="transaction-details">
-                                <div class="transaction-title">Sell Ethereum</div>
-                                <div class="transaction-subtitle">Completed - Demo Transaction</div>
-                            </div>
-                            <div class="transaction-amount">
-                                <div class="transaction-value">-0.5 ETH</div>
-                                <div class="transaction-date">Yesterday 09:15</div>
-                            </div>
-                        </div>
-                        
-                        <div class="transaction-item">
-                            <div class="transaction-icon transaction-buy">↗</div>
-                            <div class="transaction-details">
-                                <div class="transaction-title">Buy Ethereum</div>
-                                <div class="transaction-subtitle">Completed - Demo Transaction</div>
-                            </div>
-                            <div class="transaction-amount">
-                                <div class="transaction-value">+1.2 ETH</div>
-                                <div class="transaction-date">2 days ago</div>
-                            </div>
-                        </div>
-                        
-                        <div class="transaction-item">
-                            <div class="transaction-icon transaction-buy">↗</div>
-                            <div class="transaction-details">
-                                <div class="transaction-title">Buy PINJA Token</div>
-                                <div class="transaction-subtitle">Completed - Demo Transaction</div>
-                            </div>
-                            <div class="transaction-amount">
-                                <div class="transaction-value">+1000 PINJA</div>
-                                <div class="transaction-date">3 days ago</div>
-                            </div>
-                        </div>
-                        
-                        <div class="transaction-item">
-                            <div class="transaction-icon transaction-buy">↗</div>
-                            <div class="transaction-details">
-                                <div class="transaction-title">Buy Bitcoin</div>
-                                <div class="transaction-subtitle">Completed - Demo Transaction</div>
-                            </div>
-                            <div class="transaction-amount">
-                                <div class="transaction-value">+0.5 BTC</div>
-                                <div class="transaction-date">1 week ago</div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            
-            <!-- Settings Page -->
-            <div id="settings" class="page hidden">
-                <div class="page-header">
-                    <div>
-                        <h1 class="page-title">Settings</h1>
-                        <p class="page-subtitle">Configure your preferences</p>
-                    </div>
-                </div>
-                
-                <div class="dashboard-grid">
-                    <div class="dashboard-section">
-                        <div class="card">
-                            <div class="card-header">
-                                <div class="card-title">Demo Settings</div>
-                            </div>
-                            <div style="display: flex; flex-direction: column; gap: 1rem;">
-                                <label style="display: flex; align-items: center; gap: 0.5rem;">
-                                    <input type="checkbox" id="darkMode" onchange="toggleDarkMode()">
-                                    Dark Mode
-                                </label>
-                                <label style="display: flex; align-items: center; gap: 0.5rem;">
-                                    <input type="checkbox" id="realisticVolatility" checked onchange="toggleVolatility()">
-                                    Realistic Volatility
-                                </label>
-                                <label style="display: flex; align-items: center; gap: 0.5rem;">
-                                    <input type="checkbox" id="notifications" checked onchange="toggleNotificationSetting()">
-                                    Desktop Notifications
-                                </label>
-                            </div>
-                            <div class="action-buttons">
-                                <button class="btn btn-primary" onclick="resetDemoData()">Reset Demo Data</button>
-                            </div>
-                        </div>
-                    </div>
-                    
-                    <div class="dashboard-section">
-                        <div class="card">
-                            <div class="card-header">
-                                <div class="card-title">About</div>
-                            </div>
-                            <p style="color: var(--text-secondary); margin-bottom: 1rem;">
-                                This is a demo desktop application showcasing a crypto banking interface. 
-                                All data is simulated and no real transactions are performed.
-                            </p>
-                            <div style="background: var(--bg-secondary); padding: 1rem; border-radius: 8px;">
-                                <strong>Version:</strong> Desktop 1.0.0<br>
-                                <strong>Status:</strong> Demo Mode<br>
-                                <strong>Last Updated:</strong> January 2026
-                            </div>
-                        </div>
-                    </div>
-                </div>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Asset</th>
+                            <th>Price</th>
+                            <th>24h Change</th>
+                            <th>Volume (24h)</th>
+                            <th>Market Cap</th>
+                            <th>Chart</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="assetTableBody">
+                        <!-- Will be populated by JavaScript -->
+                    </tbody>
+                </table>
             </div>
         </main>
-        
-        <!-- Right Sidebar with Ads and Info -->
-        <aside class="right-sidebar">
-            <!-- Ad Banner 1 -->
-            <div class="ad-container">
-                <div class="ad-banner large" style="background: linear-gradient(135deg, #8b5cf6, #6366f1);">
-                    <div class="ad-title">📊 Advanced Trading Tools</div>
-                    <div class="ad-description">Get professional charts, indicators, and real-time alerts</div>
-                    <div class="ad-cta">Learn More (Demo)</div>
-                </div>
-            </div>
-            
-            <!-- Info Widget -->
-            <div class="info-widget">
-                <div class="info-widget-title">💡 Trading Tip</div>
-                <div class="info-widget-content">
-                    Diversify your portfolio across multiple assets to reduce risk. (This is demo advice)
-                </div>
-            </div>
-            
-            <!-- Ad Banner 2 -->
-            <div class="ad-container">
-                <div class="ad-banner medium" style="background: linear-gradient(135deg, #ef4444, #dc2626);">
-                    <div class="ad-title">🔥 Hot Offer!</div>
-                    <div class="ad-description">Trade with 50x leverage</div>
-                    <div class="ad-cta">Start Now (Demo)</div>
-                </div>
-            </div>
-            
-            <!-- Market Stats Widget -->
-            <div class="info-widget">
-                <div class="info-widget-title">📈 Market Stats (Demo)</div>
-                <div class="info-widget-content">
-                    <div style="margin-bottom: 0.5rem;">
-                        <strong>BTC Dominance:</strong> 54.2%
-                    </div>
-                    <div style="margin-bottom: 0.5rem;">
-                        <strong>24h Volume:</strong> €42.5B
-                    </div>
-                    <div>
-                        <strong>Active Traders:</strong> 1.2M
-                    </div>
-                </div>
-            </div>
-            
-            <!-- Ad Banner 3 -->
-            <div class="ad-container">
-                <div class="ad-banner medium" style="background: linear-gradient(135deg, #10b981, #059669);">
-                    <div class="ad-title">🎁 Referral Bonus</div>
-                    <div class="ad-description">Invite friends, earn €25 each</div>
-                    <div class="ad-cta">Invite Now (Demo)</div>
-                </div>
-            </div>
-            
-            <!-- News Widget -->
-            <div class="info-widget">
-                <div class="info-widget-title">📰 Latest News (Demo)</div>
-                <div class="info-widget-content">
-                    <div style="margin-bottom: 0.75rem; padding-bottom: 0.75rem; border-bottom: 1px solid var(--border);">
-                        <div style="font-weight: 600; margin-bottom: 0.25rem;">BTC reaches new milestone</div>
-                        <div style="font-size: 0.85rem; color: var(--text-tertiary);">2 hours ago</div>
-                    </div>
-                    <div style="margin-bottom: 0.75rem; padding-bottom: 0.75rem; border-bottom: 1px solid var(--border);">
-                        <div style="font-weight: 600; margin-bottom: 0.25rem;">ETH 2.0 update successful</div>
-                        <div style="font-size: 0.85rem; color: var(--text-tertiary);">5 hours ago</div>
-                    </div>
-                    <div>
-                        <div style="font-weight: 600; margin-bottom: 0.25rem;">New trading pairs added</div>
-                        <div style="font-size: 0.85rem; color: var(--text-tertiary);">1 day ago</div>
-                    </div>
-                </div>
-            </div>
-            
-            <!-- Ad Banner 4 -->
-            <div class="ad-container">
-                <div class="ad-banner small" style="background: linear-gradient(135deg, #f59e0b, #d97706);">
-                    <div style="font-weight: 600;">⚡ Instant Deposits - 0% Fees (Demo)</div>
-                </div>
-            </div>
-        </aside>
     </div>
 
     <script>
-        // ===== MOCK DATA ENGINE =====
-        class CryptoDemoEngine {
-            constructor() {
-                this.loadFromStorage();
-                this.initializePriceData();
-                this.startPriceUpdates();
-            }
-            
-            loadFromStorage() {
-                const stored = localStorage.getItem('cryptoDemo');
-                if (stored) {
-                    const data = JSON.parse(stored);
-                    this.btcPrice = data.btcPrice || 42856.23;
-                    this.ethPrice = data.ethPrice || 2640.45;
-                    this.pinjaPrice = data.pinjaPrice || 1.00;
-                    this.portfolio = data.portfolio || this.getDefaultPortfolio();
-                    this.transactions = data.transactions || this.getDefaultTransactions();
-                    this.settings = data.settings || this.getDefaultSettings();
-                } else {
-                    this.resetToDefaults();
-                }
-            }
-            
-            saveToStorage() {
-                localStorage.setItem('cryptoDemo', JSON.stringify({
-                    btcPrice: this.btcPrice,
-                    ethPrice: this.ethPrice,
-                    pinjaPrice: this.pinjaPrice,
-                    portfolio: this.portfolio,
-                    transactions: this.transactions,
-                    settings: this.settings
-                }));
-            }
-            
-            resetToDefaults() {
-                this.btcPrice = 42856.23;
-                this.ethPrice = 2640.45;
-                this.pinjaPrice = 1.00;
-                this.portfolio = this.getDefaultPortfolio();
-                this.transactions = this.getDefaultTransactions();
-                this.settings = this.getDefaultSettings();
-                this.saveToStorage();
-            }
-            
-            getDefaultPortfolio() {
-                return {
-                    btc: 0.8432,
-                    eth: 3.2156,
-                    pinja: 1000
-                };
-            }
-            
-            getDefaultTransactions() {
-                return [
-                    { id: 1, type: 'buy', asset: 'BTC', amount: 0.0234, price: 42856.23, date: new Date().toISOString(), status: 'completed' },
-                    { id: 2, type: 'sell', asset: 'ETH', amount: 0.5, price: 2640.45, date: new Date(Date.now() - 86400000).toISOString(), status: 'completed' },
-                    { id: 3, type: 'buy', asset: 'ETH', amount: 1.2, price: 2640.45, date: new Date(Date.now() - 172800000).toISOString(), status: 'completed' }
-                ];
-            }
-            
-            getDefaultSettings() {
-                return {
-                    darkMode: false,
-                    realisticVolatility: true,
-                    notifications: true
-                };
-            }
-            
-            initializePriceData() {
-                this.priceHistory = {
-                    btc: this.generatePriceHistory(this.btcPrice, 168), // 7 days of hourly data
-                    eth: this.generatePriceHistory(this.ethPrice, 168),
-                    pinja: this.generatePriceHistory(this.pinjaPrice, 168)
-                };
-            }
-            
-            generatePriceHistory(currentPrice, hours) {
-                const history = [];
-                let price = currentPrice;
-                const volatility = this.settings.realisticVolatility ? 0.02 : 0.005;
-                
-                for (let i = hours; i >= 0; i--) {
-                    const change = (Math.random() - 0.5) * volatility;
-                    price = price * (1 + change);
-                    history.push({
-                        timestamp: new Date(Date.now() - i * 3600000),
-                        price: price
-                    });
-                }
-                
-                return history;
-            }
-            
-            getCurrentPrices() {
-                return {
-                    btc: this.btcPrice,
-                    eth: this.ethPrice,
-                    pinja: this.pinjaPrice
-                };
-            }
-            
-            getTotalBalance() {
-                const prices = this.getCurrentPrices();
-                return (this.portfolio.btc * prices.btc) + 
-                       (this.portfolio.eth * prices.eth) + 
-                       (this.portfolio.pinja * prices.pinja);
-            }
-            
-            updatePrices() {
-                const volatility = this.settings.realisticVolatility ? 0.001 : 0.0003;
-                
-                this.btcPrice *= (1 + (Math.random() - 0.5) * volatility);
-                this.ethPrice *= (1 + (Math.random() - 0.5) * volatility);
-                this.pinjaPrice *= (1 + (Math.random() - 0.48) * volatility); // Slight upward bias for demo
-                
-                this.saveToStorage();
-                this.updateUI();
-            }
-            
-            startPriceUpdates() {
-                setInterval(() => {
-                    this.updatePrices();
-                }, 10000); // Update every 10 seconds for demo
-            }
-            
-            updateUI() {
-                const totalBalance = this.getTotalBalance();
-                const btcPriceEl = document.getElementById('btcPrice');
-                const totalBalanceEl = document.getElementById('totalBalance');
-                
-                if (btcPriceEl) {
-                    btcPriceEl.textContent = `€${this.btcPrice.toLocaleString('fi-FI', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
-                }
-                
-                if (totalBalanceEl) {
-                    totalBalanceEl.textContent = `€${totalBalance.toLocaleString('fi-FI', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
-                }
-            }
-        }
-        
-        // ===== UI MANAGEMENT =====
-        class UIManager {
-            constructor() {
-                this.currentPage = 'dashboard';
-                this.bindEvents();
-            }
-            
-            bindEvents() {
-                // Navigation
-                document.querySelectorAll('.nav-link').forEach(link => {
-                    link.addEventListener('click', (e) => {
-                        e.preventDefault();
-                        const page = link.dataset.page;
-                        if (page) this.showPage(page);
-                    });
-                });
-                
-                // Page transitions
-                this.showPage('dashboard');
-            }
-            
-            showPage(pageId) {
-                // Hide all pages
-                document.querySelectorAll('.page').forEach(page => {
-                    page.classList.add('hidden');
-                });
-                
-                // Show selected page
-                const targetPage = document.getElementById(pageId);
-                if (targetPage) {
-                    targetPage.classList.remove('hidden');
-                }
-                
-                // Update navigation
-                document.querySelectorAll('.nav-link').forEach(link => {
-                    link.classList.remove('active');
-                });
-                
-                const activeLink = document.querySelector(`[data-page="${pageId}"]`);
-                if (activeLink) {
-                    activeLink.classList.add('active');
-                }
-                
-                this.currentPage = pageId;
-            }
-        }
-        
-        // ===== GLOBAL FUNCTIONS =====
-        let demoEngine;
-        let uiManager;
-        
-        // Initialize when DOM is loaded
-        document.addEventListener('DOMContentLoaded', () => {
-            demoEngine = new CryptoDemoEngine();
-            uiManager = new UIManager();
-            
-            // Initial UI update
-            demoEngine.updateUI();
-        });
-        
-        function showDemoDialog(action) {
-            // Map actions to modal IDs
-            const modalMap = {
-                'Buy': 'buy',
-                'Buy Bitcoin': 'buy',
-                'Buy Ethereum': 'buy',
-                'Sell': 'sell',
-                'Sell Bitcoin': 'sell',
-                'Sell Ethereum': 'sell',
-                'Send': 'send',
-                'Receive': 'receive'
-            };
-            
-            const modalId = modalMap[action];
-            if (modalId) {
-                openModal(modalId);
-            } else {
-                alert(`DEMO MODE: ${action} functionality would be implemented here.\n\nThis is a demonstration interface with no real crypto functionality.`);
-            }
-        }
-        
-        function toggleDarkMode() {
-            const isDark = document.getElementById('darkMode').checked;
-            document.documentElement.style.setProperty('--bg-primary', isDark ? '#0f172a' : '#fafbfc');
-            document.documentElement.style.setProperty('--bg-secondary', isDark ? '#1e293b' : '#f8fafc');
-            document.documentElement.style.setProperty('--surface', isDark ? '#334155' : '#ffffff');
-            document.documentElement.style.setProperty('--text-primary', isDark ? '#f1f5f9' : '#0f172a');
-            document.documentElement.style.setProperty('--text-secondary', isDark ? '#cbd5e1' : '#475569');
-            document.documentElement.style.setProperty('--border', isDark ? 'rgba(148, 163, 184, 0.1)' : 'rgba(148, 163, 184, 0.15)');
-            
-            if (demoEngine) {
-                demoEngine.settings.darkMode = isDark;
-                demoEngine.saveToStorage();
-            }
-        }
-        
-        function toggleVolatility() {
-            const isRealistic = document.getElementById('realisticVolatility').checked;
-            if (demoEngine) {
-                demoEngine.settings.realisticVolatility = isRealistic;
-                demoEngine.saveToStorage();
-            }
-        }
-        
-        function toggleNotificationSetting() {
-            const enabled = document.getElementById('notifications').checked;
-            if (demoEngine) {
-                demoEngine.settings.notifications = enabled;
-                demoEngine.saveToStorage();
-            }
-        }
-        
-        function resetDemoData() {
-            if (confirm('Reset all demo data to defaults? This will clear your current portfolio and transaction history.')) {
-                if (demoEngine) {
-                    demoEngine.resetToDefaults();
-                    demoEngine.updateUI();
-                }
-                alert('Demo data has been reset to defaults.');
-            }
-        }
-        
-        // Keyboard shortcuts
-        document.addEventListener('keydown', (e) => {
-            if (e.altKey) {
-                switch(e.key) {
-                    case '1':
-                        e.preventDefault();
-                        uiManager.showPage('dashboard');
-                        break;
-                    case '2':
-                        e.preventDefault();
-                        uiManager.showPage('portfolio');
-                        break;
-                    case '3':
-                        e.preventDefault();
-                        uiManager.showPage('trading');
-                        break;
-                    case '4':
-                        e.preventDefault();
-                        uiManager.showPage('activity');
-                        break;
-                    case '5':
-                        e.preventDefault();
-                        uiManager.showPage('settings');
-                        break;
-                }
-            }
-        });
-    
-        
-        // ===== ADDED FROM MOBILE: LOGIN SYSTEM =====
-        let isLoggedIn = localStorage.getItem('isLoggedIn') === 'true';
-        
-        function switchLoginTab(tab) {
-            const loginForm = document.getElementById('login-form');
-            const registerForm = document.getElementById('register-form');
-            const tabs = document.querySelectorAll('.login-tab');
+        // ===== AUTH SWITCHING =====
+        function switchAuthTab(tab) {
+            const loginContent = document.getElementById('loginContent');
+            const signupContent = document.getElementById('signupContent');
+            const tabs = document.querySelectorAll('.auth-tab');
             
             tabs.forEach(t => t.classList.remove('active'));
             event.target.classList.add('active');
             
             if (tab === 'login') {
-                loginForm.classList.remove('hidden');
-                registerForm.classList.add('hidden');
+                loginContent.classList.remove('hidden');
+                signupContent.classList.add('hidden');
             } else {
-                loginForm.classList.add('hidden');
-                registerForm.classList.remove('hidden');
+                loginContent.classList.add('hidden');
+                signupContent.classList.remove('hidden');
             }
+        }
+        
+        function switchLoginMethod(method) {
+            const tabs = document.querySelectorAll('.login-method-tab');
+            const contents = document.querySelectorAll('.login-method-content');
+            
+            tabs.forEach(t => t.classList.remove('active'));
+            contents.forEach(c => c.classList.remove('active'));
+            
+            event.target.classList.add('active');
+            document.getElementById(method + 'Method').classList.add('active');
+        }
+        
+        // ===== DEMO LOGIN =====
+        function demoLogin() {
+            document.getElementById('landingPage').classList.add('hidden');
+            document.getElementById('mainApp').classList.add('active');
+            populateAssetTable();
         }
         
         function handleLogin(e) {
             e.preventDefault();
-            const username = document.getElementById('username').value;
-            const password = document.getElementById('password').value;
-            
-            // Demo login
-            if (username === 'demo' && password === 'demo123') {
-                loginUser({ username, email: 'demo@cryptobank.fi' });
-            } else {
-                showLoginError('login-error', 'Virheellinen käyttäjänimi tai salasana');
-            }
+            demoLogin();
             return false;
         }
         
-        function handleRegister(e) {
+        function handleSignup(e) {
             e.preventDefault();
-            const username = document.getElementById('reg-username').value;
-            const email = document.getElementById('reg-email').value;
-            
-            // Demo registration
-            loginUser({ username, email });
+            demoLogin();
             return false;
         }
         
-        function loginUser(user) {
-            localStorage.setItem('isLoggedIn', 'true');
-            localStorage.setItem('username', user.username);
-            const loginScreen = document.getElementById('login-screen');
-            const appContainer = document.querySelector('.app');
-            if (loginScreen) loginScreen.classList.add('hidden');
-            if (appContainer) appContainer.classList.remove('hidden');
-            addNotification('welcome', `Tervetuloa, ${user.username}!`, 'success');
+        // ===== CRYPTO ASSETS DATA =====
+        const cryptoAssets = [
+            { symbol: 'BTC', name: 'Bitcoin', price: 89432.00, change: 2.15, volume: '45.2B', marketCap: '1.75T' },
+            { symbol: 'ETH', name: 'Ethereum', price: 3245.80, change: -0.85, volume: '18.5B', marketCap: '390B' },
+            { symbol: 'SOL', name: 'Solana', price: 142.50, change: 5.32, volume: '3.2B', marketCap: '65B' },
+            { symbol: 'BNB', name: 'Binance Coin', price: 615.40, change: 1.85, volume: '2.1B', marketCap: '95B' },
+            { symbol: 'XRP', name: 'Ripple', price: 0.62, change: 3.45, volume: '1.8B', marketCap: '34B' },
+            { symbol: 'ADA', name: 'Cardano', price: 0.48, change: -1.25, volume: '890M', marketCap: '17B' },
+            { symbol: 'DOGE', name: 'Dogecoin', price: 0.082, change: 4.67, volume: '1.2B', marketCap: '12B' },
+            { symbol: 'AVAX', name: 'Avalanche', price: 38.20, change: 2.95, volume: '650M', marketCap: '14B' },
+            { symbol: 'DOT', name: 'Polkadot', price: 7.85, change: -0.45, volume: '340M', marketCap: '10B' },
+            { symbol: 'LINK', name: 'Chainlink', price: 14.50, change: 1.75, volume: '580M', marketCap: '8.5B' },
+            { symbol: 'MATIC', name: 'Polygon', price: 0.92, change: 3.20, volume: '420M', marketCap: '8.8B' },
+            { symbol: 'LTC', name: 'Litecoin', price: 98.40, change: 0.85, volume: '450M', marketCap: '7.2B' },
+            { symbol: 'UNI', name: 'Uniswap', price: 6.85, change: 2.15, volume: '280M', marketCap: '5.1B' },
+            { symbol: 'ATOM', name: 'Cosmos', price: 10.20, change: -1.35, volume: '210M', marketCap: '3.9B' },
+            { symbol: 'ARB', name: 'Arbitrum', price: 1.42, change: 4.25, volume: '380M', marketCap: '5.6B' },
+            { symbol: 'OP', name: 'Optimism', price: 2.18, change: 3.65, volume: '190M', marketCap: '3.2B' },
+            { symbol: 'NEAR', name: 'NEAR Protocol', price: 2.85, change: 1.95, volume: '165M', marketCap: '3.1B' },
+            { symbol: 'ICP', name: 'Internet Computer', price: 12.40, change: -0.95, volume: '145M', marketCap: '5.8B' },
+            { symbol: 'APT', name: 'Aptos', price: 8.95, change: 5.85, volume: '290M', marketCap: '3.5B' },
+            { symbol: 'SUI', name: 'Sui', price: 1.65, change: 6.45, volume: '420M', marketCap: '4.2B' },
+            { symbol: 'INJ', name: 'Injective', price: 35.60, change: 8.20, volume: '320M', marketCap: '3.4B' },
+            { symbol: 'RNDR', name: 'Render', price: 7.85, change: 4.10, volume: '180M', marketCap: '3.0B' },
+            { symbol: 'HBAR', name: 'Hedera', price: 0.095, change: 2.85, volume: '250M', marketCap: '3.2B' },
+            { symbol: 'FIL', name: 'Filecoin', price: 5.40, change: -1.15, volume: '190M', marketCap: '2.8B' },
+            { symbol: 'TRX', name: 'TRON', price: 0.11, change: 1.50, volume: '1.5B', marketCap: '9.8B' },
+            { symbol: 'AAVE', name: 'Aave', price: 95.20, change: 3.45, volume: '210M', marketCap: '1.4B' },
+            { symbol: 'BCH', name: 'Bitcoin Cash', price: 285.40, change: 1.05, volume: '380M', marketCap: '5.6B' },
+            { symbol: 'XLM', name: 'Stellar', price: 0.13, change: 2.70, volume: '150M', marketCap: '3.8B' },
+            { symbol: 'GRT', name: 'The Graph', price: 0.18, change: 5.25, volume: '85M', marketCap: '1.7B' },
+            { symbol: 'ALGO', name: 'Algorand', price: 0.21, change: -0.90, volume: '120M', marketCap: '1.6B' },
+            { symbol: 'VET', name: 'VeChain', price: 0.028, change: 3.80, volume: '95M', marketCap: '2.0B' },
+            { symbol: 'PEPE', name: 'Pepe', price: 0.0000012, change: 12.50, volume: '780M', marketCap: '5.2B' },
+            { symbol: 'SHIB', name: 'Shiba Inu', price: 0.000010, change: 6.80, volume: '620M', marketCap: '5.9B' },
+            { symbol: 'WIF', name: 'dogwifhat', price: 2.85, change: 9.30, volume: '420M', marketCap: '2.8B' },
+            { symbol: 'BONK', name: 'Bonk', price: 0.000020, change: 7.40, volume: '290M', marketCap: '1.4B' },
+            { symbol: 'FLOKI', name: 'FLOKI', price: 0.000042, change: 5.60, volume: '180M', marketCap: '400M' },
+            { symbol: 'SEI', name: 'Sei', price: 0.52, change: 4.95, volume: '220M', marketCap: '1.5B' },
+            { symbol: 'TIA', name: 'Celestia', price: 9.85, change: 6.20, volume: '310M', marketCap: '2.1B' },
+            { symbol: 'JUP', name: 'Jupiter', price: 0.98, change: 8.10, volume: '270M', marketCap: '1.3B' },
+            { symbol: 'EOS', name: 'EOS', price: 0.85, change: -0.75, volume: '170M', marketCap: '1.0B' }
+        ];
+        
+        function populateAssetTable() {
+            const tbody = document.getElementById('assetTableBody');
+            if (!tbody) return;
             
-            // Initialize charts after login
-            initializeCharts();
-        }
-        
-        function showLoginError(id, message) {
-            const errorEl = document.getElementById(id);
-            errorEl.textContent = message;
-            errorEl.classList.add('show');
-            setTimeout(() => errorEl.classList.remove('show'), 3000);
-        }
-        
-        // ===== ADDED FROM MOBILE: MODAL SYSTEM =====
-        function openModal(modalId) {
-            const modal = document.getElementById(`modal-${modalId}`);
-            if (modal) modal.classList.add('show');
-        }
-        
-        function closeModal(modalId) {
-            const modal = document.getElementById(`modal-${modalId}`);
-            if (modal) modal.classList.remove('show');
-        }
-        
-        function closeModalOnOverlay(event) {
-            if (event.target.classList.contains('modal-overlay')) {
-                event.target.classList.remove('show');
-            }
-        }
-        
-        // ===== ADDED FROM MOBILE: NOTIFICATION SYSTEM =====
-        let notifications = [];
-        
-        function addNotification(id, message, type = 'info') {
-            notifications.unshift({ id, message, type, time: new Date() });
-            renderNotifications();
-            updateNotificationBadge();
-        }
-        
-        function renderNotifications() {
-            const list = document.getElementById('notification-list');
-            if (!list) return;
-            
-            if (notifications.length === 0) {
-                list.innerHTML = '<div style="text-align: center; padding: var(--space-xl); color: var(--text-tertiary);">Ei ilmoituksia</div>';
-                return;
-            }
-            
-            list.innerHTML = notifications.map(n => `
-                <div class="notification-item ${n.type}">
-                    <div class="notification-content">
-                        <div class="notification-message">${n.message}</div>
-                        <div class="notification-time">${formatTime(n.time)}</div>
-                    </div>
-                </div>
+            tbody.innerHTML = cryptoAssets.map(asset => `
+                <tr>
+                    <td>
+                        <div class="asset-info">
+                            <div class="asset-icon">${asset.symbol[0]}</div>
+                            <div>
+                                <div class="asset-name">${asset.name}</div>
+                                <div class="asset-symbol">${asset.symbol}</div>
+                            </div>
+                        </div>
+                    </td>
+                    <td>€${asset.price.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 8 })}</td>
+                    <td style="color: ${asset.change > 0 ? 'var(--success)' : 'var(--error)'}">
+                        ${asset.change > 0 ? '↗' : '↘'} ${Math.abs(asset.change).toFixed(2)}%
+                    </td>
+                    <td>€${asset.volume}</td>
+                    <td>€${asset.marketCap}</td>
+                    <td>
+                        <div class="sparkline">
+                            <svg width="80" height="30" viewBox="0 0 80 30">
+                                <polyline
+                                    fill="none"
+                                    stroke="${asset.change > 0 ? 'var(--success)' : 'var(--error)'}"
+                                    stroke-width="2"
+                                    points="${generateSparklinePoints()}"
+                                />
+                            </svg>
+                        </div>
+                    </td>
+                    <td>
+                        <button style="padding: var(--space-2) var(--space-4); background: var(--neon-blue); border: none; border-radius: var(--radius-sm); color: var(--surface-dark); font-weight: 600; cursor: pointer; transition: var(--transition-fast);" onmouseover="this.style.boxShadow='var(--shadow-glow-blue)'" onmouseout="this.style.boxShadow='none'">
+                            Trade
+                        </button>
+                    </td>
+                </tr>
             `).join('');
         }
         
-        function toggleNotifications() {
-            const panel = document.getElementById('notification-panel');
-            if (panel) panel.classList.toggle('show');
-        }
-        
-        function clearNotifications() {
-            notifications = [];
-            renderNotifications();
-            updateNotificationBadge();
-        }
-        
-        function updateNotificationBadge() {
-            const badge = document.getElementById('notification-badge');
-            if (!badge) return;
-            
-            if (notifications.length > 0) {
-                badge.textContent = notifications.length;
-                badge.style.display = 'block';
-            } else {
-                badge.style.display = 'none';
+        function generateSparklinePoints() {
+            let points = [];
+            for (let i = 0; i < 20; i++) {
+                const x = i * 4;
+                const y = 15 + (Math.random() - 0.5) * 20;
+                points.push(`${x},${y}`);
             }
+            return points.join(' ');
         }
         
-        function formatTime(date) {
-            const now = new Date();
-            const diff = Math.floor((now - date) / 1000);
-            
-            if (diff < 60) return 'Juuri nyt';
-            if (diff < 3600) return `${Math.floor(diff / 60)} min sitten`;
-            if (diff < 86400) return `${Math.floor(diff / 3600)} h sitten`;
-            return date.toLocaleDateString('fi-FI');
-        }
-        
-        // ===== ADDED FROM MOBILE: CAT SYSTEM =====
-        let catBalance = parseFloat(localStorage.getItem('catBalance')) || 500.00;
-        let catActive = localStorage.getItem('catActive') === 'true';
-        
-        function getCatBalance() {
-            return catBalance;
-        }
-        
-        function updateCatBalance(amount) {
-            catBalance = amount;
-            localStorage.setItem('catBalance', catBalance.toString());
-        }
-        
-        function confirmDepositCat() {
-            showLoader();
-            setTimeout(() => {
-                const amount = 100; // Demo amount
-                updateCatBalance(catBalance + amount);
-                addNotification('deposit-cat', `Talletettu €${amount} CAT-tilille`, 'success');
-                closeModal('deposit-cat');
-                hideLoader();
-            }, 1500);
-        }
-        
-        function confirmWithdrawCat() {
-            showLoader();
-            setTimeout(() => {
-                const amount = 50; // Demo amount
-                if (catBalance >= amount) {
-                    updateCatBalance(catBalance - amount);
-                    addNotification('withdraw-cat', `Nostettu €${amount} CAT-tililtä`, 'success');
-                } else {
-                    addNotification('withdraw-cat', 'Ei tarpeeksi saldoa', 'error');
-                }
-                closeModal('withdraw-cat');
-                hideLoader();
-            }, 1500);
-        }
-        
-        function confirmUseCat() {
-            showLoader();
-            setTimeout(() => {
-                catActive = !catActive;
-                localStorage.setItem('catActive', catActive.toString());
-                addNotification('use-cat', catActive ? 'CAT aktivoitu' : 'CAT pysäytetty', 'success');
-                closeModal('use-cat');
-                hideLoader();
-            }, 1000);
-        }
-        
-        // ===== ADDED FROM MOBILE: TRANSACTION CONFIRMATIONS =====
-        function confirmSend() {
-            showLoader();
-            setTimeout(() => {
-                addNotification('send', 'Lähetys vahvistettu (DEMO)', 'success');
-                closeModal('send');
-                hideLoader();
-            }, 2000);
-        }
-        
-        function confirmReceive() {
-            addNotification('receive', 'Osoite kopioitu (DEMO)', 'success');
-            closeModal('receive');
-        }
-        
-        function confirmBuy() {
-            showLoader();
-            setTimeout(() => {
-                addNotification('buy', 'Osto vahvistettu (DEMO)', 'success');
-                closeModal('buy');
-                hideLoader();
-            }, 2000);
-        }
-        
-        function confirmSell() {
-            showLoader();
-            setTimeout(() => {
-                addNotification('sell', 'Myynti vahvistettu (DEMO)', 'success');
-                closeModal('sell');
-                hideLoader();
-            }, 2000);
-        }
-        
-        function confirmSwap() {
-            showLoader();
-            setTimeout(() => {
-                addNotification('swap', 'Vaihto vahvistettu (DEMO)', 'success');
-                closeModal('swap');
-                hideLoader();
-            }, 2000);
-        }
-        
-        // ===== ADDED: LOADER FUNCTIONS =====
-        function showLoader() {
-            const loader = document.getElementById('loader-overlay');
-            if (loader) loader.classList.add('show');
-        }
-        
-        function hideLoader() {
-            const loader = document.getElementById('loader-overlay');
-            if (loader) loader.classList.remove('show');
-        }
-        
-        // ===== ADDED: COPY ADDRESS FUNCTION =====
-        function copyAddress() {
-            const address = 'bc1qxy2kgdygjrsqtzq2n0yrf2493p83kkfjhx0wlh';
-            navigator.clipboard.writeText(address).then(() => {
-                addNotification('copy', 'Osoite kopioitu leikepöydälle', 'success');
-            });
-        }
-        
-        // ===== ADDED: MODAL PREVIEW FUNCTIONS =====
-        function updateSendPreview() {
-            const amount = parseFloat(document.getElementById('send-amount')?.value) || 0;
-            const fee = 0.00001500;
-            const total = amount + fee;
-            const totalEl = document.getElementById('send-total');
-            if (totalEl) totalEl.textContent = `${total.toFixed(8)} BTC`;
-        }
-        
-        function updateBuyPreview() {
-            const eurAmount = parseFloat(document.getElementById('buy-amount-eur')?.value) || 0;
-            const btcPrice = 89000;
-            const fee = eurAmount * 0.015; // 1.5% fee
-            const btcAmount = (eurAmount - fee) / btcPrice;
-            
-            const feeEl = document.getElementById('buy-fee');
-            const btcEl = document.getElementById('buy-btc');
-            if (feeEl) feeEl.textContent = `${fee.toFixed(2)} €`;
-            if (btcEl) btcEl.textContent = `${btcAmount.toFixed(8)} BTC`;
-        }
-        
-        function updateSellPreview() {
-            // Similar to buyPreview but reversed
-            const btcAmount = parseFloat(document.getElementById('sell-amount-btc')?.value) || 0;
-            const btcPrice = 89000;
-            const eurValue = btcAmount * btcPrice;
-            const fee = eurValue * 0.015;
-            const total = eurValue - fee;
-            
-            const feeEl = document.getElementById('sell-fee');
-            const totalEl = document.getElementById('sell-total');
-            if (feeEl) feeEl.textContent = `${fee.toFixed(2)} €`;
-            if (totalEl) totalEl.textContent = `${total.toFixed(2)} €`;
-        }
-        
-        function updateSwapPreview() {
-            // Swap between BTC and ETH
-            const fromAmount = parseFloat(document.getElementById('swap-from-amount')?.value) || 0;
-            const rate = 0.03; // Example rate
-            const toAmount = fromAmount * rate;
-            
-            const toEl = document.getElementById('swap-to-amount');
-            if (toEl) toEl.value = toAmount.toFixed(8);
-        }
-        
-        // ===== ADDED: ONBOARDING FUNCTIONS =====
-        let onboardingStep = 0;
-        const onboardingSteps = [
-            {
-                icon: '🚀',
-                title: 'Tervetuloa CryptoVaultiin!',
-                text: 'Tämä on demo-versio ammattimaisesta krypto lompakosta C-A-T automaattikaupankäynnillä.'
-            },
-            {
-                icon: '💰',
-                title: 'Hallitse cryptojasi',
-                text: 'Osta, myy ja vaihda kryptovaluuttoja turvallisesti ja helposti.'
-            },
-            {
-                icon: '🤖',
-                title: 'CAT Automaattikauppa',
-                text: 'Aktivoi C-A-T automaattikauppa, joka tekee kauppoja puolestasi.'
-            }
-        ];
-        
-        function nextOnboardingStep() {
-            onboardingStep++;
-            if (onboardingStep >= onboardingSteps.length) {
-                skipOnboarding();
-                return;
-            }
-            
-            const step = onboardingSteps[onboardingStep];
-            const iconEl = document.getElementById('onboarding-icon');
-            const titleEl = document.getElementById('onboarding-title');
-            const textEl = document.getElementById('onboarding-text');
-            
-            if (iconEl) iconEl.textContent = step.icon;
-            if (titleEl) titleEl.textContent = step.title;
-            if (textEl) textEl.textContent = step.text;
-            
-            // Update step indicators
-            document.querySelectorAll('.onboarding-step').forEach((el, idx) => {
-                el.classList.toggle('active', idx === onboardingStep);
-            });
-        }
-        
-        function skipOnboarding() {
-            const overlay = document.getElementById('onboarding-overlay');
-            if (overlay) overlay.classList.add('hidden');
-            localStorage.setItem('onboardingCompleted', 'true');
-        }
-        
-        // ===== CHART RENDERING FUNCTIONS =====
-        let chartData = {
-            btc: [],
-            trading: [],
-            timeframe: '24h'
-        };
-        
-        // Generate realistic price data
-        function generatePriceData(points, basePrice, volatility = 0.02) {
-            const data = [];
-            let price = basePrice;
-            
-            for (let i = 0; i < points; i++) {
-                const change = (Math.random() - 0.48) * volatility * price;
-                price += change;
-                data.push({
-                    time: Date.now() - (points - i) * 3600000,
-                    price: price,
-                    volume: Math.random() * 1000 + 500
-                });
-            }
-            return data;
-        }
-        
-        // Render BTC Price Line Chart
-        function renderBTCChart() {
-            const canvas = document.getElementById('btcPriceChart');
-            if (!canvas) return;
-            
-            const ctx = canvas.getContext('2d');
-            const width = canvas.width;
-            const height = canvas.height;
-            const padding = 40;
-            
-            // Clear canvas
-            ctx.clearRect(0, 0, width, height);
-            
-            // Generate or use existing data
-            if (chartData.btc.length === 0) {
-                chartData.btc = generatePriceData(24, 42000, 0.015);
-            }
-            
-            const data = chartData.btc;
-            const prices = data.map(d => d.price);
-            const minPrice = Math.min(...prices);
-            const maxPrice = Math.max(...prices);
-            const priceRange = maxPrice - minPrice;
-            
-            // Draw grid
-            ctx.strokeStyle = '#e5e7eb';
-            ctx.lineWidth = 1;
-            for (let i = 0; i <= 5; i++) {
-                const y = padding + (height - 2 * padding) * i / 5;
-                ctx.beginPath();
-                ctx.moveTo(padding, y);
-                ctx.lineTo(width - padding, y);
-                ctx.stroke();
-            }
-            
-            // Draw price labels
-            ctx.fillStyle = '#6b7280';
-            ctx.font = '11px -apple-system, sans-serif';
-            ctx.textAlign = 'right';
-            for (let i = 0; i <= 5; i++) {
-                const price = maxPrice - (priceRange * i / 5);
-                const y = padding + (height - 2 * padding) * i / 5;
-                ctx.fillText('€' + price.toFixed(0), padding - 5, y + 4);
-            }
-            
-            // Draw line chart with gradient
-            const gradient = ctx.createLinearGradient(0, padding, 0, height - padding);
-            gradient.addColorStop(0, 'rgba(102, 126, 234, 0.3)');
-            gradient.addColorStop(1, 'rgba(102, 126, 234, 0.05)');
-            
-            // Draw area under line
-            ctx.beginPath();
-            ctx.moveTo(padding, height - padding);
-            data.forEach((point, i) => {
-                const x = padding + (width - 2 * padding) * i / (data.length - 1);
-                const y = padding + (height - 2 * padding) * (1 - (point.price - minPrice) / priceRange);
-                if (i === 0) {
-                    ctx.lineTo(x, y);
-                } else {
-                    ctx.lineTo(x, y);
+        // ===== DEMO DATA UPDATE =====
+        let updateInterval = setInterval(() => {
+            const statValues = document.querySelectorAll('.stat-value');
+            statValues.forEach(val => {
+                if (val.textContent.includes('€') && !val.textContent.includes('T') && !val.textContent.includes('%')) {
+                    const current = parseFloat(val.textContent.replace(/[€,]/g, ''));
+                    const change = (Math.random() - 0.5) * current * 0.001;
+                    val.textContent = '€' + (current + change).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
                 }
             });
-            ctx.lineTo(width - padding, height - padding);
-            ctx.closePath();
-            ctx.fillStyle = gradient;
-            ctx.fill();
-            
-            // Draw line
-            ctx.beginPath();
-            data.forEach((point, i) => {
-                const x = padding + (width - 2 * padding) * i / (data.length - 1);
-                const y = padding + (height - 2 * padding) * (1 - (point.price - minPrice) / priceRange);
-                if (i === 0) {
-                    ctx.moveTo(x, y);
-                } else {
-                    ctx.lineTo(x, y);
-                }
-            });
-            ctx.strokeStyle = '#667eea';
-            ctx.lineWidth = 2;
-            ctx.stroke();
-            
-            // Draw points
-            data.forEach((point, i) => {
-                if (i % 3 === 0) { // Show every 3rd point
-                    const x = padding + (width - 2 * padding) * i / (data.length - 1);
-                    const y = padding + (height - 2 * padding) * (1 - (point.price - minPrice) / priceRange);
-                    ctx.beginPath();
-                    ctx.arc(x, y, 3, 0, Math.PI * 2);
-                    ctx.fillStyle = '#667eea';
-                    ctx.fill();
-                }
-            });
-            
-            // Update current price
-            const currentPrice = data[data.length - 1].price;
-            const priceChange = ((currentPrice - data[0].price) / data[0].price * 100);
-            document.getElementById('btcPrice').textContent = '€' + currentPrice.toFixed(2);
-            const changeEl = document.getElementById('btcChange');
-            if (changeEl) {
-                changeEl.textContent = (priceChange > 0 ? '+' : '') + priceChange.toFixed(2) + '% today';
-                changeEl.className = priceChange > 0 ? 'text-success' : 'text-error';
-            }
-        }
+        }, 5000);
         
-        // Render Trading Chart (Candlestick-style)
-        function renderTradingChart() {
-            const canvas = document.getElementById('tradingChart');
-            if (!canvas) return;
-            
-            const ctx = canvas.getContext('2d');
-            const width = canvas.width;
-            const height = canvas.height;
-            const padding = 50;
-            
-            // Clear canvas
-            ctx.clearRect(0, 0, width, height);
-            
-            // Generate candlestick data based on timeframe
-            const points = chartData.timeframe === '24h' ? 24 : chartData.timeframe === '7d' ? 168 : 720;
-            if (chartData.trading.length === 0 || chartData.trading.length !== points) {
-                chartData.trading = generateCandlestickData(points, 42000);
-            }
-            
-            const data = chartData.trading.slice(0, Math.min(50, points)); // Show last 50 candles
-            const prices = data.flatMap(d => [d.high, d.low]);
-            const minPrice = Math.min(...prices);
-            const maxPrice = Math.max(...prices);
-            const priceRange = maxPrice - minPrice;
-            
-            // Draw background grid
-            ctx.strokeStyle = '#e5e7eb';
-            ctx.lineWidth = 1;
-            for (let i = 0; i <= 5; i++) {
-                const y = padding + (height - 2 * padding) * i / 5;
-                ctx.beginPath();
-                ctx.moveTo(padding, y);
-                ctx.lineTo(width - padding, y);
-                ctx.stroke();
-            }
-            
-            // Draw price labels
-            ctx.fillStyle = '#6b7280';
-            ctx.font = '12px -apple-system, sans-serif';
-            ctx.textAlign = 'right';
-            for (let i = 0; i <= 5; i++) {
-                const price = maxPrice - (priceRange * i / 5);
-                const y = padding + (height - 2 * padding) * i / 5;
-                ctx.fillText('€' + price.toFixed(0), padding - 5, y + 4);
-            }
-            
-            // Draw candlesticks
-            const candleWidth = (width - 2 * padding) / data.length * 0.6;
-            data.forEach((candle, i) => {
-                const x = padding + (width - 2 * padding) * (i + 0.5) / data.length;
-                const yHigh = padding + (height - 2 * padding) * (1 - (candle.high - minPrice) / priceRange);
-                const yLow = padding + (height - 2 * padding) * (1 - (candle.low - minPrice) / priceRange);
-                const yOpen = padding + (height - 2 * padding) * (1 - (candle.open - minPrice) / priceRange);
-                const yClose = padding + (height - 2 * padding) * (1 - (candle.close - minPrice) / priceRange);
-                
-                const isGreen = candle.close > candle.open;
-                const color = isGreen ? '#10b981' : '#ef4444';
-                
-                // Draw wick
-                ctx.strokeStyle = color;
-                ctx.lineWidth = 1;
-                ctx.beginPath();
-                ctx.moveTo(x, yHigh);
-                ctx.lineTo(x, yLow);
-                ctx.stroke();
-                
-                // Draw body
-                ctx.fillStyle = color;
-                const bodyHeight = Math.abs(yClose - yOpen);
-                const bodyY = Math.min(yOpen, yClose);
-                ctx.fillRect(x - candleWidth / 2, bodyY, candleWidth, Math.max(bodyHeight, 1));
-            });
-            
-            // Draw volume bars
-            const maxVolume = Math.max(...data.map(d => d.volume));
-            const volumeHeight = 60;
-            data.forEach((candle, i) => {
-                const x = padding + (width - 2 * padding) * (i + 0.5) / data.length;
-                const barHeight = (candle.volume / maxVolume) * volumeHeight;
-                const y = height - padding - barHeight;
-                
-                ctx.fillStyle = candle.close > candle.open ? 'rgba(16, 185, 129, 0.3)' : 'rgba(239, 68, 68, 0.3)';
-                ctx.fillRect(x - candleWidth / 2, y, candleWidth, barHeight);
-            });
-            
-            // Draw title
-            ctx.fillStyle = '#111827';
-            ctx.font = 'bold 14px -apple-system, sans-serif';
-            ctx.textAlign = 'left';
-            ctx.fillText('BTC/EUR', padding, padding - 15);
-            
-            // Draw current price
-            const currentPrice = data[data.length - 1].close;
-            ctx.fillStyle = '#667eea';
-            ctx.font = 'bold 16px -apple-system, sans-serif';
-            ctx.fillText('€' + currentPrice.toFixed(2), padding + 100, padding - 15);
-        }
-        
-        function generateCandlestickData(count, basePrice) {
-            const data = [];
-            let price = basePrice;
-            
-            for (let i = 0; i < count; i++) {
-                const open = price;
-                const volatility = basePrice * 0.01;
-                const high = open + Math.random() * volatility;
-                const low = open - Math.random() * volatility;
-                const close = low + Math.random() * (high - low);
-                price = close;
-                
-                data.push({
-                    time: Date.now() - (count - i) * 3600000,
-                    open,
-                    high,
-                    low,
-                    close,
-                    volume: Math.random() * 1000 + 200
-                });
-            }
-            return data;
-        }
-        
-        function changeTradingTimeframe(timeframe) {
-            chartData.timeframe = timeframe;
-            chartData.trading = []; // Reset data
-            renderTradingChart();
-        }
-        
-        // Update charts periodically
-        function updateCharts() {
-            // Add new data point to BTC chart
-            if (chartData.btc.length > 0) {
-                const lastPrice = chartData.btc[chartData.btc.length - 1].price;
-                const newPrice = lastPrice * (1 + (Math.random() - 0.5) * 0.002);
-                chartData.btc.push({
-                    time: Date.now(),
-                    price: newPrice,
-                    volume: Math.random() * 1000 + 500
-                });
-                if (chartData.btc.length > 24) {
-                    chartData.btc.shift();
-                }
-                renderBTCChart();
-            }
-        }
-        
-        // Initialize charts
-        function initializeCharts() {
-            setTimeout(() => {
-                renderBTCChart();
-                renderTradingChart();
-                // Update charts every 10 seconds
-                setInterval(updateCharts, 10000);
-            }, 1000);
-        }
-        
-        // ===== INITIALIZE ON LOAD =====
-        document.addEventListener('DOMContentLoaded', () => {
-            // Check if user is logged in
-            const loginScreen = document.getElementById('login-screen');
-            const appContainer = document.querySelector('.app');
-            
-            if (loginScreen && appContainer) {
-                if (isLoggedIn) {
-                    loginScreen.classList.add('hidden');
-                    appContainer.classList.remove('hidden');
-                } else {
-                    loginScreen.classList.remove('hidden');
-                    appContainer.classList.add('hidden');
-                }
-            }
-            
-            renderNotifications();
-            updateNotificationBadge();
-            
-            // Initialize charts after login check
-            if (isLoggedIn) {
-                initializeCharts();
+        // Cleanup interval on page unload
+        window.addEventListener('beforeunload', () => {
+            if (updateInterval) {
+                clearInterval(updateInterval);
             }
         });
-        
-        // Replace demo mode alerts with modals
-        function showDemoAction(action) {
-            // Instead of alert, open appropriate modal
-            const modalMap = {
-                'Buy Bitcoin': 'buy',
-                'Buy Ethereum': 'buy',
-                'Sell Bitcoin': 'sell',
-                'Sell Ethereum': 'sell',
-                'Send': 'send',
-                'Receive': 'receive'
-            };
-            
-            const modalId = modalMap[action];
-            if (modalId) {
-                openModal(modalId);
-            }
-        }
-</script>
+    </script>
 </body>
 </html>
