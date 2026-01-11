@@ -89,13 +89,41 @@
         .app {
             display: grid;
             grid-template-areas: 
-                "header header"
-                "sidebar main";
-            grid-template-columns: var(--sidebar-width) 1fr;
+                "header header header"
+                "sidebar main rightbar";
+            grid-template-columns: var(--sidebar-width) 1fr 320px;
             grid-template-rows: var(--header-height) 1fr;
             min-height: 100vh;
-            max-width: var(--desktop-max-width);
+            max-width: 1600px;
             margin: 0 auto;
+        }
+        
+        /* Responsive layout */
+        @media (max-width: 1200px) {
+            .app {
+                grid-template-areas: 
+                    "header header"
+                    "sidebar main";
+                grid-template-columns: var(--sidebar-width) 1fr;
+            }
+            .right-sidebar {
+                display: none !important;
+            }
+        }
+        
+        @media (max-width: 768px) {
+            .app {
+                grid-template-areas: 
+                    "header"
+                    "main";
+                grid-template-columns: 1fr;
+            }
+            .sidebar {
+                display: none !important;
+            }
+            .right-sidebar {
+                display: none !important;
+            }
         }
         
         /* Header */
@@ -235,6 +263,99 @@
             padding: var(--space-xl);
             overflow-y: auto;
             background: var(--bg-primary);
+        }
+        
+        /* Right Sidebar */
+        .right-sidebar {
+            grid-area: rightbar;
+            padding: var(--space-xl);
+            background: var(--surface);
+            border-left: 1px solid var(--border);
+            overflow-y: auto;
+        }
+        
+        .ad-container {
+            margin-bottom: var(--space-lg);
+        }
+        
+        .ad-banner {
+            background: linear-gradient(135deg, var(--primary), var(--accent));
+            border-radius: var(--radius-lg);
+            padding: var(--space-lg);
+            color: white;
+            text-align: center;
+            cursor: pointer;
+            transition: transform 0.2s;
+        }
+        
+        .ad-banner:hover {
+            transform: translateY(-2px);
+        }
+        
+        .ad-banner.large {
+            min-height: 250px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: var(--space-md);
+        }
+        
+        .ad-banner.medium {
+            min-height: 150px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: var(--space-sm);
+        }
+        
+        .ad-banner.small {
+            min-height: 100px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .ad-title {
+            font-size: 1.2rem;
+            font-weight: 700;
+            margin-bottom: var(--space-sm);
+        }
+        
+        .ad-description {
+            font-size: 0.9rem;
+            opacity: 0.9;
+        }
+        
+        .ad-cta {
+            background: white;
+            color: var(--primary);
+            padding: var(--space-sm) var(--space-lg);
+            border-radius: var(--radius-md);
+            font-weight: 600;
+            margin-top: var(--space-md);
+        }
+        
+        .info-widget {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-lg);
+            padding: var(--space-lg);
+            margin-bottom: var(--space-lg);
+        }
+        
+        .info-widget-title {
+            font-size: 1rem;
+            font-weight: 600;
+            margin-bottom: var(--space-md);
+            color: var(--text-primary);
+        }
+        
+        .info-widget-content {
+            font-size: 0.9rem;
+            color: var(--text-secondary);
+            line-height: 1.6;
         }
         
         .page-header {
@@ -1307,6 +1428,14 @@
     
     <!-- LOGIN SCREEN -->
     <div id="login-screen" class="login-screen">
+        <!-- Login ads banner (top) -->
+        <div class="login-ad-banner" style="margin-bottom: 2rem;">
+            <div class="ad-banner medium" style="background: linear-gradient(135deg, #10b981, #059669);">
+                <div class="ad-title">🚀 Start Trading Crypto Today!</div>
+                <div class="ad-description">Join thousands of traders. Get €50 bonus! (Demo)</div>
+            </div>
+        </div>
+        
         <div class="login-logo">
             <svg viewBox="0 0 24 24" fill="currentColor">
                 <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8zm.31-8.86c-1.77-.45-2.34-.94-2.34-1.67 0-.84.79-1.43 2.1-1.43 1.38 0 1.9.66 1.94 1.64h1.71c-.05-1.34-.87-2.57-2.49-2.97V5H10.9v1.69c-1.51.32-2.72 1.3-2.72 2.81 0 1.79 1.49 2.69 3.66 3.21 1.95.46 2.34 1.15 2.34 1.87 0 .53-.39 1.39-2.1 1.39-1.6 0-2.23-.72-2.32-1.64H8.04c.1 1.7 1.36 2.66 2.86 2.97V19h2.34v-1.67c1.52-.29 2.72-1.16 2.73-2.77-.01-2.2-1.9-2.96-3.66-3.42z"/>
@@ -1353,6 +1482,13 @@
         <div class="login-demo-hint">
             <p>Demo-käyttäjä:</p>
             <p><strong>demo</strong> / <strong>demo123</strong></p>
+        </div>
+        
+        <!-- Login ads banner (bottom) -->
+        <div class="login-ad-banner" style="margin-top: 2rem;">
+            <div class="ad-banner small" style="background: linear-gradient(135deg, #f59e0b, #d97706);">
+                <div style="font-size: 0.9rem; font-weight: 600;">💰 Limited Offer: 0% Trading Fees! (Demo)</div>
+            </div>
         </div>
     </div>
 
@@ -1961,6 +2097,86 @@
                 </div>
             </div>
         </main>
+        
+        <!-- Right Sidebar with Ads and Info -->
+        <aside class="right-sidebar">
+            <!-- Ad Banner 1 -->
+            <div class="ad-container">
+                <div class="ad-banner large" style="background: linear-gradient(135deg, #8b5cf6, #6366f1);">
+                    <div class="ad-title">📊 Advanced Trading Tools</div>
+                    <div class="ad-description">Get professional charts, indicators, and real-time alerts</div>
+                    <div class="ad-cta">Learn More (Demo)</div>
+                </div>
+            </div>
+            
+            <!-- Info Widget -->
+            <div class="info-widget">
+                <div class="info-widget-title">💡 Trading Tip</div>
+                <div class="info-widget-content">
+                    Diversify your portfolio across multiple assets to reduce risk. (This is demo advice)
+                </div>
+            </div>
+            
+            <!-- Ad Banner 2 -->
+            <div class="ad-container">
+                <div class="ad-banner medium" style="background: linear-gradient(135deg, #ef4444, #dc2626);">
+                    <div class="ad-title">🔥 Hot Offer!</div>
+                    <div class="ad-description">Trade with 50x leverage</div>
+                    <div class="ad-cta">Start Now (Demo)</div>
+                </div>
+            </div>
+            
+            <!-- Market Stats Widget -->
+            <div class="info-widget">
+                <div class="info-widget-title">📈 Market Stats (Demo)</div>
+                <div class="info-widget-content">
+                    <div style="margin-bottom: 0.5rem;">
+                        <strong>BTC Dominance:</strong> 54.2%
+                    </div>
+                    <div style="margin-bottom: 0.5rem;">
+                        <strong>24h Volume:</strong> €42.5B
+                    </div>
+                    <div>
+                        <strong>Active Traders:</strong> 1.2M
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Ad Banner 3 -->
+            <div class="ad-container">
+                <div class="ad-banner medium" style="background: linear-gradient(135deg, #10b981, #059669);">
+                    <div class="ad-title">🎁 Referral Bonus</div>
+                    <div class="ad-description">Invite friends, earn €25 each</div>
+                    <div class="ad-cta">Invite Now (Demo)</div>
+                </div>
+            </div>
+            
+            <!-- News Widget -->
+            <div class="info-widget">
+                <div class="info-widget-title">📰 Latest News (Demo)</div>
+                <div class="info-widget-content">
+                    <div style="margin-bottom: 0.75rem; padding-bottom: 0.75rem; border-bottom: 1px solid var(--border);">
+                        <div style="font-weight: 600; margin-bottom: 0.25rem;">BTC reaches new milestone</div>
+                        <div style="font-size: 0.85rem; color: var(--text-tertiary);">2 hours ago</div>
+                    </div>
+                    <div style="margin-bottom: 0.75rem; padding-bottom: 0.75rem; border-bottom: 1px solid var(--border);">
+                        <div style="font-weight: 600; margin-bottom: 0.25rem;">ETH 2.0 update successful</div>
+                        <div style="font-size: 0.85rem; color: var(--text-tertiary);">5 hours ago</div>
+                    </div>
+                    <div>
+                        <div style="font-weight: 600; margin-bottom: 0.25rem;">New trading pairs added</div>
+                        <div style="font-size: 0.85rem; color: var(--text-tertiary);">1 day ago</div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Ad Banner 4 -->
+            <div class="ad-container">
+                <div class="ad-banner small" style="background: linear-gradient(135deg, #f59e0b, #d97706);">
+                    <div style="font-weight: 600;">⚡ Instant Deposits - 0% Fees (Demo)</div>
+                </div>
+            </div>
+        </aside>
     </div>
 
     <script>
