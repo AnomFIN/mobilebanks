@@ -21,9 +21,16 @@
             --warning: #f59e0b;
             --info: #3b82f6;
             
+            /* CAT Brand Colors */
+            --cat-primary: #8b5cf6;
+            --cat-light: #a78bfa;
+            --cat-bg: rgba(139, 92, 246, 0.15);
+            
             /* Desktop-specific colors */
             --bg-primary: #fafbfc;
             --bg-secondary: #f8fafc;
+            --bg-tertiary: #f1f5f9;
+            --bg-elevated: #ffffff;
             --surface: #ffffff;
             --surface-elevated: #ffffff;
             --border: rgba(148, 163, 184, 0.15);
@@ -48,6 +55,14 @@
             --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
             --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
             --shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+            --shadow-glow: 0 0 20px rgba(102, 126, 234, 0.3);
+            
+            /* Border Radius */
+            --radius-sm: 0.5rem;
+            --radius-md: 0.75rem;
+            --radius-lg: 1rem;
+            --radius-xl: 1.5rem;
+            --radius-2xl: 2rem;
             
             /* Desktop breakpoints */
             --desktop-max-width: 1400px;
@@ -74,13 +89,41 @@
         .app {
             display: grid;
             grid-template-areas: 
-                "header header"
-                "sidebar main";
-            grid-template-columns: var(--sidebar-width) 1fr;
+                "header header header"
+                "sidebar main rightbar";
+            grid-template-columns: var(--sidebar-width) 1fr 320px;
             grid-template-rows: var(--header-height) 1fr;
             min-height: 100vh;
-            max-width: var(--desktop-max-width);
+            max-width: 1600px;
             margin: 0 auto;
+        }
+        
+        /* Responsive layout */
+        @media (max-width: 1200px) {
+            .app {
+                grid-template-areas: 
+                    "header header"
+                    "sidebar main";
+                grid-template-columns: var(--sidebar-width) 1fr;
+            }
+            .right-sidebar {
+                display: none !important;
+            }
+        }
+        
+        @media (max-width: 768px) {
+            .app {
+                grid-template-areas: 
+                    "header"
+                    "main";
+                grid-template-columns: 1fr;
+            }
+            .sidebar {
+                display: none !important;
+            }
+            .right-sidebar {
+                display: none !important;
+            }
         }
         
         /* Header */
@@ -220,6 +263,99 @@
             padding: var(--space-xl);
             overflow-y: auto;
             background: var(--bg-primary);
+        }
+        
+        /* Right Sidebar */
+        .right-sidebar {
+            grid-area: rightbar;
+            padding: var(--space-xl);
+            background: var(--surface);
+            border-left: 1px solid var(--border);
+            overflow-y: auto;
+        }
+        
+        .ad-container {
+            margin-bottom: var(--space-lg);
+        }
+        
+        .ad-banner {
+            background: linear-gradient(135deg, var(--primary), var(--accent));
+            border-radius: var(--radius-lg);
+            padding: var(--space-lg);
+            color: white;
+            text-align: center;
+            cursor: pointer;
+            transition: transform 0.2s;
+        }
+        
+        .ad-banner:hover {
+            transform: translateY(-2px);
+        }
+        
+        .ad-banner.large {
+            min-height: 250px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: var(--space-md);
+        }
+        
+        .ad-banner.medium {
+            min-height: 150px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: var(--space-sm);
+        }
+        
+        .ad-banner.small {
+            min-height: 100px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .ad-title {
+            font-size: 1.2rem;
+            font-weight: 700;
+            margin-bottom: var(--space-sm);
+        }
+        
+        .ad-description {
+            font-size: 0.9rem;
+            opacity: 0.9;
+        }
+        
+        .ad-cta {
+            background: white;
+            color: var(--primary);
+            padding: var(--space-sm) var(--space-lg);
+            border-radius: var(--radius-md);
+            font-weight: 600;
+            margin-top: var(--space-md);
+        }
+        
+        .info-widget {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-lg);
+            padding: var(--space-lg);
+            margin-bottom: var(--space-lg);
+        }
+        
+        .info-widget-title {
+            font-size: 1rem;
+            font-weight: 600;
+            margin-bottom: var(--space-md);
+            color: var(--text-primary);
+        }
+        
+        .info-widget-content {
+            font-size: 0.9rem;
+            color: var(--text-secondary);
+            line-height: 1.6;
         }
         
         .page-header {
@@ -595,9 +731,981 @@
                 --text-tertiary: #64748b;
             }
         }
+    
+        
+        /* ===== ADDED FROM MOBILE: LOGIN & AUTH ===== */
+        /* ===== LOGIN SCREEN ===== */
+        .login-screen {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: var(--bg-primary);
+            z-index: 1000;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: var(--space-lg);
+        }
+
+        .login-screen.hidden {
+            display: none;
+        }
+
+        .login-logo {
+            width: 80px;
+            height: 80px;
+            background: linear-gradient(135deg, var(--primary) 0%, var(--cat-primary) 100%);
+            border-radius: var(--radius-xl);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: var(--space-lg);
+            box-shadow: var(--shadow-glow);
+        }
+
+        .login-logo svg {
+            width: 48px;
+            height: 48px;
+            color: white;
+        }
+
+        .login-title {
+            font-size: 28px;
+            font-weight: 700;
+            margin-bottom: var(--space-xs);
+            background: linear-gradient(135deg, var(--primary) 0%, var(--cat-primary) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .login-subtitle {
+            color: var(--text-secondary);
+            font-size: 14px;
+            margin-bottom: var(--space-xl);
+        }
+
+        .login-form {
+            width: 100%;
+            max-width: 340px;
+        }
+
+        .form-group {
+            margin-bottom: var(--space-md);
+        }
+
+        .form-label {
+            display: block;
+            font-size: 13px;
+            font-weight: 600;
+            color: var(--text-secondary);
+            margin-bottom: var(--space-xs);
+        }
+
+        .form-input {
+            width: 100%;
+            padding: 14px 16px;
+            background: var(--bg-tertiary);
+            border: 1px solid var(--border-medium);
+            border-radius: var(--radius-md);
+            color: var(--text-primary);
+            font-size: 15px;
+            transition: var(--transition);
+        }
+
+        .form-input:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px var(--primary-bg);
+        }
+
+        .form-input::placeholder {
+            color: var(--text-muted);
+        }
+
+        .login-btn {
+            width: 100%;
+            padding: 16px;
+            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+            border: none;
+            border-radius: var(--radius-md);
+            color: white;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: var(--transition);
+            margin-top: var(--space-sm);
+        }
+
+        .login-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-lg);
+        }
+
+        .login-btn:active {
+            transform: translateY(0);
+        }
+
+        .login-demo-hint {
+            margin-top: var(--space-lg);
+            padding: var(--space-md);
+            background: var(--primary-bg);
+            border-radius: var(--radius-md);
+            text-align: center;
+        }
+
+        .login-demo-hint p {
+            font-size: 13px;
+            color: var(--text-secondary);
+            margin-bottom: var(--space-xs);
+        }
+
+        .login-demo-hint strong {
+            color: var(--primary);
+        }
+
+        .login-tabs {
+            display: flex;
+            margin-bottom: var(--space-lg);
+            background: var(--bg-tertiary);
+            border-radius: var(--radius-full);
+            padding: 4px;
+        }
+
+        .login-tab {
+            flex: 1;
+            padding: 10px 20px;
+            border: none;
+            background: transparent;
+            border-radius: var(--radius-full);
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--text-tertiary);
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .login-tab.active {
+            background: var(--bg-card);
+            color: var(--text-primary);
+            box-shadow: var(--shadow-sm);
+        }
+
+        .login-error {
+            background: var(--error-light);
+            color: var(--error);
+            padding: var(--space-sm) var(--space-md);
+            border-radius: var(--radius-sm);
+            font-size: 13px;
+            margin-bottom: var(--space-md);
+            display: none;
+        }
+
+        .login-error.show {
+            display: block;
+        }
+
+        /* ===== ONBOARDING MODAL ===== */
+        .onboarding-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.8);
+            backdrop-filter: blur(10px);
+            z-index: 500;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: var(--space-lg);
+        }
+
+        .onboarding-overlay.hidden {
+            display: none;
+        }
+
+        .onboarding-modal {
+            background: var(--bg-card);
+            border-radius: var(--radius-xl);
+            padding: var(--space-xl);
+            max-width: 400px;
+            width: 100%;
+            text-align: center;
+            border: 1px solid var(--border-light);
+        }
+
+        .onboarding-icon {
+            font-size: 48px;
+            margin-bottom: var(--space-md);
+        }
+
+        .onboarding-title {
+            font-size: 22px;
+            font-weight: 700;
+            margin-bottom: var(--space-sm);
+        }
+
+        .onboarding-text {
+            color: var(--text-secondary);
+            font-size: 14px;
+            margin-bottom: var(--space-lg);
+            line-height: 1.6;
+        }
+
+        .onboarding-steps {
+            display: flex;
+            justify-content: center;
+            gap: var(--space-sm);
+            margin-bottom: var(--space-lg);
+        }
+
+        .onboarding-step {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: var(--border-medium);
+            transition: var(--transition);
+        }
+
+        .onboarding-step.active {
+            background: var(--primary);
+            width: 24px;
+            border-radius: var(--radius-full);
+        }
+
+        .onboarding-btn {
+            width: 100%;
+            padding: 14px;
+            background: var(--primary);
+            border: none;
+            border-radius: var(--radius-md);
+            color: white;
+            font-size: 15px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .onboarding-btn:hover {
+            background: var(--primary-light);
+        }
+
+        .onboarding-skip {
+            margin-top: var(--space-md);
+            background: none;
+            border: none;
+            color: var(--text-tertiary);
+            font-size: 13px;
+            cursor: pointer;
+        }
+
+        .onboarding-skip:hover {
+            color: var(--text-secondary);
+        }
+
+        /* ===== APP CONTAINER ===== */
+        .app {
+            max-width: 430px;
+            margin: 0 auto;
+            min-height: 100vh;
+            background: var(--bg-primary);
+            position: relative;
+        }
+
+        .app.hidden {
+            display: none;
+        }
+
+        /* ===== HEADER ===== */
+        .header {
+            position: fixed;
+            top: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 100%;
+            max-width: 430px;
+            height: 60px;
+            background: rgba(10, 10, 15, 0.95);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border-bottom: 1px solid var(--border-light);
+            z-index: 100;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 var(--space-md);
+        }
+
+        .light-theme .header {
+            background: rgba(255, 255, 255, 0.95);
+        }
+
+        .header-logo {
+            display: flex;
+            align-items: center;
+            gap: var(--space-sm);
+        }
+
+        .header-logo svg {
+            width: 28px;
+            height: 28px;
+            color: var(--primary);
+        }
+
+        .header-logo span {
+            font-size: 18px;
+            font-weight: 700;
+            background: linear-gradient(135deg, var(--primary) 0%, var(--cat-primary) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .header-actions {
+            display: flex;
+            align-items: center;
+            gap: var(--space-sm);
+        }
+
+        .header-btn {
+            width: 36px;
+            height: 36px;
+            border-radius: var(--radius-md);
+            background: var(--bg-tertiary);
+            border: 1px solid var(--border-light);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: var(--transition);
+            font-size: 16px;
+        }
+
+        .header-btn:hover {
+            background: var(--bg-elevated);
+            border-color: var(--border-medium);
+        }
+
+        .user-avatar {
+            width: 36px;
+            height: 36px;
+            border-radius: var(--radius-md);
+            background: linear-gradient(135deg, var(--cat-primary) 0%, var(--primary) 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 13px;
+            font-weight: 700;
+            color: white;
+            cursor: pointer;
+        }
+
+        /* ===== NOTIFICATION
+        
+        /* ===== ADDED FROM MOBILE: MODALS ===== */
+        
+        
+        /* ===== ADDED FROM MOBILE: NOTIFICATIONS ===== */
+        /* ===== NOTIFICATION CENTER ===== */
+        .notification-badge {
+            position: absolute;
+            top: -4px;
+            right: -4px;
+            width: 18px;
+            height: 18px;
+            background: var(--error);
+            border-radius: 50%;
+            font-size: 10px;
+            font-weight: 700;
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .notification-badge.hidden {
+            display: none;
+        }
+
+        .notification-panel {
+            position: fixed;
+            top: 60px;
+            right: 0;
+            width: 100%;
+            max-width: 430px;
+            max-height: 400px;
+            background: var(--bg-card);
+            border: 1px solid var(--border-light);
+            border-radius: 0 0 var(--radius-lg) var(--radius-lg);
+            z-index: 99;
+            overflow-y: auto;
+            box-shadow: var(--shadow-lg);
+            transform: translateY(-100%);
+            opacity: 0;
+            transition: var(--transition);
+            pointer-events: none;
+        }
+
+        .notification-panel.show {
+            transform: translateY(0);
+            opacity: 1;
+            pointer-events: auto;
+        }
+
+        .notification-header {
+            padding: var(--space-md);
+            border-bottom: 1px solid var(--border-light);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .notification-title {
+            font-size: 15px;
+            font-weight: 600;
+        }
+
+        .notification-clear {
+            font-size: 12px;
+            color: var(--primary);
+            background: none;
+            border: none;
+            cursor: pointer;
+        }
+
+        .notification-item {
+            padding: var(--space-md);
+            border-bottom: 1px solid var(--border-light);
+            display: flex;
+            align-items: flex-start;
+            gap: var(--space-sm);
+        }
+
+        .notification-item:last-child {
+            border-bottom: none;
+        }
+
+        .notification-icon {
+            width: 32px;
+            height: 32px;
+            border-radius: var(--radius-sm);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 14px;
+            flex-shrink: 0;
+        }
+
+        .notification-icon.success {
+            background: var(--success-light);
+        }
+
+        .notification-icon.cat {
+            background: var(--cat-bg);
+        }
+
+        .notification-icon.info {
+            background: var(--primary-bg);
+        }
+
+        .notification-content {
+            flex: 1;
+        }
+
+        .notification-message {
+            font-size: 13px;
+            color: var(--text-primary);
+            margin-bottom: 2px;
+        }
+
+        .notification-time {
+            font-size: 11px;
+            color: var(--text-tertiary);
+        }
+
+        /* ===== MAIN CONTENT ===== */
+        .main-content {
+            padding-top: 60px;
+            padding-bottom: 90px;
+            min-height: 100vh;
+        }
+
+        /* ===== SCREENS ===== */
+        .screen {
+            display: none;
+            padding: var(--space-md);
+            animation: fadeIn 0.2s ease;
+        }
+
+        .screen.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(8px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* ===== CARDS ===== */
+        .card {
+            background: var(--bg-card);
+            border-radius: var(--radius-lg);
+            border: 1px solid var(--border-light);
+            padding: var(--space-lg);
+            margin-bottom: var(--space-md);
+            transition: var(--transition);
+        }
+
+        .card:hover {
+            border-color: var(--border-medium);
+        }
+
+        /* ===== BALANCE CARD ===== */
+        .balance-card {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+            color: white;
+            border: none;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .balance-card::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -30%;
+            width: 200px;
+            height: 200px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 50%;
+        }
+
+        .balance-label {
+            font-size: 13px;
+            opacity: 0.85;
+            margin-bottom: var(--space-xs);
+            font-weight: 500;
+        }
+
+        .balance-amount {
+            font-size: 32px;
+            font-weight: 700;
+            letter-spacing: -1px;
+            margin-bottom: var(--space-sm);
+            font-family: 'SF Mono', Monaco, monospace;
+        }
+
+        .balance-btc {
+            font-size: 14px;
+            opacity: 0.9;
+            font-family: 'SF Mono', Monaco, monospace;
+            margin-bottom: var(--space-sm);
+        }
+
+        .balance-change {
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            font-size: 13px;
+            padding: 4px 10px;
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: var(--radius-full);
+            font-weight: 500;
+        }
+
+        .balance-change.positive {
+            background: rgba(16, 185, 129, 0.3);
+        }
+
+        .balance-change.negative {
+            background: rgba(239, 68, 68, 0.3);
+        }
+
+        /* ===== CAT CARD
+        
+        /* ===== ADDED FROM MOBILE: CAT SYSTEM ===== */
+        /* ===== CAT CARD ===== */
+        .cat-card {
+            background: linear-gradient(135deg, var(--cat-primary) 0%, #7c3aed 100%);
+            color: white;
+            border: none;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .cat-card::before {
+            content: '';
+            position: absolute;
+            top: -30%;
+            right: -20%;
+            width: 150px;
+            height: 150px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 50%;
+        }
+
+        .cat-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: var(--space-md);
+        }
+
+        .cat-badge {
+            display: flex;
+            align-items: center;
+            gap: var(--space-xs);
+            padding: 4px 10px;
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: var(--radius-full);
+            font-size: 11px;
+            font-weight: 600;
+        }
+
+        .cat-badge .pulse {
+            width: 6px;
+            height: 6px;
+            background: #10b981;
+            border-radius: 50%;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+
+        .cat-title {
+            font-size: 13px;
+            opacity: 0.85;
+        }
+
+        .cat-balance {
+            font-size: 26px;
+            font-weight: 700;
+            font-family: 'SF Mono', Monaco, monospace;
+            margin-bottom: var(--space-sm);
+        }
+
+        .cat-status {
+            font-size: 12px;
+            opacity: 0.8;
+        }
+
+        /* ===== CAT ACTIVITY
+        
+        /* ===== ADDED: LOADER & OVERLAY ===== */
+        .loader-overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.7);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 10000;
+        }
+        .loader-overlay.show {
+            display: flex;
+        }
+        .loader {
+            width: 48px;
+            height: 48px;
+            border: 4px solid rgba(255, 255, 255, 0.1);
+            border-top-color: var(--primary);
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+        }
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
     </style>
 </head>
 <body>
+    
+    <!-- LOGIN SCREEN -->
+    <div id="login-screen" class="login-screen">
+        <!-- Login ads banner (top) -->
+        <div class="login-ad-banner" style="margin-bottom: 2rem;">
+            <div class="ad-banner medium" style="background: linear-gradient(135deg, #10b981, #059669);">
+                <div class="ad-title">🚀 Start Trading Crypto Today!</div>
+                <div class="ad-description">Join thousands of traders. Get €50 bonus! (Demo)</div>
+            </div>
+        </div>
+        
+        <div class="login-logo">
+            <svg viewBox="0 0 24 24" fill="currentColor">
+                <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8zm.31-8.86c-1.77-.45-2.34-.94-2.34-1.67 0-.84.79-1.43 2.1-1.43 1.38 0 1.9.66 1.94 1.64h1.71c-.05-1.34-.87-2.57-2.49-2.97V5H10.9v1.69c-1.51.32-2.72 1.3-2.72 2.81 0 1.79 1.49 2.69 3.66 3.21 1.95.46 2.34 1.15 2.34 1.87 0 .53-.39 1.39-2.1 1.39-1.6 0-2.23-.72-2.32-1.64H8.04c.1 1.7 1.36 2.66 2.86 2.97V19h2.34v-1.67c1.52-.29 2.72-1.16 2.73-2.77-.01-2.2-1.9-2.96-3.66-3.42z"/>
+            </svg>
+        </div>
+        <h1 class="login-title">CryptoVault</h1>
+        <p class="login-subtitle">Turvallinen krypto lompakko + C-A-T automaattikauppa</p>
+        
+        <div class="login-tabs">
+            <button class="login-tab active" onclick="switchLoginTab('login')">Kirjaudu</button>
+            <button class="login-tab" onclick="switchLoginTab('register')">Rekisteröidy</button>
+        </div>
+        
+        <form class="login-form" id="login-form" onsubmit="handleLogin(event)">
+            <div class="login-error" id="login-error"></div>
+            <div class="form-group">
+                <label class="form-label" for="username">Käyttäjänimi</label>
+                <input type="text" id="username" class="form-input" placeholder="Syötä käyttäjänimi" required autocomplete="username">
+            </div>
+            <div class="form-group">
+                <label class="form-label" for="password">Salasana</label>
+                <input type="password" id="password" class="form-input" placeholder="Syötä salasana" required autocomplete="current-password">
+            </div>
+            <button type="submit" class="login-btn">Kirjaudu sisään</button>
+        </form>
+        
+        <form class="login-form hidden" id="register-form" onsubmit="handleRegister(event)">
+            <div class="login-error" id="register-error"></div>
+            <div class="form-group">
+                <label class="form-label" for="reg-username">Käyttäjänimi</label>
+                <input type="text" id="reg-username" class="form-input" placeholder="Valitse käyttäjänimi" required autocomplete="username">
+            </div>
+            <div class="form-group">
+                <label class="form-label" for="reg-email">Sähköposti</label>
+                <input type="email" id="reg-email" class="form-input" placeholder="sinun@email.fi" required autocomplete="email">
+            </div>
+            <div class="form-group">
+                <label class="form-label" for="reg-password">Salasana</label>
+                <input type="password" id="reg-password" class="form-input" placeholder="Valitse salasana" required autocomplete="new-password">
+            </div>
+            <button type="submit" class="login-btn">Rekisteröidy</button>
+        </form>
+        
+        <div class="login-demo-hint">
+            <p>Demo-käyttäjä:</p>
+            <p><strong>demo</strong> / <strong>demo123</strong></p>
+        </div>
+        
+        <!-- Login ads banner (bottom) -->
+        <div class="login-ad-banner" style="margin-top: 2rem;">
+            <div class="ad-banner small" style="background: linear-gradient(135deg, #f59e0b, #d97706);">
+                <div style="font-size: 0.9rem; font-weight: 600;">💰 Limited Offer: 0% Trading Fees! (Demo)</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ONBOARDING
+    
+    <!-- ONBOARDING -->
+    <div id="onboarding-overlay" class="onboarding-overlay hidden">
+        <div class="onboarding-modal">
+            <div class="onboarding-icon" id="onboarding-icon">🚀</div>
+            <h2 class="onboarding-title" id="onboarding-title">Tervetuloa CryptoVaultiin!</h2>
+            <p class="onboarding-text" id="onboarding-text">Tämä on demo-versio ammattimaisesta krypto lompakosta C-A-T automaattikaupankäynnillä.</p>
+            <div class="onboarding-steps">
+                <div class="onboarding-step active"></div>
+                <div class="onboarding-step"></div>
+                <div class="onboarding-step"></div>
+            </div>
+            <button class="onboarding-btn" onclick="nextOnboardingStep()">Seuraava</button>
+            <button class="onboarding-skip" onclick="skipOnboarding()">Ohita esittely</button>
+        </div>
+    </div>
+
+    <!-- NOTIFICATION
+    
+    <!-- NOTIFICATION PANEL -->
+    <div id="notification-panel" class="notification-panel">
+        <div class="notification-header">
+            <span class="notification-title">Ilmoitukset</span>
+            <button class="notification-clear" onclick="clearNotifications()">Tyhjennä</button>
+        </div>
+        <div id="notification-list"></div>
+    </div>
+
+    <!-- TOAST
+    
+    <!-- LOADER -->
+    <div id="loader-overlay" class="loader-overlay">
+        <div class="loader"></div>
+    </div>
+    
+    <!-- MODALS -->
+    <div id="modal-send" class="modal-overlay" onclick="closeModalOnOverlay(event)">
+        <div class="modal">
+            <div class="modal-header">
+                <h3 class="modal-title">Lähetä BTC</h3>
+                <button class="modal-close" onclick="closeModal('send')">✕</button>
+            </div>
+            <div class="modal-body">
+                <div class="modal-form-group">
+                    <label class="modal-label">Vastaanottajan osoite</label>
+                    <input type="text" class="modal-input" id="send-address" placeholder="bc1q..." style="font-size: 14px;">
+                </div>
+                <div class="modal-form-group">
+                    <label class="modal-label">Määrä (BTC)</label>
+                    <input type="number" class="modal-input" id="send-amount" placeholder="0.00000000" step="0.00000001" oninput="updateSendPreview()">
+                    <div class="modal-input-hint">Käytettävissä: <span id="send-available">0.52341234</span> BTC</div>
+                </div>
+                <div class="modal-preview">
+                    <div class="modal-preview-row">
+                        <span class="modal-preview-label">Verkkomaksu (arvio)</span>
+                        <span class="modal-preview-value" id="send-fee">0.00001500 BTC</span>
+                    </div>
+                    <div class="modal-preview-row">
+                        <span class="modal-preview-label">Yhteensä</span>
+                        <span class="modal-preview-value highlight" id="send-total">0.00000000 BTC</span>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn-secondary" onclick="closeModal('send')">Peruuta</button>
+                <button class="btn-primary" onclick="confirmSend()">Vahvista lähetys</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Receive Modal
+    <div id="modal-receive" class="modal-overlay" onclick="closeModalOnOverlay(event)">
+        <div class="modal">
+            <div class="modal-header">
+                <h3 class="modal-title">Vastaanota BTC</h3>
+                <button class="modal-close" onclick="closeModal('receive')">✕</button>
+            </div>
+            <div class="modal-body">
+                <div style="text-align: center; margin-bottom: var(--space-lg);">
+                    <div style="width: 180px; height: 180px; background: white; border-radius: var(--radius-md); margin: 0 auto var(--space-md); display: flex; align-items: center; justify-content: center; font-size: 48px;">
+                        📱
+                    </div>
+                    <p style="color: var(--text-secondary); font-size: 13px;">Skannaa QR-koodi tai kopioi osoite</p>
+                </div>
+                <div class="modal-form-group">
+                    <label class="modal-label">Bitcoin-osoite</label>
+                    <div style="font-family: 'SF Mono', Monaco, monospace; font-size: 12px; word-break: break-all; background: var(--bg-tertiary); padding: var(--space-md); border-radius: var(--radius-sm); color: var(--text-secondary);">
+                        bc1qxy2kgdygjrsqtzq2n0yrf2493p83kkfjhx0wlh
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn-primary" onclick="copyAddress(); closeModal('receive');">📋 Kopioi osoite</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Buy Modal
+    <div id="modal-buy" class="modal-overlay" onclick="closeModalOnOverlay(event)">
+        <div class="modal">
+            <div class="modal-header">
+                <h3 class="modal-title">Osta BTC</h3>
+                <button class="modal-close" onclick="closeModal('buy')">✕</button>
+            </div>
+            <div class="modal-body">
+                <div class="modal-form-group">
+                    <label class="modal-label">Summa (EUR)</label>
+                    <input type="number" class="modal-input" id="buy-amount-eur" placeholder="100.00" oninput="updateBuyPreview()">
+                </div>
+                <div class="modal-preview">
+                    <div class="modal-preview-row">
+                        <span class="modal-preview-label">Markkinahinta</span>
+                        <span class="modal-preview-value" id="buy-price">89 000,00 €/BTC</span>
+                    </div>
+                    <div class="modal-preview-row">
+                        <span class="modal-preview-label">Palvelumaksu (1.5%)</span>
+                        <span class="modal-preview-value" id="buy-fee">0,00 €</span>
+                    </div>
+                    <div class="modal-preview-row">
+                        <span class="modal-preview-label">Saat noin</span>
+                        <span class="modal-preview-value highlight" id="buy-btc">0.00000000 BTC</span>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn-secondary" onclick="closeModal('buy')">Peruuta</button>
+                <button class="btn-primary" onclick="confirmBuy()">Vahvista osto</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Sell Modal
+    <div id="modal-sell" class="modal-overlay" onclick="closeModalOnOverlay(event)">
+        <div class="modal">
+            <div class="modal-header">
+                <h3 class="modal-title">Myy BTC</h3>
+                <button class="modal-close" onclick="closeModal('sell')">✕</button>
+            </div>
+            <div class="modal-body">
+                <div class="modal-form-group">
+                    <label class="modal-label">Määrä (BTC)</label>
+                    <input type="number" class="modal-input" id="sell-amount" placeholder="0.00000000" step="0.00000001" oninput="updateSellPreview()">
+                    <div class="modal-input-hint">Käytettävissä: <span id="sell-available">0.52341234</span> BTC</div>
+                </div>
+                <div class="modal-preview">
+                    <div class="modal-preview-row">
+                        <span class="modal-preview-label">Markkinahinta</span>
+                        <span class="modal-preview-value" id="sell-price">89 000,00 €/BTC</span>
+                    </div>
+                    <div class="modal-preview-row">
+                        <span class="modal-preview-label">Palvelumaksu (1.5%)</span>
+                        <span class="modal-preview-value" id="sell-fee">0,00 €</span>
+                    </div>
+                    <div class="modal-preview-row">
+                        <span class="modal-preview-label">Saat noin</span>
+                        <span class="modal-preview-value highlight" id="sell-eur">0,00 €</span>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn-secondary" onclick="closeModal('sell')">Peruuta</button>
+                <button class="btn-primary" onclick="confirmSell()">Vahvista myynti</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Swap Modal
+    <div id="modal-swap" class="modal-overlay" onclick="closeModalOnOverlay(event)">
+        <div class="modal">
+            <div class="modal-header">
+                <h3 class="modal-title">Vaihda krypto</h3>
+                <button class="modal-close" onclick="closeModal('swap')">✕</button>
+            </div>
+            <div class="modal-body">
+                <div class="modal-form-group">
+                    <label class="modal-label">Vaihdan (BTC)</label>
+                    <input type="number" class="modal-input" id="swap-from-amount" placeholder="0.00000000" step="0.00000001" oninput="updateSwapPreview()">
+                    <div class="modal-input-hint">Käytettävissä: <span id="swap-available">0.52341234</span> BTC</div>
+                </div>
+                <div style="text-align: center; margin: var(--space-md) 0;">
+                    <span style="font-size: 24px;">⇅</span>
+                </div>
+                <div class="modal-form-group">
+                    <label class="modal-label">Saan (ETH) - Demo</label>
+                    <input type="text" class="modal-input" id="swap-to-amount" placeholder="0.00000000" readonly style="background: var(--bg-elevated);">
+                </div>
+                <div class="modal-preview">
+                    <div class="modal-preview-row">
+                        <span class="modal-preview-label">Vaihtokurssi</span>
+                        <span class="modal-preview-value">1 BTC = 18.5 ETH</span>
+                    </div>
+                    <div class="modal-preview-row">
+                        <span class="modal-preview-label">Liukuma</span>
+                        <span class="modal-preview-value" id="swap-slippage">0.5%</span>
+                    </div>
+                    <div class="modal-preview-row">
+                        <span class="modal-preview-label">Verkkomaksu</span>
+                        <span class="modal-preview-value">0.00005 BTC</span>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn-secondary" onclick="closeModal('swap')">Peruuta</button>
+                <button class="btn-primary" onclick="confirmSwap()">Vahvista vaihto</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Use CAT Modal
+    
+    
+    
+    
     <div class="app">
         <!-- Header -->
         <header class="header">
@@ -679,15 +1787,14 @@
                         
                         <div class="card">
                             <div class="card-header">
-                                <div class="card-title">BTC Price</div>
+                                <div class="card-title">BTC Price (24h)</div>
                             </div>
-                            <div class="chart-container">
-                                <div class="chart-line"></div>
-                                <span>Interactive chart placeholder</span>
+                            <div class="chart-container" style="height: 250px; position: relative;">
+                                <canvas id="btcPriceChart" width="600" height="250"></canvas>
                             </div>
                             <div style="margin-top: 1rem;">
                                 <div style="font-size: 1.5rem; font-weight: 600;" id="btcPrice">€42,856.23</div>
-                                <div class="text-success">+1.82% today</div>
+                                <div class="text-success" id="btcChange">+1.82% today</div>
                             </div>
                         </div>
                     </div>
@@ -769,10 +1876,10 @@
                 </div>
                 
                 <div class="action-buttons">
-                    <button class="btn btn-primary" onclick="showDemoDialog('Buy')">🔼 Buy Crypto</button>
-                    <button class="btn btn-secondary" onclick="showDemoDialog('Sell')">🔻 Sell Crypto</button>
-                    <button class="btn btn-secondary" onclick="showDemoDialog('Send')">💸 Send</button>
-                    <button class="btn btn-secondary" onclick="showDemoDialog('Receive')">💰 Receive</button>
+                    <button class="btn btn-primary" onclick="openModal('buy')">🔼 Buy Crypto</button>
+                    <button class="btn btn-secondary" onclick="openModal('sell')">🔻 Sell Crypto</button>
+                    <button class="btn btn-secondary" onclick="openModal('send')">💸 Send</button>
+                    <button class="btn btn-secondary" onclick="openModal('receive')">💰 Receive</button>
                 </div>
             </div>
             
@@ -837,20 +1944,24 @@
                         <div class="card-title">Quick Trade</div>
                     </div>
                     <div class="action-buttons">
-                        <button class="btn btn-primary" onclick="showDemoDialog('Buy Bitcoin')">Buy Bitcoin</button>
-                        <button class="btn btn-primary" onclick="showDemoDialog('Buy Ethereum')">Buy Ethereum</button>
-                        <button class="btn btn-secondary" onclick="showDemoDialog('Sell Bitcoin')">Sell Bitcoin</button>
-                        <button class="btn btn-secondary" onclick="showDemoDialog('Sell Ethereum')">Sell Ethereum</button>
+                        <button class="btn btn-primary" onclick="openModal('buy')">Buy Bitcoin</button>
+                        <button class="btn btn-primary" onclick="openModal('buy')">Buy Ethereum</button>
+                        <button class="btn btn-secondary" onclick="openModal('sell')">Sell Bitcoin</button>
+                        <button class="btn btn-secondary" onclick="openModal('sell')">Sell Ethereum</button>
                     </div>
                 </div>
                 
                 <div class="card">
                     <div class="card-header">
                         <div class="card-title">Price Chart</div>
+                        <div style="display: flex; gap: 0.5rem;">
+                            <button class="btn btn-sm" onclick="changeTradingTimeframe('24h')">24h</button>
+                            <button class="btn btn-sm" onclick="changeTradingTimeframe('7d')">7d</button>
+                            <button class="btn btn-sm" onclick="changeTradingTimeframe('30d')">30d</button>
+                        </div>
                     </div>
-                    <div class="chart-container" style="height: 400px;">
-                        <div class="chart-line"></div>
-                        <span>Advanced trading chart placeholder</span>
+                    <div class="chart-container" style="height: 400px; position: relative;">
+                        <canvas id="tradingChart" width="800" height="400"></canvas>
                     </div>
                 </div>
             </div>
@@ -957,7 +2068,7 @@
                                     Realistic Volatility
                                 </label>
                                 <label style="display: flex; align-items: center; gap: 0.5rem;">
-                                    <input type="checkbox" id="notifications" checked onchange="toggleNotifications()">
+                                    <input type="checkbox" id="notifications" checked onchange="toggleNotificationSetting()">
                                     Desktop Notifications
                                 </label>
                             </div>
@@ -986,6 +2097,86 @@
                 </div>
             </div>
         </main>
+        
+        <!-- Right Sidebar with Ads and Info -->
+        <aside class="right-sidebar">
+            <!-- Ad Banner 1 -->
+            <div class="ad-container">
+                <div class="ad-banner large" style="background: linear-gradient(135deg, #8b5cf6, #6366f1);">
+                    <div class="ad-title">📊 Advanced Trading Tools</div>
+                    <div class="ad-description">Get professional charts, indicators, and real-time alerts</div>
+                    <div class="ad-cta">Learn More (Demo)</div>
+                </div>
+            </div>
+            
+            <!-- Info Widget -->
+            <div class="info-widget">
+                <div class="info-widget-title">💡 Trading Tip</div>
+                <div class="info-widget-content">
+                    Diversify your portfolio across multiple assets to reduce risk. (This is demo advice)
+                </div>
+            </div>
+            
+            <!-- Ad Banner 2 -->
+            <div class="ad-container">
+                <div class="ad-banner medium" style="background: linear-gradient(135deg, #ef4444, #dc2626);">
+                    <div class="ad-title">🔥 Hot Offer!</div>
+                    <div class="ad-description">Trade with 50x leverage</div>
+                    <div class="ad-cta">Start Now (Demo)</div>
+                </div>
+            </div>
+            
+            <!-- Market Stats Widget -->
+            <div class="info-widget">
+                <div class="info-widget-title">📈 Market Stats (Demo)</div>
+                <div class="info-widget-content">
+                    <div style="margin-bottom: 0.5rem;">
+                        <strong>BTC Dominance:</strong> 54.2%
+                    </div>
+                    <div style="margin-bottom: 0.5rem;">
+                        <strong>24h Volume:</strong> €42.5B
+                    </div>
+                    <div>
+                        <strong>Active Traders:</strong> 1.2M
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Ad Banner 3 -->
+            <div class="ad-container">
+                <div class="ad-banner medium" style="background: linear-gradient(135deg, #10b981, #059669);">
+                    <div class="ad-title">🎁 Referral Bonus</div>
+                    <div class="ad-description">Invite friends, earn €25 each</div>
+                    <div class="ad-cta">Invite Now (Demo)</div>
+                </div>
+            </div>
+            
+            <!-- News Widget -->
+            <div class="info-widget">
+                <div class="info-widget-title">📰 Latest News (Demo)</div>
+                <div class="info-widget-content">
+                    <div style="margin-bottom: 0.75rem; padding-bottom: 0.75rem; border-bottom: 1px solid var(--border);">
+                        <div style="font-weight: 600; margin-bottom: 0.25rem;">BTC reaches new milestone</div>
+                        <div style="font-size: 0.85rem; color: var(--text-tertiary);">2 hours ago</div>
+                    </div>
+                    <div style="margin-bottom: 0.75rem; padding-bottom: 0.75rem; border-bottom: 1px solid var(--border);">
+                        <div style="font-weight: 600; margin-bottom: 0.25rem;">ETH 2.0 update successful</div>
+                        <div style="font-size: 0.85rem; color: var(--text-tertiary);">5 hours ago</div>
+                    </div>
+                    <div>
+                        <div style="font-weight: 600; margin-bottom: 0.25rem;">New trading pairs added</div>
+                        <div style="font-size: 0.85rem; color: var(--text-tertiary);">1 day ago</div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Ad Banner 4 -->
+            <div class="ad-container">
+                <div class="ad-banner small" style="background: linear-gradient(135deg, #f59e0b, #d97706);">
+                    <div style="font-weight: 600;">⚡ Instant Deposits - 0% Fees (Demo)</div>
+                </div>
+            </div>
+        </aside>
     </div>
 
     <script>
@@ -1190,7 +2381,24 @@
         });
         
         function showDemoDialog(action) {
-            alert(`DEMO MODE: ${action} functionality would be implemented here.\n\nThis is a demonstration interface with no real crypto functionality.`);
+            // Map actions to modal IDs
+            const modalMap = {
+                'Buy': 'buy',
+                'Buy Bitcoin': 'buy',
+                'Buy Ethereum': 'buy',
+                'Sell': 'sell',
+                'Sell Bitcoin': 'sell',
+                'Sell Ethereum': 'sell',
+                'Send': 'send',
+                'Receive': 'receive'
+            };
+            
+            const modalId = modalMap[action];
+            if (modalId) {
+                openModal(modalId);
+            } else {
+                alert(`DEMO MODE: ${action} functionality would be implemented here.\n\nThis is a demonstration interface with no real crypto functionality.`);
+            }
         }
         
         function toggleDarkMode() {
@@ -1216,7 +2424,7 @@
             }
         }
         
-        function toggleNotifications() {
+        function toggleNotificationSetting() {
             const enabled = document.getElementById('notifications').checked;
             if (demoEngine) {
                 demoEngine.settings.notifications = enabled;
@@ -1261,6 +2469,681 @@
                 }
             }
         });
-    </script>
+    
+        
+        // ===== ADDED FROM MOBILE: LOGIN SYSTEM =====
+        let isLoggedIn = localStorage.getItem('isLoggedIn') === 'true';
+        
+        function switchLoginTab(tab) {
+            const loginForm = document.getElementById('login-form');
+            const registerForm = document.getElementById('register-form');
+            const tabs = document.querySelectorAll('.login-tab');
+            
+            tabs.forEach(t => t.classList.remove('active'));
+            event.target.classList.add('active');
+            
+            if (tab === 'login') {
+                loginForm.classList.remove('hidden');
+                registerForm.classList.add('hidden');
+            } else {
+                loginForm.classList.add('hidden');
+                registerForm.classList.remove('hidden');
+            }
+        }
+        
+        function handleLogin(e) {
+            e.preventDefault();
+            const username = document.getElementById('username').value;
+            const password = document.getElementById('password').value;
+            
+            // Demo login
+            if (username === 'demo' && password === 'demo123') {
+                loginUser({ username, email: 'demo@cryptobank.fi' });
+            } else {
+                showLoginError('login-error', 'Virheellinen käyttäjänimi tai salasana');
+            }
+            return false;
+        }
+        
+        function handleRegister(e) {
+            e.preventDefault();
+            const username = document.getElementById('reg-username').value;
+            const email = document.getElementById('reg-email').value;
+            
+            // Demo registration
+            loginUser({ username, email });
+            return false;
+        }
+        
+        function loginUser(user) {
+            localStorage.setItem('isLoggedIn', 'true');
+            localStorage.setItem('username', user.username);
+            const loginScreen = document.getElementById('login-screen');
+            const appContainer = document.querySelector('.app');
+            if (loginScreen) loginScreen.classList.add('hidden');
+            if (appContainer) appContainer.classList.remove('hidden');
+            addNotification('welcome', `Tervetuloa, ${user.username}!`, 'success');
+            
+            // Initialize charts after login
+            initializeCharts();
+        }
+        
+        function showLoginError(id, message) {
+            const errorEl = document.getElementById(id);
+            errorEl.textContent = message;
+            errorEl.classList.add('show');
+            setTimeout(() => errorEl.classList.remove('show'), 3000);
+        }
+        
+        // ===== ADDED FROM MOBILE: MODAL SYSTEM =====
+        function openModal(modalId) {
+            const modal = document.getElementById(`modal-${modalId}`);
+            if (modal) modal.classList.add('show');
+        }
+        
+        function closeModal(modalId) {
+            const modal = document.getElementById(`modal-${modalId}`);
+            if (modal) modal.classList.remove('show');
+        }
+        
+        function closeModalOnOverlay(event) {
+            if (event.target.classList.contains('modal-overlay')) {
+                event.target.classList.remove('show');
+            }
+        }
+        
+        // ===== ADDED FROM MOBILE: NOTIFICATION SYSTEM =====
+        let notifications = [];
+        
+        function addNotification(id, message, type = 'info') {
+            notifications.unshift({ id, message, type, time: new Date() });
+            renderNotifications();
+            updateNotificationBadge();
+        }
+        
+        function renderNotifications() {
+            const list = document.getElementById('notification-list');
+            if (!list) return;
+            
+            if (notifications.length === 0) {
+                list.innerHTML = '<div style="text-align: center; padding: var(--space-xl); color: var(--text-tertiary);">Ei ilmoituksia</div>';
+                return;
+            }
+            
+            list.innerHTML = notifications.map(n => `
+                <div class="notification-item ${n.type}">
+                    <div class="notification-content">
+                        <div class="notification-message">${n.message}</div>
+                        <div class="notification-time">${formatTime(n.time)}</div>
+                    </div>
+                </div>
+            `).join('');
+        }
+        
+        function toggleNotifications() {
+            const panel = document.getElementById('notification-panel');
+            if (panel) panel.classList.toggle('show');
+        }
+        
+        function clearNotifications() {
+            notifications = [];
+            renderNotifications();
+            updateNotificationBadge();
+        }
+        
+        function updateNotificationBadge() {
+            const badge = document.getElementById('notification-badge');
+            if (!badge) return;
+            
+            if (notifications.length > 0) {
+                badge.textContent = notifications.length;
+                badge.style.display = 'block';
+            } else {
+                badge.style.display = 'none';
+            }
+        }
+        
+        function formatTime(date) {
+            const now = new Date();
+            const diff = Math.floor((now - date) / 1000);
+            
+            if (diff < 60) return 'Juuri nyt';
+            if (diff < 3600) return `${Math.floor(diff / 60)} min sitten`;
+            if (diff < 86400) return `${Math.floor(diff / 3600)} h sitten`;
+            return date.toLocaleDateString('fi-FI');
+        }
+        
+        // ===== ADDED FROM MOBILE: CAT SYSTEM =====
+        let catBalance = parseFloat(localStorage.getItem('catBalance')) || 500.00;
+        let catActive = localStorage.getItem('catActive') === 'true';
+        
+        function getCatBalance() {
+            return catBalance;
+        }
+        
+        function updateCatBalance(amount) {
+            catBalance = amount;
+            localStorage.setItem('catBalance', catBalance.toString());
+        }
+        
+        function confirmDepositCat() {
+            showLoader();
+            setTimeout(() => {
+                const amount = 100; // Demo amount
+                updateCatBalance(catBalance + amount);
+                addNotification('deposit-cat', `Talletettu €${amount} CAT-tilille`, 'success');
+                closeModal('deposit-cat');
+                hideLoader();
+            }, 1500);
+        }
+        
+        function confirmWithdrawCat() {
+            showLoader();
+            setTimeout(() => {
+                const amount = 50; // Demo amount
+                if (catBalance >= amount) {
+                    updateCatBalance(catBalance - amount);
+                    addNotification('withdraw-cat', `Nostettu €${amount} CAT-tililtä`, 'success');
+                } else {
+                    addNotification('withdraw-cat', 'Ei tarpeeksi saldoa', 'error');
+                }
+                closeModal('withdraw-cat');
+                hideLoader();
+            }, 1500);
+        }
+        
+        function confirmUseCat() {
+            showLoader();
+            setTimeout(() => {
+                catActive = !catActive;
+                localStorage.setItem('catActive', catActive.toString());
+                addNotification('use-cat', catActive ? 'CAT aktivoitu' : 'CAT pysäytetty', 'success');
+                closeModal('use-cat');
+                hideLoader();
+            }, 1000);
+        }
+        
+        // ===== ADDED FROM MOBILE: TRANSACTION CONFIRMATIONS =====
+        function confirmSend() {
+            showLoader();
+            setTimeout(() => {
+                addNotification('send', 'Lähetys vahvistettu (DEMO)', 'success');
+                closeModal('send');
+                hideLoader();
+            }, 2000);
+        }
+        
+        function confirmReceive() {
+            addNotification('receive', 'Osoite kopioitu (DEMO)', 'success');
+            closeModal('receive');
+        }
+        
+        function confirmBuy() {
+            showLoader();
+            setTimeout(() => {
+                addNotification('buy', 'Osto vahvistettu (DEMO)', 'success');
+                closeModal('buy');
+                hideLoader();
+            }, 2000);
+        }
+        
+        function confirmSell() {
+            showLoader();
+            setTimeout(() => {
+                addNotification('sell', 'Myynti vahvistettu (DEMO)', 'success');
+                closeModal('sell');
+                hideLoader();
+            }, 2000);
+        }
+        
+        function confirmSwap() {
+            showLoader();
+            setTimeout(() => {
+                addNotification('swap', 'Vaihto vahvistettu (DEMO)', 'success');
+                closeModal('swap');
+                hideLoader();
+            }, 2000);
+        }
+        
+        // ===== ADDED: LOADER FUNCTIONS =====
+        function showLoader() {
+            const loader = document.getElementById('loader-overlay');
+            if (loader) loader.classList.add('show');
+        }
+        
+        function hideLoader() {
+            const loader = document.getElementById('loader-overlay');
+            if (loader) loader.classList.remove('show');
+        }
+        
+        // ===== ADDED: COPY ADDRESS FUNCTION =====
+        function copyAddress() {
+            const address = 'bc1qxy2kgdygjrsqtzq2n0yrf2493p83kkfjhx0wlh';
+            navigator.clipboard.writeText(address).then(() => {
+                addNotification('copy', 'Osoite kopioitu leikepöydälle', 'success');
+            });
+        }
+        
+        // ===== ADDED: MODAL PREVIEW FUNCTIONS =====
+        function updateSendPreview() {
+            const amount = parseFloat(document.getElementById('send-amount')?.value) || 0;
+            const fee = 0.00001500;
+            const total = amount + fee;
+            const totalEl = document.getElementById('send-total');
+            if (totalEl) totalEl.textContent = `${total.toFixed(8)} BTC`;
+        }
+        
+        function updateBuyPreview() {
+            const eurAmount = parseFloat(document.getElementById('buy-amount-eur')?.value) || 0;
+            const btcPrice = 89000;
+            const fee = eurAmount * 0.015; // 1.5% fee
+            const btcAmount = (eurAmount - fee) / btcPrice;
+            
+            const feeEl = document.getElementById('buy-fee');
+            const btcEl = document.getElementById('buy-btc');
+            if (feeEl) feeEl.textContent = `${fee.toFixed(2)} €`;
+            if (btcEl) btcEl.textContent = `${btcAmount.toFixed(8)} BTC`;
+        }
+        
+        function updateSellPreview() {
+            // Similar to buyPreview but reversed
+            const btcAmount = parseFloat(document.getElementById('sell-amount-btc')?.value) || 0;
+            const btcPrice = 89000;
+            const eurValue = btcAmount * btcPrice;
+            const fee = eurValue * 0.015;
+            const total = eurValue - fee;
+            
+            const feeEl = document.getElementById('sell-fee');
+            const totalEl = document.getElementById('sell-total');
+            if (feeEl) feeEl.textContent = `${fee.toFixed(2)} €`;
+            if (totalEl) totalEl.textContent = `${total.toFixed(2)} €`;
+        }
+        
+        function updateSwapPreview() {
+            // Swap between BTC and ETH
+            const fromAmount = parseFloat(document.getElementById('swap-from-amount')?.value) || 0;
+            const rate = 0.03; // Example rate
+            const toAmount = fromAmount * rate;
+            
+            const toEl = document.getElementById('swap-to-amount');
+            if (toEl) toEl.value = toAmount.toFixed(8);
+        }
+        
+        // ===== ADDED: ONBOARDING FUNCTIONS =====
+        let onboardingStep = 0;
+        const onboardingSteps = [
+            {
+                icon: '🚀',
+                title: 'Tervetuloa CryptoVaultiin!',
+                text: 'Tämä on demo-versio ammattimaisesta krypto lompakosta C-A-T automaattikaupankäynnillä.'
+            },
+            {
+                icon: '💰',
+                title: 'Hallitse cryptojasi',
+                text: 'Osta, myy ja vaihda kryptovaluuttoja turvallisesti ja helposti.'
+            },
+            {
+                icon: '🤖',
+                title: 'CAT Automaattikauppa',
+                text: 'Aktivoi C-A-T automaattikauppa, joka tekee kauppoja puolestasi.'
+            }
+        ];
+        
+        function nextOnboardingStep() {
+            onboardingStep++;
+            if (onboardingStep >= onboardingSteps.length) {
+                skipOnboarding();
+                return;
+            }
+            
+            const step = onboardingSteps[onboardingStep];
+            const iconEl = document.getElementById('onboarding-icon');
+            const titleEl = document.getElementById('onboarding-title');
+            const textEl = document.getElementById('onboarding-text');
+            
+            if (iconEl) iconEl.textContent = step.icon;
+            if (titleEl) titleEl.textContent = step.title;
+            if (textEl) textEl.textContent = step.text;
+            
+            // Update step indicators
+            document.querySelectorAll('.onboarding-step').forEach((el, idx) => {
+                el.classList.toggle('active', idx === onboardingStep);
+            });
+        }
+        
+        function skipOnboarding() {
+            const overlay = document.getElementById('onboarding-overlay');
+            if (overlay) overlay.classList.add('hidden');
+            localStorage.setItem('onboardingCompleted', 'true');
+        }
+        
+        // ===== CHART RENDERING FUNCTIONS =====
+        let chartData = {
+            btc: [],
+            trading: [],
+            timeframe: '24h'
+        };
+        
+        // Generate realistic price data
+        function generatePriceData(points, basePrice, volatility = 0.02) {
+            const data = [];
+            let price = basePrice;
+            
+            for (let i = 0; i < points; i++) {
+                const change = (Math.random() - 0.48) * volatility * price;
+                price += change;
+                data.push({
+                    time: Date.now() - (points - i) * 3600000,
+                    price: price,
+                    volume: Math.random() * 1000 + 500
+                });
+            }
+            return data;
+        }
+        
+        // Render BTC Price Line Chart
+        function renderBTCChart() {
+            const canvas = document.getElementById('btcPriceChart');
+            if (!canvas) return;
+            
+            const ctx = canvas.getContext('2d');
+            const width = canvas.width;
+            const height = canvas.height;
+            const padding = 40;
+            
+            // Clear canvas
+            ctx.clearRect(0, 0, width, height);
+            
+            // Generate or use existing data
+            if (chartData.btc.length === 0) {
+                chartData.btc = generatePriceData(24, 42000, 0.015);
+            }
+            
+            const data = chartData.btc;
+            const prices = data.map(d => d.price);
+            const minPrice = Math.min(...prices);
+            const maxPrice = Math.max(...prices);
+            const priceRange = maxPrice - minPrice;
+            
+            // Draw grid
+            ctx.strokeStyle = '#e5e7eb';
+            ctx.lineWidth = 1;
+            for (let i = 0; i <= 5; i++) {
+                const y = padding + (height - 2 * padding) * i / 5;
+                ctx.beginPath();
+                ctx.moveTo(padding, y);
+                ctx.lineTo(width - padding, y);
+                ctx.stroke();
+            }
+            
+            // Draw price labels
+            ctx.fillStyle = '#6b7280';
+            ctx.font = '11px -apple-system, sans-serif';
+            ctx.textAlign = 'right';
+            for (let i = 0; i <= 5; i++) {
+                const price = maxPrice - (priceRange * i / 5);
+                const y = padding + (height - 2 * padding) * i / 5;
+                ctx.fillText('€' + price.toFixed(0), padding - 5, y + 4);
+            }
+            
+            // Draw line chart with gradient
+            const gradient = ctx.createLinearGradient(0, padding, 0, height - padding);
+            gradient.addColorStop(0, 'rgba(102, 126, 234, 0.3)');
+            gradient.addColorStop(1, 'rgba(102, 126, 234, 0.05)');
+            
+            // Draw area under line
+            ctx.beginPath();
+            ctx.moveTo(padding, height - padding);
+            data.forEach((point, i) => {
+                const x = padding + (width - 2 * padding) * i / (data.length - 1);
+                const y = padding + (height - 2 * padding) * (1 - (point.price - minPrice) / priceRange);
+                if (i === 0) {
+                    ctx.lineTo(x, y);
+                } else {
+                    ctx.lineTo(x, y);
+                }
+            });
+            ctx.lineTo(width - padding, height - padding);
+            ctx.closePath();
+            ctx.fillStyle = gradient;
+            ctx.fill();
+            
+            // Draw line
+            ctx.beginPath();
+            data.forEach((point, i) => {
+                const x = padding + (width - 2 * padding) * i / (data.length - 1);
+                const y = padding + (height - 2 * padding) * (1 - (point.price - minPrice) / priceRange);
+                if (i === 0) {
+                    ctx.moveTo(x, y);
+                } else {
+                    ctx.lineTo(x, y);
+                }
+            });
+            ctx.strokeStyle = '#667eea';
+            ctx.lineWidth = 2;
+            ctx.stroke();
+            
+            // Draw points
+            data.forEach((point, i) => {
+                if (i % 3 === 0) { // Show every 3rd point
+                    const x = padding + (width - 2 * padding) * i / (data.length - 1);
+                    const y = padding + (height - 2 * padding) * (1 - (point.price - minPrice) / priceRange);
+                    ctx.beginPath();
+                    ctx.arc(x, y, 3, 0, Math.PI * 2);
+                    ctx.fillStyle = '#667eea';
+                    ctx.fill();
+                }
+            });
+            
+            // Update current price
+            const currentPrice = data[data.length - 1].price;
+            const priceChange = ((currentPrice - data[0].price) / data[0].price * 100);
+            document.getElementById('btcPrice').textContent = '€' + currentPrice.toFixed(2);
+            const changeEl = document.getElementById('btcChange');
+            if (changeEl) {
+                changeEl.textContent = (priceChange > 0 ? '+' : '') + priceChange.toFixed(2) + '% today';
+                changeEl.className = priceChange > 0 ? 'text-success' : 'text-error';
+            }
+        }
+        
+        // Render Trading Chart (Candlestick-style)
+        function renderTradingChart() {
+            const canvas = document.getElementById('tradingChart');
+            if (!canvas) return;
+            
+            const ctx = canvas.getContext('2d');
+            const width = canvas.width;
+            const height = canvas.height;
+            const padding = 50;
+            
+            // Clear canvas
+            ctx.clearRect(0, 0, width, height);
+            
+            // Generate candlestick data based on timeframe
+            const points = chartData.timeframe === '24h' ? 24 : chartData.timeframe === '7d' ? 168 : 720;
+            if (chartData.trading.length === 0 || chartData.trading.length !== points) {
+                chartData.trading = generateCandlestickData(points, 42000);
+            }
+            
+            const data = chartData.trading.slice(0, Math.min(50, points)); // Show last 50 candles
+            const prices = data.flatMap(d => [d.high, d.low]);
+            const minPrice = Math.min(...prices);
+            const maxPrice = Math.max(...prices);
+            const priceRange = maxPrice - minPrice;
+            
+            // Draw background grid
+            ctx.strokeStyle = '#e5e7eb';
+            ctx.lineWidth = 1;
+            for (let i = 0; i <= 5; i++) {
+                const y = padding + (height - 2 * padding) * i / 5;
+                ctx.beginPath();
+                ctx.moveTo(padding, y);
+                ctx.lineTo(width - padding, y);
+                ctx.stroke();
+            }
+            
+            // Draw price labels
+            ctx.fillStyle = '#6b7280';
+            ctx.font = '12px -apple-system, sans-serif';
+            ctx.textAlign = 'right';
+            for (let i = 0; i <= 5; i++) {
+                const price = maxPrice - (priceRange * i / 5);
+                const y = padding + (height - 2 * padding) * i / 5;
+                ctx.fillText('€' + price.toFixed(0), padding - 5, y + 4);
+            }
+            
+            // Draw candlesticks
+            const candleWidth = (width - 2 * padding) / data.length * 0.6;
+            data.forEach((candle, i) => {
+                const x = padding + (width - 2 * padding) * (i + 0.5) / data.length;
+                const yHigh = padding + (height - 2 * padding) * (1 - (candle.high - minPrice) / priceRange);
+                const yLow = padding + (height - 2 * padding) * (1 - (candle.low - minPrice) / priceRange);
+                const yOpen = padding + (height - 2 * padding) * (1 - (candle.open - minPrice) / priceRange);
+                const yClose = padding + (height - 2 * padding) * (1 - (candle.close - minPrice) / priceRange);
+                
+                const isGreen = candle.close > candle.open;
+                const color = isGreen ? '#10b981' : '#ef4444';
+                
+                // Draw wick
+                ctx.strokeStyle = color;
+                ctx.lineWidth = 1;
+                ctx.beginPath();
+                ctx.moveTo(x, yHigh);
+                ctx.lineTo(x, yLow);
+                ctx.stroke();
+                
+                // Draw body
+                ctx.fillStyle = color;
+                const bodyHeight = Math.abs(yClose - yOpen);
+                const bodyY = Math.min(yOpen, yClose);
+                ctx.fillRect(x - candleWidth / 2, bodyY, candleWidth, Math.max(bodyHeight, 1));
+            });
+            
+            // Draw volume bars
+            const maxVolume = Math.max(...data.map(d => d.volume));
+            const volumeHeight = 60;
+            data.forEach((candle, i) => {
+                const x = padding + (width - 2 * padding) * (i + 0.5) / data.length;
+                const barHeight = (candle.volume / maxVolume) * volumeHeight;
+                const y = height - padding - barHeight;
+                
+                ctx.fillStyle = candle.close > candle.open ? 'rgba(16, 185, 129, 0.3)' : 'rgba(239, 68, 68, 0.3)';
+                ctx.fillRect(x - candleWidth / 2, y, candleWidth, barHeight);
+            });
+            
+            // Draw title
+            ctx.fillStyle = '#111827';
+            ctx.font = 'bold 14px -apple-system, sans-serif';
+            ctx.textAlign = 'left';
+            ctx.fillText('BTC/EUR', padding, padding - 15);
+            
+            // Draw current price
+            const currentPrice = data[data.length - 1].close;
+            ctx.fillStyle = '#667eea';
+            ctx.font = 'bold 16px -apple-system, sans-serif';
+            ctx.fillText('€' + currentPrice.toFixed(2), padding + 100, padding - 15);
+        }
+        
+        function generateCandlestickData(count, basePrice) {
+            const data = [];
+            let price = basePrice;
+            
+            for (let i = 0; i < count; i++) {
+                const open = price;
+                const volatility = basePrice * 0.01;
+                const high = open + Math.random() * volatility;
+                const low = open - Math.random() * volatility;
+                const close = low + Math.random() * (high - low);
+                price = close;
+                
+                data.push({
+                    time: Date.now() - (count - i) * 3600000,
+                    open,
+                    high,
+                    low,
+                    close,
+                    volume: Math.random() * 1000 + 200
+                });
+            }
+            return data;
+        }
+        
+        function changeTradingTimeframe(timeframe) {
+            chartData.timeframe = timeframe;
+            chartData.trading = []; // Reset data
+            renderTradingChart();
+        }
+        
+        // Update charts periodically
+        function updateCharts() {
+            // Add new data point to BTC chart
+            if (chartData.btc.length > 0) {
+                const lastPrice = chartData.btc[chartData.btc.length - 1].price;
+                const newPrice = lastPrice * (1 + (Math.random() - 0.5) * 0.002);
+                chartData.btc.push({
+                    time: Date.now(),
+                    price: newPrice,
+                    volume: Math.random() * 1000 + 500
+                });
+                if (chartData.btc.length > 24) {
+                    chartData.btc.shift();
+                }
+                renderBTCChart();
+            }
+        }
+        
+        // Initialize charts
+        function initializeCharts() {
+            setTimeout(() => {
+                renderBTCChart();
+                renderTradingChart();
+                // Update charts every 10 seconds
+                setInterval(updateCharts, 10000);
+            }, 1000);
+        }
+        
+        // ===== INITIALIZE ON LOAD =====
+        document.addEventListener('DOMContentLoaded', () => {
+            // Check if user is logged in
+            const loginScreen = document.getElementById('login-screen');
+            const appContainer = document.querySelector('.app');
+            
+            if (loginScreen && appContainer) {
+                if (isLoggedIn) {
+                    loginScreen.classList.add('hidden');
+                    appContainer.classList.remove('hidden');
+                } else {
+                    loginScreen.classList.remove('hidden');
+                    appContainer.classList.add('hidden');
+                }
+            }
+            
+            renderNotifications();
+            updateNotificationBadge();
+            
+            // Initialize charts after login check
+            if (isLoggedIn) {
+                initializeCharts();
+            }
+        });
+        
+        // Replace demo mode alerts with modals
+        function showDemoAction(action) {
+            // Instead of alert, open appropriate modal
+            const modalMap = {
+                'Buy Bitcoin': 'buy',
+                'Buy Ethereum': 'buy',
+                'Sell Bitcoin': 'sell',
+                'Sell Ethereum': 'sell',
+                'Send': 'send',
+                'Receive': 'receive'
+            };
+            
+            const modalId = modalMap[action];
+            if (modalId) {
+                openModal(modalId);
+            }
+        }
+</script>
 </body>
 </html>
