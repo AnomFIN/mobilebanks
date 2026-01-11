@@ -1,0 +1,1266 @@
+<!DOCTYPE html>
+<html lang="fi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CryptoBank Desktop - Professional Banking Platform</title>
+    <meta name="description" content="Desktop-optimized crypto banking demo platform">
+    
+    <!-- Favicon -->
+    <link rel="icon" href="crypto-icon.svg" type="image/svg+xml">
+    
+    <style>
+        /* ===== DESIGN SYSTEM ===== */
+        :root {
+            /* Colors */
+            --primary: #667eea;
+            --primary-dark: #5a67d8;
+            --accent: #8b5cf6;
+            --success: #10b981;
+            --error: #ef4444;
+            --warning: #f59e0b;
+            --info: #3b82f6;
+            
+            /* Desktop-specific colors */
+            --bg-primary: #fafbfc;
+            --bg-secondary: #f8fafc;
+            --surface: #ffffff;
+            --surface-elevated: #ffffff;
+            --border: rgba(148, 163, 184, 0.15);
+            --border-hover: rgba(148, 163, 184, 0.25);
+            
+            /* Text */
+            --text-primary: #0f172a;
+            --text-secondary: #475569;
+            --text-tertiary: #94a3b8;
+            --text-inverse: #ffffff;
+            
+            /* Spacing for desktop */
+            --space-xs: 0.25rem;
+            --space-sm: 0.5rem;
+            --space-md: 1rem;
+            --space-lg: 1.5rem;
+            --space-xl: 2rem;
+            --space-2xl: 3rem;
+            
+            /* Shadows */
+            --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+            --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+            --shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+            
+            /* Desktop breakpoints */
+            --desktop-max-width: 1400px;
+            --sidebar-width: 280px;
+            --header-height: 70px;
+        }
+        
+        /* ===== RESET & BASE ===== */
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            line-height: 1.6;
+            overflow-x: hidden;
+        }
+        
+        /* ===== LAYOUT ===== */
+        .app {
+            display: grid;
+            grid-template-areas: 
+                "header header"
+                "sidebar main";
+            grid-template-columns: var(--sidebar-width) 1fr;
+            grid-template-rows: var(--header-height) 1fr;
+            min-height: 100vh;
+            max-width: var(--desktop-max-width);
+            margin: 0 auto;
+        }
+        
+        /* Header */
+        .header {
+            grid-area: header;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 var(--space-xl);
+            background: var(--surface);
+            border-bottom: 1px solid var(--border);
+            backdrop-filter: blur(20px);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+        
+        .header-left {
+            display: flex;
+            align-items: center;
+            gap: var(--space-lg);
+        }
+        
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: var(--space-sm);
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--primary);
+        }
+        
+        .logo-icon {
+            width: 32px;
+            height: 32px;
+            background: linear-gradient(135deg, var(--primary), var(--accent));
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+        }
+        
+        .header-right {
+            display: flex;
+            align-items: center;
+            gap: var(--space-md);
+        }
+        
+        .demo-badge {
+            background: var(--warning);
+            color: white;
+            padding: var(--space-xs) var(--space-sm);
+            border-radius: 6px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        
+        .user-profile {
+            display: flex;
+            align-items: center;
+            gap: var(--space-sm);
+            padding: var(--space-sm) var(--space-md);
+            border-radius: 8px;
+            cursor: pointer;
+            transition: background 0.2s ease;
+        }
+        
+        .user-profile:hover {
+            background: var(--bg-secondary);
+        }
+        
+        .user-avatar {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--primary), var(--accent));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: 600;
+        }
+        
+        /* Sidebar */
+        .sidebar {
+            grid-area: sidebar;
+            background: var(--surface);
+            border-right: 1px solid var(--border);
+            padding: var(--space-lg);
+            overflow-y: auto;
+        }
+        
+        .nav-menu {
+            list-style: none;
+            display: flex;
+            flex-direction: column;
+            gap: var(--space-xs);
+        }
+        
+        .nav-item {
+            display: block;
+        }
+        
+        .nav-link {
+            display: flex;
+            align-items: center;
+            gap: var(--space-md);
+            padding: var(--space-md) var(--space-lg);
+            border-radius: 12px;
+            color: var(--text-secondary);
+            text-decoration: none;
+            font-weight: 500;
+            transition: all 0.2s ease;
+            cursor: pointer;
+        }
+        
+        .nav-link:hover,
+        .nav-link.active {
+            background: var(--bg-secondary);
+            color: var(--primary);
+        }
+        
+        .nav-icon {
+            width: 20px;
+            height: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        /* Main Content */
+        .main {
+            grid-area: main;
+            padding: var(--space-xl);
+            overflow-y: auto;
+            background: var(--bg-primary);
+        }
+        
+        .page-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: var(--space-2xl);
+        }
+        
+        .page-title {
+            font-size: 2rem;
+            font-weight: 700;
+            color: var(--text-primary);
+        }
+        
+        .page-subtitle {
+            color: var(--text-secondary);
+            margin-top: var(--space-xs);
+        }
+        
+        /* Dashboard Grid */
+        .dashboard-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: var(--space-xl);
+            margin-bottom: var(--space-xl);
+        }
+        
+        .dashboard-section {
+            display: grid;
+            gap: var(--space-lg);
+        }
+        
+        /* Cards */
+        .card {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: var(--space-xl);
+            box-shadow: var(--shadow-sm);
+            transition: all 0.2s ease;
+        }
+        
+        .card:hover {
+            border-color: var(--border-hover);
+            box-shadow: var(--shadow-md);
+        }
+        
+        .card-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: var(--space-lg);
+        }
+        
+        .card-title {
+            font-size: 1.25rem;
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+        
+        .card-subtitle {
+            color: var(--text-secondary);
+            font-size: 0.875rem;
+            margin-top: var(--space-xs);
+        }
+        
+        /* Balance Card */
+        .balance-card {
+            background: linear-gradient(135deg, var(--primary), var(--accent));
+            color: var(--text-inverse);
+            border: none;
+        }
+        
+        .balance-amount {
+            font-size: 3rem;
+            font-weight: 700;
+            margin: var(--space-lg) 0;
+        }
+        
+        .balance-change {
+            display: flex;
+            align-items: center;
+            gap: var(--space-sm);
+            font-size: 0.875rem;
+            opacity: 0.9;
+        }
+        
+        .change-positive {
+            color: var(--success);
+        }
+        
+        .change-negative {
+            color: var(--error);
+        }
+        
+        /* Portfolio Grid */
+        .portfolio-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            gap: var(--space-lg);
+        }
+        
+        .asset-card {
+            display: flex;
+            align-items: center;
+            gap: var(--space-md);
+            padding: var(--space-lg);
+        }
+        
+        .asset-icon {
+            width: 48px;
+            height: 48px;
+            border-radius: 12px;
+            background: linear-gradient(135deg, var(--primary), var(--accent));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: 600;
+            font-size: 1.25rem;
+        }
+        
+        .asset-info {
+            flex: 1;
+        }
+        
+        .asset-name {
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+        
+        .asset-symbol {
+            color: var(--text-secondary);
+            font-size: 0.875rem;
+        }
+        
+        .asset-balance {
+            font-weight: 600;
+            color: var(--text-primary);
+            margin-top: var(--space-xs);
+        }
+        
+        .asset-value {
+            color: var(--text-secondary);
+            font-size: 0.875rem;
+        }
+        
+        /* Chart placeholder */
+        .chart-container {
+            height: 200px;
+            background: var(--bg-secondary);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--text-secondary);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .chart-line {
+            position: absolute;
+            bottom: 20px;
+            left: 20px;
+            right: 20px;
+            height: 2px;
+            background: linear-gradient(to right, var(--primary), var(--accent));
+            border-radius: 1px;
+        }
+        
+        .chart-line::before {
+            content: '';
+            position: absolute;
+            top: -10px;
+            right: 0;
+            width: 20px;
+            height: 20px;
+            background: var(--accent);
+            border-radius: 50%;
+            opacity: 0.8;
+        }
+        
+        /* Transactions */
+        .transaction-list {
+            display: flex;
+            flex-direction: column;
+            gap: var(--space-sm);
+        }
+        
+        .transaction-item {
+            display: flex;
+            align-items: center;
+            justify-content: between;
+            padding: var(--space-md);
+            border-radius: 12px;
+            transition: background 0.2s ease;
+            cursor: pointer;
+        }
+        
+        .transaction-item:hover {
+            background: var(--bg-secondary);
+        }
+        
+        .transaction-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: var(--space-md);
+            font-size: 1.125rem;
+        }
+        
+        .transaction-buy {
+            background: rgba(16, 185, 129, 0.1);
+            color: var(--success);
+        }
+        
+        .transaction-sell {
+            background: rgba(239, 68, 68, 0.1);
+            color: var(--error);
+        }
+        
+        .transaction-details {
+            flex: 1;
+        }
+        
+        .transaction-title {
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+        
+        .transaction-subtitle {
+            color: var(--text-secondary);
+            font-size: 0.875rem;
+        }
+        
+        .transaction-amount {
+            text-align: right;
+        }
+        
+        .transaction-value {
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+        
+        .transaction-date {
+            color: var(--text-secondary);
+            font-size: 0.875rem;
+        }
+        
+        /* Buttons */
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: var(--space-sm);
+            padding: var(--space-md) var(--space-lg);
+            border-radius: 12px;
+            font-weight: 600;
+            text-decoration: none;
+            transition: all 0.2s ease;
+            cursor: pointer;
+            border: none;
+            font-size: 0.875rem;
+        }
+        
+        .btn-primary {
+            background: var(--primary);
+            color: var(--text-inverse);
+        }
+        
+        .btn-primary:hover {
+            background: var(--primary-dark);
+            transform: translateY(-1px);
+            box-shadow: var(--shadow-lg);
+        }
+        
+        .btn-secondary {
+            background: var(--bg-secondary);
+            color: var(--text-primary);
+            border: 1px solid var(--border);
+        }
+        
+        .btn-secondary:hover {
+            background: var(--surface);
+            border-color: var(--border-hover);
+        }
+        
+        /* Action Buttons */
+        .action-buttons {
+            display: flex;
+            gap: var(--space-md);
+            margin-top: var(--space-lg);
+        }
+        
+        /* Responsive */
+        @media (max-width: 1200px) {
+            .app {
+                grid-template-columns: 240px 1fr;
+            }
+            
+            :root {
+                --sidebar-width: 240px;
+            }
+        }
+        
+        @media (max-width: 768px) {
+            .app {
+                grid-template-areas: 
+                    "header"
+                    "main";
+                grid-template-columns: 1fr;
+                grid-template-rows: var(--header-height) 1fr;
+            }
+            
+            .sidebar {
+                display: none;
+            }
+            
+            .main {
+                padding: var(--space-lg);
+            }
+            
+            .dashboard-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .portfolio-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+        
+        /* Utilities */
+        .text-success { color: var(--success); }
+        .text-error { color: var(--error); }
+        .text-warning { color: var(--warning); }
+        .text-info { color: var(--info); }
+        
+        .bg-success { background: var(--success); }
+        .bg-error { background: var(--error); }
+        .bg-warning { background: var(--warning); }
+        .bg-info { background: var(--info); }
+        
+        .hidden { display: none; }
+        .visible { display: block; }
+        
+        /* Loading animation */
+        .loading {
+            animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+        }
+        
+        @keyframes pulse {
+            0%, 100% {
+                opacity: 1;
+            }
+            50% {
+                opacity: .5;
+            }
+        }
+        
+        /* Dark mode support */
+        @media (prefers-color-scheme: dark) {
+            :root {
+                --bg-primary: #0f172a;
+                --bg-secondary: #1e293b;
+                --surface: #334155;
+                --border: rgba(148, 163, 184, 0.1);
+                --text-primary: #f1f5f9;
+                --text-secondary: #cbd5e1;
+                --text-tertiary: #64748b;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="app">
+        <!-- Header -->
+        <header class="header">
+            <div class="header-left">
+                <div class="logo">
+                    <div class="logo-icon">₿</div>
+                    <span>CryptoBank Desktop</span>
+                </div>
+            </div>
+            <div class="header-right">
+                <div class="demo-badge">DEMO</div>
+                <div class="user-profile">
+                    <div class="user-avatar">JD</div>
+                    <span>John Doe</span>
+                </div>
+            </div>
+        </header>
+        
+        <!-- Sidebar -->
+        <nav class="sidebar">
+            <ul class="nav-menu">
+                <li class="nav-item">
+                    <a href="#" class="nav-link active" data-page="dashboard">
+                        <span class="nav-icon">🏠</span>
+                        <span>Dashboard</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="#" class="nav-link" data-page="portfolio">
+                        <span class="nav-icon">💼</span>
+                        <span>Portfolio</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="#" class="nav-link" data-page="trading">
+                        <span class="nav-icon">📈</span>
+                        <span>Trading</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="#" class="nav-link" data-page="activity">
+                        <span class="nav-icon">📋</span>
+                        <span>Activity</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="#" class="nav-link" data-page="settings">
+                        <span class="nav-icon">⚙️</span>
+                        <span>Settings</span>
+                    </a>
+                </li>
+            </ul>
+        </nav>
+        
+        <!-- Main Content -->
+        <main class="main">
+            <!-- Dashboard Page -->
+            <div id="dashboard" class="page">
+                <div class="page-header">
+                    <div>
+                        <h1 class="page-title">Dashboard</h1>
+                        <p class="page-subtitle">Welcome back to your crypto portfolio</p>
+                    </div>
+                </div>
+                
+                <div class="dashboard-grid">
+                    <!-- Balance Section -->
+                    <div class="dashboard-section">
+                        <div class="card balance-card">
+                            <div class="card-header">
+                                <div class="card-title">Total Balance</div>
+                            </div>
+                            <div class="balance-amount" id="totalBalance">€45,632.89</div>
+                            <div class="balance-change">
+                                <span class="text-success">↗ +2.34%</span>
+                                <span>Last 24h</span>
+                            </div>
+                        </div>
+                        
+                        <div class="card">
+                            <div class="card-header">
+                                <div class="card-title">BTC Price</div>
+                            </div>
+                            <div class="chart-container">
+                                <div class="chart-line"></div>
+                                <span>Interactive chart placeholder</span>
+                            </div>
+                            <div style="margin-top: 1rem;">
+                                <div style="font-size: 1.5rem; font-weight: 600;" id="btcPrice">€42,856.23</div>
+                                <div class="text-success">+1.82% today</div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Portfolio Section -->
+                    <div class="dashboard-section">
+                        <div class="card">
+                            <div class="card-header">
+                                <div class="card-title">Portfolio</div>
+                                <a href="#" class="btn btn-secondary">View All</a>
+                            </div>
+                            <div class="portfolio-grid">
+                                <div class="asset-card">
+                                    <div class="asset-icon">₿</div>
+                                    <div class="asset-info">
+                                        <div class="asset-name">Bitcoin</div>
+                                        <div class="asset-symbol">BTC</div>
+                                        <div class="asset-balance">0.8432 BTC</div>
+                                        <div class="asset-value">€36,142.89</div>
+                                    </div>
+                                </div>
+                                
+                                <div class="asset-card">
+                                    <div class="asset-icon" style="background: linear-gradient(135deg, #f59e0b, #d97706);">Ξ</div>
+                                    <div class="asset-info">
+                                        <div class="asset-name">Ethereum</div>
+                                        <div class="asset-symbol">ETH</div>
+                                        <div class="asset-balance">3.2156 ETH</div>
+                                        <div class="asset-value">€8,490.00</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="card">
+                            <div class="card-header">
+                                <div class="card-title">Recent Activity</div>
+                                <a href="#" class="btn btn-secondary">View All</a>
+                            </div>
+                            <div class="transaction-list">
+                                <div class="transaction-item">
+                                    <div class="transaction-icon transaction-buy">↗</div>
+                                    <div class="transaction-details">
+                                        <div class="transaction-title">Buy Bitcoin</div>
+                                        <div class="transaction-subtitle">Completed</div>
+                                    </div>
+                                    <div class="transaction-amount">
+                                        <div class="transaction-value">+0.0234 BTC</div>
+                                        <div class="transaction-date">Today 14:32</div>
+                                    </div>
+                                </div>
+                                
+                                <div class="transaction-item">
+                                    <div class="transaction-icon transaction-sell">↙</div>
+                                    <div class="transaction-details">
+                                        <div class="transaction-title">Sell Ethereum</div>
+                                        <div class="transaction-subtitle">Completed</div>
+                                    </div>
+                                    <div class="transaction-amount">
+                                        <div class="transaction-value">-0.5 ETH</div>
+                                        <div class="transaction-date">Yesterday</div>
+                                    </div>
+                                </div>
+                                
+                                <div class="transaction-item">
+                                    <div class="transaction-icon transaction-buy">↗</div>
+                                    <div class="transaction-details">
+                                        <div class="transaction-title">Buy Ethereum</div>
+                                        <div class="transaction-subtitle">Completed</div>
+                                    </div>
+                                    <div class="transaction-amount">
+                                        <div class="transaction-value">+1.2 ETH</div>
+                                        <div class="transaction-date">2 days ago</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="action-buttons">
+                    <button class="btn btn-primary" onclick="showDemoDialog('Buy')">🔼 Buy Crypto</button>
+                    <button class="btn btn-secondary" onclick="showDemoDialog('Sell')">🔻 Sell Crypto</button>
+                    <button class="btn btn-secondary" onclick="showDemoDialog('Send')">💸 Send</button>
+                    <button class="btn btn-secondary" onclick="showDemoDialog('Receive')">💰 Receive</button>
+                </div>
+            </div>
+            
+            <!-- Portfolio Page -->
+            <div id="portfolio" class="page hidden">
+                <div class="page-header">
+                    <div>
+                        <h1 class="page-title">Portfolio</h1>
+                        <p class="page-subtitle">Manage your crypto holdings</p>
+                    </div>
+                </div>
+                
+                <div class="card">
+                    <div class="card-header">
+                        <div class="card-title">Holdings</div>
+                    </div>
+                    <div class="portfolio-grid">
+                        <div class="asset-card">
+                            <div class="asset-icon">₿</div>
+                            <div class="asset-info">
+                                <div class="asset-name">Bitcoin</div>
+                                <div class="asset-symbol">BTC</div>
+                                <div class="asset-balance">0.8432 BTC</div>
+                                <div class="asset-value">€36,142.89</div>
+                            </div>
+                        </div>
+                        
+                        <div class="asset-card">
+                            <div class="asset-icon" style="background: linear-gradient(135deg, #f59e0b, #d97706);">Ξ</div>
+                            <div class="asset-info">
+                                <div class="asset-name">Ethereum</div>
+                                <div class="asset-symbol">ETH</div>
+                                <div class="asset-balance">3.2156 ETH</div>
+                                <div class="asset-value">€8,490.00</div>
+                            </div>
+                        </div>
+                        
+                        <div class="asset-card">
+                            <div class="asset-icon" style="background: linear-gradient(135deg, #8b5cf6, #a78bfa);">P</div>
+                            <div class="asset-info">
+                                <div class="asset-name">PINJA Token</div>
+                                <div class="asset-symbol">PINJA</div>
+                                <div class="asset-balance">1,000 PINJA</div>
+                                <div class="asset-value">€1,000.00</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Trading Page -->
+            <div id="trading" class="page hidden">
+                <div class="page-header">
+                    <div>
+                        <h1 class="page-title">Trading</h1>
+                        <p class="page-subtitle">Buy and sell crypto assets</p>
+                    </div>
+                </div>
+                
+                <div class="card">
+                    <div class="card-header">
+                        <div class="card-title">Quick Trade</div>
+                    </div>
+                    <div class="action-buttons">
+                        <button class="btn btn-primary" onclick="showDemoDialog('Buy Bitcoin')">Buy Bitcoin</button>
+                        <button class="btn btn-primary" onclick="showDemoDialog('Buy Ethereum')">Buy Ethereum</button>
+                        <button class="btn btn-secondary" onclick="showDemoDialog('Sell Bitcoin')">Sell Bitcoin</button>
+                        <button class="btn btn-secondary" onclick="showDemoDialog('Sell Ethereum')">Sell Ethereum</button>
+                    </div>
+                </div>
+                
+                <div class="card">
+                    <div class="card-header">
+                        <div class="card-title">Price Chart</div>
+                    </div>
+                    <div class="chart-container" style="height: 400px;">
+                        <div class="chart-line"></div>
+                        <span>Advanced trading chart placeholder</span>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Activity Page -->
+            <div id="activity" class="page hidden">
+                <div class="page-header">
+                    <div>
+                        <h1 class="page-title">Activity</h1>
+                        <p class="page-subtitle">Transaction history and account activity</p>
+                    </div>
+                </div>
+                
+                <div class="card">
+                    <div class="card-header">
+                        <div class="card-title">Recent Transactions</div>
+                    </div>
+                    <div class="transaction-list">
+                        <div class="transaction-item">
+                            <div class="transaction-icon transaction-buy">↗</div>
+                            <div class="transaction-details">
+                                <div class="transaction-title">Buy Bitcoin</div>
+                                <div class="transaction-subtitle">Completed - Demo Transaction</div>
+                            </div>
+                            <div class="transaction-amount">
+                                <div class="transaction-value">+0.0234 BTC</div>
+                                <div class="transaction-date">Today 14:32</div>
+                            </div>
+                        </div>
+                        
+                        <div class="transaction-item">
+                            <div class="transaction-icon transaction-sell">↙</div>
+                            <div class="transaction-details">
+                                <div class="transaction-title">Sell Ethereum</div>
+                                <div class="transaction-subtitle">Completed - Demo Transaction</div>
+                            </div>
+                            <div class="transaction-amount">
+                                <div class="transaction-value">-0.5 ETH</div>
+                                <div class="transaction-date">Yesterday 09:15</div>
+                            </div>
+                        </div>
+                        
+                        <div class="transaction-item">
+                            <div class="transaction-icon transaction-buy">↗</div>
+                            <div class="transaction-details">
+                                <div class="transaction-title">Buy Ethereum</div>
+                                <div class="transaction-subtitle">Completed - Demo Transaction</div>
+                            </div>
+                            <div class="transaction-amount">
+                                <div class="transaction-value">+1.2 ETH</div>
+                                <div class="transaction-date">2 days ago</div>
+                            </div>
+                        </div>
+                        
+                        <div class="transaction-item">
+                            <div class="transaction-icon transaction-buy">↗</div>
+                            <div class="transaction-details">
+                                <div class="transaction-title">Buy PINJA Token</div>
+                                <div class="transaction-subtitle">Completed - Demo Transaction</div>
+                            </div>
+                            <div class="transaction-amount">
+                                <div class="transaction-value">+1000 PINJA</div>
+                                <div class="transaction-date">3 days ago</div>
+                            </div>
+                        </div>
+                        
+                        <div class="transaction-item">
+                            <div class="transaction-icon transaction-buy">↗</div>
+                            <div class="transaction-details">
+                                <div class="transaction-title">Buy Bitcoin</div>
+                                <div class="transaction-subtitle">Completed - Demo Transaction</div>
+                            </div>
+                            <div class="transaction-amount">
+                                <div class="transaction-value">+0.5 BTC</div>
+                                <div class="transaction-date">1 week ago</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Settings Page -->
+            <div id="settings" class="page hidden">
+                <div class="page-header">
+                    <div>
+                        <h1 class="page-title">Settings</h1>
+                        <p class="page-subtitle">Configure your preferences</p>
+                    </div>
+                </div>
+                
+                <div class="dashboard-grid">
+                    <div class="dashboard-section">
+                        <div class="card">
+                            <div class="card-header">
+                                <div class="card-title">Demo Settings</div>
+                            </div>
+                            <div style="display: flex; flex-direction: column; gap: 1rem;">
+                                <label style="display: flex; align-items: center; gap: 0.5rem;">
+                                    <input type="checkbox" id="darkMode" onchange="toggleDarkMode()">
+                                    Dark Mode
+                                </label>
+                                <label style="display: flex; align-items: center; gap: 0.5rem;">
+                                    <input type="checkbox" id="realisticVolatility" checked onchange="toggleVolatility()">
+                                    Realistic Volatility
+                                </label>
+                                <label style="display: flex; align-items: center; gap: 0.5rem;">
+                                    <input type="checkbox" id="notifications" checked onchange="toggleNotifications()">
+                                    Desktop Notifications
+                                </label>
+                            </div>
+                            <div class="action-buttons">
+                                <button class="btn btn-primary" onclick="resetDemoData()">Reset Demo Data</button>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="dashboard-section">
+                        <div class="card">
+                            <div class="card-header">
+                                <div class="card-title">About</div>
+                            </div>
+                            <p style="color: var(--text-secondary); margin-bottom: 1rem;">
+                                This is a demo desktop application showcasing a crypto banking interface. 
+                                All data is simulated and no real transactions are performed.
+                            </p>
+                            <div style="background: var(--bg-secondary); padding: 1rem; border-radius: 8px;">
+                                <strong>Version:</strong> Desktop 1.0.0<br>
+                                <strong>Status:</strong> Demo Mode<br>
+                                <strong>Last Updated:</strong> January 2026
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script>
+        // ===== MOCK DATA ENGINE =====
+        class CryptoDemoEngine {
+            constructor() {
+                this.loadFromStorage();
+                this.initializePriceData();
+                this.startPriceUpdates();
+            }
+            
+            loadFromStorage() {
+                const stored = localStorage.getItem('cryptoDemo');
+                if (stored) {
+                    const data = JSON.parse(stored);
+                    this.btcPrice = data.btcPrice || 42856.23;
+                    this.ethPrice = data.ethPrice || 2640.45;
+                    this.pinjaPrice = data.pinjaPrice || 1.00;
+                    this.portfolio = data.portfolio || this.getDefaultPortfolio();
+                    this.transactions = data.transactions || this.getDefaultTransactions();
+                    this.settings = data.settings || this.getDefaultSettings();
+                } else {
+                    this.resetToDefaults();
+                }
+            }
+            
+            saveToStorage() {
+                localStorage.setItem('cryptoDemo', JSON.stringify({
+                    btcPrice: this.btcPrice,
+                    ethPrice: this.ethPrice,
+                    pinjaPrice: this.pinjaPrice,
+                    portfolio: this.portfolio,
+                    transactions: this.transactions,
+                    settings: this.settings
+                }));
+            }
+            
+            resetToDefaults() {
+                this.btcPrice = 42856.23;
+                this.ethPrice = 2640.45;
+                this.pinjaPrice = 1.00;
+                this.portfolio = this.getDefaultPortfolio();
+                this.transactions = this.getDefaultTransactions();
+                this.settings = this.getDefaultSettings();
+                this.saveToStorage();
+            }
+            
+            getDefaultPortfolio() {
+                return {
+                    btc: 0.8432,
+                    eth: 3.2156,
+                    pinja: 1000
+                };
+            }
+            
+            getDefaultTransactions() {
+                return [
+                    { id: 1, type: 'buy', asset: 'BTC', amount: 0.0234, price: 42856.23, date: new Date().toISOString(), status: 'completed' },
+                    { id: 2, type: 'sell', asset: 'ETH', amount: 0.5, price: 2640.45, date: new Date(Date.now() - 86400000).toISOString(), status: 'completed' },
+                    { id: 3, type: 'buy', asset: 'ETH', amount: 1.2, price: 2640.45, date: new Date(Date.now() - 172800000).toISOString(), status: 'completed' }
+                ];
+            }
+            
+            getDefaultSettings() {
+                return {
+                    darkMode: false,
+                    realisticVolatility: true,
+                    notifications: true
+                };
+            }
+            
+            initializePriceData() {
+                this.priceHistory = {
+                    btc: this.generatePriceHistory(this.btcPrice, 168), // 7 days of hourly data
+                    eth: this.generatePriceHistory(this.ethPrice, 168),
+                    pinja: this.generatePriceHistory(this.pinjaPrice, 168)
+                };
+            }
+            
+            generatePriceHistory(currentPrice, hours) {
+                const history = [];
+                let price = currentPrice;
+                const volatility = this.settings.realisticVolatility ? 0.02 : 0.005;
+                
+                for (let i = hours; i >= 0; i--) {
+                    const change = (Math.random() - 0.5) * volatility;
+                    price = price * (1 + change);
+                    history.push({
+                        timestamp: new Date(Date.now() - i * 3600000),
+                        price: price
+                    });
+                }
+                
+                return history;
+            }
+            
+            getCurrentPrices() {
+                return {
+                    btc: this.btcPrice,
+                    eth: this.ethPrice,
+                    pinja: this.pinjaPrice
+                };
+            }
+            
+            getTotalBalance() {
+                const prices = this.getCurrentPrices();
+                return (this.portfolio.btc * prices.btc) + 
+                       (this.portfolio.eth * prices.eth) + 
+                       (this.portfolio.pinja * prices.pinja);
+            }
+            
+            updatePrices() {
+                const volatility = this.settings.realisticVolatility ? 0.001 : 0.0003;
+                
+                this.btcPrice *= (1 + (Math.random() - 0.5) * volatility);
+                this.ethPrice *= (1 + (Math.random() - 0.5) * volatility);
+                this.pinjaPrice *= (1 + (Math.random() - 0.48) * volatility); // Slight upward bias for demo
+                
+                this.saveToStorage();
+                this.updateUI();
+            }
+            
+            startPriceUpdates() {
+                setInterval(() => {
+                    this.updatePrices();
+                }, 10000); // Update every 10 seconds for demo
+            }
+            
+            updateUI() {
+                const totalBalance = this.getTotalBalance();
+                const btcPriceEl = document.getElementById('btcPrice');
+                const totalBalanceEl = document.getElementById('totalBalance');
+                
+                if (btcPriceEl) {
+                    btcPriceEl.textContent = `€${this.btcPrice.toLocaleString('fi-FI', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
+                }
+                
+                if (totalBalanceEl) {
+                    totalBalanceEl.textContent = `€${totalBalance.toLocaleString('fi-FI', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
+                }
+            }
+        }
+        
+        // ===== UI MANAGEMENT =====
+        class UIManager {
+            constructor() {
+                this.currentPage = 'dashboard';
+                this.bindEvents();
+            }
+            
+            bindEvents() {
+                // Navigation
+                document.querySelectorAll('.nav-link').forEach(link => {
+                    link.addEventListener('click', (e) => {
+                        e.preventDefault();
+                        const page = link.dataset.page;
+                        if (page) this.showPage(page);
+                    });
+                });
+                
+                // Page transitions
+                this.showPage('dashboard');
+            }
+            
+            showPage(pageId) {
+                // Hide all pages
+                document.querySelectorAll('.page').forEach(page => {
+                    page.classList.add('hidden');
+                });
+                
+                // Show selected page
+                const targetPage = document.getElementById(pageId);
+                if (targetPage) {
+                    targetPage.classList.remove('hidden');
+                }
+                
+                // Update navigation
+                document.querySelectorAll('.nav-link').forEach(link => {
+                    link.classList.remove('active');
+                });
+                
+                const activeLink = document.querySelector(`[data-page="${pageId}"]`);
+                if (activeLink) {
+                    activeLink.classList.add('active');
+                }
+                
+                this.currentPage = pageId;
+            }
+        }
+        
+        // ===== GLOBAL FUNCTIONS =====
+        let demoEngine;
+        let uiManager;
+        
+        // Initialize when DOM is loaded
+        document.addEventListener('DOMContentLoaded', () => {
+            demoEngine = new CryptoDemoEngine();
+            uiManager = new UIManager();
+            
+            // Initial UI update
+            demoEngine.updateUI();
+        });
+        
+        function showDemoDialog(action) {
+            alert(`DEMO MODE: ${action} functionality would be implemented here.\n\nThis is a demonstration interface with no real crypto functionality.`);
+        }
+        
+        function toggleDarkMode() {
+            const isDark = document.getElementById('darkMode').checked;
+            document.documentElement.style.setProperty('--bg-primary', isDark ? '#0f172a' : '#fafbfc');
+            document.documentElement.style.setProperty('--bg-secondary', isDark ? '#1e293b' : '#f8fafc');
+            document.documentElement.style.setProperty('--surface', isDark ? '#334155' : '#ffffff');
+            document.documentElement.style.setProperty('--text-primary', isDark ? '#f1f5f9' : '#0f172a');
+            document.documentElement.style.setProperty('--text-secondary', isDark ? '#cbd5e1' : '#475569');
+            document.documentElement.style.setProperty('--border', isDark ? 'rgba(148, 163, 184, 0.1)' : 'rgba(148, 163, 184, 0.15)');
+            
+            if (demoEngine) {
+                demoEngine.settings.darkMode = isDark;
+                demoEngine.saveToStorage();
+            }
+        }
+        
+        function toggleVolatility() {
+            const isRealistic = document.getElementById('realisticVolatility').checked;
+            if (demoEngine) {
+                demoEngine.settings.realisticVolatility = isRealistic;
+                demoEngine.saveToStorage();
+            }
+        }
+        
+        function toggleNotifications() {
+            const enabled = document.getElementById('notifications').checked;
+            if (demoEngine) {
+                demoEngine.settings.notifications = enabled;
+                demoEngine.saveToStorage();
+            }
+        }
+        
+        function resetDemoData() {
+            if (confirm('Reset all demo data to defaults? This will clear your current portfolio and transaction history.')) {
+                if (demoEngine) {
+                    demoEngine.resetToDefaults();
+                    demoEngine.updateUI();
+                }
+                alert('Demo data has been reset to defaults.');
+            }
+        }
+        
+        // Keyboard shortcuts
+        document.addEventListener('keydown', (e) => {
+            if (e.altKey) {
+                switch(e.key) {
+                    case '1':
+                        e.preventDefault();
+                        uiManager.showPage('dashboard');
+                        break;
+                    case '2':
+                        e.preventDefault();
+                        uiManager.showPage('portfolio');
+                        break;
+                    case '3':
+                        e.preventDefault();
+                        uiManager.showPage('trading');
+                        break;
+                    case '4':
+                        e.preventDefault();
+                        uiManager.showPage('activity');
+                        break;
+                    case '5':
+                        e.preventDefault();
+                        uiManager.showPage('settings');
+                        break;
+                }
+            }
+        });
+    </script>
+</body>
+</html>
