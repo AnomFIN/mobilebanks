@@ -1203,7 +1203,7 @@
         }
         
         // ===== DEMO DATA UPDATE =====
-        setInterval(() => {
+        let updateInterval = setInterval(() => {
             const statValues = document.querySelectorAll('.stat-value');
             statValues.forEach(val => {
                 if (val.textContent.includes('€') && !val.textContent.includes('T') && !val.textContent.includes('%')) {
@@ -1213,6 +1213,13 @@
                 }
             });
         }, 5000);
+        
+        // Cleanup interval on page unload
+        window.addEventListener('beforeunload', () => {
+            if (updateInterval) {
+                clearInterval(updateInterval);
+            }
+        });
     </script>
 </body>
 </html>
