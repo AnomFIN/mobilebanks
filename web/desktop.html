@@ -1434,12 +1434,15 @@
             }
         }
         
-        function updateChartTimeframe(timeframe) {
+        function updateChartTimeframe(timeframe, evt) {
             // Update button states
             document.querySelectorAll('.chart-timeframe-btn').forEach(btn => {
                 btn.classList.remove('active');
             });
-            event.target.classList.add('active');
+            const target = (evt && evt.target) || (window.event && window.event.target);
+            if (target) {
+                target.classList.add('active');
+            }
             
             // Generate new data based on timeframe
             const btcCanvas = document.getElementById('btcChart');
