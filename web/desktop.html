@@ -544,6 +544,8 @@
             background: linear-gradient(180deg, transparent 0%, rgba(0, 0, 0, 0.3) 100%);
             z-index: 1;
         }
+        
+        .payment-logos {
             display: flex;
             gap: var(--space-4);
             margin-top: var(--space-6);
@@ -665,6 +667,39 @@
         .header-nav-link.active {
             background: var(--surface-elevated);
             color: var(--neon-blue);
+        }
+        
+        .header-nav-link:focus {
+            outline: 2px solid var(--neon-blue);
+            outline-offset: 2px;
+        }
+        
+        .load-more-btn {
+            padding: var(--space-3) var(--space-8);
+            background: var(--surface-elevated);
+            border: 1px solid var(--neon-blue);
+            border-radius: var(--radius-md);
+            color: var(--neon-blue);
+            font-weight: 600;
+            cursor: pointer;
+            transition: var(--transition-normal);
+            font-size: 0.95rem;
+        }
+        
+        .load-more-btn:hover {
+            background: var(--neon-blue);
+            color: var(--surface-dark);
+            transform: translateY(-2px);
+        }
+        
+        .load-more-btn:focus {
+            outline: 2px solid var(--neon-blue);
+            outline-offset: 2px;
+        }
+        
+        .load-more-btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
         }
         
         .search-bar {
@@ -1183,17 +1218,16 @@
                     <div class="chart-header">
                         <h3 class="chart-title">Bitcoin Price (BTC/EUR)</h3>
                         <div class="chart-timeframe">
-                            <button class="chart-timeframe-btn" onclick="updateChartTimeframe('1H')" aria-label="One hour timeframe">1H</button>
-                            <button class="chart-timeframe-btn active" onclick="updateChartTimeframe('24H')" aria-label="Twenty-four hours timeframe">24H</button>
-                            <button class="chart-timeframe-btn" onclick="updateChartTimeframe('7D')" aria-label="Seven days timeframe">7D</button>
-                            <button class="chart-timeframe-btn" onclick="updateChartTimeframe('30D')" aria-label="Thirty days timeframe">30D</button>
-                            <button class="chart-timeframe-btn" onclick="updateChartTimeframe('1Y')" aria-label="One year timeframe">1Y</button>
+                            <button class="chart-timeframe-btn" onclick="updateChartTimeframe('1H', event)" aria-label="One hour timeframe">1H</button>
+                            <button class="chart-timeframe-btn active" onclick="updateChartTimeframe('24H', event)" aria-label="Twenty-four hours timeframe">24H</button>
+                            <button class="chart-timeframe-btn" onclick="updateChartTimeframe('7D', event)" aria-label="Seven days timeframe">7D</button>
+                            <button class="chart-timeframe-btn" onclick="updateChartTimeframe('30D', event)" aria-label="Thirty days timeframe">30D</button>
+                            <button class="chart-timeframe-btn" onclick="updateChartTimeframe('1Y', event)" aria-label="One year timeframe">1Y</button>
                         </div>
                     </div>
-                    <canvas id="btcChart"
-                            role="img"
-                            aria-label="Line chart showing Bitcoin (BTC) price in euros over the selected timeframe.">
-                        Your browser does not support the interactive Bitcoin price chart. Refer to the displayed Bitcoin price and 24-hour change statistics above for current values.
+                    <canvas id="btcChart" 
+                            role="img" 
+                            aria-label="Line chart showing Bitcoin (BTC) price in euros over the selected timeframe">
                     </canvas>
                 </div>
                 <div class="chart-container">
@@ -1202,8 +1236,7 @@
                     </div>
                     <canvas id="portfolioChart"
                             role="img"
-                            aria-label="Chart showing the percentage distribution of assets in your portfolio by cryptocurrency.">
-                        Your browser does not support the interactive portfolio distribution chart. Refer to the asset list and allocation percentages displayed in the dashboard for detailed breakdowns.
+                            aria-label="Doughnut chart showing the percentage distribution of assets in your portfolio by cryptocurrency">
                     </canvas>
                 </div>
             </div>
@@ -1260,7 +1293,11 @@
                     </tbody>
                 </table>
                 <div style="display: flex; justify-content: center; padding: var(--space-6); border-top: 1px solid rgba(255, 255, 255, 0.05);">
-                    <button id="loadMoreBtn" onclick="loadMoreAssets()" onmouseover="this.style.background='var(--neon-blue)'; this.style.color='var(--surface-dark)'; this.style.transform='translateY(-2px)'" onmouseout="this.style.background='var(--surface-elevated)'; this.style.color='var(--neon-blue)'; this.style.transform='translateY(0)'" style="padding: var(--space-3) var(--space-8); background: var(--surface-elevated); border: 1px solid var(--neon-blue); border-radius: var(--radius-md); color: var(--neon-blue); font-weight: 600; cursor: pointer; transition: var(--transition-normal); font-size: 0.95rem;">
+                    <button id="loadMoreBtn" 
+                            onclick="loadMoreAssets()" 
+                            aria-live="polite"
+                            aria-busy="false"
+                            class="load-more-btn">
                         Load More Assets
                     </button>
                 </div>
@@ -1270,13 +1307,16 @@
 
     <script>
         // ===== QR CODE GENERATION =====
+        // NOTE: This generates a decorative QR code-like pattern for visual purposes only.
+        // It is NOT a valid, scannable QR code and does not contain functional positioning markers.
+        // This is purely for demo/aesthetic purposes and does not lead to any actual functionality.
         function generateQRCode() {
             const qrSvg = document.getElementById('qrcode');
             if (qrSvg) {
                 // Simple mock QR code pattern using SVG
                 const sessionId = 'CRYPTO-' + Math.random().toString(36).substring(2, 10).toUpperCase();
                 
-                // Create a simple pixelated QR-like pattern
+                // Create a simple pixelated QR-like pattern (decorative only, not functional)
                 let qrPattern = '';
                 for (let row = 0; row < 25; row++) {
                     for (let col = 0; col < 25; col++) {
@@ -1301,9 +1341,21 @@
         window.addEventListener('DOMContentLoaded', generateQRCode);
         
         // ===== CHART DRAWING =====
+        // Constants for colors and chart styling
+        const CHART_PRIMARY_COLOR = '#00d4ff';
+        const CHART_SECONDARY_COLOR = '#6366f1';
+        const CHART_SUCCESS_COLOR = '#10b981';
+        const CHART_NEUTRAL_COLOR = '#94a3b8';
+        const DOUGHNUT_HOLE_RATIO = 0.6;
+        const LEGEND_OFFSET = 30;
         
         function drawLineChart(canvas, data, color) {
             const ctx = canvas.getContext('2d');
+            if (!ctx) {
+                console.error('Unable to get canvas context for line chart');
+                return;
+            }
+            
             const width = canvas.width = canvas.offsetWidth;
             const height = canvas.height = canvas.offsetHeight;
             
@@ -1344,11 +1396,10 @@
             
             ctx.stroke();
             
-            // Fill area under line
+            // Fill area under line using globalAlpha for better compatibility
             ctx.lineTo(width, height);
             ctx.lineTo(0, height);
             ctx.closePath();
-            // Use globalAlpha to create a semi-transparent fill without relying on color string format
             ctx.save();
             ctx.globalAlpha = 0.1;
             ctx.fillStyle = color;
@@ -1364,13 +1415,18 @@
         
         function drawDoughnutChart(canvas, data, colors, labels) {
             const ctx = canvas.getContext('2d');
+            if (!ctx) {
+                console.error('Unable to get canvas context for doughnut chart');
+                return;
+            }
+            
             const width = canvas.width = canvas.offsetWidth;
             const height = canvas.height = canvas.offsetHeight;
             
             ctx.clearRect(0, 0, width, height);
             
             const centerX = width / 2;
-            const centerY = height / 2 - 30;
+            const centerY = height / 2 - LEGEND_OFFSET;
             const radius = Math.min(width, height) / 3;
             
             let currentAngle = -Math.PI / 2;
@@ -1396,12 +1452,12 @@
             
             // Draw center circle (doughnut hole)
             ctx.beginPath();
-            ctx.arc(centerX, centerY, radius * 0.6, 0, Math.PI * 2);
+            ctx.arc(centerX, centerY, radius * DOUGHNUT_HOLE_RATIO, 0, Math.PI * 2);
             ctx.fillStyle = '#0f1419';
             ctx.fill();
             
             // Draw legend
-            const legendY = centerY + radius + 30;
+            const legendY = centerY + radius + LEGEND_OFFSET;
             const legendItemWidth = width / labels.length;
             
             ctx.font = '12px -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif';
@@ -1423,6 +1479,13 @@
             const btcCanvas = document.getElementById('btcChart');
             const portfolioCanvas = document.getElementById('portfolioChart');
             
+            // Check if canvas elements exist and are ready before initializing
+            if (!btcCanvas || !portfolioCanvas) {
+                console.warn('Canvas elements not found, retrying...');
+                requestAnimationFrame(initializeCharts);
+                return;
+            }
+            
             if (btcCanvas) {
                 // Generate mock BTC price data
                 const btcData = [];
@@ -1431,12 +1494,12 @@
                     price = price + (Math.random() - 0.5) * 500;
                     btcData.push(price);
                 }
-                drawLineChart(btcCanvas, btcData, '#00d4ff');
+                drawLineChart(btcCanvas, btcData, CHART_PRIMARY_COLOR);
             }
             
             if (portfolioCanvas) {
                 const portfolioData = [45, 25, 15, 15];
-                const portfolioColors = ['#00d4ff', '#6366f1', '#10b981', '#94a3b8'];
+                const portfolioColors = [CHART_PRIMARY_COLOR, CHART_SECONDARY_COLOR, CHART_SUCCESS_COLOR, CHART_NEUTRAL_COLOR];
                 const portfolioLabels = ['BTC', 'ETH', 'SOL', 'Other'];
                 drawDoughnutChart(portfolioCanvas, portfolioData, portfolioColors, portfolioLabels);
             }
@@ -1487,7 +1550,7 @@
                     data.push(price);
                 }
                 
-                drawLineChart(btcCanvas, data, '#00d4ff');
+                drawLineChart(btcCanvas, data, CHART_PRIMARY_COLOR);
             }
         }
         
@@ -1525,8 +1588,8 @@
             document.getElementById('landingPage').classList.add('hidden');
             document.getElementById('mainApp').classList.add('active');
             populateAssetTable();
-            // Initialize charts after login
-            setTimeout(initializeCharts, 100);
+            // Initialize charts after login using requestAnimationFrame for reliability
+            requestAnimationFrame(initializeCharts);
         }
         
         function handleLogin(e) {
@@ -1639,6 +1702,7 @@
             if (loadMoreBtn) {
                 loadMoreBtn.textContent = 'Loading...';
                 loadMoreBtn.disabled = true;
+                loadMoreBtn.setAttribute('aria-busy', 'true');
             }
             
             // Simulate loading delay for reactive feel
@@ -1649,6 +1713,7 @@
                 if (loadMoreBtn) {
                     loadMoreBtn.textContent = 'Load More Assets';
                     loadMoreBtn.disabled = false;
+                    loadMoreBtn.setAttribute('aria-busy', 'false');
                 }
             }, 300);
         }
