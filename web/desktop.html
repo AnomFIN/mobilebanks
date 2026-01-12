@@ -1341,8 +1341,12 @@
             ctx.lineTo(width, height);
             ctx.lineTo(0, height);
             ctx.closePath();
-            ctx.fillStyle = color.replace(')', ', 0.1)').replace('rgb', 'rgba');
+            // Use globalAlpha to create a semi-transparent fill without relying on color string format
+            ctx.save();
+            ctx.globalAlpha = 0.1;
+            ctx.fillStyle = color;
             ctx.fill();
+            ctx.restore();
             
             // Draw axis labels
             ctx.fillStyle = '#64748b';
