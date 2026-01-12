@@ -1190,13 +1190,21 @@
                             <button class="chart-timeframe-btn" onclick="updateChartTimeframe('1Y')" aria-label="One year timeframe">1Y</button>
                         </div>
                     </div>
-                    <canvas id="btcChart"></canvas>
+                    <canvas id="btcChart"
+                            role="img"
+                            aria-label="Line chart showing Bitcoin (BTC) price in euros over the selected timeframe.">
+                        Your browser does not support the interactive Bitcoin price chart. Refer to the displayed Bitcoin price and 24-hour change statistics above for current values.
+                    </canvas>
                 </div>
                 <div class="chart-container">
                     <div class="chart-header">
                         <h3 class="chart-title">Portfolio Distribution</h3>
                     </div>
-                    <canvas id="portfolioChart"></canvas>
+                    <canvas id="portfolioChart"
+                            role="img"
+                            aria-label="Chart showing the percentage distribution of assets in your portfolio by cryptocurrency.">
+                        Your browser does not support the interactive portfolio distribution chart. Refer to the asset list and allocation percentages displayed in the dashboard for detailed breakdowns.
+                    </canvas>
                 </div>
             </div>
             
