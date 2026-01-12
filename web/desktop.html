@@ -1251,6 +1251,11 @@
                         <!-- Will be populated by JavaScript -->
                     </tbody>
                 </table>
+                <div style="display: flex; justify-content: center; padding: var(--space-6); border-top: 1px solid rgba(255, 255, 255, 0.05);">
+                    <button id="loadMoreBtn" onclick="loadMoreAssets()" onmouseover="this.style.background='var(--neon-blue)'; this.style.color='var(--surface-dark)'; this.style.transform='translateY(-2px)'" onmouseout="this.style.background='var(--surface-elevated)'; this.style.color='var(--neon-blue)'; this.style.transform='translateY(0)'" style="padding: var(--space-3) var(--space-8); background: var(--surface-elevated); border: 1px solid var(--neon-blue); border-radius: var(--radius-md); color: var(--neon-blue); font-weight: 600; cursor: pointer; transition: var(--transition-normal); font-size: 0.95rem;">
+                        Load More Assets
+                    </button>
+                </div>
             </div>
         </main>
     </div>
@@ -1562,11 +1567,15 @@
             { symbol: 'EOS', name: 'EOS', price: 0.85, change: -0.75, volume: '170M', marketCap: '1.0B' }
         ];
         
+        let displayedCount = 10; // Show only 10 cryptos by default
+        
         function populateAssetTable() {
             const tbody = document.getElementById('assetTableBody');
             if (!tbody) return;
             
-            tbody.innerHTML = cryptoAssets.map(asset => `
+            const assetsToShow = cryptoAssets.slice(0, displayedCount);
+            
+            tbody.innerHTML = assetsToShow.map(asset => `
                 <tr>
                     <td>
                         <div class="asset-info">
@@ -1602,6 +1611,40 @@
                     </td>
                 </tr>
             `).join('');
+            
+            // Update load more button visibility
+            updateLoadMoreButton();
+        }
+        
+        function loadMoreAssets() {
+            const loadMoreBtn = document.getElementById('loadMoreBtn');
+            if (loadMoreBtn) {
+                loadMoreBtn.textContent = 'Loading...';
+                loadMoreBtn.disabled = true;
+            }
+            
+            // Simulate loading delay for reactive feel
+            setTimeout(() => {
+                displayedCount = Math.min(displayedCount + 10, cryptoAssets.length);
+                populateAssetTable();
+                
+                if (loadMoreBtn) {
+                    loadMoreBtn.textContent = 'Load More Assets';
+                    loadMoreBtn.disabled = false;
+                }
+            }, 300);
+        }
+        
+        function updateLoadMoreButton() {
+            const loadMoreBtn = document.getElementById('loadMoreBtn');
+            if (loadMoreBtn) {
+                if (displayedCount >= cryptoAssets.length) {
+                    loadMoreBtn.style.display = 'none';
+                } else {
+                    loadMoreBtn.style.display = 'block';
+                    loadMoreBtn.textContent = `Load More Assets (${cryptoAssets.length - displayedCount} remaining)`;
+                }
+            }
         }
         
         function generateSparklinePoints() {
