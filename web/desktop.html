@@ -1460,6 +1460,10 @@
                     case '1Y':
                         dataPoints = 12;
                         break;
+                    default:
+                        console.warn('updateChartTimeframe: unknown timeframe', timeframe);
+                        dataPoints = 24;
+                        break;
                 }
                 
                 const variance = timeframe === '1Y' ? 10000 : timeframe === '30D' ? 3000 : 500;
