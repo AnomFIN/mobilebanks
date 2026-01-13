@@ -197,14 +197,25 @@
         
         .qr-code-container {
             position: relative;
-            width: 200px;
-            height: 200px;
+            width: 220px;
+            height: 220px;
             margin: var(--space-6) auto;
             background: white;
             border-radius: var(--radius-md);
             display: flex;
             align-items: center;
             justify-content: center;
+            padding: 10px;
+        }
+        
+        .qr-code-container #qrcode {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .qr-code-container #qrcode img {
+            border-radius: 4px;
         }
         
         .qr-code-container::before {
@@ -448,6 +459,92 @@
             color: var(--text-secondary);
         }
         
+        .app-store-buttons {
+            display: flex;
+            gap: var(--space-4);
+            margin-top: var(--space-8);
+        }
+        
+        .app-store-btn {
+            display: flex;
+            align-items: center;
+            gap: var(--space-3);
+            padding: var(--space-3) var(--space-6);
+            background: #000000;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: var(--radius-md);
+            color: white;
+            text-decoration: none;
+            transition: var(--transition-normal);
+            cursor: pointer;
+            min-width: 160px;
+        }
+        
+        .app-store-btn:hover {
+            background: #1a1a1a;
+            border-color: rgba(255, 255, 255, 0.2);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+        }
+        
+        .app-store-icon {
+            font-size: 2rem;
+        }
+        
+        .app-store-text {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+        }
+        
+        .app-store-small {
+            font-size: 0.65rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            opacity: 0.8;
+        }
+        
+        .app-store-large {
+            font-size: 1.1rem;
+            font-weight: 600;
+            line-height: 1.2;
+        }
+        
+        .hero-images {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: var(--space-6);
+            margin-top: var(--space-8);
+            position: relative;
+        }
+        
+        .hero-image {
+            position: relative;
+            border-radius: var(--radius-lg);
+            overflow: hidden;
+            aspect-ratio: 4/3;
+            background: linear-gradient(135deg, #1a1f2e 0%, #0f1419 100%);
+            box-shadow: var(--shadow-card);
+            transition: var(--transition-normal);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 4rem;
+        }
+        
+        .hero-image:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 8px 32px rgba(0, 212, 255, 0.2);
+        }
+        
+        .hero-image::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(180deg, transparent 0%, rgba(0, 0, 0, 0.3) 100%);
+            z-index: 1;
+        }
+        
         .payment-logos {
             display: flex;
             gap: var(--space-4);
@@ -471,10 +568,10 @@
             display: none;
             min-height: 100vh;
             grid-template-areas:
-                "sidebar header"
-                "sidebar main";
-            grid-template-columns: 280px 1fr;
-            grid-template-rows: 70px 1fr;
+                "header"
+                "main";
+            grid-template-columns: 1fr;
+            grid-template-rows: 120px 1fr;
         }
         
         .main-app.active {
@@ -482,10 +579,7 @@
         }
         
         .sidebar {
-            grid-area: sidebar;
-            background: var(--surface-dark);
-            border-right: 1px solid rgba(255, 255, 255, 0.05);
-            padding: var(--space-6);
+            display: none;
         }
         
         .sidebar-logo {
@@ -529,8 +623,83 @@
             border-bottom: 1px solid rgba(255, 255, 255, 0.05);
             padding: 0 var(--space-6);
             display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+        
+        .header-top {
+            display: flex;
             align-items: center;
             justify-content: space-between;
+            padding: var(--space-4) 0;
+        }
+        
+        .header-logo {
+            display: flex;
+            align-items: center;
+            gap: var(--space-3);
+            font-size: 1.5rem;
+            font-weight: 700;
+        }
+        
+        .header-nav {
+            display: flex;
+            align-items: center;
+            gap: var(--space-2);
+            flex-wrap: wrap;
+            padding-bottom: var(--space-3);
+        }
+        
+        .header-nav-link {
+            display: flex;
+            align-items: center;
+            gap: var(--space-2);
+            padding: var(--space-2) var(--space-4);
+            color: var(--text-secondary);
+            text-decoration: none;
+            border-radius: var(--radius-sm);
+            transition: var(--transition-fast);
+            font-weight: 500;
+            font-size: 0.95rem;
+        }
+        
+        .header-nav-link:hover,
+        .header-nav-link.active {
+            background: var(--surface-elevated);
+            color: var(--neon-blue);
+        }
+        
+        .header-nav-link:focus {
+            outline: 2px solid var(--neon-blue);
+            outline-offset: 2px;
+        }
+        
+        .load-more-btn {
+            padding: var(--space-3) var(--space-8);
+            background: var(--surface-elevated);
+            border: 1px solid var(--neon-blue);
+            border-radius: var(--radius-md);
+            color: var(--neon-blue);
+            font-weight: 600;
+            cursor: pointer;
+            transition: var(--transition-normal);
+            font-size: 0.95rem;
+        }
+        
+        .load-more-btn:hover {
+            background: var(--neon-blue);
+            color: var(--surface-dark);
+            transform: translateY(-2px);
+        }
+        
+        .load-more-btn:focus {
+            outline: 2px solid var(--neon-blue);
+            outline-offset: 2px;
+        }
+        
+        .load-more-btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
         }
         
         .search-bar {
@@ -584,6 +753,49 @@
             grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
             gap: var(--space-6);
             margin-bottom: var(--space-8);
+        }
+        
+        .chart-container {
+            background: var(--surface-card);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            border-radius: var(--radius-lg);
+            padding: var(--space-6);
+            margin-bottom: var(--space-8);
+            height: 400px;
+        }
+        
+        .chart-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: var(--space-6);
+        }
+        
+        .chart-title {
+            font-size: 1.25rem;
+            font-weight: 700;
+        }
+        
+        .chart-timeframe {
+            display: flex;
+            gap: var(--space-2);
+        }
+        
+        .chart-timeframe-btn {
+            padding: var(--space-2) var(--space-3);
+            background: var(--surface-elevated);
+            border: none;
+            border-radius: var(--radius-sm);
+            color: var(--text-secondary);
+            font-size: 0.875rem;
+            cursor: pointer;
+            transition: var(--transition-fast);
+        }
+        
+        .chart-timeframe-btn.active,
+        .chart-timeframe-btn:hover {
+            background: var(--neon-blue);
+            color: var(--surface-dark);
         }
         
         .stat-card {
@@ -741,7 +953,7 @@
                     <div class="login-method-content active" id="qrMethod">
                         <div class="qr-login">
                             <div class="qr-code-container">
-                                <div style="font-size: 3rem;">📱</div>
+                                <svg id="qrcode" width="200" height="200" viewBox="0 0 25 25"></svg>
                             </div>
                             <p style="color: var(--text-secondary); margin-bottom: var(--space-6);">
                                 Scan with mobile app to login instantly
@@ -885,12 +1097,29 @@
                     <div class="payment-logo">Trustly</div>
                 </div>
                 
-                <div style="display: flex; gap: var(--space-4); margin-top: var(--space-6);">
-                    <div style="padding: var(--space-3) var(--space-6); background: black; border-radius: var(--radius-sm); font-size: 0.875rem;">
-                        📱 App Store
+                <div class="app-store-buttons">
+                    <button type="button" class="app-store-btn" onclick="event.preventDefault(); alert('Demo app - Download not available');">
+                        <div class="app-store-icon">🍎</div>
+                        <div class="app-store-text">
+                            <span class="app-store-small">Download on the</span>
+                            <span class="app-store-large">App Store</span>
+                        </div>
+                    </button>
+                    <button type="button" class="app-store-btn" onclick="event.preventDefault(); alert('Demo app - Download not available');">
+                        <div class="app-store-icon">▶️</div>
+                        <div class="app-store-text">
+                            <span class="app-store-small">Get it on</span>
+                            <span class="app-store-large">Google Play</span>
+                        </div>
+                    </button>
+                </div>
+                
+                <div class="hero-images">
+                    <div class="hero-image">
+                        💻
                     </div>
-                    <div style="padding: var(--space-3) var(--space-6); background: black; border-radius: var(--radius-sm); font-size: 0.875rem;">
-                        🤖 Google Play
+                    <div class="hero-image">
+                        ₿
                     </div>
                 </div>
             </div>
@@ -899,85 +1128,62 @@
     
     <!-- MAIN APPLICATION (Hidden by default) -->
     <div class="main-app" id="mainApp">
-        <!-- Sidebar -->
-        <aside class="sidebar">
-            <div class="sidebar-logo">
-                <div class="logo-icon" style="width: 36px; height: 36px; font-size: 1.25rem;">₿</div>
-                <span>CryptoExchange</span>
-            </div>
-            
-            <nav>
-                <ul class="nav-menu">
-                    <li class="nav-item">
-                        <a href="#" class="nav-link active">
-                            <span>🏠</span>
-                            <span>Dashboard</span>
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a href="#" class="nav-link">
-                            <span>📈</span>
-                            <span>Markets</span>
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a href="#" class="nav-link">
-                            <span>💼</span>
-                            <span>Portfolio</span>
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a href="#" class="nav-link">
-                            <span>💱</span>
-                            <span>Trade</span>
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a href="#" class="nav-link">
-                            <span>💰</span>
-                            <span>Earn</span>
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a href="#" class="nav-link">
-                            <span>📋</span>
-                            <span>Activity</span>
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a href="#" class="nav-link">
-                            <span>👛</span>
-                            <span>Wallet</span>
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a href="#" class="nav-link">
-                            <span>💳</span>
-                            <span>Cards</span>
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a href="#" class="nav-link">
-                            <span>⚙️</span>
-                            <span>Settings</span>
-                        </a>
-                    </li>
-                </ul>
-            </nav>
-        </aside>
-        
-        <!-- Top Header -->
+        <!-- Top Header with Navigation -->
         <header class="app-header">
-            <div class="search-bar">
-                <input type="search" class="search-input" placeholder="Search assets...">
-            </div>
-            <div class="header-actions">
-                <div style="padding: var(--space-2) var(--space-4); background: var(--success); border-radius: var(--radius-sm); font-size: 0.875rem; font-weight: 600;">
-                    🟢 Market Open
+            <div class="header-top">
+                <div class="header-logo">
+                    <div class="logo-icon" style="width: 36px; height: 36px; font-size: 1.25rem;">₿</div>
+                    <span>CryptoExchange</span>
                 </div>
-                <button class="header-btn">🔔</button>
-                <button class="header-btn">👤</button>
+                <div style="display: flex; align-items: center; gap: var(--space-4);">
+                    <div class="search-bar">
+                        <input type="search" class="search-input" placeholder="Search assets...">
+                    </div>
+                    <div style="padding: var(--space-2) var(--space-4); background: var(--success); border-radius: var(--radius-sm); font-size: 0.875rem; font-weight: 600;">
+                        🟢 Market Open
+                    </div>
+                    <button class="header-btn">🔔</button>
+                    <button class="header-btn">👤</button>
+                </div>
             </div>
+            <nav class="header-nav">
+                <a href="#" class="header-nav-link active">
+                    <span>🏠</span>
+                    <span>Dashboard</span>
+                </a>
+                <a href="#" class="header-nav-link">
+                    <span>📈</span>
+                    <span>Markets</span>
+                </a>
+                <a href="#" class="header-nav-link">
+                    <span>💼</span>
+                    <span>Portfolio</span>
+                </a>
+                <a href="#" class="header-nav-link">
+                    <span>💱</span>
+                    <span>Trade</span>
+                </a>
+                <a href="#" class="header-nav-link">
+                    <span>💰</span>
+                    <span>Earn</span>
+                </a>
+                <a href="#" class="header-nav-link">
+                    <span>📋</span>
+                    <span>Activity</span>
+                </a>
+                <a href="#" class="header-nav-link">
+                    <span>👛</span>
+                    <span>Wallet</span>
+                </a>
+                <a href="#" class="header-nav-link">
+                    <span>💳</span>
+                    <span>Cards</span>
+                </a>
+                <a href="#" class="header-nav-link">
+                    <span>⚙️</span>
+                    <span>Settings</span>
+                </a>
+            </nav>
         </header>
         
         <!-- Main Content -->
@@ -1004,6 +1210,39 @@
                     <div class="stat-value">€3,245.80</div>
                     <div class="stat-change negative">↘ -0.85%</div>
                 </div>
+            </div>
+            
+            <!-- Charts Section -->
+            <div style="display: grid; grid-template-columns: 2fr 1fr; gap: var(--space-6); margin-bottom: var(--space-8);">
+                <div class="chart-container">
+                    <div class="chart-header">
+                        <h3 class="chart-title">Bitcoin Price (BTC/EUR)</h3>
+                        <div class="chart-timeframe">
+                            <button class="chart-timeframe-btn" onclick="updateChartTimeframe('1H', event)" aria-label="One hour timeframe">1H</button>
+                            <button class="chart-timeframe-btn active" onclick="updateChartTimeframe('24H', event)" aria-label="Twenty-four hours timeframe">24H</button>
+                            <button class="chart-timeframe-btn" onclick="updateChartTimeframe('7D', event)" aria-label="Seven days timeframe">7D</button>
+                            <button class="chart-timeframe-btn" onclick="updateChartTimeframe('30D', event)" aria-label="Thirty days timeframe">30D</button>
+                            <button class="chart-timeframe-btn" onclick="updateChartTimeframe('1Y', event)" aria-label="One year timeframe">1Y</button>
+                        </div>
+                    </div>
+                    <canvas id="btcChart" 
+                            role="img" 
+                            aria-label="Line chart showing Bitcoin (BTC) price in euros over the selected timeframe">
+                    </canvas>
+                </div>
+                <div class="chart-container">
+                    <div class="chart-header">
+                        <h3 class="chart-title">Portfolio Distribution</h3>
+                    </div>
+                    <canvas id="portfolioChart"
+                            role="img"
+                            aria-label="Doughnut chart showing the percentage distribution of assets in your portfolio by cryptocurrency">
+                    </canvas>
+                </div>
+            </div>
+            
+            <!-- Additional Stats -->
+            <div class="dashboard-grid">
                 <div class="stat-card">
                     <div class="stat-label">Market Cap</div>
                     <div class="stat-value">€2.1T</div>
@@ -1053,11 +1292,268 @@
                         <!-- Will be populated by JavaScript -->
                     </tbody>
                 </table>
+                <div style="display: flex; justify-content: center; padding: var(--space-6); border-top: 1px solid rgba(255, 255, 255, 0.05);">
+                    <button id="loadMoreBtn" 
+                            onclick="loadMoreAssets()" 
+                            aria-live="polite"
+                            aria-busy="false"
+                            class="load-more-btn">
+                        Load More Assets
+                    </button>
+                </div>
             </div>
         </main>
     </div>
 
     <script>
+        // ===== QR CODE GENERATION =====
+        // NOTE: This generates a decorative QR code-like pattern for visual purposes only.
+        // It is NOT a valid, scannable QR code and does not contain functional positioning markers.
+        // This is purely for demo/aesthetic purposes and does not lead to any actual functionality.
+        function generateQRCode() {
+            const qrSvg = document.getElementById('qrcode');
+            if (qrSvg) {
+                // Simple mock QR code pattern using SVG
+                const sessionId = 'CRYPTO-' + Math.random().toString(36).substring(2, 10).toUpperCase();
+                
+                // Create a simple pixelated QR-like pattern (decorative only, not functional)
+                let qrPattern = '';
+                for (let row = 0; row < 25; row++) {
+                    for (let col = 0; col < 25; col++) {
+                        // Create a pseudo-random but deterministic pattern
+                        const isBlack = (row * col + row + col) % 3 !== 0 || 
+                                      (row < 7 && col < 7) || 
+                                      (row < 7 && col > 17) || 
+                                      (row > 17 && col < 7);
+                        if (isBlack) {
+                            qrPattern += `<rect x="${col}" y="${row}" width="1" height="1" fill="#0a0e27"/>`;
+                        }
+                    }
+                }
+                qrSvg.innerHTML = qrPattern;
+                
+                // Store session ID for demo purposes
+                qrSvg.dataset.session = sessionId;
+            }
+        }
+        
+        // Generate QR code on page load
+        window.addEventListener('DOMContentLoaded', generateQRCode);
+        
+        // ===== CHART DRAWING =====
+        // Constants for colors and chart styling
+        const CHART_PRIMARY_COLOR = '#00d4ff';
+        const CHART_SECONDARY_COLOR = '#6366f1';
+        const CHART_SUCCESS_COLOR = '#10b981';
+        const CHART_NEUTRAL_COLOR = '#94a3b8';
+        const DOUGHNUT_HOLE_RATIO = 0.6;
+        const LEGEND_OFFSET = 30;
+        
+        function drawLineChart(canvas, data, color) {
+            const ctx = canvas.getContext('2d');
+            if (!ctx) {
+                console.error('Unable to get canvas context for line chart');
+                return;
+            }
+            
+            const width = canvas.width = canvas.offsetWidth;
+            const height = canvas.height = canvas.offsetHeight;
+            
+            // Clear canvas
+            ctx.clearRect(0, 0, width, height);
+            
+            // Find min and max for scaling
+            const min = Math.min(...data);
+            const max = Math.max(...data);
+            const range = max - min;
+            
+            // Draw grid
+            ctx.strokeStyle = 'rgba(255, 255, 255, 0.05)';
+            ctx.lineWidth = 1;
+            for (let i = 0; i < 5; i++) {
+                const y = (height / 4) * i;
+                ctx.beginPath();
+                ctx.moveTo(0, y);
+                ctx.lineTo(width, y);
+                ctx.stroke();
+            }
+            
+            // Draw line
+            ctx.strokeStyle = color;
+            ctx.lineWidth = 2;
+            ctx.beginPath();
+            
+            data.forEach((value, index) => {
+                const x = (width / (data.length - 1)) * index;
+                const y = height - ((value - min) / range) * (height - 40) - 20;
+                
+                if (index === 0) {
+                    ctx.moveTo(x, y);
+                } else {
+                    ctx.lineTo(x, y);
+                }
+            });
+            
+            ctx.stroke();
+            
+            // Fill area under line using globalAlpha for better compatibility
+            ctx.lineTo(width, height);
+            ctx.lineTo(0, height);
+            ctx.closePath();
+            ctx.save();
+            ctx.globalAlpha = 0.1;
+            ctx.fillStyle = color;
+            ctx.fill();
+            ctx.restore();
+            
+            // Draw axis labels
+            ctx.fillStyle = '#64748b';
+            ctx.font = '12px -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif';
+            ctx.fillText('€' + min.toFixed(0), 10, height - 5);
+            ctx.fillText('€' + max.toFixed(0), 10, 15);
+        }
+        
+        function drawDoughnutChart(canvas, data, colors, labels) {
+            const ctx = canvas.getContext('2d');
+            if (!ctx) {
+                console.error('Unable to get canvas context for doughnut chart');
+                return;
+            }
+            
+            const width = canvas.width = canvas.offsetWidth;
+            const height = canvas.height = canvas.offsetHeight;
+            
+            ctx.clearRect(0, 0, width, height);
+            
+            const centerX = width / 2;
+            const centerY = height / 2 - LEGEND_OFFSET;
+            const radius = Math.min(width, height) / 3;
+            
+            let currentAngle = -Math.PI / 2;
+            const total = data.reduce((a, b) => a + b, 0);
+            
+            // Draw segments
+            data.forEach((value, index) => {
+                const sliceAngle = (value / total) * Math.PI * 2;
+                
+                ctx.beginPath();
+                ctx.arc(centerX, centerY, radius, currentAngle, currentAngle + sliceAngle);
+                ctx.lineTo(centerX, centerY);
+                ctx.fillStyle = colors[index];
+                ctx.fill();
+                
+                // Draw border
+                ctx.strokeStyle = '#0f1419';
+                ctx.lineWidth = 2;
+                ctx.stroke();
+                
+                currentAngle += sliceAngle;
+            });
+            
+            // Draw center circle (doughnut hole)
+            ctx.beginPath();
+            ctx.arc(centerX, centerY, radius * DOUGHNUT_HOLE_RATIO, 0, Math.PI * 2);
+            ctx.fillStyle = '#0f1419';
+            ctx.fill();
+            
+            // Draw legend
+            const legendY = centerY + radius + LEGEND_OFFSET;
+            const legendItemWidth = width / labels.length;
+            
+            ctx.font = '12px -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif';
+            labels.forEach((label, index) => {
+                const x = legendItemWidth * index + legendItemWidth / 2;
+                
+                // Draw color box
+                ctx.fillStyle = colors[index];
+                ctx.fillRect(x - 25, legendY - 6, 12, 12);
+                
+                // Draw label
+                ctx.fillStyle = '#ffffff';
+                ctx.textAlign = 'left';
+                ctx.fillText(label, x - 10, legendY + 5);
+            });
+        }
+        
+        function initializeCharts() {
+            const btcCanvas = document.getElementById('btcChart');
+            const portfolioCanvas = document.getElementById('portfolioChart');
+            
+            // Check if canvas elements exist and are ready before initializing
+            if (!btcCanvas || !portfolioCanvas) {
+                console.warn('Canvas elements not found, retrying...');
+                requestAnimationFrame(initializeCharts);
+                return;
+            }
+            
+            if (btcCanvas) {
+                // Generate mock BTC price data
+                const btcData = [];
+                let price = 89000;
+                for (let i = 0; i < 25; i++) {
+                    price = price + (Math.random() - 0.5) * 500;
+                    btcData.push(price);
+                }
+                drawLineChart(btcCanvas, btcData, CHART_PRIMARY_COLOR);
+            }
+            
+            if (portfolioCanvas) {
+                const portfolioData = [45, 25, 15, 15];
+                const portfolioColors = [CHART_PRIMARY_COLOR, CHART_SECONDARY_COLOR, CHART_SUCCESS_COLOR, CHART_NEUTRAL_COLOR];
+                const portfolioLabels = ['BTC', 'ETH', 'SOL', 'Other'];
+                drawDoughnutChart(portfolioCanvas, portfolioData, portfolioColors, portfolioLabels);
+            }
+        }
+        
+        function updateChartTimeframe(timeframe, evt) {
+            // Update button states
+            document.querySelectorAll('.chart-timeframe-btn').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            const target = (evt && evt.target) || (window.event && window.event.target);
+            if (target) {
+                target.classList.add('active');
+            }
+            
+            // Generate new data based on timeframe
+            const btcCanvas = document.getElementById('btcChart');
+            if (btcCanvas) {
+                let dataPoints, price = 89000;
+                const data = [];
+                
+                switch(timeframe) {
+                    case '1H':
+                        dataPoints = 60;
+                        break;
+                    case '24H':
+                        dataPoints = 24;
+                        break;
+                    case '7D':
+                        dataPoints = 7;
+                        break;
+                    case '30D':
+                        dataPoints = 30;
+                        break;
+                    case '1Y':
+                        dataPoints = 12;
+                        break;
+                    default:
+                        console.warn('updateChartTimeframe: unknown timeframe', timeframe);
+                        dataPoints = 24;
+                        break;
+                }
+                
+                const variance = timeframe === '1Y' ? 10000 : timeframe === '30D' ? 3000 : 500;
+                
+                for (let i = 0; i < dataPoints; i++) {
+                    price = price + (Math.random() - 0.5) * variance;
+                    data.push(price);
+                }
+                
+                drawLineChart(btcCanvas, data, CHART_PRIMARY_COLOR);
+            }
+        }
+        
         // ===== AUTH SWITCHING =====
         function switchAuthTab(tab) {
             const loginContent = document.getElementById('loginContent');
@@ -1092,6 +1588,8 @@
             document.getElementById('landingPage').classList.add('hidden');
             document.getElementById('mainApp').classList.add('active');
             populateAssetTable();
+            // Initialize charts after login using requestAnimationFrame for reliability
+            requestAnimationFrame(initializeCharts);
         }
         
         function handleLogin(e) {
@@ -1150,11 +1648,15 @@
             { symbol: 'EOS', name: 'EOS', price: 0.85, change: -0.75, volume: '170M', marketCap: '1.0B' }
         ];
         
+        let displayedCount = 10; // Show only 10 cryptos by default
+        
         function populateAssetTable() {
             const tbody = document.getElementById('assetTableBody');
             if (!tbody) return;
             
-            tbody.innerHTML = cryptoAssets.map(asset => `
+            const assetsToShow = cryptoAssets.slice(0, displayedCount);
+            
+            tbody.innerHTML = assetsToShow.map(asset => `
                 <tr>
                     <td>
                         <div class="asset-info">
@@ -1190,6 +1692,42 @@
                     </td>
                 </tr>
             `).join('');
+            
+            // Update load more button visibility
+            updateLoadMoreButton();
+        }
+        
+        function loadMoreAssets() {
+            const loadMoreBtn = document.getElementById('loadMoreBtn');
+            if (loadMoreBtn) {
+                loadMoreBtn.textContent = 'Loading...';
+                loadMoreBtn.disabled = true;
+                loadMoreBtn.setAttribute('aria-busy', 'true');
+            }
+            
+            // Simulate loading delay for reactive feel
+            setTimeout(() => {
+                displayedCount = Math.min(displayedCount + 10, cryptoAssets.length);
+                populateAssetTable();
+                
+                if (loadMoreBtn) {
+                    loadMoreBtn.textContent = 'Load More Assets';
+                    loadMoreBtn.disabled = false;
+                    loadMoreBtn.setAttribute('aria-busy', 'false');
+                }
+            }, 300);
+        }
+        
+        function updateLoadMoreButton() {
+            const loadMoreBtn = document.getElementById('loadMoreBtn');
+            if (loadMoreBtn) {
+                if (displayedCount >= cryptoAssets.length) {
+                    loadMoreBtn.style.display = 'none';
+                } else {
+                    loadMoreBtn.style.display = 'block';
+                    loadMoreBtn.textContent = `Load More Assets (${cryptoAssets.length - displayedCount} remaining)`;
+                }
+            }
         }
         
         function generateSparklinePoints() {
